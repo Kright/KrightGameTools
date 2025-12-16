@@ -8,13 +8,17 @@
 #include "BodyLine.h"
 #include "BodyPoint.h"
 #include "Forque.h"
+#include "PhysicsBodyConnection.h"
+
 
 namespace pga3d {
-
     struct TorsionConfig {
         double kNperRad = 0.0;
 
-        void calculateForque(const BodyPoint &first, const BodyPoint &second, const BodyLine& axis, auto onResult) const noexcept {
+        void calculateForque(const BodyPoint &first,
+                             const BodyPoint &second,
+                             const BodyLine &axis,
+                             auto onResult) const noexcept {
             const Point firstGlobalPos = first.globalPos();
             const Point secondGlobalPos = second.globalPos();
 
@@ -47,17 +51,43 @@ namespace pga3d {
             onResult(mf1, mf2);
         }
 
-        void addForque(const BodyPoint &first, const BodyPoint &second, const BodyLine& axis) const noexcept {
-            calculateForque(first, second, axis, [&](const Bivector& mf1, const Bivector& mf2) {
+        [[nodiscard]] double getEnergy(const BodyPoint &first,
+                                       const BodyPoint &second,
+                                       const BodyLine &axis) const noexcept {
+            const Point firstGlobalPos = first.globalPos();
+            const Point secondGlobalPos = second.globalPos();
+
+            const Bivector axisGlobalLine = axis.globalLine();
+
+            const Point firstProjectedToLine = firstGlobalPos.projectOntoLine(axisGlobalLine).toPoint();
+            const Point secondProjectedToLine = secondGlobalPos.projectOntoLine(axisGlobalLine).toPoint();
+
+            const Vector dr1 = firstGlobalPos - firstProjectedToLine;
+            const Vector dr2 = secondGlobalPos - secondProjectedToLine;
+
+            const double dr1NormSquare = dr1.normSquare();
+            const double dr2NormSquare = dr2.normSquare();
+
+            const double dr1Dr2Norm = std::sqrt(dr1NormSquare * dr2NormSquare);
+
+            if (dr1Dr2Norm < 1e-100) return 0.0;
+
+            const BivectorBulk rotationAngle = (dr1.dual().geometric(dr2.dual()) / dr1Dr2Norm).log();
+            return 0.5 * kNperRad * rotationAngle.normSquare();
+        }
+
+        void addForque(const BodyPoint &first, const BodyPoint &second, const BodyLine &axis) const noexcept {
+            calculateForque(first, second, axis, [&](const Bivector &mf1, const Bivector &mf2) {
                 first.body->addGlobalForquePaired(mf1, *axis.body);
                 second.body->addGlobalForquePaired(mf2, *axis.body);
             });
         }
 
-        [[nodiscard]] std::pair<Bivector, Bivector> getTorque(const BodyPoint &first, const BodyPoint &second, const BodyLine& axis) const noexcept {
+        [[nodiscard]] std::pair<Bivector, Bivector> getTorque(const BodyPoint &first, const BodyPoint &second,
+                                                              const BodyLine &axis) const noexcept {
             std::pair<Bivector, Bivector> result = {};
 
-            calculateForque(first, second, axis, [&](const Bivector& mf1, const Bivector& mf2) {
+            calculateForque(first, second, axis, [&](const Bivector &mf1, const Bivector &mf2) {
                 result.first = mf1;
                 result.second = mf2;
             });
@@ -81,5 +111,12 @@ namespace pga3d {
         [[nodiscard]] std::pair<Bivector, Bivector> getForque() const noexcept {
             return config.getTorque(first, second, axis);
         }
+
+        [[nodiscard]] double energy() const noexcept {
+            return config.getEnergy(first, second, axis);
+        }
     };
+
+    static_assert(HasEnergy<Torsion>);
+    static_assert(HasAddForqueMethod<Torsion>);
 }

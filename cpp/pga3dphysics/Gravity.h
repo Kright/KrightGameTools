@@ -19,5 +19,14 @@ namespace pga3d {
                 body.addGlobalForque(Forque::force(body.globalCenterOfMass(), body.inertia.mass() * gravity));
             }
         }
+
+        [[nodiscard]] constexpr double energy(std::span<const PhysicsBody> bodies) const noexcept {
+            if (gravity == Vector{}) return 0.0;
+            double totalEnergy = 0.0;
+            for (auto &body: bodies) {
+                totalEnergy -= gravity.antiDot(body.globalCenterOfMass()).i;
+            }
+            return totalEnergy;
+        }
     };
 }

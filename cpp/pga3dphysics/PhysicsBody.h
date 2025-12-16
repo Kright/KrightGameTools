@@ -11,6 +11,7 @@
 #include "pga3d/opsSandwich.h"
 #include "InertiaMovedLocal.h"
 #include "BodyState.h"
+#include "Energy.h"
 
 
 namespace pga3d {
@@ -72,4 +73,9 @@ namespace pga3d {
             return state.globalVelocityForLocalPos(localPos);
         }
     };
+
+    [[nodiscard]] constexpr double energy(const PhysicsBody &body) noexcept {
+        return body.kineticEnergy();
+    }
+    static_assert(HasEnergy<PhysicsBody>);
 }

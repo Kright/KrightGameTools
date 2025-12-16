@@ -5,6 +5,7 @@
 #include <vector>
 #include "BodyPoint.h"
 #include "Friction.h"
+#include "PhysicsBodyConnection.h"
 
 namespace pga3d {
     struct SpringConfig {
@@ -58,6 +59,21 @@ namespace pga3d {
             return result;
         }
 
+        [[nodiscard]] double getEnergy(const BodyPoint &first, const BodyPoint &second) const noexcept {
+            const Point pos1 = first.globalPos();
+            const Point pos2 = second.globalPos();
+            const Vector dPos = pos2 - pos1;
+            const double r2 = dPos.normSquare();
+            if (r2 <= targetR * targetR) {
+                if (noPush) return 0.0;
+            } else {
+                if (noPull) return 0.0;
+            }
+            const double r = std::sqrt(r2);
+            const double dr = r - targetR;
+            return 0.5 * k * dr * dr;
+        }
+
         void afterStep(const BodyPoint& first, const BodyPoint& second) noexcept {
             const Point pos1 = first.globalPos();
             const Point pos2 = second.globalPos();
@@ -83,21 +99,13 @@ namespace pga3d {
         void afterStep() noexcept {
             config.afterStep(first, second);
         }
-    };
 
-    struct SpringSystem {
-        std::vector<Spring> springs;
-
-        void addForques() const noexcept {
-            for (const Spring &spring: springs) {
-                spring.addForque();
-            }
-        }
-
-        void afterStep() {
-            for (Spring &spring: springs) {
-                spring.afterStep();
-            }
+        [[nodiscard]] double energy() const noexcept {
+            return config.getEnergy(first, second);
         }
     };
+
+    static_assert(HasEnergy<Spring>);
+    static_assert(HasAddForqueMethod<Spring>);
+    static_assert(HasAfterStepMethod<Spring>);
 }

@@ -9,6 +9,7 @@
 #include "Sphere.h"
 #include "AABB.h"
 
+#include "Energy.h"
 #include "Forque.h"
 #include "Velocity.h"
 
@@ -25,6 +26,8 @@
 #include "BodyPoint.h"
 #include "BodyLine.h"
 
+#include "PhysicsBodyConnection.h"
+#include "PhysicsBodyConnections.h"
 #include "Gravity.h"
 #include "Friction.h"
 #include "Spring.h"

@@ -18042,6 +18042,45 @@ namespace pga3d {
     };
 }
 
+// Energy.h
+
+namespace pga3d {
+    template<class T>
+    concept HasEnergy =
+            requires(const T &obj) {
+                { energy(obj) } -> std::same_as<double>;
+            };
+
+    template<class T>
+    concept HasEnergyMethod =
+            requires(const T &obj) {
+                { obj.energy() } -> std::same_as<double>;
+            };
+
+    template<HasEnergyMethod T>
+    auto energy(const T &obj) {
+        return obj.energy();
+    }
+
+    template<HasEnergy T>
+    double energy(const std::span<const T>& elems) {
+        double totalEnergy = 0.0;
+        for (const auto &elem: elems) {
+            totalEnergy += energy(elem);
+        }
+        return totalEnergy;
+    }
+
+    template<HasEnergy T>
+    double energy(const std::vector<T>& elems) {
+        double totalEnergy = 0.0;
+        for (const auto &elem: elems) {
+            totalEnergy += energy(elem);
+        }
+        return totalEnergy;
+    }
+}
+
 // Forque.h
 
 namespace pga3d {
@@ -18859,6 +18898,11 @@ namespace pga3d {
             return state.globalVelocityForLocalPos(localPos);
         }
     };
+
+    [[nodiscard]] constexpr double energy(const PhysicsBody &body) noexcept {
+        return body.kineticEnergy();
+    }
+    static_assert(HasEnergy<PhysicsBody>);
 }
 
 // BodyPoint.h
@@ -18891,20 +18935,26 @@ namespace pga3d {
     };
 }
 
-// Gravity.h
+// PhysicsBodyConnection.h
 
 namespace pga3d {
-    struct GravitySystem {
-        Vector gravity{};
+    template<class T>
+    concept HasAddForqueMethod =
+            requires(T &obj) {
+                { obj.addForque() } -> std::same_as<void>;
+            };
 
-        void addForques(std::span<PhysicsBody> bodies) const noexcept {
-            if (gravity == Vector{}) return;
+    template<class T>
+    concept HasBeforeStepMethod =
+            requires(T &obj) {
+                { obj.beforeStep() } -> std::same_as<void>;
+            };
 
-            for (auto &body: bodies) {
-                body.addGlobalForque(Forque::force(body.globalCenterOfMass(), body.inertia.mass() * gravity));
-            }
-        }
-    };
+    template<class T>
+    concept HasAfterStepMethod =
+            requires(T &obj) {
+                { obj.afterStep() } -> std::same_as<void>;
+            };
 }
 
 // Friction.h
@@ -19120,6 +19170,21 @@ namespace pga3d {
             return result;
         }
 
+        [[nodiscard]] double getEnergy(const BodyPoint &first, const BodyPoint &second) const noexcept {
+            const Point pos1 = first.globalPos();
+            const Point pos2 = second.globalPos();
+            const Vector dPos = pos2 - pos1;
+            const double r2 = dPos.normSquare();
+            if (r2 <= targetR * targetR) {
+                if (noPush) return 0.0;
+            } else {
+                if (noPull) return 0.0;
+            }
+            const double r = std::sqrt(r2);
+            const double dr = r - targetR;
+            return 0.5 * k * dr * dr;
+        }
+
         void afterStep(const BodyPoint& first, const BodyPoint& second) noexcept {
             const Point pos1 = first.globalPos();
             const Point pos2 = second.globalPos();
@@ -19145,21 +19210,77 @@ namespace pga3d {
         void afterStep() noexcept {
             config.afterStep(first, second);
         }
+
+        [[nodiscard]] double energy() const noexcept {
+            return config.getEnergy(first, second);
+        }
     };
 
-    struct SpringSystem {
-        std::vector<Spring> springs;
+    static_assert(HasEnergy<Spring>);
+    static_assert(HasAddForqueMethod<Spring>);
+    static_assert(HasAfterStepMethod<Spring>);
+}
 
-        void addForques() const noexcept {
-            for (const Spring &spring: springs) {
-                spring.addForque();
+// PhysicsBodyConnections.h
+
+namespace pga3d {
+    template<class Connection> requires HasAddForqueMethod<Connection>
+    struct PhysicsBodyConnections {
+        std::vector<Connection> elems;
+
+        void beforeStep() {
+            if constexpr (HasBeforeStepMethod<Connection>) {
+                for (auto &elem: elems) {
+                    elem.beforeStep();
+                }
+            }
+        }
+
+        void addForque() const {
+            for (const auto &elem: elems) {
+                elem.addForque();
             }
         }
 
         void afterStep() {
-            for (Spring &spring: springs) {
-                spring.afterStep();
+            if constexpr (HasAfterStepMethod<Connection>) {
+                for (auto &elem: elems) {
+                    elem.afterStep();
+                }
             }
+        }
+    };
+
+    template<HasEnergy Connection>
+    [[nodiscard]] double energy(const PhysicsBodyConnections<Connection> &connections) {
+        return energy(connections.elems);
+    }
+
+    static_assert(HasEnergy<Spring>);
+    static_assert(HasEnergy<PhysicsBodyConnections<Spring> >);
+}
+
+// Gravity.h
+
+namespace pga3d {
+    struct GravitySystem {
+        Vector gravity{};
+
+        void addForques(std::span<PhysicsBody> bodies) const noexcept {
+            if (gravity == Vector{}) return;
+
+            for (auto &body: bodies) {
+                body.addGlobalForque(Forque::force(body.globalCenterOfMass(), body.inertia.mass() * gravity));
+            }
+        }
+
+        [[nodiscard]] constexpr double energy(std::span<const PhysicsBody> bodies) const noexcept {
+            if (gravity == Vector{}) return 0.0;
+            double totalEnergy = 0.0;
+            for (auto &body: bodies) {
+                totalEnergy -= gravity.antiDot(body.globalCenterOfMass()).i;
+            }
+            return totalEnergy;
         }
     };
 }
@@ -19182,6 +19303,14 @@ namespace pga3d {
             const Bivector forque = getForque(bodyLine, bodyPoint);
             bodyLine.body->addGlobalForquePaired(forque, *bodyPoint.body);
         }
+
+        [[nodiscard]] constexpr double getEnergy(const BodyLine &bodyLine, const BodyPoint &bodyPoint) const noexcept {
+            const Bivector line = bodyLine.globalLine();
+            const Point pos2 = bodyPoint.globalPos();
+            const Point posOnLine = pos2.projectOntoLine(line).toPoint();
+            const double r2 = (pos2 - posOnLine).normSquare();
+            return 0.5 * k * r2;
+        }
     };
 
     struct SpringToLine {
@@ -19196,17 +19325,26 @@ namespace pga3d {
         [[nodiscard]] Bivector getForque() const noexcept {
             return config.getForque(line, point);
         }
+
+        [[nodiscard]] constexpr double energy() const noexcept {
+            return config.getEnergy(line, point);
+        }
     };
+
+    static_assert(HasEnergy<SpringToLine>);
+    static_assert(HasAddForqueMethod<SpringToLine>);
 }
 
 // Torsion.h
 
 namespace pga3d {
-
     struct TorsionConfig {
         double kNperRad = 0.0;
 
-        void calculateForque(const BodyPoint &first, const BodyPoint &second, const BodyLine& axis, auto onResult) const noexcept {
+        void calculateForque(const BodyPoint &first,
+                             const BodyPoint &second,
+                             const BodyLine &axis,
+                             auto onResult) const noexcept {
             const Point firstGlobalPos = first.globalPos();
             const Point secondGlobalPos = second.globalPos();
 
@@ -19239,17 +19377,43 @@ namespace pga3d {
             onResult(mf1, mf2);
         }
 
-        void addForque(const BodyPoint &first, const BodyPoint &second, const BodyLine& axis) const noexcept {
-            calculateForque(first, second, axis, [&](const Bivector& mf1, const Bivector& mf2) {
+        [[nodiscard]] double getEnergy(const BodyPoint &first,
+                                       const BodyPoint &second,
+                                       const BodyLine &axis) const noexcept {
+            const Point firstGlobalPos = first.globalPos();
+            const Point secondGlobalPos = second.globalPos();
+
+            const Bivector axisGlobalLine = axis.globalLine();
+
+            const Point firstProjectedToLine = firstGlobalPos.projectOntoLine(axisGlobalLine).toPoint();
+            const Point secondProjectedToLine = secondGlobalPos.projectOntoLine(axisGlobalLine).toPoint();
+
+            const Vector dr1 = firstGlobalPos - firstProjectedToLine;
+            const Vector dr2 = secondGlobalPos - secondProjectedToLine;
+
+            const double dr1NormSquare = dr1.normSquare();
+            const double dr2NormSquare = dr2.normSquare();
+
+            const double dr1Dr2Norm = std::sqrt(dr1NormSquare * dr2NormSquare);
+
+            if (dr1Dr2Norm < 1e-100) return 0.0;
+
+            const BivectorBulk rotationAngle = (dr1.dual().geometric(dr2.dual()) / dr1Dr2Norm).log();
+            return 0.5 * kNperRad * rotationAngle.normSquare();
+        }
+
+        void addForque(const BodyPoint &first, const BodyPoint &second, const BodyLine &axis) const noexcept {
+            calculateForque(first, second, axis, [&](const Bivector &mf1, const Bivector &mf2) {
                 first.body->addGlobalForquePaired(mf1, *axis.body);
                 second.body->addGlobalForquePaired(mf2, *axis.body);
             });
         }
 
-        [[nodiscard]] std::pair<Bivector, Bivector> getTorque(const BodyPoint &first, const BodyPoint &second, const BodyLine& axis) const noexcept {
+        [[nodiscard]] std::pair<Bivector, Bivector> getTorque(const BodyPoint &first, const BodyPoint &second,
+                                                              const BodyLine &axis) const noexcept {
             std::pair<Bivector, Bivector> result = {};
 
-            calculateForque(first, second, axis, [&](const Bivector& mf1, const Bivector& mf2) {
+            calculateForque(first, second, axis, [&](const Bivector &mf1, const Bivector &mf2) {
                 result.first = mf1;
                 result.second = mf2;
             });
@@ -19272,7 +19436,14 @@ namespace pga3d {
         [[nodiscard]] std::pair<Bivector, Bivector> getForque() const noexcept {
             return config.getTorque(first, second, axis);
         }
+
+        [[nodiscard]] double energy() const noexcept {
+            return config.getEnergy(first, second, axis);
+        }
     };
+
+    static_assert(HasEnergy<Torsion>);
+    static_assert(HasAddForqueMethod<Torsion>);
 }
 
 // PhysicsSolverRK4.h

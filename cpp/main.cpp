@@ -14,12 +14,12 @@ public:
     pga3d::PhysicsSolverRK4 solver;
 
     pga3d::GravitySystem gravity;
-    pga3d::SpringSystem springs;
+    pga3d::PhysicsBodyConnections<pga3d::Spring> springs;
 
     void doStep() {
         solver.doStepRk4(bodies, dt, [&](double _) {
             gravity.addForques(bodies);
-            springs.addForques();
+            springs.addForque();
         });
 
         time += dt;
@@ -28,9 +28,17 @@ public:
     }
 
     [[nodiscard]] constexpr double getKineticEnergy() const {
-        double sum = 0.0;
+        return pga3d::energy(bodies);
+    }
+
+    [[nodiscard]] double getTotalEnergy() const {
+        return getKineticEnergy() + pga3d::energy(springs) + gravity.energy(bodies);
+    }
+
+    [[nodiscard]] constexpr pga3d::Bivector getTotalImpulse() const {
+        pga3d::Bivector sum = {};
         for (const auto &body: bodies) {
-            sum += body.kineticEnergy();
+            sum += body.impulse();
         }
         return sum;
     }
@@ -86,8 +94,10 @@ void measurePerf() {
         const auto end = std::chrono::high_resolution_clock::now();
         const auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
 
-        std::cout << "Motor.sandwich(Bivector) " << duration.count() << "ns, " << duration.count() / size << " ns/step" << ", result = " << sum <<
-                std::endl;
+        std::cout << "Motor.sandwich(Bivector) " << duration.count() << "ns"
+                  << ", " << duration.count() / size << " ns/step"
+                  << ", result = " << sum
+                  << std::endl;
     }
 }
 
@@ -115,7 +125,7 @@ int main() {
 
         for (int body_no = 0; body_no < system.bodies.size(); ++body_no) {
             for (int j = 0; j < 3; ++j) {
-                system.springs.springs.push_back(pga3d::Spring{
+                system.springs.elems.push_back(pga3d::Spring{
                     .config = pga3d::SpringConfig{
                         .velocityFriction = {.linearK = 2.0, .quadraticK = 1.0, .maxForce = 1000.0},
                         .positionFriction = {.stiffness = {.linearK = 2.0, .maxDelta = 0.001}, .boundPosition = 0.0},
@@ -131,6 +141,8 @@ int main() {
         // system.gravity.gravity = pga3d::Vector{0.0, -9.81, 0.0};
 
         const double initialEnergy = system.getKineticEnergy();
+        const double initialTotalEnergy = system.getTotalEnergy();
+        const pga3d::Bivector initialImpulse = system.getTotalImpulse();
 
         constexpr int stepsCount = 2000;
         auto start = std::chrono::high_resolution_clock::now();
@@ -142,8 +154,13 @@ int main() {
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
 
-        std::cout << duration.count() << " ns for " << stepsCount << " steps, dE = " << system.getKineticEnergy() -
-                initialEnergy << ", " << duration.count() / stepsCount << " ns per step" << std::endl;
+        std::cout
+                << duration.count() << " ns for " << stepsCount << " steps"
+                << ", dE = " << system.getKineticEnergy() - initialEnergy
+                << ", total dE = " << system.getTotalEnergy() - initialTotalEnergy
+                << ", total dImpulse = " << (system.getTotalImpulse() - initialImpulse).norm()
+                << ", " << duration.count() / stepsCount << " ns per step"
+                << std::endl;
     }
 
     const pga3d::Motor motor = pga3d::Translator::addVector({1.0, 2.0, 3.0}).geometric(

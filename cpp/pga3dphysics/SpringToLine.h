@@ -6,6 +6,7 @@
 #include "pga3d/opsAntiWedge.h"
 #include "BodyLine.h"
 #include "BodyPoint.h"
+#include "PhysicsBodyConnection.h"
 
 
 namespace pga3d {
@@ -24,6 +25,14 @@ namespace pga3d {
             const Bivector forque = getForque(bodyLine, bodyPoint);
             bodyLine.body->addGlobalForquePaired(forque, *bodyPoint.body);
         }
+
+        [[nodiscard]] constexpr double getEnergy(const BodyLine &bodyLine, const BodyPoint &bodyPoint) const noexcept {
+            const Bivector line = bodyLine.globalLine();
+            const Point pos2 = bodyPoint.globalPos();
+            const Point posOnLine = pos2.projectOntoLine(line).toPoint();
+            const double r2 = (pos2 - posOnLine).normSquare();
+            return 0.5 * k * r2;
+        }
     };
 
     struct SpringToLine {
@@ -38,5 +47,12 @@ namespace pga3d {
         [[nodiscard]] Bivector getForque() const noexcept {
             return config.getForque(line, point);
         }
+
+        [[nodiscard]] constexpr double energy() const noexcept {
+            return config.getEnergy(line, point);
+        }
     };
+
+    static_assert(HasEnergy<SpringToLine>);
+    static_assert(HasAddForqueMethod<SpringToLine>);
 }

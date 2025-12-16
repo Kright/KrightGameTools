@@ -3,7 +3,7 @@ Header ["pga3d.h"](pga3d.h) includes everything.
 File ["types.h"](types.h) includes all definitions without complex implementations.
 
 Each operation is placed in its own header, so if you don't need it, you can exclude it from compilation. 
-Unfortunately, `deducing this` feature is in C++ 23 only, so geometric operations have to be declared inside struct bodies.
+Unfortunately, C++ does not have extension methods, so geometric operations have to be declared inside struct bodies.
 
 Generally, there is a list of types and a list of math operations for them.
 Types and operations are based on projective geometric algebra, but I choose useful subtypes and gave them names like "Plane" or "Vector".
