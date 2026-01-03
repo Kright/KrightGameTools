@@ -167,7 +167,7 @@ private class BinaryMethodCodeGen(val methodName: String,
               else right != CppSubclasses.multivector
 
             if (pairAllowed) {
-              val leftS = left.self
+              val leftS = left.makeSymbolic("a")
               val rightS = right.makeSymbolic("b")
               val resultS = op(leftS, rightS)
               val target = CppSubclasses.findMatchingClass(resultS)
@@ -175,19 +175,23 @@ private class BinaryMethodCodeGen(val methodName: String,
 
                 makeCustomBody match {
                   case Some(makeBody) => {
-                    code(s"constexpr ${target.name} ${left.name}::${methodName}(const ${right.name}& b) const noexcept {") // (" return ${target.makeBracesInit(result, multiline = true)}; }")
+                    code(s"[[nodiscard]] constexpr ${target.name} ${methodName}(const ${left.name}&a, const ${right.name}& b) noexcept {")
                     code.block {
                       code(makeBody(left, leftS, right, rightS, target, resultS))
                     }
                     code("}")
                   }
                   case None => {
-                    code(s"constexpr ${target.name} ${left.name}::${methodName}(const ${right.name}& b) const noexcept { return ${target.makeBracesInit(resultS, multiline = true)}; }")
+                    code(s"[[nodiscard]] constexpr ${target.name} ${methodName}(const ${left.name}& a,const ${right.name}& b) noexcept { return ${target.makeBracesInit(resultS, multiline = true)}; }")
                   }
                 }
 
                 alternativeNames.foreach { altName =>
-                  code(s"constexpr ${target.name} ${left.name}::${altName}(const ${right.name}& b) const noexcept { return ${methodName}(b); }")
+                  code(s"[[nodiscard]] constexpr ${target.name} ${altName}(const ${left.name}& a,const ${right.name}& b) noexcept { return ${methodName}(a, b); }")
+                }
+
+                (Seq(methodName) ++ alternativeNames).foreach { altName =>
+                  code(s"constexpr ${target.name} ${left.name}::${altName}(const ${right.name}& b) const noexcept { return pga3d::${methodName}(*this, b); }")
                 }
                 code("")
               }
