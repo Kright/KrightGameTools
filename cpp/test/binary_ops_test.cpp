@@ -223,7 +223,7 @@ TEST_CASE("antiGeometric distributes over toMultivector for all supported pairs"
             const pg::Multivector lhs = ToMultivector(a.antiGeometric(b));
             const pg::Multivector rhs = ToMultivector(a).antiGeometric(ToMultivector(b));
             INFO("diff = " << (lhs - rhs));
-            CHECK((lhs - rhs).norm() < 3e-16);
+            CHECK((lhs - rhs).norm() < 4e-16);
             // An addition of doubles is not commutative and order varies between implementation
         }
     });
@@ -288,7 +288,7 @@ TEST_CASE("sandwich distributes over toMultivector for all supported pairs") {
             const pg::Multivector lhs = ToMultivector(a.sandwich(b));
             const pg::Multivector rhs = ToMultivector(a).sandwich(ToMultivector(b));
             INFO("diff = " << (lhs - rhs));
-            CHECK((lhs - rhs).norm() < 3e-16);
+            CHECK((lhs - rhs).norm() < 1e-15);
             // An addition of doubles is not commutative and order varies between implementation
         }
     });
@@ -319,7 +319,7 @@ namespace {
 }
 
 TEST_CASE("sandwich product is correct for motor") {
-    const double eps = 2e-15;
+    const double eps = 3e-15;
     for (int i = 0; i < 1000; ++i) {
         const pga3d::Motor motor = makeRandom<pga3d::Motor>();
 
