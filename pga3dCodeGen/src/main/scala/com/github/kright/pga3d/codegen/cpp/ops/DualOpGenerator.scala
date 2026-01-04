@@ -11,10 +11,12 @@ class DualOpGenerator extends CppCodeGenerator {
 
     code.namespace(codeGen.namespace) {
       for (cls <- CppSubclasses.all if cls.shouldBeGenerated) {
-        val result = cls.self.dual
+        val result = cls.makeSymbolic("a").dual
         val target = CppSubclasses.findMatchingClass(result)
         if (target != CppSubclasses.zeroCls) {
-          code(s"constexpr ${target.name} ${cls.name}::dual() const noexcept { return ${target.makeBracesInit(result)}; }")
+          code(s"constexpr ${target.name} dual(const ${cls.name}& a) noexcept { return ${target.makeBracesInit(result, multiline = true)}; }")
+          code(s"constexpr ${target.name} ${cls.name}::dual() const noexcept { return pga3d::dual(*this); }")
+          code("")
         }
       }
     }
