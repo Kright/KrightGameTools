@@ -9,6 +9,7 @@
 #include "pga3d/Translator.h"
 #include "pga3d/Motor.h"
 
+#include "PointMapping.h"
 #include "InertiaLocalSphere.h"
 #include "InertiaLocal.h"
 #include "InertiaMovedLocal.h"
@@ -55,7 +56,7 @@ namespace pga3d {
         }
 
     private:
-        [[nodiscard]] constexpr InertiaSummable movedByImpl(auto mapProjectivePoint) const noexcept {
+        [[nodiscard]] constexpr InertiaSummable movedByImpl(ProjectivePointMapping auto mapProjectivePoint) const noexcept {
             const ProjectivePoint cx = mapProjectivePoint(ProjectivePoint{xx, xy , xz, wx});
             const ProjectivePoint cy = mapProjectivePoint(ProjectivePoint{xy, yy, yz, wy});
             const ProjectivePoint cz = mapProjectivePoint(ProjectivePoint{xz, yz, zz, wz});

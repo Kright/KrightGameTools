@@ -3,6 +3,8 @@
 
 #pragma once
 #include "pga3d/Point.h"
+#include "PointMapping.h"
+
 
 namespace pga3d {
     struct Sphere {
@@ -35,6 +37,13 @@ namespace pga3d {
 
             const double drNorm = std::sqrt(drNormSquare);
             return dr * (radius / (drNorm + 1e-100));
+        }
+
+        [[nodiscard]] Sphere mapPoints(PointMapping auto mapPoint) const noexcept {
+            return {
+                .center = mapPoint(center),
+                .radius = radius
+            };
         }
     };
 }

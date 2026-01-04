@@ -53,6 +53,7 @@ add_executable(cpp
         pga3dphysics/Inertia.h
         pga3dphysics/Energy.h
         pga3dphysics/PhysicsBodyConnection.h
+        pga3dphysics/PointMapping.h
 )
 
 # -----------------------------

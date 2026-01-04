@@ -4,6 +4,7 @@
 #pragma once
 
 #include "pga3d/Bivector.h"
+#include "Inertia.h"
 
 namespace pga3d {
     /**
@@ -62,7 +63,7 @@ namespace pga3d {
         }
 
         [[nodiscard]] constexpr double getKineticEnergy(const Bivector& velocity) const noexcept {
-            return velocity.antiWedge(operator()(velocity)) * 0.5;
+            return inertia::getKineticEnergy(velocity, operator()(velocity));
         }
 
         [[nodiscard]] static constexpr InertiaLocalSphere fromXX(const double mass, const double xx) noexcept {
@@ -95,4 +96,6 @@ namespace pga3d {
             return fromR2(mass, r * r * (2.0 / 5.0));
         }
     };
+
+    static_assert(Inertia<InertiaLocalSphere>);
 }

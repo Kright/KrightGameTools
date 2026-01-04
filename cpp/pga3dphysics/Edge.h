@@ -8,6 +8,7 @@
 #include "pga3d/Bivector.h"
 #include "pga3d/opsArithmetic.h"
 #include "pga3d/opsAntiWedge.h"
+#include "PointMapping.h"
 
 namespace pga3d {
     struct Edge {
@@ -46,6 +47,11 @@ namespace pga3d {
             return ab().normSquare();
         }
 
-
+        [[nodiscard]] Edge mapPoints(PointMapping auto mapPoint) const noexcept {
+            return {
+                .a = mapPoint(a),
+                .b = mapPoint(b),
+            };
+        }
     };
 }

@@ -6,6 +6,7 @@
 #include "pga3d/Motor.h"
 #include "pga3d/opsSandwich.h"
 
+#include "Inertia.h"
 #include "InertiaLocal.h"
 
 namespace pga3d {
@@ -18,7 +19,7 @@ namespace pga3d {
         }
 
         [[nodiscard]] constexpr Point centerOfMassPoint() const noexcept {
-            return localToGlobal.sandwich(pga3d::PointCenter{}).toPointUnsafe();
+            return localToGlobal.sandwich(PointCenter{}).toPointUnsafe();
         }
 
         [[nodiscard]] constexpr Bivector operator ()(const Bivector& globalB) const noexcept {
@@ -72,4 +73,6 @@ namespace pga3d {
             };
         }
     };
+
+    static_assert(Inertia<InertiaMovedLocal>);
 }

@@ -51,7 +51,7 @@ namespace pga3d {
         }
 
         [[nodiscard]] constexpr double getKineticEnergy(const Bivector& velocity) const noexcept {
-            return velocity.antiWedge(operator()(velocity)) * 0.5;
+            return inertia::getKineticEnergy(velocity, operator()(velocity));
         }
 
 
@@ -123,4 +123,6 @@ namespace pga3d {
             return fromXXYYZZ(mass, rod, disk, disk);
         }
     };
+
+    static_assert(Inertia<InertiaLocal>);
 }

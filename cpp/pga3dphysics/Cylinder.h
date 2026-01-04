@@ -8,6 +8,7 @@
 #include "pga3d/Bivector.h"
 #include "pga3d/opsArithmetic.h"
 #include "pga3d/opsAntiWedge.h"
+#include "PointMapping.h"
 
 namespace pga3d {
     struct Cylinder {
@@ -25,6 +26,14 @@ namespace pga3d {
 
         [[nodiscard]] constexpr Bivector line() const noexcept {
             return a.antiWedge(b);
+        }
+
+        [[nodiscard]] Cylinder mapPoints(PointMapping auto mapPoint) const noexcept {
+            return {
+                .a = mapPoint(a),
+                .b = mapPoint(b),
+                .r = r
+            };
         }
     };
 }

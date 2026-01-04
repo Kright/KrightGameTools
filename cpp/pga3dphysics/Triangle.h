@@ -8,6 +8,7 @@
 #include "pga3d/Plane.h"
 #include "pga3d/opsArithmetic.h"
 #include "pga3d/opsAntiWedge.h"
+#include "PointMapping.h"
 
 namespace pga3d {
     struct Triangle {
@@ -33,6 +34,14 @@ namespace pga3d {
 
         [[nodiscard]] double area() const noexcept {
             return 0.5 * ab().antiWedge(ac()).norm();
+        }
+
+        [[nodiscard]] Triangle mapPoints(PointMapping auto mapPoint) const noexcept {
+            return {
+                .a = mapPoint(a),
+                .b = mapPoint(b),
+                .c = mapPoint(c)
+            };
         }
     };
 }

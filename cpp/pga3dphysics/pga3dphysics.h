@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "PointMapping.h"
+
 #include "Edge.h"
 #include "Triangle.h"
 #include "Cylinder.h"
