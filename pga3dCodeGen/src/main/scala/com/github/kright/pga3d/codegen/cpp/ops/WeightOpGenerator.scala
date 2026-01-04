@@ -11,10 +11,12 @@ class WeightOpGenerator extends CppCodeGenerator {
 
     code.namespace(codeGen.namespace) {
       for (cls <- CppSubclasses.all if cls.shouldBeGenerated) {
-        val result = cls.self.weight
+        val result = cls.makeSymbolic("a").weight
         val target = CppSubclasses.findMatchingClass(result)
         if (target != CppSubclasses.zeroCls) {
-          code(s"constexpr ${target.name} ${cls.name}::weight() const noexcept { return ${target.makeBracesInit(result)}; }")
+          code(s"constexpr ${target.name} weight(const ${cls.name}& a) noexcept { return ${target.makeBracesInit(result, multiline = true)}; }")
+          code(s"constexpr ${target.name} ${cls.name}::weight() const noexcept { return pga3d::weight(*this); }")
+          code("")
         }
       }
     }

@@ -11,10 +11,12 @@ class BulkOpGenerator extends CppCodeGenerator {
 
     code.namespace(codeGen.namespace) {
       for (cls <- CppSubclasses.all if cls.shouldBeGenerated) {
-        val result = cls.self.bulk
+        val result = cls.makeSymbolic("a").bulk
         val target = CppSubclasses.findMatchingClass(result)
         if (target != CppSubclasses.zeroCls) {
-          code(s"constexpr ${target.name} ${cls.name}::bulk() const noexcept { return ${target.makeBracesInit(result)}; }")
+          code(s"constexpr ${target.name} bulk(const ${cls.name}& a) noexcept { return ${target.makeBracesInit(result, multiline = true)}; }")
+          code(s"constexpr ${target.name} ${cls.name}::bulk() const noexcept { return pga3d::bulk(*this); }")
+          code("")
         }
       }
     }
@@ -25,7 +27,7 @@ class BulkOpGenerator extends CppCodeGenerator {
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
     val result = cls.self.bulk
     val target = CppSubclasses.findMatchingClass(result)
-    if (target == CppSubclasses.zeroCls) Seq() 
+    if (target == CppSubclasses.zeroCls) Seq()
     else structBodyPart(s"[[nodiscard]] constexpr ${target.name} bulk() const noexcept;")
   }
 }
