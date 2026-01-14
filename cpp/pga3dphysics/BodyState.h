@@ -51,6 +51,10 @@ namespace pga3d {
         [[nodiscard]] constexpr Vector globalVelocityForLocalPos(const Point& localPos) const noexcept {
             return motor.sandwich(localPos.cross(localB));
         }
+
+        [[nodiscard]] constexpr Point globalCenter() const noexcept {
+            return motor.sandwich(PointCenter{}).toPointUnsafe();
+        }
     };
 
     [[nodiscard]] constexpr BodyState operator+(const BodyState& a, const BodyState& b) noexcept {

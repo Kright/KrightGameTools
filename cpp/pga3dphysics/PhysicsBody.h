@@ -65,6 +65,10 @@ namespace pga3d {
             return state.globalPosToLocal(localPos);
         }
 
+        [[nodiscard]] constexpr Point globalCenter() const noexcept {
+            return state.globalCenter();
+        }
+
         [[nodiscard]] constexpr Point globalCenterOfMass() const noexcept {
             return localPosToGlobal(inertia.centerOfMassPoint());
         }
