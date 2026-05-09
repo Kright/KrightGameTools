@@ -1,12 +1,14 @@
 package com.github.kright.pga3d
 
 import scala.annotation.targetName
+import com.github.kright.math.FlatDoubleSerializer
+
 
 /** this code is generated, see com.github.kright.pga3d.codegen.CodeGenClass */
 final case class Pga3dProjectivePoint(x: Double = 0.0,
                                       y: Double = 0.0,
                                       z: Double = 0.0,
-                                      w: Double = 0.0) derives CanEqual:
+                                      w: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
 
   inline def wyz: Double = -x
 

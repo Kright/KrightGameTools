@@ -1,11 +1,13 @@
 package com.github.kright.pga3d
 
 import scala.annotation.targetName
+import com.github.kright.math.FlatDoubleSerializer
+
 
 /** this code is generated, see com.github.kright.pga3d.codegen.CodeGenClass */
 final case class Pga3dTranslator(wx: Double = 0.0,
                                  wy: Double = 0.0,
-                                 wz: Double = 0.0) derives CanEqual:
+                                 wz: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
   inline val s = 1.0
 
   override def toString: String =

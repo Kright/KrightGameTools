@@ -1,9 +1,11 @@
 package com.github.kright.pga3d
 
 import scala.annotation.targetName
+import com.github.kright.math.FlatDoubleSerializer
+
 
 /** this code is generated, see com.github.kright.pga3d.codegen.CodeGenClass */
-final case class Pga3dPseudoScalar(i: Double = 0.0) derives CanEqual:
+final case class Pga3dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga3dPseudoScalar(i = $i)"

@@ -1,8 +1,33 @@
 package com.github.kright.math
 
 import scala.quoted.*
+import scala.annotation.nowarn
+import scala.reflect.ClassTag
 
-object FlatSerializer:
+
+trait FlatDoubleSerializer[T]:
+  val size: Int
+  def classTag: ClassTag[T]
+
+  def write(elem: T, array: Array[Double], offset: Int): Unit
+
+  def read(array: Array[Double], offset: Int): T
+
+
+object FlatDoubleSerializer:
+
+  @nowarn
+  inline def derived[T]: FlatDoubleSerializer[T] = new FlatDoubleSerializer[T]:
+    override val size: Int = FlatDoubleSerializer.getSize[T]
+    override val classTag: ClassTag[T] = scala.compiletime.summonInline[ClassTag[T]]
+
+    override def write(value: T, array: Array[Double], offset: Int): Unit =
+      FlatDoubleSerializer.write[T](value, array, offset)
+
+    override def read(array: Array[Double], offset: Int): T =
+      FlatDoubleSerializer.read[T](array, offset)
+
+  
   //* count of double values in case class */
   inline def getSize[T]: Int = ${ getSizeImpl[T] }
 

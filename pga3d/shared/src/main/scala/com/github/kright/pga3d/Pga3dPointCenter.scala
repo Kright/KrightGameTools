@@ -1,6 +1,8 @@
 package com.github.kright.pga3d
 
 import scala.annotation.targetName
+import com.github.kright.math.FlatDoubleSerializer
+
 
 /** this code is generated, see com.github.kright.pga3d.codegen.CodeGenClass */
 object Pga3dPointCenter:

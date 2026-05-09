@@ -10,7 +10,7 @@ class ScalaMatrixCodeGen extends ScalaCodeGenClass:
 
   override def generateImports(): String =
     s"""import com.github.kright.matrix.Matrix
-       |import com.github.kright.math.FlatSerializer
+       |import com.github.kright.math.FlatDoubleSerializer
        |""".stripMargin
 
   override def generateCode(): String =
@@ -48,7 +48,7 @@ class ScalaMatrixCodeGen extends ScalaCodeGenClass:
        |    val matrix = Matrix(6, 6)
        |    for ((b, i) <- bivectors.zipWithIndex) {
        |      val mappedB = map(b)
-       |      FlatSerializer.write(mappedB, matrix.data, i * 6)
+       |      FlatDoubleSerializer.write(mappedB, matrix.data, i * 6)
        |    }
        |    matrix.transposeInplace()
        |    matrix

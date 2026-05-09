@@ -1,5 +1,6 @@
 package com.github.kright.pga3dgeom
 
+import com.github.kright.math.FlatDoubleSerializer
 import com.github.kright.pga3d.{Pga3dPlane, Pga3dPoint, Pga3dVector}
 
 case class Pga3dTriangle(a: Pga3dPoint,

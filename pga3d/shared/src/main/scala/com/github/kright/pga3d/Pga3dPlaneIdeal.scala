@@ -1,11 +1,13 @@
 package com.github.kright.pga3d
 
 import scala.annotation.targetName
+import com.github.kright.math.FlatDoubleSerializer
+
 
 /** this code is generated, see com.github.kright.pga3d.codegen.CodeGenClass */
 final case class Pga3dPlaneIdeal(x: Double = 0.0,
                                  y: Double = 0.0,
-                                 z: Double = 0.0) derives CanEqual:
+                                 z: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga3dPlaneIdeal(x = $x, y = $y, z = $z)"

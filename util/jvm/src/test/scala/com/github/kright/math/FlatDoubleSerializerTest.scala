@@ -4,16 +4,16 @@ import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-case class Vector3d(x: Double, y: Double, z: Double)
+private final case class Vector3d(x: Double, y: Double, z: Double)
 
-final case class Pga3dBivector(wx: Double = 0.0,
-                               wy: Double = 0.0,
-                               wz: Double = 0.0,
-                               xy: Double = 0.0,
-                               xz: Double = 0.0,
-                               yz: Double = 0.0)
+private final case class Pga3dBivector(wx: Double = 0.0,
+                                       wy: Double = 0.0,
+                                       wz: Double = 0.0,
+                                       xy: Double = 0.0,
+                                       xz: Double = 0.0,
+                                       yz: Double = 0.0)
 
-class FlatSerializerTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
+class FlatDoubleSerializerTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private val vector3dGen: Gen[Vector3d] = for {
     x <- Gen.double
     y <- Gen.double
@@ -29,20 +29,20 @@ class FlatSerializerTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     yz <- Gen.double
   } yield Pga3dBivector(wx, wy, wz, xy, xz, yz)
   test("getSize should return correct number of fields") {
-    assert(FlatSerializer.getSize[Vector3d] == 3)
-    assert(FlatSerializer.getSize[Pga3dBivector] == 6)
+    assert(FlatDoubleSerializer.getSize[Vector3d] == 3)
+    assert(FlatDoubleSerializer.getSize[Pga3dBivector] == 6)
   }
 
   test("serialize and deserialize should work for Vector3d") {
     val vec = Vector3d(1.0, 2.0, 3.0)
     val arr = new Array[Double](3)
 
-    FlatSerializer.write(vec, arr, 0)
+    FlatDoubleSerializer.write(vec, arr, 0)
     assert(arr(0) == 1.0)
     assert(arr(1) == 2.0)
     assert(arr(2) == 3.0)
 
-    val restored = FlatSerializer.read[Vector3d](arr, 0)
+    val restored = FlatDoubleSerializer.read[Vector3d](arr, 0)
     assert(restored.x == 1.0)
     assert(restored.y == 2.0)
     assert(restored.z == 3.0)
@@ -52,10 +52,10 @@ class FlatSerializerTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val bivector = Pga3dBivector(1.0, 2.0, 3.0, 4.0, 5.0, 6.0)
     val arr = new Array[Double](6)
 
-    FlatSerializer.write(bivector, arr, 0)
+    FlatDoubleSerializer.write(bivector, arr, 0)
     assert(arr.toSeq == Seq(1.0, 2.0, 3.0, 4.0, 5.0, 6.0))
 
-    val restored = FlatSerializer.read[Pga3dBivector](arr, 0)
+    val restored = FlatDoubleSerializer.read[Pga3dBivector](arr, 0)
     assert(restored.wx == 1.0)
     assert(restored.wy == 2.0)
     assert(restored.wz == 3.0)
@@ -68,12 +68,12 @@ class FlatSerializerTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val vec = Vector3d(1.0, 2.0, 3.0)
     val arr = new Array[Double](5)
 
-    FlatSerializer.write(vec, arr, 2)
+    FlatDoubleSerializer.write(vec, arr, 2)
     assert(arr(2) == 1.0)
     assert(arr(3) == 2.0)
     assert(arr(4) == 3.0)
 
-    val restored = FlatSerializer.read[Vector3d](arr, 2)
+    val restored = FlatDoubleSerializer.read[Vector3d](arr, 2)
     assert(restored.x == 1.0)
     assert(restored.y == 2.0)
     assert(restored.z == 3.0)
@@ -82,8 +82,8 @@ class FlatSerializerTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("property: Vector3d serialization/deserialization roundtrip") {
     forAll(vector3dGen) { vec =>
       val arr = new Array[Double](3)
-      FlatSerializer.write(vec, arr, 0)
-      val restored = FlatSerializer.read[Vector3d](arr, 0)
+      FlatDoubleSerializer.write(vec, arr, 0)
+      val restored = FlatDoubleSerializer.read[Vector3d](arr, 0)
       assert(restored.x == vec.x)
       assert(restored.y == vec.y)
       assert(restored.z == vec.z)
@@ -93,8 +93,8 @@ class FlatSerializerTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("property: Pga3dBivector serialization/deserialization roundtrip") {
     forAll(pga3dBivectorGen) { bivector =>
       val arr = new Array[Double](6)
-      FlatSerializer.write(bivector, arr, 0)
-      val restored = FlatSerializer.read[Pga3dBivector](arr, 0)
+      FlatDoubleSerializer.write(bivector, arr, 0)
+      val restored = FlatDoubleSerializer.read[Pga3dBivector](arr, 0)
       assert(restored.wx == bivector.wx)
       assert(restored.wy == bivector.wy)
       assert(restored.wz == bivector.wz)
@@ -107,10 +107,24 @@ class FlatSerializerTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("property: serialization/deserialization with random offset") {
     forAll(vector3dGen, Gen.choose(0, 10)) { (vec, offset) =>
       val arr = new Array[Double](offset + 3)
-      FlatSerializer.write(vec, arr, offset)
-      val restored = FlatSerializer.read[Vector3d](arr, offset)
+      FlatDoubleSerializer.write(vec, arr, offset)
+      val restored = FlatDoubleSerializer.read[Vector3d](arr, offset)
       assert(restored.x == vec.x)
       assert(restored.y == vec.y)
       assert(restored.z == vec.z)
     }
+  }
+
+  test("derived serializer should work") {
+    val serializer = FlatDoubleSerializer.derived[Vector3d]
+    val vec = Vector3d(1.0, 2.0, 3.0)
+    val arr = new Array[Double](3)
+    serializer.write(vec, arr, 0)
+    assert(arr(0) == 1.0)
+    assert(arr(1) == 2.0)
+    assert(arr(2) == 3.0)
+    val restored = serializer.read(arr, 0)
+    assert(restored.x == vec.x)
+    assert(restored.y == vec.y)
+    assert(restored.z == vec.z)
   }

@@ -1,7 +1,7 @@
 package com.github.kright.pga3d
 
 import com.github.kright.matrix.Matrix
-import com.github.kright.math.FlatSerializer
+import com.github.kright.math.FlatDoubleSerializer
 
 /** this code is generated, see com.github.kright.pga3d.codegen.CodeGenClass */
 object Pga3dMatrix:
@@ -38,7 +38,7 @@ object Pga3dMatrix:
     val matrix = Matrix(6, 6)
     for ((b, i) <- bivectors.zipWithIndex) {
       val mappedB = map(b)
-      FlatSerializer.write(mappedB, matrix.data, i * 6)
+      FlatDoubleSerializer.write(mappedB, matrix.data, i * 6)
     }
     matrix.transposeInplace()
     matrix

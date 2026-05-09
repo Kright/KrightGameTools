@@ -1,6 +1,8 @@
 package com.github.kright.pga3d
 
 import scala.annotation.targetName
+import com.github.kright.math.FlatDoubleSerializer
+
 
 /** this code is generated, see com.github.kright.pga3d.codegen.CodeGenClass */
 final case class Pga3dMultivector(s: Double = 0.0,
@@ -18,7 +20,7 @@ final case class Pga3dMultivector(s: Double = 0.0,
                                   wxz: Double = 0.0,
                                   wyz: Double = 0.0,
                                   xyz: Double = 0.0,
-                                  i: Double = 0.0) derives CanEqual:
+                                  i: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga3dMultivector(s = $s, w = $w, x = $x, y = $y, z = $z, wx = $wx, wy = $wy, wz = $wz, xy = $xy, xz = $xz, yz = $yz, wxy = $wxy, wxz = $wxz, wyz = $wyz, xyz = $xyz, i = $i)"

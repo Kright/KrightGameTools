@@ -21,6 +21,8 @@ class ScalaMultivectorSubClass(name: String,
 
   override def generateImports(): String =
     """import scala.annotation.targetName
+      |import com.github.kright.math.FlatDoubleSerializer
+      |
       |""".stripMargin
 
   def makeSymbolic(instanceName: String): MultiVector[Sym] =
@@ -88,7 +90,7 @@ class ScalaMultivectorSubClass(name: String,
         .map(f => s"${f.name}: Double = 0.0")
         .zipWithIndex
         .map((s, i) => if (i == 0) s else pad + s)
-        .mkString(start, ",\n", ") derives CanEqual:"))
+        .mkString(start, ",\n", ") derives CanEqual, FlatDoubleSerializer:"))
     }
   }
 
@@ -168,7 +170,7 @@ class ScalaMultivectorSubClass(name: String,
 
     code.toString
   }
-  
+
   def makeConstructorOptimized(result: MultiVector[Sym], resultCls: ScalaMultivectorSubClass): String = {
     val code = ScalaCodeBuilder()
 
