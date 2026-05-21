@@ -17,7 +17,7 @@ class MatrixTest extends AnyFunSuite with ScalaCheckPropertyChecks:
       assert((mat3 * v) === (q * v))
       assert((mat4 * v) === (q * v))
 
-      mat3.setRows(q.getX(), q.getY(), q.getZ())
+      mat3.setRows(q.oX, q.oY, q.oZ)
       assert((mat3 * v) === (q * v))
     }
   }
@@ -155,7 +155,7 @@ class MatrixTest extends AnyFunSuite with ScalaCheckPropertyChecks:
   test("2d rotation") {
     forAll(angleRadians) { angle =>
       val ma = Matrix3d().set2dRotation(angle)
-      val mb = Matrix3d() := (Quaternion() := (angle, Vector3d(0, 0, 1)))
+      val mb = Matrix3d() := (Quaternion(angle, Vector3d(0, 0, 1)))
       val mc = Matrix3d() := Matrix2d().set2dRotation(angle)
       assert(ma === (mb))
       assert(ma === (mc))

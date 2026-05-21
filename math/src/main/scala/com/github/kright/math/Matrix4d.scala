@@ -52,7 +52,7 @@ final class Matrix4d(val elements: Array[Double]) extends MatrixNd[Matrix4d]:
         0.0,   0.0, 0.0, 1.0
     )
 
-  def :=(q: IQuaternion): Matrix4d =
+  def :=(q: Quaternion): Matrix4d =
     this := (
       q.rotM00, q.rotM01, q.rotM02, 0.0,
       q.rotM10, q.rotM11, q.rotM12, 0.0,

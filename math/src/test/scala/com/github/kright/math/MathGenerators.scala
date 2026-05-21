@@ -14,7 +14,7 @@ object MathGenerators:
   val normalizedQuaternions: Gen[Quaternion] =
     Gen.oneOf(
       Gen.const(Quaternion.id),
-      Gen.const(Quaternion.id.negate()),
+      Gen.const(-Quaternion.id),
       gaussianQuaternions.map(_.normalized())
     )
 

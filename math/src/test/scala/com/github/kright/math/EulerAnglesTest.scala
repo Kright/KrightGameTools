@@ -10,11 +10,11 @@ class EulerAnglesTest extends AnyFunSuite with ScalaCheckPropertyChecks:
 
   test("euler to quaternion conversion") {
     forAll(eulerAngles) { euler =>
-      val q = Quaternion() := euler
+      val q = Quaternion(euler)
 
-      val qYaw = Quaternion() := (euler.yaw, Vector3d(0, 1, 0))
-      val qPitch = Quaternion() := (euler.pitch, Vector3d(1, 0, 0))
-      val qRoll = Quaternion() := (euler.roll, Vector3d(0, 0, 1))
+      val qYaw = Quaternion(euler.yaw, Vector3d(0, 1, 0))
+      val qPitch = Quaternion(euler.pitch, Vector3d(1, 0, 0))
+      val qRoll = Quaternion(euler.roll, Vector3d(0, 0, 1))
 
       val qqq = qYaw * qPitch * qRoll
       assert(q === qqq)
@@ -25,9 +25,9 @@ class EulerAnglesTest extends AnyFunSuite with ScalaCheckPropertyChecks:
     forAll(eulerAngles) { euler =>
       val m = Matrix3d() := euler
 
-      val mYaw = Matrix3d() := (Quaternion() := (euler.yaw, Vector3d(0, 1, 0)))
-      val mPitch = Matrix3d() := (Quaternion() := (euler.pitch, Vector3d(1, 0, 0)))
-      val mRoll = Matrix3d() := (Quaternion() := (euler.roll, Vector3d(0, 0, 1)))
+      val mYaw = Matrix3d() := (Quaternion(euler.yaw, Vector3d(0, 1, 0)))
+      val mPitch = Matrix3d() := (Quaternion(euler.pitch, Vector3d(1, 0, 0)))
+      val mRoll = Matrix3d() := (Quaternion(euler.roll, Vector3d(0, 0, 1)))
 
       val mmm = mYaw * mPitch * mRoll
       assert(m === mmm)
@@ -37,7 +37,7 @@ class EulerAnglesTest extends AnyFunSuite with ScalaCheckPropertyChecks:
   test("euler matrix quaternion correspondence") {
     forAll(eulerAngles) { euler =>
       val ma = Matrix3d() := euler
-      val mb = Matrix3d() := (Quaternion() := euler)
+      val mb = Matrix3d() := (Quaternion(euler))
       assert(ma === mb)
       assert((Matrix4d() := euler) === (Matrix4d() := mb))
     }
@@ -45,7 +45,7 @@ class EulerAnglesTest extends AnyFunSuite with ScalaCheckPropertyChecks:
 
   test("zero angles") {
     val euler = EulerAngles(0, 0, 0)
-    assert((Quaternion() := euler) === Quaternion().setIdentity())
+    assert((Quaternion(euler)) === Quaternion.id)
     assert((Matrix3d() := euler) === Matrix3d().setIdentity())
     assert((Matrix4d() := euler) === Matrix4d().setIdentity())
   }
@@ -69,7 +69,7 @@ class EulerAnglesTest extends AnyFunSuite with ScalaCheckPropertyChecks:
   private def check(eulerAngles: EulerAngles): Unit = {
     val e3 = EulerAngles(Matrix3d() := eulerAngles)
     val e4 = EulerAngles(Matrix4d() := eulerAngles)
-    val eq = EulerAngles(Quaternion() := eulerAngles)
+    val eq = EulerAngles(Quaternion(eulerAngles))
 
     assert(e3 === eulerAngles, s"$e3 != $eulerAngles")
     assert(e4 === eulerAngles, s"$e4 != $eulerAngles")
