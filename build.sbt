@@ -32,7 +32,6 @@ lazy val root = (project in file("."))
     packageSrc / publishArtifact := true,
   ).aggregate(
     math,
-    physics3d,
     solvers,
     symbolic,
     util.jvm, util.js,
@@ -85,13 +84,6 @@ lazy val ga = (project in file("ga"))
 
 lazy val solvers = (project in file("solvers"))
   .settings(scalatestSettings)
-
-lazy val physics3d = (project in file("physics3d"))
-  .settings(scalatestSettings)
-  .dependsOn(
-    math % "compile->compile;test->test",
-    solvers,
-  )
 
 lazy val pga3dCodeGen = (project in file("pga3dCodeGen"))
   .settings(scalatestSettings)

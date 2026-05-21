@@ -88,12 +88,6 @@ too.
     * Quaternion
     * Matrix: 2x2, 3x3, 4x4
     * Euler angles: yaw Z, pitch Y, roll X
-* [**physics3d**](physics3d/README.md): Rigid body physics
-    * Transform3d (position and orientation)
-    * Inertia3d (mass and tensor of angular mass)
-    * Force3d, Impulse3d, Velocity3d, Acceleration3d (combined linear and angular)
-    * Joint3d with Spring3d, AngularSpring3d, Friction, AngularFriction3d, OrientationSpring3d
-    * BodySystem for handling a system of bodies with joints between them
 * **solvers**: helper for solving differential equations with Euler or Runge-Kutta methods
 
 ### Advanced modules with geometric algebra
