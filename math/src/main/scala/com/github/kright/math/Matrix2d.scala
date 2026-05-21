@@ -21,10 +21,7 @@ final class Matrix2d(var m00: Double, var m01: Double,
 
 
   def *(v: IVector2d): Vector2d =
-    Matrix2d.multiply(this, v, Vector2d())
-
-  def *>(v: Vector2d): Vector2d =
-    Matrix2d.multiply(this, v, v)
+    Matrix2d.multiply(this, v)
 
 
   override def *(right: Matrix2d): Matrix2d =
@@ -138,8 +135,8 @@ object Matrix2d extends MatrixNdFactory[Matrix2d]:
       a.m10 * m, a.m11 * m
     )
 
-  def multiply(a: Matrix2d, v: IVector2d, result: Vector2d): Vector2d =
-    result := (
+  def multiply(a: Matrix2d, v: IVector2d): Vector2d =
+    Vector2d(
       a.m00 * v.x + a.m01 * v.y,
       a.m10 * v.x + a.m11 * v.y,
     )

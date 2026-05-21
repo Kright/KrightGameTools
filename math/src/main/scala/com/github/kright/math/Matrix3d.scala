@@ -28,22 +28,13 @@ final class Matrix3d(val elements: Array[Double]) extends MatrixNd[Matrix3d]:
 
 
   def *(v: IVector3d): Vector3d =
-    Matrix3d.multiply(this, v, Vector3d())
-
-  def *>(v: Vector3d): Vector3d =
-    Matrix3d.multiply(this, v, v)
+    Matrix3d.multiply(this, v)
 
   def *(v: IVector2d): Vector2d =
-    Matrix3d.multiply(this, v, 1.0, Vector2d())
-
-  def *>(v: Vector2d): Vector2d =
-    Matrix3d.multiply(this, v, 1.0, v)
+    Matrix3d.multiply(this, v, 1.0)
 
   def rotate(v: IVector2d): Vector2d =
-    Matrix3d.rotate2d(this, v, Vector2d())
-
-  def rotateInplace(v: Vector2d): Vector2d =
-    Matrix3d.rotate2d(this, v, v)
+    Matrix3d.rotate2d(this, v)
 
 
   override def *(right: Matrix3d): Matrix3d =
@@ -238,26 +229,26 @@ object Matrix3d extends MatrixNdFactory[Matrix3d]:
     }
     result
 
-  def multiply(a: Matrix3d, v: IVector3d, result: Vector3d): Vector3d =
+  def multiply(a: Matrix3d, v: IVector3d): Vector3d =
     val e = a.elements
-    result := (
+    Vector3d(
       e(0) * v.x + e(1) * v.y + e(2) * v.z,
       e(3) * v.x + e(4) * v.y + e(5) * v.z,
       e(6) * v.x + e(7) * v.y + e(8) * v.z,
     )
 
-  def multiply(a: Matrix3d, v: IVector2d, z: Double, result: Vector2d): Vector2d =
+  def multiply(a: Matrix3d, v: IVector2d, z: Double): Vector2d =
     val e = a.elements
     val rx = e(0) * v.x + e(1) * v.y + e(2) * z
     val ry = e(3) * v.x + e(4) * v.y + e(5) * z
     val rz = e(6) * v.x + e(7) * v.y + e(8) * z
-    result := (rx / rz, ry / rz)
+    Vector2d(rx / rz, ry / rz)
 
-  def rotate2d(a: Matrix3d, v: IVector2d, result: Vector2d): Vector2d =
+  def rotate2d(a: Matrix3d, v: IVector2d): Vector2d =
     val e = a.elements
     val rx = e(0) * v.x + e(1) * v.y
     val ry = e(3) * v.x + e(4) * v.y
-    result := (rx, ry)
+    Vector2d(rx, ry)
 
   private inline def elementWiseOperation(left: Matrix3d, right: Matrix3d, result: Matrix3d)(inline op: (Double, Double) => Double): Matrix3d =
     for (i <- FastRange(9)) {
