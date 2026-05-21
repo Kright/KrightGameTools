@@ -113,7 +113,7 @@ class QuaternionTest extends AnyFunSuite with ScalaCheckPropertyChecks:
 
   test("quaternion to euler and back") {
     forAll(normalizedQuaternions) { q =>
-      val eq = Quaternion() := (EulerAngles() := q)
+      val eq = Quaternion() := EulerAngles(q)
       assert(eq === q, s"$eq != $q")
     }
   }

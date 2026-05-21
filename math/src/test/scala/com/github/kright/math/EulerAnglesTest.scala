@@ -67,9 +67,9 @@ class EulerAnglesTest extends AnyFunSuite with ScalaCheckPropertyChecks:
   }
 
   private def check(eulerAngles: EulerAngles): Unit = {
-    val e3 = EulerAngles().setFromRotation(Matrix3d() := eulerAngles)
-    val e4 = EulerAngles().setFromRotation(Matrix4d() := eulerAngles)
-    val eq = EulerAngles() := (Quaternion() := eulerAngles)
+    val e3 = EulerAngles(Matrix3d() := eulerAngles)
+    val e4 = EulerAngles(Matrix4d() := eulerAngles)
+    val eq = EulerAngles(Quaternion() := eulerAngles)
 
     assert(e3 === eulerAngles, s"$e3 != $eulerAngles")
     assert(e4 === eulerAngles, s"$e4 != $eulerAngles")
