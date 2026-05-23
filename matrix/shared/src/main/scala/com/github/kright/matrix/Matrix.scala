@@ -20,15 +20,14 @@ class Matrix(val h: Int, val w: Int) extends ArrayView2d[Double]:
 
   def setIdt(): Unit =
     require(isSquare)
-    for (y <- FastRange(h);
-         x <- FastRange(w)) {
-      val v = if (x == y) 1.0 else 0.0
-      this (y, x) = v
+    fill { (x, y) =>
+      if (x == y) 1.0 else 0.0
     }
 
   @targetName("timesAssign")
-  def *=(s: Double): Unit =
-    mapElements(_ * s)
+  def *=(s: Double): Unit = {
+    mapInplace(_ * s)
+  }
 
   private inline def elementsIndices =
     FastRange(data.length)
@@ -100,12 +99,6 @@ class Matrix(val h: Int, val w: Int) extends ArrayView2d[Double]:
       this (i, j) = t2
       this (j, i) = t
     }
-
-  def mapElements(f: Double => Double): Unit = {
-    for (i <- elementsIndices) {
-      data(i) = f(data(i))
-    }
-  }
 
   def setZero(): Unit =
     for (i <- elementsIndices) {

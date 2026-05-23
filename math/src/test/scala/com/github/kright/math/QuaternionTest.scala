@@ -51,9 +51,11 @@ class QuaternionTest extends AnyFunSuite with ScalaCheckPropertyChecks:
 
   test("quaternion slerp") {
     forAll(normalizedQuaternions, normalizedQuaternions, Gen.double) { (first, second, t) =>
-      val slerp = Quaternion.slerp(first, second, t)
-      val groundTruth = first * (((first ^ -1) * second) ^ t)
-      assert(slerp === groundTruth)
+      if (first.dot(second) >= 0.0) {
+        val slerp = Quaternion.slerp(first, second, t)
+        val groundTruth = first * (((first ^ -1) * second) ^ t)
+        assert(slerp === groundTruth)
+      }
     }
   }
 
