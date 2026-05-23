@@ -2,9 +2,9 @@ package com.github.kright.math
 
 
 /**
- * Standard range boxes int indexes into Integer and in some hot loops this causes performance problems.
+ * Standard range boxes int indexes into Integer, and in some hot loops this causes performance problems.
  * For example, I measured x15 slowdown on code with triple nested loops for multiplying matrices 4x4
- * This range is a replacement aimed to maximum performance.
+ * This range is a replacement, aimed to maximum performance.
  * In addition, because of inlining there is no problem with `return` invocation from inner code
  */
 object FastRange:

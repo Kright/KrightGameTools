@@ -31,7 +31,6 @@ lazy val root = (project in file("."))
     name := "scalaGameMath",
     packageSrc / publishArtifact := true,
   ).aggregate(
-    math,
     solvers,
     symbolic,
     util.jvm, util.js,
@@ -53,12 +52,6 @@ lazy val vector = crossProject(JSPlatform, JVMPlatform)
   .in(file("vector"))
   .settings(scalatestSettings)
   .dependsOn(util)
-
-lazy val math = (project in file("math"))
-  .settings(scalatestSettings)
-  .dependsOn(vector.jvm % "compile->compile;test->test")
-  .dependsOn(matrix.jvm % "compile->compile;test->test")
-  .dependsOn(util.jvm % "compile->compile;test->test")
 
 lazy val matrix = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)

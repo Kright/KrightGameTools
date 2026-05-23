@@ -87,8 +87,8 @@ object FlatDoubleView extends EvidenceIterableFactory[FlatDoubleView, FlatDouble
   override def empty[T](using FlatDoubleSerializer[T]): FlatDoubleView[T] =
     new FlatDoubleView[T](new Array[Double](0), 0, 0)
 
-  override def newBuilder[T](using serializer: FlatDoubleSerializer[T]): Builder[T, FlatDoubleView[T]] =
-    new Builder[T, FlatDoubleView[T]]:
+  override def newBuilder[T](using serializer: FlatDoubleSerializer[T]): mutable.Builder[T, FlatDoubleView[T]] =
+    new mutable.Builder[T, FlatDoubleView[T]]:
       private var arr: Array[Double] = new Array[Double](0)
       private var len: Int = 0
 

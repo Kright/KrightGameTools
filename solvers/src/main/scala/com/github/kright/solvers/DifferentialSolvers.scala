@@ -1,4 +1,4 @@
-package com.github.kright.math
+package com.github.kright.solvers
 
 /**
  * example:

@@ -1,6 +1,6 @@
 package com.github.kright.ga
 
-import com.github.kright.math.DifferentialSolvers
+import com.github.kright.solvers.DifferentialSolvers
 
 class PGA3OneBody(val inertia: PGA3Inertia[Double],
                   val initialState: PGA3State[Double]) {
