@@ -57,6 +57,7 @@ lazy val vector = crossProject(JSPlatform, JVMPlatform)
 lazy val math = (project in file("math"))
   .settings(scalatestSettings)
   .dependsOn(vector.jvm % "compile->compile;test->test")
+  .dependsOn(matrix.jvm % "compile->compile;test->test")
   .dependsOn(util.jvm % "compile->compile;test->test")
 
 lazy val matrix = crossProject(JSPlatform, JVMPlatform)

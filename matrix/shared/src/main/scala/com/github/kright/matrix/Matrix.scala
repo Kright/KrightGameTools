@@ -1,17 +1,23 @@
 package com.github.kright.matrix
 
 import me.kright.arrayview.ArrayView2d
-import com.github.kright.math.FastRange
+import com.github.kright.math.{FastRange, IEqualsWithEps}
 
 import scala.annotation.targetName
 
-class Matrix(val h: Int, val w: Int) extends ArrayView2d[Double]:
-  override val data: Array[Double] = new Array[Double](h * w)
+class Matrix(val h: Int,
+             val w: Int,
+             override val data: Array[Double]) extends ArrayView2d[Double] with IEqualsWithEps[Matrix]:
+  require(data.length == h * w)
 
   override def shape0: Int = h
+
   override def shape1: Int = w
+
   override inline val offset = 0
+
   override inline def stride0: Int = w
+
   override inline val stride1 = 1
   override inline val hasSimpleFlatLayout = true
 
@@ -29,7 +35,7 @@ class Matrix(val h: Int, val w: Int) extends ArrayView2d[Double]:
     mapInplace(_ * s)
   }
 
-  private inline def elementsIndices =
+  protected inline def elementsIndices =
     FastRange(data.length)
 
   @targetName("plusAssign")
@@ -68,7 +74,7 @@ class Matrix(val h: Int, val w: Int) extends ArrayView2d[Double]:
   def *(right: Matrix): Matrix =
     require(this.w == right.h)
 
-    val result = new Matrix(this.h, right.w)
+    val result = Matrix(this.h, right.w)
 
     for (y <- FastRange(result.h);
          x <- FastRange(result.w)) {
@@ -81,8 +87,16 @@ class Matrix(val h: Int, val w: Int) extends ArrayView2d[Double]:
 
     result
 
+  @targetName("times")
+  def *(scalar: Double): Matrix =
+    this.mapTo(_ * scalar, Matrix(h, w))
+
+  @targetName("div")
+  def /(scalar: Double): Matrix =
+    this * (1 / scalar)
+
   def transposedCopy(): Matrix =
-    val result = new Matrix(w, h)
+    val result = Matrix(w, h)
     for (y <- FastRange(result.h);
          x <- FastRange(result.w)) {
       result(y, x) = this (x, y)
@@ -123,20 +137,47 @@ class Matrix(val h: Int, val w: Int) extends ArrayView2d[Double]:
   override def toString: String =
     MatrixPrinter.oneLinePrinter(this)
 
+  def det(): Double = {
+    require(h == w)
+    if (h == 1) return data(0)
+    if (h == 2) return Matrix2d.determinant(this)
+    if (h == 3) return Matrix3d.determinant(this)
+    if (h == 4) return Matrix4d.determinant(this)
+    throw new UnsupportedOperationException("Determinant calculation for matrices larger than 4x4 is not implemented")
+  }
+
+  def inverted(): Matrix = {
+    require(h == w)
+    if (h == 1) return Matrix(1, 1, Array(1.0 / data(0)))
+    if (h == 2) return Matrix2d.inverted(this)
+    if (h == 3) return Matrix3d.inverted(this)
+    if (h == 4) return Matrix4d.inverted(this)
+    throw new UnsupportedOperationException("Inversion for matrices larger than 4x4 is not implemented")
+  }
+
+  override def isEquals(other: Matrix, eps: Double): Boolean = {
+    if (h != other.h || w != other.w) return false
+    data.view.zip(other.data).forall((d1, d2) => Math.abs(d1 - d2) <= eps)
+  }
+
 
 object Matrix:
+  def apply(h: Int, w: Int): Matrix =
+    new Matrix(h, w, new Array[Double](h * w))
+
+  def apply(h: Int, w: Int, data: Array[Double]): Matrix =
+    new Matrix(h, w, data)
+
   def symmetricMatrixToDiagonalAndEigenvectors(m: Matrix): (Matrix, Matrix) =
     SymmetricMatrixDiagonalization.toDiagonalAndEigenvectors(m)
 
   def fromValues(h: Int, w: Int)(data: Double*): Matrix = {
     require(data.size == h * w)
-    val m = Matrix(h, w)
-    data.copyToArray(m.data)
-    m
+    Matrix(h, w, data.toArray)
   }
 
   def idt(size: Int): Matrix =
-    val result = new Matrix(size, size)
+    val result = Matrix(size, size)
     for (i <- FastRange(size)) {
       result(i, i) = 1.0
     }

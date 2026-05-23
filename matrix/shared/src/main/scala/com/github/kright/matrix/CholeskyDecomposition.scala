@@ -23,7 +23,7 @@ object CholeskyDecomposition:
   def apply(m: Matrix): Matrix =
     require(m.isSquare)
 
-    val L = new Matrix(m.h, m.w)
+    val L = Matrix(m.h, m.w)
     val size = m.h
 
     for (i <- FastRange(size)) {

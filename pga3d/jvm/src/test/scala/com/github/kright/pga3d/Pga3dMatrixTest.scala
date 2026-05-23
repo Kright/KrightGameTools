@@ -22,7 +22,7 @@ class Pga3dMatrixTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   private def bivectorToMatrix(b: Pga3dBivector): Matrix =
-    val m = new Matrix(6, 1)
+    val m = Matrix(6, 1)
     FlatDoubleSerializer.write(b, m.data, 0)
     m
 

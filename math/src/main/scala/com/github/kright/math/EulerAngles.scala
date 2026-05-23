@@ -1,5 +1,7 @@
 package com.github.kright.math
 
+import com.github.kright.matrix.{Matrix, Matrix3d}
+
 
 /**
  * @param yaw   - angle in radians around axis Y (up)
@@ -14,6 +16,21 @@ final case class EulerAngles(yaw: Double,
     Math.abs(yaw - e.yaw) < eps &&
       Math.abs(pitch - e.pitch) < eps &&
       Math.abs(roll - e.roll) < eps
+
+  def toMatrix: Matrix =
+    val cy = Math.cos(yaw)
+    val sy = Math.sin(yaw)
+    val cp = Math.cos(pitch)
+    val sp = Math.sin(pitch)
+    val cr = Math.cos(roll)
+    val sr = Math.sin(roll)
+
+    Matrix3d(Array(
+      cy * cr + sy * sp * sr, -cy * sr + sy * sp * cr, sy * cp,
+      cp * sr, cp * cr, -sp,
+      -sy * cr + cy * sp * sr, sy * sr + cy * sp * cr, cy * cp,
+    ))
+
 
   /** print angles in degrees */
   override def toString: String =
@@ -31,10 +48,7 @@ object EulerAngles:
       Math.toRadians(roll),
     )
 
-  def apply(m: Matrix3d): EulerAngles =
-    restoreFromRotation(m(0, 0), m(0, 2), m(1, 0), m(1, 1), m(1, 2), m(2, 0), m(2, 2))
-
-  def apply(m: Matrix4d): EulerAngles =
+  def apply(m: Matrix): EulerAngles =
     restoreFromRotation(m(0, 0), m(0, 2), m(1, 0), m(1, 1), m(1, 2), m(2, 0), m(2, 2))
 
   def apply(q: Quaternion): EulerAngles =

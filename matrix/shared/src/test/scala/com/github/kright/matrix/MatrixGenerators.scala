@@ -36,9 +36,7 @@ object MatrixGenerators:
 
   def matrixUniform1(h: Int, w: Int): Gen[Matrix] =
     Gen.containerOfN[Array, Double](w * h, Gen.double.map(v => v * 2.0 - 1.0)).map { arr =>
-      val m = new Matrix(h, w)
-      arr.copyToArray(m.data)
-      m
+      Matrix(h, w, arr)
     }
 
   def rotatedDiagonal(size: Int, repeats: Int, min: Double, max: Double): Gen[Matrix] =

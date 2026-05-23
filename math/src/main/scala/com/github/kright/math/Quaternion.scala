@@ -1,5 +1,7 @@
 package com.github.kright.math
 
+import com.github.kright.matrix.{Matrix, Matrix3d}
+
 
 /**
  * I used the book:
@@ -134,6 +136,13 @@ final case class Quaternion(w: Double,
   def zx: Double = y
   // @formatter:on
 
+  def toMatrix: Matrix =
+    Matrix3d(Array(
+      rotM00, rotM01, rotM02,
+      rotM10, rotM11, rotM12,
+      rotM20, rotM21, rotM22,
+    ))
+
   override def toString: String =
     f"Quaternion(w=$w, x=$x, y=$y, z=$z)"
 
@@ -141,11 +150,11 @@ final case class Quaternion(w: Double,
 object Quaternion:
   extension (m: Double)
     inline def *(q: Quaternion): Quaternion = q * m
-  
+
   val zero: Quaternion = new Quaternion(0.0, 0.0, 0.0, 0.0)
 
   val id: Quaternion = new Quaternion(1.0, 0.0, 0.0, 0.0)
-  
+
   def apply(xyz: IVector3d) = new Quaternion(0.0, xyz.x, xyz.y, xyz.z)
 
   def apply(euler: EulerAngles): Quaternion =
@@ -242,51 +251,7 @@ object Quaternion:
       v.x * q.rotM20 + v.y * q.rotM21 + v.z * q.rotM22,
     )
 
-  def restoreFromRotation(m: Matrix3d): Quaternion =
-    val m00 = m(0, 0)
-    val m11 = m(1, 1)
-    val m22 = m(2, 2)
-    val tr = m00 + m11 + m22
-    val max = Math.max(tr, Math.max(m00, Math.max(m11, m22)))
-    if (tr == max) {
-      val w = Math.sqrt(1.0 + m00 + m11 + m22)
-      return Quaternion(
-        0.5 * w,
-        0.5 * (m(2, 1) - m(1, 2)) / w,
-        0.5 * (m(0, 2) - m(2, 0)) / w,
-        0.5 * (m(1, 0) - m(0, 1)) / w,
-      )
-    }
-    if (m00 == max) {
-      val d = Math.sqrt(1.0 + m00 - m11 - m22)
-      return Quaternion(
-        0.5 * (m(2, 1) - m(1, 2)) / d,
-        0.5 * d,
-        0.5 * (m(0, 1) + m(1, 0)) / d,
-        0.5 * (m(2, 0) + m(0, 2)) / d,
-      )
-    }
-    if (m11 == max) {
-      val d = Math.sqrt(1.0 - m00 + m11 - m22)
-      return Quaternion(
-        0.5 * (m(0, 2) - m(2, 0)) / d,
-        0.5 * (m(0, 1) + m(1, 0)) / d,
-        0.5 * d,
-        0.5 * (m(1, 2) + m(2, 1)) / d
-      )
-    }
-    // qz2 == max
-    {
-      val d = Math.sqrt(1.0 - m00 - m11 + m22)
-      return Quaternion(
-        0.5 * (m(1, 0) - m(0, 1)) / d,
-        0.5 * (m(2, 0) + m(0, 2)) / d,
-        0.5 * (m(2, 1) + m(1, 2)) / d,
-        0.5 * d
-      )
-    }
-
-  def restoreFromRotation(m: Matrix4d): Quaternion =
+  def restoreFromRotation(m: Matrix): Quaternion =
     val m00 = m(0, 0)
     val m11 = m(1, 1)
     val m22 = m(2, 2)

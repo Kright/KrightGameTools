@@ -10,7 +10,7 @@ object SymmetricMatrixDiagonalization:
   def toDiagonalAndEigenvectors(m: Matrix): (Matrix, Matrix) = {
     require(m.isSquare)
     val i = m.copy()
-    val v = new Matrix(m.h, m.w)
+    val v = Matrix(m.h, m.w)
     v.setIdt()
 
     diagonalizeSymmetricInplace(i, (p, q, sin, cos) => rotateEigenvectors(v, p, q, sin, cos))
