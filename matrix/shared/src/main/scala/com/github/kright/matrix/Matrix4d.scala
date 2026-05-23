@@ -147,7 +147,7 @@ object Matrix4d:
     ))
   //@formatter:on
 
-//  def lookAt(from: IVector3d, to: IVector3d, up: IVector3d): Matrix4d =
+//  def lookAt(from: Vector3d, to: Vector3d, up: Vector3d): Matrix4d =
 //    val z = (to - from).normalize()
 //    val x = up.cross(z).normalize()
 //    val y = z.cross(x)

@@ -1,91 +1,56 @@
 package com.github.kright.math
 
-trait IVector4d extends IVectorNd[IVector4d, Vector4d]:
-  def x: Double
+import scala.math.Fractional.Implicits.infixFractionalOps
 
-  def y: Double
+final case class Vector4d(x: Double,
+                          y: Double,
+                          z: Double,
+                          w: Double) extends VectorNd[Vector4d]:
 
-  def z: Double
 
-  def w: Double
+  override def +(v: Vector4d): Vector4d = Vector4d(x + v.x, y + v.y, z + v.z, w + v.w)
 
-  override def copy(): Vector4d =
-    new Vector4d(x, y, z, w)
+  override def -(v: Vector4d): Vector4d = Vector4d(x - v.x, y - v.y, z - v.z, w - v.w)
 
-  override infix def dot(v: IVector4d): Double =
+  override def *(v: Vector4d): Vector4d = Vector4d(x * v.x, y * v.y, z * v.z, w * v.w)
+
+  override def *(m: Double): Vector4d = Vector4d(x * m, y * m, z * m, w * m)
+
+  override def /(v: Vector4d): Vector4d = Vector4d(x / v.x, y / v.y, z / v.z, w / v.w)
+
+  override def ^(pow: Double): Vector4d = Vector4d(Math.pow(x, pow), Math.pow(y, pow), Math.pow(z, pow), Math.pow(w, pow))
+
+  override def ^(v: Vector4d): Vector4d = Vector4d(Math.pow(x, v.x), Math.pow(y, v.y), Math.pow(z, v.z), Math.pow(w, v.w))
+
+  override infix def dot(v: Vector4d): Double =
     x * v.x + y * v.y + z * v.z + w * v.w
 
-  override def squareDistance(v: IVector4d): Double =
+  override def projected(axis: Vector4d): Vector4d =
+    axis * (this.dot(axis) / axis.squareMag)
+
+  override def rejected(axis: Vector4d): Vector4d =
+    this - projected(axis)
+
+  override def min(v: Vector4d): Vector4d = getPerElement(v, Math.min)
+
+  override def max(v: Vector4d): Vector4d = getPerElement(v, Math.max)
+
+  override def clamp(lower: Vector4d, upper: Vector4d): Vector4d = this.max(lower).min(upper)
+
+  private inline def getPerElement(v: Vector4d, inline f: (Double, Double) => Double): Vector4d =
+    Vector4d(f(x, v.x), f(y, v.y), f(z, v.z), f(w, v.w))
+
+  override def squareDistance(v: Vector4d): Double =
     val dx = x - v.x
     val dy = y - v.y
     val dz = z - v.z
     val dw = w - v.w
     dx * dx + dy * dy + dz * dz + dw * dw
 
-  override def isEquals(v: IVector4d, eps: Double): Boolean =
+  override def isEquals(v: Vector4d, eps: Double): Boolean =
     Math.abs(x - v.x) <= eps && Math.abs(y - v.y) <= eps && Math.abs(z - v.z) <= eps && Math.abs(w - v.w) <= eps
 
-
-final case class Vector4d(var x: Double,
-                          var y: Double,
-                          var z: Double,
-                          var w: Double) extends IVector4d with VectorNd[IVector4d, Vector4d]:
-
-  def :=(x: Double, y: Double, z: Double, w: Double): Vector4d =
-    this.x = x
-    this.y = y
-    this.z = z
-    this.w = w
-    this
-
-  override def :=(v: IVector4d): Vector4d =
-    setPerElement(v)((_, c) => c)
-
-  override def +=(v: IVector4d): Vector4d =
-    setPerElement(v)(_ + _)
-
-  override def -=(v: IVector4d): Vector4d =
-    setPerElement(v)(_ - _)
-
-  override def *=(v: IVector4d): Vector4d =
-    setPerElement(v)(_ * _)
-
-  override def *=(m: Double): Vector4d =
-    setPerElement(_ * m)
-
-  override def madd(v: IVector4d, multiplier: Double): Vector4d =
-    setPerElement(v)(_ + _ * multiplier)
-
-  override def /=(v: IVector4d): Vector4d =
-    setPerElement(v)(_ / _)
-
-  override def ^=(v: IVector4d): Vector4d =
-    setPerElement(v)(Math.pow)
-
-  override def ^=(pow: Double): Vector4d =
-    setPerElement(Math.pow(_, pow))
-
-  override def setMin(v: IVector4d): Vector4d =
-    setPerElement(v)(Math.min)
-
-  override def setMax(v: IVector4d): Vector4d =
-    setPerElement(v)(Math.max)
-
   override def toString: String = s"Vector4d($x, $y, $z, $w)"
-
-  private inline def setPerElement(v: IVector4d)(inline f: (Double, Double) => Double): Vector4d =
-    x = f(x, v.x)
-    y = f(y, v.y)
-    z = f(z, v.z)
-    w = f(w, v.w)
-    this
-
-  private inline def setPerElement(inline f: Double => Double): Vector4d =
-    x = f(x)
-    y = f(y)
-    z = f(z)
-    w = f(w)
-    this
 
 
 object Vector4d:

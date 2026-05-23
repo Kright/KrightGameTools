@@ -39,7 +39,7 @@ final case class Quaternion(w: Double,
   def *(q: Quaternion): Quaternion =
     Quaternion.multiply(this, q)
 
-  def *(v: IVector3d): Vector3d =
+  def *(v: Vector3d): Vector3d =
     Quaternion.multiply(this, v)
 
   def *(m: Double): Quaternion =
@@ -155,7 +155,7 @@ object Quaternion:
 
   val id: Quaternion = new Quaternion(1.0, 0.0, 0.0, 0.0)
 
-  def apply(xyz: IVector3d) = new Quaternion(0.0, xyz.x, xyz.y, xyz.z)
+  def apply(xyz: Vector3d) = new Quaternion(0.0, xyz.x, xyz.y, xyz.z)
 
   def apply(euler: EulerAngles): Quaternion =
     val cy = Math.cos(0.5 * euler.yaw)
@@ -176,7 +176,7 @@ object Quaternion:
       sr * cp * cy - cr * sp * sy, // x
     )
 
-  def apply(angleRadians: Double, axis: IVector3d): Quaternion =
+  def apply(angleRadians: Double, axis: Vector3d): Quaternion =
     val realAngle = angleRadians * 0.5
     val m = Math.sin(realAngle) / axis.mag
     Quaternion(Math.cos(realAngle), axis.x * m, axis.y * m, axis.z * m)
@@ -242,7 +242,7 @@ object Quaternion:
       mix(q1, 1 - t, q2, -t)
     }
 
-  def multiply(q: Quaternion, v: IVector3d): Vector3d =
+  def multiply(q: Quaternion, v: Vector3d): Vector3d =
     // val r = q * Quaternion(0.0, v.x, v.y, v.z) * q.conjugated()
     // result := (r.x, r.y, r.z)
     Vector3d(
@@ -301,19 +301,18 @@ object Quaternion:
    * @param result     Quaternion for which q * sourceAxis == targetAxis
    * @return result
    */
-  def fromAxisToAxis(sourceAxis: IVector3d, targetAxis: IVector3d): Quaternion =
-    val mid = sourceAxis + targetAxis
+  def fromAxisToAxis(sourceAxis: Vector3d, targetAxis: Vector3d): Quaternion =
+    var mid = sourceAxis + targetAxis
     if (mid.mag < 1e-12) {
       // choose any vector perpendicular to sourceAxis
-      mid := (1, 0, 0)
+      mid = Vector3d(1, 0, 0)
       val cos = mid.dot(sourceAxis)
       if (cos > -0.1 && cos < 0.1) {
-        mid := (0, 1, 0)
+        mid = Vector3d(0, 1, 0)
       }
-      mid.rejected(sourceAxis)
+      mid = mid.rejected(sourceAxis)
     }
-    mid.normalize()
-    fromAxisOverBisection(sourceAxis, mid)
+    fromAxisOverBisection(sourceAxis, mid.normalized())
 
   /**
    * @param sourceAxis : normalized vector
@@ -321,13 +320,13 @@ object Quaternion:
    * @param result     Quaternion for which q * sourceAxis == targetAxis
    * @return result
    */
-  def fromAxisOverBisection(sourceAxis: IVector3d, bisection: IVector3d): Quaternion =
+  def fromAxisOverBisection(sourceAxis: Vector3d, bisection: Vector3d): Quaternion =
     val w = sourceAxis.dot(bisection)
     val xyz = sourceAxis.cross(bisection)
     Quaternion(w, xyz.x, xyz.y, xyz.z)
 
   /** exponent length is 0.5*angle of rotation */
-  def fromExp(exp: IVector3d): Quaternion =
+  def fromExp(exp: Vector3d): Quaternion =
     val l = exp.mag
 
     // for small numerbs, sin(l) / l => (l - l^3 / 3! + ...) / l = 1 - l^2 / 6

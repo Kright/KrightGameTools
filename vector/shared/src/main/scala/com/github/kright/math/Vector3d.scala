@@ -1,108 +1,63 @@
 package com.github.kright.math
 
-trait IVector3d extends IVectorNd[IVector3d, Vector3d]:
-  def x: Double
+import scala.math.Fractional.Implicits.infixFractionalOps
 
-  def y: Double
+final case class Vector3d(x: Double,
+                          y: Double,
+                          z: Double) extends VectorNd[Vector3d]:
 
-  def z: Double
+  override def +(v: Vector3d): Vector3d = Vector3d(x + v.x, y + v.y, z + v.z)
 
-  override def copy(): Vector3d =
-    new Vector3d(x, y, z)
+  override def -(v: Vector3d): Vector3d = Vector3d(x - v.x, y - v.y, z - v.z)
 
-  override infix def dot(v: IVector3d): Double =
+  override def *(v: Vector3d): Vector3d = Vector3d(x * v.x, y * v.y, z * v.z)
+
+  override def *(m: Double): Vector3d = Vector3d(x * m, y * m, z * m)
+
+  override def /(v: Vector3d): Vector3d = Vector3d(x / v.x, y / v.y, z / v.z)
+
+  override def ^(pow: Double): Vector3d = Vector3d(Math.pow(x, pow), Math.pow(y, pow), Math.pow(z, pow))
+
+  override def ^(v: Vector3d): Vector3d = Vector3d(Math.pow(x, v.x), Math.pow(y, v.y), Math.pow(z, v.z))
+
+  override infix def dot(v: Vector3d): Double =
     x * v.x + y * v.y + z * v.z
 
-  override def squareDistance(v: IVector3d): Double =
+  override def squareDistance(v: Vector3d): Double =
     val dx = x - v.x
     val dy = y - v.y
     val dz = z - v.z
     dx * dx + dy * dy + dz * dz
 
-  def cross(v: IVector3d): Vector3d =
+  def cross(v: Vector3d): Vector3d =
     new Vector3d(
       y * v.z - z * v.y,
       z * v.x - x * v.z,
       x * v.y - y * v.x
     )
 
-  def sin(v: IVector3d): Double =
+  override def projected(axis: Vector3d): Vector3d =
+    axis * (this.dot(axis) / axis.squareMag)
+
+  override def rejected(axis: Vector3d): Vector3d =
+    this - projected(axis)
+
+  override def min(v: Vector3d): Vector3d = getPerElement(v, Math.min)
+
+  override def max(v: Vector3d): Vector3d = getPerElement(v, Math.max)
+
+  override def clamp(lower: Vector3d, upper: Vector3d): Vector3d = this.max(lower).min(upper)
+
+  private inline def getPerElement(v: Vector3d, inline f: (Double, Double) => Double): Vector3d =
+    Vector3d(f(x, v.x), f(y, v.y), f(z, v.z))
+
+  def sin(v: Vector3d): Double =
     Math.sqrt(cross(v).squareMag / (squareMag * v.squareMag))
 
-  override def isEquals(v: IVector3d, eps: Double): Boolean =
+  override def isEquals(v: Vector3d, eps: Double): Boolean =
     Math.abs(x - v.x) <= eps && Math.abs(y - v.y) <= eps && Math.abs(z - v.z) <= eps
 
-
-final case class Vector3d(var x: Double,
-                          var y: Double,
-                          var z: Double) extends IVector3d with VectorNd[IVector3d, Vector3d]:
-
-  def :=(x: Double, y: Double, z: Double): Vector3d =
-    this.x = x
-    this.y = y
-    this.z = z
-    this
-
-  override def :=(v: IVector3d): Vector3d =
-    setPerElement(v)((_, c) => c)
-
-  override def +=(v: IVector3d): Vector3d =
-    setPerElement(v)(_ + _)
-
-  override def -=(v: IVector3d): Vector3d =
-    setPerElement(v)(_ - _)
-
-  override def *=(v: IVector3d): Vector3d =
-    setPerElement(v)(_ * _)
-
-  override def *=(m: Double): Vector3d =
-    setPerElement(_ * m)
-
-  override def madd(v: IVector3d, multiplier: Double): Vector3d =
-    setPerElement(v)(_ + _ * multiplier)
-
-  override def /=(v: IVector3d): Vector3d =
-    setPerElement(v)(_ / _)
-
-  override def ^=(v: IVector3d): Vector3d =
-    setPerElement(v)(Math.pow)
-
-  override def ^=(pow: Double): Vector3d =
-    setPerElement(Math.pow(_, pow))
-
-  override def setMin(v: IVector3d): Vector3d =
-    setPerElement(v)(Math.min)
-
-  override def setMax(v: IVector3d): Vector3d =
-    setPerElement(v)(Math.max)
-
-  def setCross(f: IVector3d, s: IVector3d): Vector3d =
-    this := (
-      f.y * s.z - f.z * s.y,
-      f.z * s.x - f.x * s.z,
-      f.x * s.y - f.y * s.x
-    )
-
-  def addCross(f: IVector3d, s: IVector3d): Vector3d =
-    this := (
-      this.x + f.y * s.z - f.z * s.y,
-      this.y + f.z * s.x - f.x * s.z,
-      this.z + f.x * s.y - f.y * s.x
-    )
-
   override def toString: String = s"Vector3d($x, $y, $z)"
-
-  private inline def setPerElement(v: IVector3d)(inline f: (Double, Double) => Double): Vector3d =
-    x = f(x, v.x)
-    y = f(y, v.y)
-    z = f(z, v.z)
-    this
-
-  private inline def setPerElement(inline f: Double => Double): Vector3d =
-    x = f(x)
-    y = f(y)
-    z = f(z)
-    this
 
 
 object Vector3d:
