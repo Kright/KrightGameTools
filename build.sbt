@@ -1,6 +1,6 @@
 ThisBuild / version := "0.8.1-SNAPSHOT"
 
-ThisBuild / scalaVersion := "3.7.2"
+ThisBuild / scalaVersion := "3.8.3"
 
 ThisBuild / licenses := List(License.MIT)
 ThisBuild / startYear := Some(2022)
@@ -64,8 +64,7 @@ lazy val matrix = crossProject(JSPlatform, JVMPlatform)
   .in(file("matrix"))
   .settings(explicitNulls, wError)
   .settings(
-    resolvers += "jitpack" at "https://jitpack.io",
-    libraryDependencies += "com.github.kright.ArrayView" %% "arrayview" % "0.1.6",
+    libraryDependencies += "me.kright" %% "arrayview" % "0.3.0",
   )
   .settings(scalatestSettings)
   .dependsOn(util)

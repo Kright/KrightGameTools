@@ -1,6 +1,6 @@
 package com.github.kright.matrix
 
-import com.github.kright.arrayview.ArrayView2d
+import me.kright.arrayview.ArrayView2d
 import com.github.kright.math.FastRange
 
 import scala.annotation.targetName
