@@ -1,6 +1,6 @@
 package com.github.kright.pga3dphysics
 
-import com.github.kright.matrix.Matrix
+import me.kright.gametools.matrix.Matrix
 import com.github.kright.pga3d.*
 
 class Pga3dInertiaPrecomputed(val inertia: Pga3dInertia) extends Pga3dInertia:

@@ -1,6 +1,6 @@
 package com.github.kright.pga3dphysics
 
-import com.github.kright.matrix.MatrixPrinter
+import me.kright.gametools.matrix.MatrixPrinter
 import com.github.kright.pga3d.*
 import com.github.kright.pga3d.Pga3dGenerators.{normalizedQuaternions, vectors}
 import com.github.kright.pga3dphysics.Pga3dInertiaGenerators.inertiaMovedLocal

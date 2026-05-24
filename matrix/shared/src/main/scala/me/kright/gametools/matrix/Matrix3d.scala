@@ -1,4 +1,4 @@
-package com.github.kright.matrix
+package me.kright.gametools.matrix
 
 object Matrix3d:
   def zero: Matrix = Matrix(3, 3)

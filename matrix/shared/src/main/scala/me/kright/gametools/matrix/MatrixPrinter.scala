@@ -1,4 +1,4 @@
-package com.github.kright.matrix
+package me.kright.gametools.matrix
 
 import scala.annotation.targetName
 

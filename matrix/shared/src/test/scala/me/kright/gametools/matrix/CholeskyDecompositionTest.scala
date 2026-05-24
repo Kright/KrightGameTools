@@ -1,4 +1,4 @@
-package com.github.kright.matrix
+package me.kright.gametools.matrix
 
 import me.kright.gametools.mathutil.FastRange
 import org.scalactic.anyvals.PosInt

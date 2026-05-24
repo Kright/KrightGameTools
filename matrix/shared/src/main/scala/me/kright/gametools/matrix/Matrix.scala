@@ -1,4 +1,4 @@
-package com.github.kright.matrix
+package me.kright.gametools.matrix
 
 import me.kright.arrayview.ArrayView2d
 import me.kright.gametools.mathutil.{FastRange, IEqualsWithEps}

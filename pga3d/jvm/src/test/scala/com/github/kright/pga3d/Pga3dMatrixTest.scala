@@ -1,6 +1,6 @@
 package com.github.kright.pga3d
 
-import com.github.kright.matrix.Matrix
+import me.kright.gametools.matrix.Matrix
 import me.kright.gametools.mathutil.FlatDoubleSerializer
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

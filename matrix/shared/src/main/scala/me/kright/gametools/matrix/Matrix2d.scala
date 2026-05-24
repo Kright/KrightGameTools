@@ -1,4 +1,4 @@
-package com.github.kright.matrix
+package me.kright.gametools.matrix
 
 object Matrix2d:
   def zero: Matrix = Matrix(2, 2)

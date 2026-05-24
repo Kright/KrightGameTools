@@ -1,6 +1,6 @@
 package com.github.kright.pga3dphysics
 
-import com.github.kright.matrix.{Matrix, SymmetricMatrixDiagonalization}
+import me.kright.gametools.matrix.{Matrix, SymmetricMatrixDiagonalization}
 import com.github.kright.pga3d.*
 import com.github.kright.pga3dphysics.Pga3dInertiaSummable.sandwich
 
