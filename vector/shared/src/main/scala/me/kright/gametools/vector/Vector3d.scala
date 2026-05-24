@@ -1,4 +1,4 @@
-package com.github.kright.math
+package me.kright.gametools.vector
 
 final case class Vector3d(x: Double,
                           y: Double,

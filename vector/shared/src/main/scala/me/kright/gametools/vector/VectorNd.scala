@@ -1,4 +1,4 @@
-package com.github.kright.math
+package me.kright.gametools.vector
 
 import com.github.kright.mathutil.IEqualsWithEps
 

@@ -1,7 +1,7 @@
 package com.github.kright.ga
 
 import com.github.kright.ga.PGA3.point
-import com.github.kright.math.VectorMathGenerators
+import me.kright.gametools.vector.VectorMathGenerators
 import org.scalacheck.Gen
 
 object PGA3Generator:

@@ -1,7 +1,7 @@
 package com.github.kright.ga
 
 import com.github.kright.mathutil.MathUtil.square
-import com.github.kright.math.Vector3d
+import me.kright.gametools.vector.Vector3d
 
 import scala.math.Numeric.Implicits.infixNumericOps
 

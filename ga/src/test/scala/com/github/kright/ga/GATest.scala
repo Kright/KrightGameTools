@@ -1,6 +1,6 @@
 package com.github.kright.ga
 
-import com.github.kright.math.VectorMathGenerators
+import me.kright.gametools.vector.VectorMathGenerators
 import com.github.kright.symbolic.Sym
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike

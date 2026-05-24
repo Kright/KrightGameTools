@@ -21,7 +21,7 @@ class ScalaMultivectorSubClass(name: String,
 
   override def generateImports(): String =
     """import scala.annotation.targetName
-      |import com.github.kright.math.FlatDoubleSerializer
+      |import com.github.kright.mathutil.FlatDoubleSerializer
       |
       |""".stripMargin
 

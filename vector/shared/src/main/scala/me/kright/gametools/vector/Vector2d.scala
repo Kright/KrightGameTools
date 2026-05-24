@@ -1,4 +1,4 @@
-package com.github.kright.math
+package me.kright.gametools.vector
 
 final case class Vector2d(x: Double,
                           y: Double) extends VectorNd[Vector2d]:

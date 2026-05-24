@@ -1,6 +1,6 @@
 package com.github.kright.ga
 
-import com.github.kright.math.Vector2d
+import me.kright.gametools.vector.Vector2d
 
 class PGA2(stringMapperParams: GARepresentationConfig) extends PGA(stringMapperParams):
   require(stringMapperParams.signature == Signature.pga2)

@@ -1,6 +1,6 @@
-package com.github.kright.math
+package me.kright.gametools.vector
 
-import com.github.kright.math.VectorMathGenerators.*
+import me.kright.gametools.vector.VectorMathGenerators.*
 import com.github.kright.mathutil.EqualityEps
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
