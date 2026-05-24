@@ -1,6 +1,6 @@
 package com.github.kright.pga3dphysics
 
-import com.github.kright.math.MathUtil
+import com.github.kright.util.MathUtil
 import org.scalacheck.Gen
 
 object Pga3dVectorMathGenerators:

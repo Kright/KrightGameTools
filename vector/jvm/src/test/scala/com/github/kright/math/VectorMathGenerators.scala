@@ -1,5 +1,6 @@
 package com.github.kright.math
 
+import com.github.kright.util.MathUtil
 import org.scalacheck.Gen
 
 object VectorMathGenerators:

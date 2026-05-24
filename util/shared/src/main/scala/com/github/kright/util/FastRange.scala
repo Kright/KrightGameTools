@@ -1,5 +1,4 @@
-package com.github.kright.math
-
+package com.github.kright.util
 
 /**
  * Standard range boxes int indexes into Integer, and in some hot loops this causes performance problems.

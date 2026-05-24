@@ -1,7 +1,7 @@
 package com.github.kright.pga3dphysics
 
-import com.github.kright.math.FastRange
 import com.github.kright.pga3dphysics.Pga3dPhysicsSolverUtil.*
+import com.github.kright.util.FastRange
 
 /**
  * [[https://en.wikipedia.org/wiki/Gauss%E2%80%93Legendre_method]]

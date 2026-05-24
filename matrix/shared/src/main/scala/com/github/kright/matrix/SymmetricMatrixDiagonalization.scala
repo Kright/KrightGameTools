@@ -1,6 +1,6 @@
 package com.github.kright.matrix
 
-import com.github.kright.math.FastRange
+import com.github.kright.util.FastRange
 
 
 /**

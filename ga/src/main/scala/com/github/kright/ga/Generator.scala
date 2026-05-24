@@ -1,6 +1,6 @@
 package com.github.kright.ga
 
-import com.github.kright.math.Sign
+import com.github.kright.util.Sign
 
 case class Generator(number: Int, squareSign: Sign) extends Ordered[Generator]:
 

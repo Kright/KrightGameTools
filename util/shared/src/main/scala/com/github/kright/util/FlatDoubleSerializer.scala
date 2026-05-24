@@ -1,7 +1,7 @@
-package com.github.kright.math
+package com.github.kright.util
 
-import scala.quoted.*
 import scala.annotation.nowarn
+import scala.quoted.*
 import scala.reflect.ClassTag
 
 

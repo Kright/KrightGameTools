@@ -1,7 +1,7 @@
 package com.github.kright.ga
 
 import com.github.kright.ga.GAGenerator.forAnyGA
-import com.github.kright.math.Sign
+import com.github.kright.util.Sign
 import org.scalatest.funsuite.AnyFunSuite
 
 class BinaryOpTest extends AnyFunSuite:

@@ -1,4 +1,6 @@
-package com.github.kright.math
+package com.github.kright.util
+
+import com.github.kright.util.EqualityEps
 
 import scala.annotation.targetName
 

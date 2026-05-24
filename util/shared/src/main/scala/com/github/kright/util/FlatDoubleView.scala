@@ -1,7 +1,7 @@
-package com.github.kright.math
+package com.github.kright.util
 
-import scala.collection.{EvidenceIterableFactory, mutable}
 import scala.collection.mutable.Builder
+import scala.collection.{EvidenceIterableFactory, mutable}
 
 /**
  * A mutable indexed view over an array of Doubles that treats it as a sequence of elements of type T.

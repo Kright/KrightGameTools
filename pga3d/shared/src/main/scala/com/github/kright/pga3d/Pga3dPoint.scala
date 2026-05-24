@@ -1,7 +1,7 @@
 package com.github.kright.pga3d
 
+import com.github.kright.util.FlatDoubleSerializer
 import scala.annotation.targetName
-import com.github.kright.math.FlatDoubleSerializer
 
 
 /** this code is generated, see com.github.kright.pga3d.codegen.CodeGenClass */

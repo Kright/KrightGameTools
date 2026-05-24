@@ -1,6 +1,6 @@
 package com.github.kright.matrix
 
-import com.github.kright.math.FastRange
+import com.github.kright.util.FastRange
 import org.scalactic.anyvals.PosInt
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

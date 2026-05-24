@@ -1,7 +1,7 @@
 package com.github.kright.pga3dphysics
 
-import com.github.kright.math.{EqualityEps, FastRange}
 import com.github.kright.pga3d.*
+import com.github.kright.util.{EqualityEps, FastRange}
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

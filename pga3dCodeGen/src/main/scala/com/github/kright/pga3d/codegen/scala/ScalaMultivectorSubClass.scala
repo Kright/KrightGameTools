@@ -1,12 +1,12 @@
 package com.github.kright.pga3d.codegen.scala
 
 import com.github.kright.ga.*
-import com.github.kright.math.Sign
 import ScalaMultivectorSubClass.*
 import com.github.kright.pga3d.codegen.common.{MultivectorField, MultivectorSubClass}
 import com.github.kright.pga3d.codegen.scala.ops.*
 import com.github.kright.symbolic.Sym
 import com.github.kright.symbolic.transform.simplifiers.ReplaceSumOrProduct
+import com.github.kright.util.Sign
 
 import scala.math.Numeric.Implicits.infixNumericOps
 import scala.util.Try

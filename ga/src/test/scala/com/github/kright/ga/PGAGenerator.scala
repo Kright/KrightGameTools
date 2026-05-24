@@ -1,6 +1,7 @@
 package com.github.kright.ga
 
-import com.github.kright.math.{Sign, VectorMathGenerators}
+import com.github.kright.math.VectorMathGenerators
+import com.github.kright.util.Sign
 import org.scalacheck.Gen
 
 object PGAGenerator:

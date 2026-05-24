@@ -1,6 +1,6 @@
 package com.github.kright.ga
 
-import com.github.kright.math.Sign
+import com.github.kright.util.Sign
 
 class GAComplement[T](val left: T,
                       val right: T)

@@ -1,8 +1,8 @@
 package com.github.kright.ga
 
 import com.github.kright.ga.PGA2.*
-import com.github.kright.math.EqualityEps
 import com.github.kright.symbolic.Sym
+import com.github.kright.util.EqualityEps
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

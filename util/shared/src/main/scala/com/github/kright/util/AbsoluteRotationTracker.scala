@@ -1,6 +1,6 @@
-package com.github.kright.math
+package com.github.kright.util
 
-import com.github.kright.math.AbsoluteRotationTracker.*
+import com.github.kright.util.AbsoluteRotationTracker.*
 
 /**
  * Tracks rotations count

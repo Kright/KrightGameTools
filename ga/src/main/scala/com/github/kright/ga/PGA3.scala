@@ -1,6 +1,6 @@
 package com.github.kright.ga
 
-import com.github.kright.math.MathUtil.square
+import com.github.kright.util.MathUtil.square
 import com.github.kright.math.Vector3d
 
 import scala.math.Numeric.Implicits.infixNumericOps

@@ -1,8 +1,9 @@
 package com.github.kright.ga
 
 import com.github.kright.ga.PGA3.*
-import com.github.kright.math.{EqualityEps, Vector3d, VectorMathGenerators}
+import com.github.kright.math.{Vector3d, VectorMathGenerators}
 import com.github.kright.symbolic.Sym
+import com.github.kright.util.EqualityEps
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

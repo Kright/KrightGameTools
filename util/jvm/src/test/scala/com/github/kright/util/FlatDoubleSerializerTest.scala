@@ -1,5 +1,6 @@
-package com.github.kright.math
+package com.github.kright.util
 
+import com.github.kright.util.FlatDoubleSerializer
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
