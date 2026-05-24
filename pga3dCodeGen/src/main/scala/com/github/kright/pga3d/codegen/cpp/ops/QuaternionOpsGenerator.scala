@@ -2,7 +2,7 @@ package com.github.kright.pga3d.codegen.cpp.ops
 
 import com.github.kright.pga3d.codegen.common.FileContent
 import com.github.kright.pga3d.codegen.cpp.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 
 class QuaternionOpsGenerator extends CppCodeGenerator {
 

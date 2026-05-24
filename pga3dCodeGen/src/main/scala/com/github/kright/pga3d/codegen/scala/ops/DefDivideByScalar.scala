@@ -2,7 +2,7 @@ package com.github.kright.pga3d.codegen.scala.ops
 
 import me.kright.gametools.ga.PGA3
 import com.github.kright.pga3d.codegen.scala.{GeneratedCode, ScalaMultivectorSubClass, MultivectorUnaryOp}
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 
 object DefDivideByScalar:
   def apply()(using pga3: PGA3): MultivectorUnaryOp = MultivectorUnaryOp { (cls, s) =>

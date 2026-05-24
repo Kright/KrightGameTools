@@ -2,7 +2,7 @@ package com.github.kright.pga3d.codegen.cpp
 
 import me.kright.gametools.ga.{BasisBladeWithSign, MultiVector}
 import com.github.kright.pga3d.codegen.common.MultivectorField
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 import me.kright.gametools.mathutil.Sign
 
 object CppSubclasses:

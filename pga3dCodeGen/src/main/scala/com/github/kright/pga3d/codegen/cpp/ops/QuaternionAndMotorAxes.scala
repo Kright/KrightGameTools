@@ -1,7 +1,7 @@
 package com.github.kright.pga3d.codegen.cpp.ops
 
 import com.github.kright.pga3d.codegen.cpp.{CppCodeBuilder, CppSubclass, CppSubclasses}
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 
 object QuaternionAndMotorAxes {
   def makeDeclaration(code: CppCodeBuilder, cls: CppSubclass): Unit = {

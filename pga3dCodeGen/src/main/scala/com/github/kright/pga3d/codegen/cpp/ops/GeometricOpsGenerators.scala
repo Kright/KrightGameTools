@@ -4,9 +4,9 @@ import me.kright.gametools.ga.MultiVector
 import me.kright.gametools.mathutil.Sign.Positive
 import com.github.kright.pga3d.codegen.common.FileContent
 import com.github.kright.pga3d.codegen.cpp.*
-import com.github.kright.symbolic.Sym
-import com.github.kright.symbolic.Sym.given_Numeric_Sym.mkNumericOps
-import com.github.kright.symbolic.transform.simplifiers.ReplaceSumOrProduct
+import me.kright.gametools.symbolic.Sym
+import me.kright.gametools.symbolic.Sym.given_Numeric_Sym.mkNumericOps
+import me.kright.gametools.symbolic.transform.simplifiers.ReplaceSumOrProduct
 
 class GeometricOpsGenerator extends CppCodeGeneratorSum(
   Seq(

@@ -3,7 +3,7 @@ package com.github.kright.pga3d.codegen.scala.ops
 import me.kright.gametools.ga.{MultiVector, PGA3}
 import com.github.kright.pga3d.codegen.scala.ScalaMultivectorSubClass.{translator, vector}
 import com.github.kright.pga3d.codegen.scala.{GeneratedCode, MultivectorUnaryOp}
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 
 object DefObjectMethodsForTranslator:
   def apply()(using pga3: PGA3): MultivectorUnaryOp =

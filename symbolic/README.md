@@ -13,8 +13,8 @@ Simple implementation for AST (Abstract Syntax Tree) of mathematical expressions
 ## Usage example
 
 ```scala
-import com.github.kright.symbolic.SymbolicStr
-import com.github.kright.symbolic.SymbolicStr.{given, *}
+import me.kright.gametools.symbolic.SymbolicStr
+import me.kright.gametools.symbolic.SymbolicStr.{given, *}
 
 val x = SymbolicStr("x")
 val y = SymbolicStr("y")

@@ -3,7 +3,7 @@ package com.github.kright.pga3d.codegen.cpp.ops
 import me.kright.gametools.ga.MultiVector
 import com.github.kright.pga3d.codegen.common.FileContent
 import com.github.kright.pga3d.codegen.cpp.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 
 class ArithmeticsGenerator extends CppCodeGenerator:
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
@@ -35,7 +35,7 @@ class ArithmeticsGenerator extends CppCodeGenerator:
   }
 
   private def multiplyOrDivideByScalar(code: CppCodeBuilder): Unit = {
-    import com.github.kright.symbolic.Sym
+    import me.kright.gametools.symbolic.Sym
 
     for (cls <- CppSubclasses.all if cls.shouldBeGenerated) {
       val a = cls.makeSymbolic("a")

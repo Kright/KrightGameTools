@@ -3,7 +3,7 @@ package com.github.kright.pga3d.codegen.scala.ops
 import me.kright.gametools.ga.{MultiVector, PGA3}
 import com.github.kright.pga3d.codegen.scala.{GeneratedCode, ScalaMultivectorSubClass, MultivectorUnaryOp}
 import com.github.kright.pga3d.codegen.scala.ScalaMultivectorSubClass.{bivector, bivectorWeight}
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 
 import scala.math.Numeric.Implicits.infixNumericOps
 

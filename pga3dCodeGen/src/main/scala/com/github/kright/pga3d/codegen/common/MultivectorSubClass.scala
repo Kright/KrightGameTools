@@ -2,7 +2,7 @@ package com.github.kright.pga3d.codegen.common
 
 import me.kright.gametools.ga.{BasisBlade, MultiVector, PGA3}
 import com.github.kright.pga3d.codegen.common.MultivectorField
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 
 class MultivectorSubClass(val name: String,
                           val variableFields: Seq[MultivectorField],

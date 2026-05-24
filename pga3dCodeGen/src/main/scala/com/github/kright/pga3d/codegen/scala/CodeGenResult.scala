@@ -1,7 +1,7 @@
 package com.github.kright.pga3d.codegen.scala
 
 import me.kright.gametools.ga.MultiVector
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 
 object GeneratedCode:
   def apply(f: ScalaCodeBuilder => Unit): Option[String] = {

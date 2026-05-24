@@ -3,7 +3,7 @@ package com.github.kright.pga3d.codegen.scala.ops
 import me.kright.gametools.ga.{MultiVector, PGA3}
 import com.github.kright.pga3d.codegen.scala.{GeneratedCode, ScalaMultivectorSubClass, MultivectorUnaryOp}
 import com.github.kright.pga3d.codegen.scala.ScalaMultivectorSubClass.{point, projectivePoint, vector}
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 
 object DefMethodsIfAnyPoint:
   def apply()(using pga3: PGA3): MultivectorUnaryOp =

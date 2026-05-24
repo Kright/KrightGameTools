@@ -1,6 +1,6 @@
 package me.kright.gametools.ga
 
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 import me.kright.gametools.mathutil.Sign
 
 

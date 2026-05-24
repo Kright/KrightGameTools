@@ -1,7 +1,7 @@
 package me.kright.gametools.ga
 
 import me.kright.gametools.ga.PGA2.*
-import com.github.kright.symbolic.Sym
+import me.kright.gametools.symbolic.Sym
 import me.kright.gametools.mathutil.EqualityEps
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
