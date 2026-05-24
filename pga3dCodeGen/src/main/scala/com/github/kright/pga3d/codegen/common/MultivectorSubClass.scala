@@ -1,6 +1,6 @@
 package com.github.kright.pga3d.codegen.common
 
-import com.github.kright.ga.{BasisBlade, MultiVector, PGA3}
+import me.kright.gametools.ga.{BasisBlade, MultiVector, PGA3}
 import com.github.kright.pga3d.codegen.common.MultivectorField
 import com.github.kright.symbolic.Sym
 

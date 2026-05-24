@@ -1,6 +1,6 @@
 package com.github.kright.pga3d.codegen.scala
 
-import com.github.kright.ga.*
+import me.kright.gametools.ga.*
 import ScalaMultivectorSubClass.*
 import com.github.kright.pga3d.codegen.common.{MultivectorField, MultivectorSubClass}
 import com.github.kright.pga3d.codegen.scala.ops.*

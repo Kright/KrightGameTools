@@ -1,6 +1,6 @@
 package com.github.kright.pga3d.codegen.scala.ops
 
-import com.github.kright.ga.PGA3
+import me.kright.gametools.ga.PGA3
 import com.github.kright.pga3d.codegen.scala.{GeneratedCode, MultivectorUnaryOp, ScalaMultivectorSubClass}
 import com.github.kright.symbolic.Sym
 import com.github.kright.symbolic.Sym.given_Numeric_Sym.mkNumericOps

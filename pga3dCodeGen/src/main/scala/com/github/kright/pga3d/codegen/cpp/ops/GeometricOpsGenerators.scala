@@ -1,6 +1,6 @@
 package com.github.kright.pga3d.codegen.cpp.ops
 
-import com.github.kright.ga.MultiVector
+import me.kright.gametools.ga.MultiVector
 import com.github.kright.mathutil.Sign.Positive
 import com.github.kright.pga3d.codegen.common.FileContent
 import com.github.kright.pga3d.codegen.cpp.*

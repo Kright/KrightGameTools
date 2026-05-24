@@ -11,6 +11,6 @@ Experimental support for geometric algebra (GA) and plane-based geometric algebr
 
 ## Examples
 
-See `ga/src/test/scala/com/github/kright/ga` for usage examples:
+See `ga/src/test/scala/me/kright/gametools/ga` for usage examples:
 - `PGA3OneBody.scala`: rigid body rotation simulation using PGA
 - `DifferentialSolvers.scala`: generic implementation of numerical integration methods

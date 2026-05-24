@@ -1,6 +1,6 @@
 package com.github.kright.pga3d.codegen.scala.ops
 
-import com.github.kright.ga.{MultiVector, PGA3}
+import me.kright.gametools.ga.{MultiVector, PGA3}
 import com.github.kright.pga3d.codegen.scala.{GeneratedCode, ScalaMultivectorSubClass, MultivectorUnaryOp}
 import com.github.kright.pga3d.codegen.scala.ScalaMultivectorSubClass.{motor, quaternion, translator}
 import com.github.kright.symbolic.Sym

@@ -1,6 +1,6 @@
 package com.github.kright.pga3d.codegen.cpp
 
-import com.github.kright.ga.{GARepresentationConfig, PGA3, Signature}
+import me.kright.gametools.ga.{GARepresentationConfig, PGA3, Signature}
 
 object Pga3dProvider:
   private val representationConfig = GARepresentationConfig(

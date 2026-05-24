@@ -1,6 +1,6 @@
 package com.github.kright.pga3d.codegen.scala
 
-import com.github.kright.ga.MultiVector
+import me.kright.gametools.ga.MultiVector
 import com.github.kright.symbolic.Sym
 
 case class MultivectorUnaryOp(f: (ScalaMultivectorSubClass, MultiVector[Sym]) => Option[String]):
