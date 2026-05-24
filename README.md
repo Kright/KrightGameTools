@@ -3,7 +3,7 @@
 ## Introduction
 
 KrightGameTools consists of several independent modules in Scala and C++ for 3d applications: math and physics
-simulation.
+simulation. Most Scala modules support both JVM and Scala.js.
 
 It contains some basic classes like vectors, quaternion, matrices, and rigid body physics built on top of them.
 All of this is implemented from scratch and doesn't depend on other libraries.
@@ -33,50 +33,40 @@ All the code is under MIT license. Contributions are welcome, feel free to send 
 
 ### Getting started
 
-I'm using jitpack [https://jitpack.io/#Kright/KrightGameTools](https://jitpack.io/#Kright/ScalaGameMath)
-
 You may add the whole library or specific modules.
 
 ### sbt
 
+```scala
+libraryDependencies += "me.kright" %% "gametools-pga3d" % "0.9.0"
 ```
-resolvers += "jitpack" at "https://jitpack.io"
-...
-libraryDependencies += "com.github.Kright" % "ScalaGameMath" % "0.8.0"
+
+For Scala.js use `%%%` instead of `%%`:
+
+```scala
+libraryDependencies += "me.kright" %%% "gametools-pga3d" % "0.9.0"
 ```
 
 Or for separate modules
 
-```
-libraryDependencies += Seq(
-  "com.github.Kright.ScalaGameMath" %% "pga3d" % "0.8.0",
-  "com.github.Kright.ScalaGameMath" %% "pga3dphysics" % "0.8.0",
-  "com.github.Kright.ScalaGameMath" %% "mathutil" % "0.8.0",
+```scala
+libraryDependencies ++= Seq(
+  "me.kright" %% "gametools-pga3d" % "0.9.0",
+  "me.kright" %% "gametools-pga3dphysics" % "0.9.0",
+  "me.kright" %% "gametools-mathutil" % "0.9.0",
 )
-```
-
-for latest version:
-
-```
-libraryDependencies += "com.github.Kright" % "ScalaGameMath" % "master-SNAPSHOT"
 ```
 
 ### Gradle:
 
-```
-repositories {
-    maven { url "https://jitpack.io" }
-}
-
+```groovy
 dependencies {
-  implementation 'com.github.Kright.ScalaGameMath:pga3d_3:v0.8.0'
-  implementation 'com.github.Kright.ScalaGameMath:mathutil_3:v0.8.0'
-  implementation 'com.github.Kright.ScalaGameMath:matrix_3:v0.8.0'
-  implementation 'com.github.Kright.ScalaGameMath:pga3dphysics_3:v0.8.0'
+  implementation 'me.kright:gametools-pga3d_3:0.9.0'
+  implementation 'me.kright:gametools-mathutil_3:0.9.0'
+  implementation 'me.kright:gametools-matrix_3:0.9.0'
+  implementation 'me.kright:gametools-pga3dphysics_3:0.9.0'
 }
 ```
-
-For other variants see [https://jitpack.io/#Kright/ScalaGameMath](https://jitpack.io/#Kright/ScalaGameMath).
 
 ## Library modules
 
@@ -140,20 +130,19 @@ Or to the local maven:
 sbt publishM2
 ```
 
-In my case "\~/.ivy2/local/scalagamemath/scalagamemath_3/0.7.0-SNAPSHOT"
-and "\~/.m2/repository/scalagamemath/scalagamemath_3/0.7.0-SNAPSHOT"
+In my case "~/.ivy2/local/me.kright/gametools-pga3d_3/0.9.1-SNAPSHOT"
+and "~/.m2/repository/me/kright/gametools-pga3d_3/0.9.1-SNAPSHOT"
 
 After that, add the local library to another project. In my case, it was for sbt:
 
 ```scala
-libraryDependencies += "scalagamemath" %% "scalagamemath" % "0.8.0-SNAPSHOT"
+libraryDependencies += "me.kright" %% "gametools-pga3d" % "0.9.1-SNAPSHOT"
 ```
 
 And for Gradle:
 
 ```groovy
-implementation "pga3d:pga3d_3:0.7.3-SNAPSHOT"
+implementation "me.kright:gametools-pga3d_3:0.9.1-SNAPSHOT"
 ```
 
-Maybe you will need to remove cached lib of jitpack, it will be placed in path like "~
-/.cache/coursier/v1/https/jitpack.io/com/github/Kright/ScalaGameMath/master-SNAPSHOT".
+Maybe you will need to remove cached lib, it will be placed in path like "~/.cache/coursier/v1/https/repo1.maven.org/maven2/me/kright/".
