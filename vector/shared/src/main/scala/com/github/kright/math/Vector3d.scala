@@ -1,7 +1,5 @@
 package com.github.kright.math
 
-import scala.math.Fractional.Implicits.infixFractionalOps
-
 final case class Vector3d(x: Double,
                           y: Double,
                           z: Double) extends VectorNd[Vector3d]:

@@ -1,7 +1,5 @@
 package com.github.kright.math
 
-import scala.math.Fractional.Implicits.infixFractionalOps
-
 final case class Vector4d(x: Double,
                           y: Double,
                           z: Double,

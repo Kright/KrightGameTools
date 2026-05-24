@@ -2,29 +2,32 @@
 
 ## Introduction
 
-KrightGameTools consists of several independent modules in Scala and C++ for 3d applications: math and physics simulation.
+KrightGameTools consists of several independent modules in Scala and C++ for 3d applications: math and physics
+simulation.
 
-It contains some basic classes like vectors, quaternion, matrices, and rigid body physics built on top of them. 
-All of this is implemented from scratch and doesn't depend on other libraries. 
-So I hope the library could be used with in graalvm or from Kotlin or Java. 
+It contains some basic classes like vectors, quaternion, matrices, and rigid body physics built on top of them.
+All of this is implemented from scratch and doesn't depend on other libraries.
+So I hope the library could be used with in graalvm or from Kotlin or Java.
 
 All the code is under MIT license. Contributions are welcome, feel free to send a pull request.
 
 ## Table of Contents
+
 - [Getting started](#Getting-started)
-   - [Sbt](#sbt)
-   - [Gradle](#Gradle)
+    - [Sbt](#sbt)
+    - [Gradle](#Gradle)
 - [Library modules](#Library-modules)
-  - [Simple modules](#simple-modules)
-  - [Advanced modules with geometric algebra](#advanced-modules-with-geometric-algebra)
-  - [C++](#c-code)
+    - [Simple modules](#simple-modules)
+    - [Advanced modules with geometric algebra](#advanced-modules-with-geometric-algebra)
+    - [C++](#c-code)
 - [Tests](#tests)
 - [How to change this library and try changes locally in other project](#how-to-change-this-library-and-try-changes-locally-in-other-project)
 
 ## Examples:
 
 1. [examples/precession](examples/precession/README.md): Scala + sbt, simulate body precession
-2. [examples/nbody](examples/nbody/README.md): Gradle + Kotlin + Java on JVM and GraalVM, simulation of N-bodies in space.
+2. [examples/nbody](examples/nbody/README.md): Gradle + Kotlin + Java on JVM and GraalVM, simulation of N-bodies in
+   space.
 3. [examples/indigodemo](examples/indigodemo/README.md): Indigo game engine with scala js.
 4. [cpp](cpp/main.cpp): C++ code for 3d physics simulation.
 
@@ -77,36 +80,32 @@ For other variants see [https://jitpack.io/#Kright/ScalaGameMath](https://jitpac
 
 ## Library modules
 
-Initially, it was a repo for simple math with matrices and vectors. I implemented physics for 3d on top of that math. During my development, I figured out that plane-based geometric algebra is a fantastic way to describe physics
+Initially, it was a repo for simple math with matrices and vectors. I implemented physics for 3d on top of that math.
+During my development, I figured out that plane-based geometric algebra is a fantastic way to describe physics
 equations. So there is a code with geometric algebra, which includes math and physics.
 too.
 
-### Simple modules
-
-* [**vector**](vector/README.md): Vector2d, Vector3d, Vector4d
-* [**math**](math/README.md):
-    * Quaternion
-    * Matrix: 2x2, 3x3, 4x4
-    * Euler angles: yaw Z, pitch Y, roll X
-* **solvers**: helper for solving differential equations with Euler or Runge-Kutta methods
-
-### Advanced modules with geometric algebra
+### Modules
 
 I'm inspired by https://bivector.net/PGADYN.html
 
 I rewrote physics equations in PGA, it looks like PGA is a better way of describing physics.
 
-* **symbolic**: simple implementation for AST like `(1.0 + ("y" * "x"))`
-* **ga**: experimental support for geometric algebra (GA) and plane-based geometric algebra (PGA).
+* [**symbolic**](symbolic/README.md): simple implementation for AST like `(1.0 + ("y" * "x"))`
+* [**ga**](ga/README.md): experimental support for geometric algebra (GA) and plane-based geometric algebra (PGA).
   See [https://bivector.net](https://bivector.net) for more details. Suitable for any dimensions
-* [**pga3d**](pga3d/README.md): efficient library for 3d PGA with generated code and some common cases—Pga3dPlane, Pga3dPoint,
+* [**vector**](vector/README.md): Vector2d, Vector3d, Vector4d
+* [**pga3d**](pga3d/README.md): efficient library for 3d PGA with generated code and some common cases—Pga3dPlane,
+  Pga3dPoint,
   Pga3dQuaternion, Pga3dBivector, etc.
   There is a huge number of similar methods (for each pair of classes for each type of multiplication). Because of
   generated methods for each case it's possible to know at compile time that, for example, dot product of two bivectors
   is a scalar or geometric product of two planes is a motor.
-* [**pga3dCodeGen**](pga3dCodeGen/README.md): hand-made code generator for pga3d module. It does operations in symbolic form, and searches the
+* [**pga3dCodeGen**](pga3dCodeGen/README.md): hand-made code generator for pga3d module. It does operations in symbolic
+  form, and searches the
   most narrow subclass of multivector for the result. Generates both Scala and C++ code.
-* [**pga3dPhysics**](pga3dphysics/README.md): some helper classes for implementing physics engine - body inertia, physics solvers, etc. Under active development now.
+* [**pga3dPhysics**](pga3dphysics/README.md): some helper classes for implementing physics engine - body inertia,
+  physics solvers, etc. Under active development now.
 * [**pga3dgeom**](pga3dgeom/README.md): classes for geometry - edges, triangles, axis-aligned bounding boxes
 
 ### C++ code
@@ -141,7 +140,7 @@ Or to the local maven:
 sbt publishM2
 ```
 
-In my case "\~/.ivy2/local/scalagamemath/scalagamemath_3/0.7.0-SNAPSHOT" 
+In my case "\~/.ivy2/local/scalagamemath/scalagamemath_3/0.7.0-SNAPSHOT"
 and "\~/.m2/repository/scalagamemath/scalagamemath_3/0.7.0-SNAPSHOT"
 
 After that, add the local library to another project. In my case, it was for sbt:
