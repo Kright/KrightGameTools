@@ -1,4 +1,4 @@
-package com.github.kright.util
+package com.github.kright.mathutil
 
 object MathUtil:
   inline val Pi = math.Pi

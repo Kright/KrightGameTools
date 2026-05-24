@@ -51,7 +51,7 @@ Or for separate modules
 libraryDependencies += Seq(
   "com.github.Kright.ScalaGameMath" %% "pga3d" % "0.8.0",
   "com.github.Kright.ScalaGameMath" %% "pga3dphysics" % "0.8.0",
-  "com.github.Kright.ScalaGameMath" %% "util" % "0.8.0",
+  "com.github.Kright.ScalaGameMath" %% "mathutil" % "0.8.0",
 )
 ```
 
@@ -70,7 +70,7 @@ repositories {
 
 dependencies {
   implementation 'com.github.Kright.ScalaGameMath:pga3d_3:v0.8.0'
-  implementation 'com.github.Kright.ScalaGameMath:util_3:v0.8.0'
+  implementation 'com.github.Kright.ScalaGameMath:mathutil_3:v0.8.0'
   implementation 'com.github.Kright.ScalaGameMath:matrix_3:v0.8.0'
   implementation 'com.github.Kright.ScalaGameMath:pga3dphysics_3:v0.8.0'
 }

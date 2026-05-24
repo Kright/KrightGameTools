@@ -1,7 +1,7 @@
 package com.github.kright.math
 
 import com.github.kright.math.VectorMathGenerators.*
-import com.github.kright.util.EqualityEps
+import com.github.kright.mathutil.EqualityEps
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 

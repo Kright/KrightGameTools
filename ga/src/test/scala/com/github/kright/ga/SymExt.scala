@@ -1,7 +1,7 @@
 package com.github.kright.ga
 
 import com.github.kright.symbolic.Sym
-import com.github.kright.util.Sign
+import com.github.kright.mathutil.Sign
 
 
 extension (obj: Sym.type)

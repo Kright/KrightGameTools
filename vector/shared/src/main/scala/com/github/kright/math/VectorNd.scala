@@ -1,6 +1,6 @@
 package com.github.kright.math
 
-import com.github.kright.util.IEqualsWithEps
+import com.github.kright.mathutil.IEqualsWithEps
 
 trait VectorNd[Vec <: VectorNd[Vec]] extends IEqualsWithEps[Vec]:
   self: Vec =>

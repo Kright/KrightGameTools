@@ -1,6 +1,6 @@
-package com.github.kright.util
+package com.github.kright.mathutil
 
-import com.github.kright.util.FlatDoubleSerializer
+import com.github.kright.mathutil.FlatDoubleSerializer
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

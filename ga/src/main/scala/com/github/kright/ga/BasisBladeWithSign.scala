@@ -1,6 +1,6 @@
 package com.github.kright.ga
 
-import com.github.kright.util.Sign
+import com.github.kright.mathutil.Sign
 
 case class BasisBladeWithSign(basisBlade: BasisBlade, sign: Sign = Sign.Positive):
   def *(anotherSign: Sign): BasisBladeWithSign = this.copy(sign = this.sign * anotherSign)

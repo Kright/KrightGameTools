@@ -3,7 +3,7 @@ package com.github.kright.pga3d.codegen.cpp
 import com.github.kright.ga.{MultiVector, PGA3}
 import com.github.kright.pga3d.codegen.common.{MultivectorField, MultivectorSubClass}
 import com.github.kright.symbolic.Sym
-import com.github.kright.util.Sign
+import com.github.kright.mathutil.Sign
 
 import scala.math.Numeric.Implicits.infixNumericOps
 import scala.util.chaining.scalaUtilChainingOps

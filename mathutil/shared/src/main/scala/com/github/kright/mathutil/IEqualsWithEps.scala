@@ -1,6 +1,6 @@
-package com.github.kright.util
+package com.github.kright.mathutil
 
-import com.github.kright.util.EqualityEps
+import com.github.kright.mathutil.EqualityEps
 
 import scala.annotation.targetName
 

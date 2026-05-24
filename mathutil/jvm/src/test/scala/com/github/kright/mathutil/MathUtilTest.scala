@@ -1,7 +1,7 @@
-package com.github.kright.util
+package com.github.kright.mathutil
 
-import com.github.kright.util.MathUtil
-import com.github.kright.util.MathUtil.*
+import com.github.kright.mathutil.MathUtil
+import com.github.kright.mathutil.MathUtil.*
 import org.scalatest.funsuite.AnyFunSuite
 
 class MathUtilTest extends AnyFunSuite:

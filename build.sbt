@@ -32,7 +32,7 @@ lazy val root = (project in file("."))
     packageSrc / publishArtifact := true,
   ).aggregate(
     symbolic,
-    util.jvm, util.js,
+    mathutil.jvm, mathutil.js,
     vector.jvm, vector.js,
     ga,
     matrix.jvm, matrix.js,
@@ -41,16 +41,16 @@ lazy val root = (project in file("."))
     pga3dphysics.jvm, pga3dphysics.js,
   )
 
-lazy val util = crossProject(JSPlatform, JVMPlatform)
+lazy val mathutil = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
-  .in(file("util"))
+  .in(file("mathutil"))
   .settings(scalatestSettings, explicitNulls, wError, strictEquality)
 
 lazy val vector = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("vector"))
   .settings(scalatestSettings)
-  .dependsOn(util)
+  .dependsOn(mathutil)
 
 lazy val matrix = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
@@ -60,7 +60,7 @@ lazy val matrix = crossProject(JSPlatform, JVMPlatform)
     libraryDependencies += "me.kright" %% "arrayview" % "0.3.0",
   )
   .settings(scalatestSettings)
-  .dependsOn(util)
+  .dependsOn(mathutil)
 
 lazy val symbolic = (project in file("symbolic"))
   .settings(scalatestSettings)
@@ -68,7 +68,7 @@ lazy val symbolic = (project in file("symbolic"))
 lazy val ga = (project in file("ga"))
   .settings(scalatestSettings)
   .dependsOn(
-    util.jvm,
+    mathutil.jvm,
     symbolic % "test",
     vector.jvm % "compile->compile;test->test",
   )
@@ -86,7 +86,7 @@ lazy val pga3d = crossProject(JSPlatform, JVMPlatform)
   .settings(scalatestSettings, explicitNulls, wError)
   .dependsOn(
     matrix,
-    util % "test",
+    mathutil % "test",
   )
 
 lazy val pga3dgeom = crossProject(JSPlatform, JVMPlatform)

@@ -1,4 +1,4 @@
-package com.github.kright.util
+package com.github.kright.mathutil
 
 sealed trait Sign extends Ordered[Sign] derives CanEqual:
   def toInt: Int

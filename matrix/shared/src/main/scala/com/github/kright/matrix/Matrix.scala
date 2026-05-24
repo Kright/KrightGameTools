@@ -1,7 +1,7 @@
 package com.github.kright.matrix
 
 import me.kright.arrayview.ArrayView2d
-import com.github.kright.util.{FastRange, IEqualsWithEps}
+import com.github.kright.mathutil.{FastRange, IEqualsWithEps}
 
 import scala.annotation.targetName
 

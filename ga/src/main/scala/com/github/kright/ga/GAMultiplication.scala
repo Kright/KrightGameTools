@@ -1,6 +1,6 @@
 package com.github.kright.ga
 
-import com.github.kright.util.Sign
+import com.github.kright.mathutil.Sign
 
 class GAMultiplication[T](val geometric: T,
                           val dot: T,

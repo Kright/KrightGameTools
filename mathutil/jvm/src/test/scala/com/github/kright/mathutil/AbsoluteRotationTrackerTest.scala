@@ -1,7 +1,7 @@
-package com.github.kright.util
+package com.github.kright.mathutil
 
-import com.github.kright.util.AbsoluteRotationTracker.*
-import com.github.kright.util.{AbsoluteRotationTracker, MathUtil}
+import com.github.kright.mathutil.AbsoluteRotationTracker.*
+import com.github.kright.mathutil.{AbsoluteRotationTracker, MathUtil}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 

@@ -1,6 +1,6 @@
 package com.github.kright.pga3dphysics
 
-import com.github.kright.util.MathUtil.clamp
+import com.github.kright.mathutil.MathUtil.clamp
 import com.github.kright.pga3d.Pga3dVector
 
 trait Pga3dFriction:

@@ -1,6 +1,6 @@
-package com.github.kright.util
+package com.github.kright.mathutil
 
-import com.github.kright.util.{FlatDoubleSerializer, FlatDoubleView}
+import com.github.kright.mathutil.{FlatDoubleSerializer, FlatDoubleView}
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 private final case class Vector3dTest(x: Double, y: Double, z: Double) derives CanEqual

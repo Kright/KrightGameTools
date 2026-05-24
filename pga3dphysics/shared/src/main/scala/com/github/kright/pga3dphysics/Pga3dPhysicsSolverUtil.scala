@@ -1,6 +1,6 @@
 package com.github.kright.pga3dphysics
 
-import com.github.kright.util.FastRange
+import com.github.kright.mathutil.FastRange
 
 object Pga3dPhysicsSolverUtil:
   def getDerivative(dynamicBodies: Array[Pga3dPhysicsBody], currentDt: Double, addForquesToBodies: Double => Unit): Array[Pga3dBodyState] = {

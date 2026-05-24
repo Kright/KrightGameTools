@@ -1,4 +1,4 @@
-package com.github.kright.util
+package com.github.kright.mathutil
 
 import scala.collection.mutable.Builder
 import scala.collection.{EvidenceIterableFactory, mutable}

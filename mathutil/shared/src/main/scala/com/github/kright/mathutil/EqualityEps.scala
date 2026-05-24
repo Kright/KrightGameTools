@@ -1,3 +1,3 @@
-package com.github.kright.util
+package com.github.kright.mathutil
 
 case class EqualityEps(value: Double)

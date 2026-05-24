@@ -1,6 +1,6 @@
 package com.github.kright.ga
 
-import com.github.kright.util.Sign
+import com.github.kright.mathutil.Sign
 import scala.collection.mutable
 import scala.math.Numeric.Implicits.infixNumericOps
 
