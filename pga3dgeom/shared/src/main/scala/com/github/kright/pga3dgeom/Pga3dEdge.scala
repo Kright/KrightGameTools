@@ -1,8 +1,8 @@
 package com.github.kright.pga3dgeom
 
-import com.github.kright.mathutil.MathUtil.clamp
+import me.kright.gametools.mathutil.MathUtil.clamp
 import com.github.kright.pga3d.*
-import com.github.kright.mathutil.MathUtil
+import me.kright.gametools.mathutil.MathUtil
 
 case class Pga3dEdge(a: Pga3dPoint,
                      b: Pga3dPoint):

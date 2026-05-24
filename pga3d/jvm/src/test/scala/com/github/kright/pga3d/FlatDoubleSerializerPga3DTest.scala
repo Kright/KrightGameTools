@@ -1,7 +1,7 @@
 package com.github.kright.pga3d
 
 import com.github.kright.pga3d.FlatDoubleSerializerPga3DTest.myCheck
-import com.github.kright.mathutil.FlatDoubleSerializer
+import me.kright.gametools.mathutil.FlatDoubleSerializer
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

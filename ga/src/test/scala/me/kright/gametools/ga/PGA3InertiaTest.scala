@@ -1,7 +1,7 @@
 package me.kright.gametools.ga
 
 import com.github.kright.symbolic.Sym
-import com.github.kright.mathutil.EqualityEps
+import me.kright.gametools.mathutil.EqualityEps
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

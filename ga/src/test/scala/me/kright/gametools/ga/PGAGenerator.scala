@@ -1,7 +1,7 @@
 package me.kright.gametools.ga
 
 import me.kright.gametools.vector.VectorMathGenerators
-import com.github.kright.mathutil.Sign
+import me.kright.gametools.mathutil.Sign
 import org.scalacheck.Gen
 
 object PGAGenerator:

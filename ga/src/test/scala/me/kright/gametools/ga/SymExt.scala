@@ -1,7 +1,7 @@
 package me.kright.gametools.ga
 
 import com.github.kright.symbolic.Sym
-import com.github.kright.mathutil.Sign
+import me.kright.gametools.mathutil.Sign
 
 
 extension (obj: Sym.type)

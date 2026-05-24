@@ -1,6 +1,6 @@
 package me.kright.gametools.ga
 
-import com.github.kright.mathutil.Sign
+import me.kright.gametools.mathutil.Sign
 
 
 class GAOperations(val signature: Signature):

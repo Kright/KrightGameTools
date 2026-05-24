@@ -6,7 +6,7 @@ import com.github.kright.pga3d.codegen.common.{MultivectorField, MultivectorSubC
 import com.github.kright.pga3d.codegen.scala.ops.*
 import com.github.kright.symbolic.Sym
 import com.github.kright.symbolic.transform.simplifiers.ReplaceSumOrProduct
-import com.github.kright.mathutil.Sign
+import me.kright.gametools.mathutil.Sign
 
 import scala.math.Numeric.Implicits.infixNumericOps
 import scala.util.Try
@@ -21,7 +21,7 @@ class ScalaMultivectorSubClass(name: String,
 
   override def generateImports(): String =
     """import scala.annotation.targetName
-      |import com.github.kright.mathutil.FlatDoubleSerializer
+      |import me.kright.gametools.mathutil.FlatDoubleSerializer
       |
       |""".stripMargin
 

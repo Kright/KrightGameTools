@@ -3,7 +3,7 @@ package com.github.kright
 import com.badlogic.gdx.{Gdx, Input}
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.math.Vector3
-import com.github.kright.mathutil.MathUtil.clamp
+import me.kright.gametools.mathutil.MathUtil.clamp
 
 import scala.language.{existentials, implicitConversions}
 import scala.util.chaining.*

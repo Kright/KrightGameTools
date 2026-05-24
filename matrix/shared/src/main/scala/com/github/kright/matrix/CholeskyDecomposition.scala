@@ -1,6 +1,6 @@
 package com.github.kright.matrix
 
-import com.github.kright.mathutil.FastRange
+import me.kright.gametools.mathutil.FastRange
 import scala.annotation.targetName
 
 /**

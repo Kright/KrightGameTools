@@ -1,6 +1,6 @@
 package me.kright.gametools.vector
 
-import com.github.kright.mathutil.IEqualsWithEps
+import me.kright.gametools.mathutil.IEqualsWithEps
 
 trait VectorNd[Vec <: VectorNd[Vec]] extends IEqualsWithEps[Vec]:
   self: Vec =>

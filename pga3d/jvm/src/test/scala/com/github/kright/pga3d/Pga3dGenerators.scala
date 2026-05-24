@@ -1,7 +1,7 @@
 package com.github.kright.pga3d
 
 import com.github.kright.matrix.Matrix
-import com.github.kright.mathutil.FlatDoubleSerializer
+import me.kright.gametools.mathutil.FlatDoubleSerializer
 import org.scalacheck.Gen
 
 object Pga3dGenerators:

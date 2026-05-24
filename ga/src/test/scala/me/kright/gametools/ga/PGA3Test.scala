@@ -3,7 +3,7 @@ package me.kright.gametools.ga
 import me.kright.gametools.ga.PGA3.*
 import me.kright.gametools.vector.{Vector3d, VectorMathGenerators}
 import com.github.kright.symbolic.Sym
-import com.github.kright.mathutil.EqualityEps
+import me.kright.gametools.mathutil.EqualityEps
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

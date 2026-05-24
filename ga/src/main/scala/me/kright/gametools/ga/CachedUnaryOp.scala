@@ -1,6 +1,6 @@
 package me.kright.gametools.ga
 
-import com.github.kright.mathutil.MathUtil.*
+import me.kright.gametools.mathutil.MathUtil.*
 
 class CachedUnaryOp(val signature: Signature,
                     val singleOp: UnaryOp) extends UnaryOp:

@@ -1,6 +1,6 @@
 package me.kright.gametools.vector
 
-import com.github.kright.mathutil.MathUtil
+import me.kright.gametools.mathutil.MathUtil
 import org.scalacheck.Gen
 
 object VectorMathGenerators:

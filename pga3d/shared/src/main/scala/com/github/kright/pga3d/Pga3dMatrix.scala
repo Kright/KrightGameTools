@@ -1,7 +1,7 @@
 package com.github.kright.pga3d
 
 import com.github.kright.matrix.Matrix
-import com.github.kright.mathutil.FlatDoubleSerializer
+import me.kright.gametools.mathutil.FlatDoubleSerializer
 
 /** this code is generated, see com.github.kright.pga3d.codegen.CodeGenClass */
 object Pga3dMatrix:

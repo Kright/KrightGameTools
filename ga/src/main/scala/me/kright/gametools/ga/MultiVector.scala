@@ -1,6 +1,6 @@
 package me.kright.gametools.ga
 
-import com.github.kright.mathutil.Sign
+import me.kright.gametools.mathutil.Sign
 import scala.math.Numeric.Implicits.infixNumericOps
 
 case class MultiVector[Value](ga: GA, values: Map[BasisBlade, Value]):

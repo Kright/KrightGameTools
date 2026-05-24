@@ -1,7 +1,7 @@
 package com.github.kright.pga3d.codegen.common
 
 import me.kright.gametools.ga.{BasisBlade, BasisBladeWithSign}
-import com.github.kright.mathutil.Sign
+import me.kright.gametools.mathutil.Sign
 
 case class MultivectorField(name: String,
                             basisBladeWithSign: BasisBladeWithSign):

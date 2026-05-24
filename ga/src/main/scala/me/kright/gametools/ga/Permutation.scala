@@ -1,6 +1,6 @@
 package me.kright.gametools.ga
 
-import com.github.kright.mathutil.MathUtil.swap
+import me.kright.gametools.mathutil.MathUtil.swap
 
 import scala.collection.mutable
 

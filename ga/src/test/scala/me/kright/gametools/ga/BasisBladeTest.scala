@@ -1,7 +1,7 @@
 package me.kright.gametools.ga
 
 import me.kright.gametools.ga.GAGenerator.forAnyGA
-import com.github.kright.mathutil.Sign
+import me.kright.gametools.mathutil.Sign
 import org.scalatest.funsuite.AnyFunSuite
 
 class BasisBladeTest extends AnyFunSuite:

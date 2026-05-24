@@ -1,7 +1,7 @@
 package com.github.kright.pga3dphysics
 
 import com.github.kright.pga3d.*
-import com.github.kright.mathutil.{EqualityEps, FastRange}
+import me.kright.gametools.mathutil.{EqualityEps, FastRange}
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
