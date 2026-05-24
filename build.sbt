@@ -1,5 +1,5 @@
 ThisBuild / organization := "me.kright"
-ThisBuild / version := "0.8.1-SNAPSHOT"
+ThisBuild / version := "0.9.0"
 ThisBuild / scalaVersion := "3.8.3"
 ThisBuild / pomIncludeRepository := { _ => false }
 
