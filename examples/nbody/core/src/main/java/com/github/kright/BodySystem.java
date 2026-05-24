@@ -1,8 +1,8 @@
 package com.github.kright;
 
 import com.badlogic.gdx.math.Vector2;
-import com.github.kright.pga3d.*;
-import com.github.kright.pga3dphysics.*;
+import me.kright.gametools.pga3d.*;
+import me.kright.gametools.pga3d.physics.*;
 import scala.runtime.BoxedUnit;
 
 import java.util.ArrayList;

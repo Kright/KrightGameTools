@@ -12,8 +12,8 @@ Geometric algebra and classes are complex enough, thinking about mutability will
 
 ### Plane:
 
-* [**Pga3dPlane**](shared/src/main/scala/com/github/kright/pga3d/Pga3dPlane.scala): plane, 4 fields.
-* [**Pga3dPlaneIdeal**](shared/src/main/scala/com/github/kright/pga3d/Pga3dPlaneIdeal.scala): plane passing through the center of coordinates, 3 fields. Dual to Pga3dVector
+* [**Pga3dPlane**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dPlane.scala): plane, 4 fields.
+* [**Pga3dPlaneIdeal**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dPlaneIdeal.scala): plane passing through the center of coordinates, 3 fields. Dual to Pga3dVector
 
 ```scala
 val plane = Pga3dPlane(a, b, c, d)  // ax + by + cz + d = 0
@@ -29,11 +29,11 @@ val mirroredPoint = plane.sandwich(point)
 
 ### Point:
 
-* [**Pga3dPoint**](shared/src/main/scala/com/github/kright/pga3d/Pga3dPoint.scala): Point in space. Stored as dual representation with human-friendly fields x, y, z and fixed w=1.
-* [**Pga3dPointCenter**](shared/src/main/scala/com/github/kright/pga3d/Pga3dPointCenter.scala): singleton object, center of coordinates.
-* [**Pga3dVector**](shared/src/main/scala/com/github/kright/pga3d/Pga3dVector.scala): difference between points. Consist of x, y, z and fixed w=0. Pga3dTranslator moved points, but not
+* [**Pga3dPoint**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dPoint.scala): Point in space. Stored as dual representation with human-friendly fields x, y, z and fixed w=1.
+* [**Pga3dPointCenter**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dPointCenter.scala): singleton object, center of coordinates.
+* [**Pga3dVector**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dVector.scala): difference between points. Consist of x, y, z and fixed w=0. Pga3dTranslator moved points, but not
   vectors.
-* [**Pga3dProjectivePoint**](shared/src/main/scala/com/github/kright/pga3d/Pga3dProjectivePoint.scala): general case with four homogeneous coordindates (x, y, z, w). Could be mapped to point via (x/w, y/w, z/w) when w != 0.
+* [**Pga3dProjectivePoint**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dProjectivePoint.scala): general case with four homogeneous coordindates (x, y, z, w). Could be mapped to point via (x/w, y/w, z/w) when w != 0.
 
 ```scala
 // Creating a point
@@ -51,9 +51,9 @@ val point3 = vector * 2 + point1
 
 In addition, it represents velocity and force.
 
-* [**Pga3dBivector**](shared/src/main/scala/com/github/kright/pga3d/Pga3dBivector.scala): 6 fields (xy, xz, yz, xw, yw, zw)
-* [**Pga3dBivectorBulk**](shared/src/main/scala/com/github/kright/pga3d/Pga3dBivectorBulk.scala) - bivector with only 3 fields (xy, xz, yz).
-* [**Pga3dBivectorWeight**](shared/src/main/scala/com/github/kright/pga3d/Pga3dBivectorWeight.scala) - bivector with only 3 fields (xw, yw, zw).
+* [**Pga3dBivector**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dBivector.scala): 6 fields (xy, xz, yz, xw, yw, zw)
+* [**Pga3dBivectorBulk**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dBivectorBulk.scala) - bivector with only 3 fields (xy, xz, yz).
+* [**Pga3dBivectorWeight**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dBivectorWeight.scala) - bivector with only 3 fields (xw, yw, zw).
 
 Sometimes it's easier to work with `wedge` and `antiWedge` as for `meet` and `join` operations.
 
@@ -86,9 +86,9 @@ val (line, shift) = bivector.split()
 
 ### Movement
 
-* [**Pga3dQuaternion**](shared/src/main/scala/com/github/kright/pga3d/Pga3dQuaternion.scala): represents rotation, 4 fields (scalar, xy, xz, yz). It is the exponent of Pga3dBivectorBulk
-* [**Pga3dTranslator**](shared/src/main/scala/com/github/kright/pga3d/Pga3dTranslator.scala): represents linear movement, 3 fields (wx, wy, wz). It is the exponent of Pga3dBivectorWeight
-* [**Pga3dMotor**](shared/src/main/scala/com/github/kright/pga3d/Pga3dMotor.scala): combination of rotation and linear movement. Has 8 fields (scalar, all bivector fields and pseudoscalar),
+* [**Pga3dQuaternion**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dQuaternion.scala): represents rotation, 4 fields (scalar, xy, xz, yz). It is the exponent of Pga3dBivectorBulk
+* [**Pga3dTranslator**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dTranslator.scala): represents linear movement, 3 fields (wx, wy, wz). It is the exponent of Pga3dBivectorWeight
+* [**Pga3dMotor**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dMotor.scala): combination of rotation and linear movement. Has 8 fields (scalar, all bivector fields and pseudoscalar),
   exponent of Pga3dBivector
 
 To move everything with these classes, you need to call `motor.sandwich(obj)`
@@ -138,9 +138,9 @@ val motor2 = bivector.exp()
 
 ### Other classes:
 
-* [**Pga3dMultivector**](shared/src/main/scala/com/github/kright/pga3d/Pga3dMultivector.scala): class with all 16 fields for a general case
-* [**Pga3dPseudoScalar**](shared/src/main/scala/com/github/kright/pga3d/Pga3dPseudoScalar.scala): class with one field. Library has no scalar class and uses just Double instead.
-* [**Pga3dMatrix**](shared/src/main/scala/com/github/kright/pga3d/Pga3dMatrix.scala): object with some utility code
+* [**Pga3dMultivector**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dMultivector.scala): class with all 16 fields for a general case
+* [**Pga3dPseudoScalar**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dPseudoScalar.scala): class with one field. Library has no scalar class and uses just Double instead.
+* [**Pga3dMatrix**](shared/src/main/scala/me.kright.gametools.pga3d/Pga3dMatrix.scala): object with some utility code
 
 ```scala
 // Converting specialized classes to multivector

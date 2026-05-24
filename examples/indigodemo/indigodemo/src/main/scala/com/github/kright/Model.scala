@@ -1,8 +1,8 @@
 package com.github.kright
 
 import com.github.kright.Model.*
-import com.github.kright.pga3d.{Pga3dBivector, Pga3dPoint, Pga3dTranslator, Pga3dVector}
-import com.github.kright.pga3dphysics.*
+import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dPoint, Pga3dTranslator, Pga3dVector}
+import me.kright.gametools.pga3d.physics.*
 
 final case class Model(time: Double,
                        systemTime: Double,

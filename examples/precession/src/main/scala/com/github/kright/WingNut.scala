@@ -1,8 +1,8 @@
 package com.github.kright
 
 import com.badlogic.gdx.math.Matrix4
-import com.github.kright.pga3d.*
-import com.github.kright.pga3dphysics.*
+import me.kright.gametools.pga3d.*
+import me.kright.gametools.pga3d.physics.*
 
 class WingNut:
   private def state = Pga3dPhysicsBody(

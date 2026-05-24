@@ -27,7 +27,7 @@ trait ScalaCodeGenClass:
     val clsPath = packageDir.resolve(s"${name}.scala")
 
     val code =
-      s"""package com.github.kright.pga3d
+      s"""package me.kright.gametools.pga3d
          |
          |${generateImports()}
          |/** this code is generated, see me.kright.gametools.pga3d.codegen.CodeGenClass */

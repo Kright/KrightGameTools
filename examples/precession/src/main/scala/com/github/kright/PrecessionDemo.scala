@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.{ApplicationAdapter, Gdx}
-import com.github.kright.pga3d.*
+import me.kright.gametools.pga3d.*
 
 import scala.language.implicitConversions
 import scala.util.chaining.*

@@ -1,6 +1,6 @@
 package com.github.kright
 
-import com.github.kright.pga3d.Pga3dPoint
+import me.kright.gametools.pga3d.Pga3dPoint
 import indigo.shared.datatypes.Point
 
 final case class ViewModel(firstConnectionPoint: Point,

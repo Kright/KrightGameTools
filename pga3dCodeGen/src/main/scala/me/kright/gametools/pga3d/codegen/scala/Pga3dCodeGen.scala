@@ -7,7 +7,7 @@ import java.nio.file.{Files, Path}
 
 @main
 def runScalaCodeGen(): Unit = {
-  val packageDir = Path.of("pga3d/shared/src/main/scala/com/github/kright/pga3d")
+  val packageDir = Path.of("pga3d/shared/src/main/scala/me/kright/gametools/pga3d")
   assert(Files.exists(packageDir))
 
   for (cls <- pgaClasses if cls.shouldBeGenerated) {
