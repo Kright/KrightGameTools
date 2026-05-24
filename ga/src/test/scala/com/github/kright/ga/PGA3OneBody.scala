@@ -1,7 +1,5 @@
 package com.github.kright.ga
 
-import com.github.kright.solvers.DifferentialSolvers
-
 class PGA3OneBody(val inertia: PGA3Inertia[Double],
                   val initialState: PGA3State[Double]) {
   var state: PGA3State[Double] = initialState

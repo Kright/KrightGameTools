@@ -31,7 +31,6 @@ lazy val root = (project in file("."))
     name := "scalaGameMath",
     packageSrc / publishArtifact := true,
   ).aggregate(
-    solvers,
     symbolic,
     util.jvm, util.js,
     vector.jvm, vector.js,
@@ -72,11 +71,7 @@ lazy val ga = (project in file("ga"))
     util.jvm,
     symbolic % "test",
     vector.jvm % "compile->compile;test->test",
-    solvers % "test",
   )
-
-lazy val solvers = (project in file("solvers"))
-  .settings(scalatestSettings)
 
 lazy val pga3dCodeGen = (project in file("pga3dCodeGen"))
   .settings(scalatestSettings)

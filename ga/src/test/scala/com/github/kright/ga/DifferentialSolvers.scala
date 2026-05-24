@@ -1,4 +1,4 @@
-package com.github.kright.solvers
+package com.github.kright.ga
 
 /**
  * example:
