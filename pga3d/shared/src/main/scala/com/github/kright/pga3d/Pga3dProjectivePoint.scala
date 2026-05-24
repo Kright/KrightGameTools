@@ -4,7 +4,7 @@ import me.kright.gametools.mathutil.FlatDoubleSerializer
 import scala.annotation.targetName
 
 
-/** this code is generated, see com.github.kright.pga3d.codegen.CodeGenClass */
+/** this code is generated, see me.kright.gametools.pga3d.codegen.CodeGenClass */
 final case class Pga3dProjectivePoint(x: Double = 0.0,
                                       y: Double = 0.0,
                                       z: Double = 0.0,
