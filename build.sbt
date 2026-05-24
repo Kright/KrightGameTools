@@ -1,9 +1,41 @@
+ThisBuild / organization := "me.kright"
 ThisBuild / version := "0.8.1-SNAPSHOT"
-
 ThisBuild / scalaVersion := "3.8.3"
 
-ThisBuild / licenses := List(License.MIT)
+ThisBuild / description := "Kright Game Tools for Scala"
+ThisBuild / homepage := Some(url("https://github.com/kright/KrightGameTools"))
 ThisBuild / startYear := Some(2022)
+
+ThisBuild / developers := List(
+  Developer(
+    id = "Kright",
+    name = "Igor Slobodskov",
+    email = "simplicivy@gmail.com",
+    url = url("https://kright.me/about")
+  )
+)
+
+ThisBuild / scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/kright/KrightGameTools"),
+    "scm:git@github.com:kright/KrightGameTools.git"
+  )
+)
+
+ThisBuild / licenses := List("MIT" -> url("https://opensource.org/licenses/MIT"))
+
+ThisBuild / sonatypeCredentialHost := "central.sonatype.com"
+ThisBuild / sonatypeRepository := "https://central.sonatype.com/service/local"
+ThisBuild / sonatypeProfileName := "me.kright"
+
+lazy val sonatypeSettings = Seq(
+  publishMavenStyle := true,
+  publishTo := {
+    val centralSnapshots = "https://central.sonatype.com/repository/maven-snapshots/"
+    if (isSnapshot.value) Some("central-snapshots" at centralSnapshots)
+    else sonatypePublishToBundle.value
+  }
+)
 
 scalacOptions ++= Seq(
   "-Yexplicit-nulls",
@@ -28,8 +60,8 @@ lazy val scalatestSettings =
 
 lazy val root = (project in file("."))
   .settings(
-    name := "scalaGameMath",
-    packageSrc / publishArtifact := true,
+    name := "gametools",
+    publish / skip := true,
   ).aggregate(
     symbolic,
     mathutil.jvm, mathutil.js,
@@ -45,11 +77,13 @@ lazy val mathutil = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("mathutil"))
   .settings(scalatestSettings, explicitNulls, wError, strictEquality)
+  .settings(sonatypeSettings, name := "gametools-mathutil")
 
 lazy val vector = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("vector"))
   .settings(scalatestSettings)
+  .settings(sonatypeSettings, name := "gametools-vector")
   .dependsOn(mathutil)
 
 lazy val matrix = crossProject(JSPlatform, JVMPlatform)
@@ -60,13 +94,16 @@ lazy val matrix = crossProject(JSPlatform, JVMPlatform)
     libraryDependencies += "me.kright" %% "arrayview" % "0.3.0",
   )
   .settings(scalatestSettings)
+  .settings(sonatypeSettings, name := "gametools-matrix")
   .dependsOn(mathutil)
 
 lazy val symbolic = (project in file("symbolic"))
   .settings(scalatestSettings)
+  .settings(publish / skip := true)
 
 lazy val ga = (project in file("ga"))
   .settings(scalatestSettings)
+  .settings(publish / skip := true)
   .dependsOn(
     mathutil.jvm,
     symbolic % "test",
@@ -75,6 +112,7 @@ lazy val ga = (project in file("ga"))
 
 lazy val pga3dCodeGen = (project in file("pga3dCodeGen"))
   .settings(scalatestSettings)
+  .settings(publish / skip := true)
   .dependsOn(
     ga,
     symbolic,
@@ -84,6 +122,7 @@ lazy val pga3d = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga3d"))
   .settings(scalatestSettings, explicitNulls, wError)
+  .settings(sonatypeSettings, name := "gametools-pga3d")
   .dependsOn(
     matrix,
     mathutil % "test",
@@ -93,6 +132,7 @@ lazy val pga3dgeom = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga3dgeom"))
   .settings(scalatestSettings, explicitNulls, wError)
+  .settings(sonatypeSettings, name := "gametools-pga3dgeom")
   .dependsOn(
     pga3d % "compile->compile;test->test",
     matrix,
@@ -102,6 +142,7 @@ lazy val pga3dphysics = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga3dphysics"))
   .settings(scalatestSettings, explicitNulls, wError)
+  .settings(sonatypeSettings, name := "gametools-pga3dphysics")
   .dependsOn(
     pga3d % "compile->compile;test->test",
     matrix,
