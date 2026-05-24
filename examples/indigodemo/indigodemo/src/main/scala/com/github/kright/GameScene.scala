@@ -47,8 +47,6 @@ object GameScene extends Scene[StartUpData, Model, ViewModel]:
              ): Outcome[SceneUpdateFragment] = {
     val screenCenter = context.frame.viewport.center
 
-    println("fiasco!!")
-
     Outcome(
       SceneUpdateFragment(
         Shape

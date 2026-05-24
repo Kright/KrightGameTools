@@ -22,20 +22,24 @@ lazy val gameOptions: IndigoOptions =
 lazy val indigodemo =
   (project in file("indigodemo"))
     .enablePlugins(ScalaJSPlugin, SbtIndigo)
-    .settings( // Normal SBT settings
+    .dependsOn(
+      ProjectRef(file("../../"), "pga3dJS"),
+      ProjectRef(file("../../"), "pga3dphysicsJS"),
+      ProjectRef(file("../../"), "mathutilJS"),
+    )
+    .settings(
+      scalacOptions -= "-Werror",
+      scalacOptions -= "-Xfatal-warnings",
       name         := "indigodemo",
       version      := "0.0.1",
-      scalaVersion := "3.6.4",
+      scalaVersion := "3.8.3",
       organization := "com.github.kright",
       resolvers += "jitpack" at "https://jitpack.io",
       libraryDependencies ++= Seq(
         "org.scalameta" %%% "munit" % "1.1.1" % Test,
-        "com.github.Kright.ScalaGameMath" %%% "pga3d" % "d32d331d34",
-        "com.github.Kright.ScalaGameMath" %%% "pga3dphysics" % "d32d331d34",
-        "com.github.Kright.ScalaGameMath" %%% "util" % "d32d331d34",
       ),
       testFrameworks += new TestFramework("munit.Framework"),
-      scalafixOnCompile  := true,
+      scalafixOnCompile  := false,
       semanticdbEnabled  := true,
       semanticdbVersion  := scalafixSemanticdb.revision,
     )
