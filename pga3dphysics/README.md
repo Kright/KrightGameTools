@@ -11,7 +11,7 @@ Classes Pga3dMatrixForPoints and Pga3dBivectorMutable are made for performance r
 val dynamicBodies: ArrayBuffer[PhysicsBody] =
   ArrayBuffer(
     PhysicsBody.motionless(Pga3dInertia.sphere(mass = 2.0, r = 1), Pga3dMotor.id),
-    PhysicsBody.motionless(Pga3dInertia.cube(mass = 2.0, rx = 1, ry = 2, rz = 0.5), Pga3dTranslator.addVector(Vector(1, 2, 3)).toMotor),
+    PhysicsBody.motionless(Pga3dInertia.cube(mass = 2.0, rx = 1, ry = 2, rz = 0.5), Pga3dTranslator.addVector(Pga3dVector(1, 2, 3)).toMotor),
 ...
 )
 

@@ -39,7 +39,7 @@ trait VectorNd[Vec <: VectorNd[Vec]] extends IEqualsWithEps[Vec]:
 
   def decomposed(axis: Vec): (Vec, Vec) = (projected(axis), rejected(axis))
 
-  def normalized(): Vec = this / this.mag
+  def normalized: Vec = this / this.mag
 
   def squareMag: Double = this.dot(this)
 

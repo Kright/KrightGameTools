@@ -13,13 +13,12 @@ All the code is under MIT license. Contributions are welcome, feel free to send 
 
 ## Table of Contents
 
-- [Getting started](#Getting-started)
+- [Getting started](#getting-started)
     - [Sbt](#sbt)
-    - [Gradle](#Gradle)
-- [Library modules](#Library-modules)
-    - [Simple modules](#simple-modules)
-    - [Advanced modules with geometric algebra](#advanced-modules-with-geometric-algebra)
-    - [C++](#c-code)
+    - [Gradle](#gradle)
+- [Library modules](#library-modules)
+    - [Modules](#modules)
+    - [C++](#c++-code)
 - [Tests](#tests)
 - [How to change this library and try changes locally in other project](#how-to-change-this-library-and-try-changes-locally-in-other-project)
 
@@ -33,12 +32,17 @@ All the code is under MIT license. Contributions are welcome, feel free to send 
 
 ### Getting started
 
-You may add the whole library or specific modules.
-
 ### sbt
 
 ```scala
-libraryDependencies += "me.kright" %% "gametools-pga3d" % "0.9.0"
+libraryDependencies ++= Seq(
+  "me.kright" %% "gametools-mathutil" % "0.9.0",
+  "me.kright" %% "gametools-vector" % "0.9.0",
+  "me.kright" %% "gametools-matrix" % "0.9.0",
+  "me.kright" %% "gametools-pga3d" % "0.9.0",
+  "me.kright" %% "gametools-pga3dgeom" % "0.9.0",
+  "me.kright" %% "gametools-pga3dphysics" % "0.9.0"
+)
 ```
 
 For Scala.js use `%%%` instead of `%%`:
@@ -47,23 +51,17 @@ For Scala.js use `%%%` instead of `%%`:
 libraryDependencies += "me.kright" %%% "gametools-pga3d" % "0.9.0"
 ```
 
-Or for separate modules
-
-```scala
-libraryDependencies ++= Seq(
-  "me.kright" %% "gametools-pga3d" % "0.9.0",
-  "me.kright" %% "gametools-pga3dphysics" % "0.9.0",
-  "me.kright" %% "gametools-mathutil" % "0.9.0",
-)
-```
-
 ### Gradle:
+
+Note: suffix `_3` is for Scala 3.
 
 ```groovy
 dependencies {
-  implementation 'me.kright:gametools-pga3d_3:0.9.0'
   implementation 'me.kright:gametools-mathutil_3:0.9.0'
+  implementation 'me.kright:gametools-vector_3:0.9.0'
   implementation 'me.kright:gametools-matrix_3:0.9.0'
+  implementation 'me.kright:gametools-pga3d_3:0.9.0'
+  implementation 'me.kright:gametools-pga3dgeom_3:0.9.0'
   implementation 'me.kright:gametools-pga3dphysics_3:0.9.0'
 }
 ```
@@ -72,8 +70,7 @@ dependencies {
 
 Initially, it was a repo for simple math with matrices and vectors. I implemented physics for 3d on top of that math.
 During my development, I figured out that plane-based geometric algebra is a fantastic way to describe physics
-equations. So there is a code with geometric algebra, which includes math and physics.
-too.
+equations. So there is a code with geometric algebra, which includes math and physics too.
 
 ### Modules
 
@@ -112,11 +109,10 @@ sbt test
 ```
 
 I use scalaCheck and property-based approach. It goes well with checking math properties such as addition or
-multiplication associativity, zero and id elements, morphisms between quaternions and corresponding matrices or euler
-angles.
+multiplication associativity, zero and id elements, morphisms between quaternions and corresponding matrices.
 For physics, it's ok to check that total energy and impulse are constant in body systems without friction.
 
-# How to change this library and try changes locally in other project
+## How to change this library and try changes locally in another project
 
 Change lib code, publish to local ivy repo:
 
