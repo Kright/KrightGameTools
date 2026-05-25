@@ -3,6 +3,7 @@ package me.kright.gametools.pga3d
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
+import scala.annotation.tailrec
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
@@ -20,6 +21,7 @@ class QuaternionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val rnd = new Random()
     rnd.setSeed(123)
 
+    @tailrec
     def makeQ(): Pga3dQuaternion =
       val q = Pga3dQuaternion(rnd.nextGaussian(), rnd.nextGaussian(), rnd.nextGaussian(), rnd.nextGaussian())
       if (q.norm < 1e-3) makeQ() else q.normalizedByNorm
@@ -89,4 +91,51 @@ class QuaternionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     assert(q.restoreRotationInPlaneX == expected)
     assert((err geometric q).restoreRotationInPlaneX == expected)
     assert((q geometric err).restoreRotationInPlaneX == expected)
+  }
+
+  test("restore quaternion from axes") {
+    val eps = 1e-12
+    forAll(Pga3dGenerators.normalizedQuaternions, MinSuccessful(1000)) { q =>
+      val restored = Pga3dQuaternion.restore(q.axisX, q.axisY, q.axisZ)
+
+      val diff1 = (restored - q).normSquare
+      val diff2 = (restored + q).normSquare
+      assert(Math.min(diff1, diff2) < eps)
+    }
+  }
+
+  test("restore small rotation around X") {
+    val q = Pga3dQuaternion(Math.cos(0.05), 0, 0, Math.sin(0.05)) // yz component is rotation around X
+    val restored = Pga3dQuaternion.restore(q.axisX, q.axisY, q.axisZ)
+    assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
+  }
+
+  test("restore small rotation around Y") {
+    val q = Pga3dQuaternion(Math.cos(0.05), 0, -Math.sin(0.05), 0) // xz component
+    val restored = Pga3dQuaternion.restore(q.axisX, q.axisY, q.axisZ)
+    assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
+  }
+
+  test("restore small rotation around Z") {
+    val q = Pga3dQuaternion(Math.cos(0.05), Math.sin(0.05), 0, 0) // xy component
+    val restored = Pga3dQuaternion.restore(q.axisX, q.axisY, q.axisZ)
+    assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
+  }
+
+  test("restore 180 degree rotation around X") {
+    val q = Pga3dQuaternion(0, 0, 0, 1) // yz = 1
+    val restored = Pga3dQuaternion.restore(q.axisX, q.axisY, q.axisZ)
+    assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
+  }
+
+  test("restore 180 degree rotation around Y") {
+    val q = Pga3dQuaternion(0, 0, 1, 0) // xz = 1
+    val restored = Pga3dQuaternion.restore(q.axisX, q.axisY, q.axisZ)
+    assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
+  }
+
+  test("restore 180 degree rotation around Z") {
+    val q = Pga3dQuaternion(0, 1, 0, 0) // xy = 1
+    val restored = Pga3dQuaternion.restore(q.axisX, q.axisY, q.axisZ)
+    assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
   }
