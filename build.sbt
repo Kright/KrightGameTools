@@ -38,12 +38,6 @@ lazy val sonatypeSettings = Seq(
   }
 )
 
-scalacOptions ++= Seq(
-  "-Yexplicit-nulls",
-  "-language:strictEquality",
-  "-Werror",
-)
-
 lazy val explicitNulls =
   scalacOptions += "-Yexplicit-nulls"
 
@@ -52,6 +46,8 @@ lazy val wError =
 
 lazy val strictEquality =
   scalacOptions += "-language:strictEquality"
+
+lazy val strictSettings = Seq(explicitNulls, wError, strictEquality)
 
 lazy val scalatestSettings =
   libraryDependencies ++= Seq(
@@ -70,6 +66,7 @@ lazy val root = (project in file("."))
     ga,
     matrix.jvm, matrix.js,
     pga3d.jvm, pga3d.js,
+    pga2d.jvm, pga2d.js,
     pga3dgeom.jvm, pga3dgeom.js,
     pga3dphysics.jvm, pga3dphysics.js,
   )
@@ -77,20 +74,20 @@ lazy val root = (project in file("."))
 lazy val mathutil = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("mathutil"))
-  .settings(scalatestSettings, explicitNulls, wError, strictEquality)
+  .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-mathutil")
 
 lazy val vector = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("vector"))
-  .settings(scalatestSettings)
+  .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-vector")
   .dependsOn(mathutil)
 
 lazy val matrix = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("matrix"))
-  .settings(explicitNulls, wError)
+  .settings(strictSettings)
   .settings(
     libraryDependencies += "me.kright" %%% "arrayview" % "0.3.2",
   )
@@ -99,11 +96,11 @@ lazy val matrix = crossProject(JSPlatform, JVMPlatform)
   .dependsOn(mathutil)
 
 lazy val symbolic = (project in file("symbolic"))
-  .settings(scalatestSettings)
+  .settings(scalatestSettings, strictSettings)
   .settings(publish / skip := true)
 
 lazy val ga = (project in file("ga"))
-  .settings(scalatestSettings)
+  .settings(scalatestSettings, strictSettings)
   .settings(publish / skip := true)
   .dependsOn(
     mathutil.jvm,
@@ -111,8 +108,8 @@ lazy val ga = (project in file("ga"))
     vector.jvm % "compile->compile;test->test",
   )
 
-lazy val pga3dCodeGen = (project in file("pga3dCodeGen"))
-  .settings(scalatestSettings)
+lazy val pgaNdCodeGen = (project in file("pgaNdCodeGen"))
+  .settings(scalatestSettings, strictSettings)
   .settings(publish / skip := true)
   .dependsOn(
     ga,
@@ -122,17 +119,27 @@ lazy val pga3dCodeGen = (project in file("pga3dCodeGen"))
 lazy val pga3d = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga3d"))
-  .settings(scalatestSettings, explicitNulls, wError)
+  .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-pga3d")
   .dependsOn(
     matrix,
     mathutil % "test",
   )
 
+lazy val pga2d = crossProject(JSPlatform, JVMPlatform)
+  .withoutSuffixFor(JVMPlatform)
+  .in(file("pga2d"))
+  .settings(scalatestSettings, strictSettings)
+  .settings(sonatypeSettings, name := "gametools-pga2d")
+  .dependsOn(
+    mathutil,
+    matrix % "test",
+  )
+
 lazy val pga3dgeom = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga3dgeom"))
-  .settings(scalatestSettings, explicitNulls, wError)
+  .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-pga3dgeom")
   .dependsOn(
     pga3d % "compile->compile;test->test",
@@ -142,7 +149,7 @@ lazy val pga3dgeom = crossProject(JSPlatform, JVMPlatform)
 lazy val pga3dphysics = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga3dphysics"))
-  .settings(scalatestSettings, explicitNulls, wError)
+  .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-pga3dphysics")
   .dependsOn(
     pga3d % "compile->compile;test->test",

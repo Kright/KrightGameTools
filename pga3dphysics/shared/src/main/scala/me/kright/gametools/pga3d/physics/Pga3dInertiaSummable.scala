@@ -14,14 +14,14 @@ final case class Pga3dInertiaSummable(ww: Double,
                                       zz: Double,
                                       xy: Double,
                                       yz: Double,
-                                      xz: Double) extends Pga3dInertia:
+                                      xz: Double) extends Pga3dInertia derives CanEqual:
 
   /** lazy cache for computing inversion */
   private var inertiaMovedLocalOrNull: Pga3dInertiaMovedLocal | Null = null
 
   override def toInertiaMovedLocal: Pga3dInertiaMovedLocal =
     val inertiaOrNull = inertiaMovedLocalOrNull
-    if (inertiaOrNull != null) return inertiaOrNull
+    if (inertiaOrNull ne null) return inertiaOrNull
 
     val newInertia = toInertiaMovedLocalImpl
     inertiaMovedLocalOrNull = newInertia
@@ -102,13 +102,13 @@ final case class Pga3dInertiaSummable(ww: Double,
 
     val shifted = Pga3dTranslator.addVector(-shift).sandwich(this)
     val i = shifted.toMatrixXYZ
-    val quaternion = Pga3dInertiaSummable.diagonalyzeSymmetricInplace(i)
+    val rotor = Pga3dInertiaSummable.diagonalyzeSymmetricInplace(i)
     val ixx = i(0, 0)
     val iyy = i(1, 1)
     val izz = i(2, 2)
 
     Pga3dInertiaMovedLocal(
-      localToGlobal = Pga3dTranslator.addVector(shift).geometric(quaternion),
+      localToGlobal = Pga3dTranslator.addVector(shift).geometric(rotor),
       localInertia = Pga3dInertiaLocal(mass, iyy + izz, ixx + izz, ixx + iyy)
     )
 
@@ -165,8 +165,8 @@ final case class Pga3dInertiaSummable(ww: Double,
   def movedBy(motor: Pga3dMotor): Pga3dInertiaSummable =
     motor.sandwich(this)
 
-  def movedBy(quaternion: Pga3dQuaternion): Pga3dInertiaSummable =
-    quaternion.sandwich(this)
+  def movedBy(rotor: Pga3dRotor): Pga3dInertiaSummable =
+    rotor.sandwich(this)
 
   override def toString: String =
     s"Pga3dInertiaSummable(ww=$ww, wx=$wx, wy=$wy, wz=$wz, xx=$xx, yy=$yy, zz=$zz, xy=$xy, yz=$yz, xz=$xz)"
@@ -234,7 +234,7 @@ object Pga3dInertiaSummable:
     def sandwich(b: Pga3dInertiaSummable): Pga3dInertiaSummable =
       sandwichImpl(b, t.sandwich)
 
-  extension (q: Pga3dQuaternion)
+  extension (q: Pga3dRotor)
     def sandwich(b: Pga3dInertiaSummable): Pga3dInertiaSummable =
       sandwichImpl(b, q.sandwich)
 
@@ -244,23 +244,23 @@ object Pga3dInertiaSummable:
     Pga3dPlaneIdeal(0, 0, 1),
   )
 
-  private def diagonalyzeSymmetricInplace(i: Matrix): Pga3dQuaternion = {
-    var quaternion = Pga3dQuaternion.id
+  private def diagonalyzeSymmetricInplace(i: Matrix): Pga3dRotor = {
+    var rotor = Pga3dRotor.id
 
     while (true) {
       val (p, q) = SymmetricMatrixDiagonalization.findBiggestOffDiagonalElementByAbs(i)
 
       if (Math.abs(i(p, q)) < 1e-100) {
-        return quaternion
+        return rotor
       }
       val (sin, cos) = SymmetricMatrixDiagonalization.findSinCosAtan(i(p, p), i(p, q), i(q, q))
       SymmetricMatrixDiagonalization.sandwichRotSymmetricMatrix(i, p, q, sin, cos)
 
       val planeP = planesByAxis(p)
       val planeQ = planesByAxis(q)
-      val dq = Pga3dQuaternion.rotation(planeP, planeP * cos + planeQ * sin)
-      quaternion = quaternion.geometric(dq)
+      val dq = Pga3dRotor.rotation(planeP, planeP * cos + planeQ * sin)
+      rotor = rotor.geometric(dq)
     }
 
-    quaternion
+    rotor
   }

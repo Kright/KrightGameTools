@@ -44,7 +44,7 @@ class GARepresentation(params: GARepresentationConfig,
 
   protected def multiVector2str[T](vec: MultiVector[T], start: String, separator: String, end: String): String =
     if (vec.values.isEmpty) return "MultiVector()"
-    val text = blades.flatMap(b => vec.values.get(b).map(v => s"${'\"' + apply(b) + '\"'} -> ${v}")).mkString(start, separator, end)
+    val text = blades.flatMap(b => vec.values.get(b).map(v => s"\"${apply(b)}\" -> ${v}")).mkString(start, separator, end)
     s"MultiVector$text"
 
   def apply[T](v: MultiVector[T]): String = multiVector2str(v, "(", ", ", ")")

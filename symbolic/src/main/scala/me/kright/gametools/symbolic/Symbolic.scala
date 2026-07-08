@@ -10,6 +10,8 @@ sealed trait Symbolic[+F, +S]:
 
 
 object Symbolic:
+  given CanEqual[Symbolic[?, ?], Symbolic[?, ?]] = CanEqual.derived
+
   def apply[F, S](f: F, a: Seq[Symbolic[F, S]]): Func[F, S] = Symbolic.Func[F, S](f, a)
 
   def apply[F, S](a: S): Symbolic[F, S] = Symbolic.Symbol(a)

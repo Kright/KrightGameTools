@@ -14,7 +14,7 @@ class FlatDoubleSerializerPga3DPhysicsTest extends AnyFunSuiteLike with ScalaChe
     assert(FlatDoubleSerializer.getSize[Pga3dPoint] == Pga3dPoint.componentsCount)
   }
 
-  inline def myCheck[T](gen: Gen[T]): Unit = {
+  inline def myCheck[T](gen: Gen[T])(using CanEqual[T, T]): Unit = {
     forAll(gen, gen) { (a, b) =>
       val size = FlatDoubleSerializer.getSize[T]
       val arr = new Array[Double](size * 2)
@@ -33,5 +33,5 @@ class FlatDoubleSerializerPga3DPhysicsTest extends AnyFunSuiteLike with ScalaChe
   }
 
 object FlatDoubleSerializerPga3DPhysicsTest:
-  inline def myCheck[T](gen: Gen[T]): Unit =
+  inline def myCheck[T](gen: Gen[T])(using CanEqual[T, T]): Unit =
     FlatDoubleSerializerPga3DTest.myCheck(gen)

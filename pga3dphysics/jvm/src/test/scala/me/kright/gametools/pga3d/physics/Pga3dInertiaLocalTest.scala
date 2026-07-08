@@ -94,9 +94,9 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
       Pga3dTranslator.addVector(Pga3dVector(0, 1, 0)).toMotor,
       Pga3dTranslator.addVector(Pga3dVector(0, 0, 1)).toMotor,
       Pga3dTranslator.addVector(Pga3dVector(1, 2, 3)).toMotor,
-      Pga3dQuaternion.rotation(Pga3dVector(1, 0, 0), Pga3dVector(0, 1, 0)).toMotor,
-      Pga3dQuaternion.rotation(Pga3dVector(1, 0, 0), Pga3dVector(0, 1, 1)).toMotor,
-      Pga3dQuaternion.rotation(Pga3dVector(1, 0, 0), Pga3dVector(0, 1, 1)).geometric(Pga3dTranslator.addVector(Pga3dVector(1, 2, 3)).toMotor),
+      Pga3dRotor.rotation(Pga3dVector(1, 0, 0), Pga3dVector(0, 1, 0)).toMotor,
+      Pga3dRotor.rotation(Pga3dVector(1, 0, 0), Pga3dVector(0, 1, 1)).toMotor,
+      Pga3dRotor.rotation(Pga3dVector(1, 0, 0), Pga3dVector(0, 1, 1)).geometric(Pga3dTranslator.addVector(Pga3dVector(1, 2, 3)).toMotor),
     )
 
     for (motor <- motors) {

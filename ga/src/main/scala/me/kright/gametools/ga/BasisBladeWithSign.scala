@@ -2,7 +2,7 @@ package me.kright.gametools.ga
 
 import me.kright.gametools.mathutil.Sign
 
-case class BasisBladeWithSign(basisBlade: BasisBlade, sign: Sign = Sign.Positive):
+case class BasisBladeWithSign(basisBlade: BasisBlade, sign: Sign = Sign.Positive) derives CanEqual:
   def *(anotherSign: Sign): BasisBladeWithSign = this.copy(sign = this.sign * anotherSign)
 
 object BasisBladeWithSign:

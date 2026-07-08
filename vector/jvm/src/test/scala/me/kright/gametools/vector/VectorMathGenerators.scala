@@ -80,7 +80,7 @@ object VectorMathGenerators:
   val vectors3normalized: Gen[Vector3d] =
     Gen.oneOf(
       axisVector3,
-      vectors3InCube.filter(_.mag > 1e-12).map(_.normalized())
+      vectors3InCube.filter(_.mag > 1e-12).map(_.normalized)
     )
 
   val vectors4InCube: Gen[Vector4d] =

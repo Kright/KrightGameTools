@@ -18,6 +18,5 @@ object SymbolicToPrettyString:
     })
 
   private def toStr(symbol: Symbolic[Nothing, String]): String =
-    @unchecked
-    val Symbolic.Symbol(result) = symbol
+    val Symbolic.Symbol(result) = symbol: @unchecked
     result

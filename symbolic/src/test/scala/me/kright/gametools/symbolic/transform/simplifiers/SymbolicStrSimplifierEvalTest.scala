@@ -37,3 +37,4 @@ private def eval(expr: SymbolicStr, variables: Map[String, Double]): Double =
     case SymbolicStr.SymbolStr(variableName) => variables(variableName)
     case Symbolic.Func("+", args) => args.map(eval(_, variables)).sum
     case Symbolic.Func("*", args) => args.map(eval(_, variables)).product
+    case other => throw new IllegalArgumentException(s"can't eval: $other")

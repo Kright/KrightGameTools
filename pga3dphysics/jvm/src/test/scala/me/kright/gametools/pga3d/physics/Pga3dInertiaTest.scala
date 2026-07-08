@@ -2,7 +2,7 @@ package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.matrix.MatrixPrinter
 import me.kright.gametools.pga3d.*
-import me.kright.gametools.pga3d.Pga3dGenerators.{normalizedQuaternions, vectors}
+import me.kright.gametools.pga3d.Pga3dGenerators.{normalizedRotors, vectors}
 import me.kright.gametools.pga3d.physics.Pga3dInertiaGenerators.inertiaMovedLocal
 import org.scalacheck.Gen
 import org.scalacheck.rng.Seed
@@ -71,7 +71,7 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val p1 = Pga3dPoint(-1.0, 0.0, 0.0)
     val p2 = Pga3dPoint(1.0, 0.0, 0.0)
     val sum = Pga3dInertiaSummable.point(p1, mass = 1.0) + Pga3dInertiaSummable.point(p2, mass = 3.0)
-    forAll(normalizedQuaternions) { q =>
+    forAll(normalizedRotors) { q =>
       val rotatedSum = Pga3dInertiaSummable.point(q.sandwich(p1).toPoint, mass = 1.0) + Pga3dInertiaSummable.point(q.sandwich(p2).toPoint, mass = 3.0)
       assertEq(q.sandwich(sum), rotatedSum)
       assertEq(q.toMotor.sandwich(sum), rotatedSum)
@@ -82,7 +82,7 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val p1 = Pga3dPoint(-1.0, 0.0, 0.0)
     val p2 = Pga3dPoint(1.0, 0.0, 0.0)
     val sum = Pga3dInertiaSummable.point(p1, mass = 1.0) + Pga3dInertiaSummable.point(p2, mass = 3.0)
-    forAll(normalizedQuaternions(Gen.Parameters.default, Seed(12345L)).get, vectors) { (q, shift) =>
+    forAll(normalizedRotors(Gen.Parameters.default, Seed(12345L)).get, vectors) { (q, shift) =>
       val motor = q.geometric(Pga3dTranslator.addVector(shift))
       val movedSum = motor.sandwich(sum)
       assertEq(motor.sandwich(sum), movedSum)
@@ -331,10 +331,10 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     }
   }
 
-  test("any inertia moved by quaternion same as moved by motor") {
-    forAll(Pga3dInertiaGenerators.anyInertia, Pga3dGenerators.normalizedQuaternions, MinSuccessful(10000)) { (inertia, quaternion) =>
-      val s1 = inertia.movedBy(quaternion).toSummable
-      val s2 = inertia.movedBy(quaternion.toMotor).toSummable
+  test("any inertia moved by rotor same as moved by motor") {
+    forAll(Pga3dInertiaGenerators.anyInertia, Pga3dGenerators.normalizedRotors, MinSuccessful(10000)) { (inertia, rotor) =>
+      val s1 = inertia.movedBy(rotor).toSummable
+      val s2 = inertia.movedBy(rotor.toMotor).toSummable
 
       val eps = 1e-12
       assert((s1 - s2).norm < eps)

@@ -20,7 +20,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
     classOf[Pga3dProjectivePoint],
     classOf[Pga3dPoint],
     classOf[Pga3dPseudoScalar],
-    classOf[Pga3dQuaternion],
+    classOf[Pga3dRotor],
     classOf[Pga3dTranslator],
     classOf[Pga3dVector],
   )
@@ -33,9 +33,9 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
 
   private def toMultivector(instance: AnyRef): Pga3dMultivector = {
     val cls = instance.getClass
-    (if (cls == classOf[Pga3dMultivector]) {
+    (if (cls eq classOf[Pga3dMultivector]) {
       instance
-    } else if (cls == classOf[java.lang.Double]) {
+    } else if (cls eq classOf[java.lang.Double]) {
       Pga3dMultivector(s = instance.asInstanceOf[Double])
     } else {
       cls.getMethod("toMultivector").nn.invoke(instance)
@@ -61,7 +61,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
         require(method.getParameterTypes.size == 1)
         val otherType = parameterTypes.head
 
-        if (classes.contains(otherType) || otherType == classOf[Double]) {
+        if (classes.contains(otherType) || (otherType eq classOf[Double])) {
           val otherCls = makeRandom(otherType)
 
           val first = makeRandom(cls)

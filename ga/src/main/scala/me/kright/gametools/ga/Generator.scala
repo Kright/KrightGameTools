@@ -11,6 +11,9 @@ case class Generator(number: Int, squareSign: Sign) extends Ordered[Generator]:
 
 
 object Generator:
+  // the signature guarantees a single squareSign per number, so ordering by number matches `compare` above
+  given ordering: Ordering[Generator] = Ordering.by(_.number)
+
   def apply(number: Int, signature: Signature): Generator =
     new Generator(number, signature.getSign(number))
 

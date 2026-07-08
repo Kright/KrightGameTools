@@ -52,20 +52,20 @@ object Pga3dGenerators:
       makeGenT(3, FlatDoubleSerializer.read[Pga3dBivectorWeight]),
     )
 
-  val quaternions: Gen[Pga3dQuaternion] =
+  val rotors: Gen[Pga3dRotor] =
     Gen.oneOf(
       Gen.oneOf(
         Seq(
-          Pga3dQuaternion.id,
-          -Pga3dQuaternion.id,
-          Pga3dQuaternion()
+          Pga3dRotor.id,
+          -Pga3dRotor.id,
+          Pga3dRotor()
         )
       ),
-      makeGenT(4, FlatDoubleSerializer.read[Pga3dQuaternion])
+      makeGenT(4, FlatDoubleSerializer.read[Pga3dRotor])
     )
 
-  val normalizedQuaternions: Gen[Pga3dQuaternion] =
-    quaternions.filter(_.norm > 1e-40).map(_.normalizedByNorm)
+  val normalizedRotors: Gen[Pga3dRotor] =
+    rotors.filter(_.norm > 1e-40).map(_.normalizedByNorm)
 
   val points: Gen[Pga3dPoint] =
     makeGenT(3, FlatDoubleSerializer.read[Pga3dPoint])
@@ -87,7 +87,7 @@ object Pga3dGenerators:
   val normalizedMotors: Gen[Pga3dMotor] =
     for (
       v <- vectors;
-      q <- normalizedQuaternions
+      q <- normalizedRotors
     ) yield Pga3dTranslator.addVector(v).geometric(q)
 
   val anyMotors: Gen[Pga3dMotor] =

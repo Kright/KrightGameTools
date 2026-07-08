@@ -3,7 +3,7 @@ package me.kright.gametools.ga
 import me.kright.gametools.mathutil.Sign
 import scala.math.Numeric.Implicits.infixNumericOps
 
-case class MultiVector[Value](ga: GA, values: Map[BasisBlade, Value]):
+case class MultiVector[Value](ga: GA, values: Map[BasisBlade, Value]) derives CanEqual:
 
   def scalar(using num: Numeric[Value]): Value = get(ga.scalarBlade).getOrElse(num.zero)
 
@@ -175,7 +175,7 @@ object MultiVector:
     def squareMagnitude: T =
       left.values.values.map(v => v * v).sum
 
-    def withoutZeros: MultiVector[T] =
+    def withoutZeros(using CanEqual[T, T]): MultiVector[T] =
       left.filter((_, v) => v != num.zero)
 
   extension (left: MultiVector[Double])

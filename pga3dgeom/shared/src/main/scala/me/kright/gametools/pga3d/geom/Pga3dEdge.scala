@@ -5,7 +5,7 @@ import me.kright.gametools.pga3d.*
 import me.kright.gametools.mathutil.MathUtil
 
 case class Pga3dEdge(a: Pga3dPoint,
-                     b: Pga3dPoint):
+                     b: Pga3dPoint) derives CanEqual:
 
   override def toString: String = s"Pga3dEdge(a = $a, b = $b)"
 
@@ -82,7 +82,7 @@ object Pga3dEdge:
     def sandwich(edge: Pga3dEdge): Pga3dEdge =
       edge.map(p.sandwich)
 
-  extension (p: Pga3dQuaternion)
+  extension (p: Pga3dRotor)
     def sandwich(edge: Pga3dEdge): Pga3dEdge =
       edge.map(p.sandwich(_).toPointUnsafe)
 

@@ -4,7 +4,7 @@ import me.kright.gametools.mathutil.Sign
 
 case class Signature(positives: Int,
                      negatives: Int,
-                     zeros: Int):
+                     zeros: Int) derives CanEqual:
   require(positives >= 0)
   require(negatives >= 0)
   require(zeros >= 0)

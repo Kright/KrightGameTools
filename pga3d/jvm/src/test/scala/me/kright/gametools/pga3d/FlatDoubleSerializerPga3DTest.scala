@@ -13,7 +13,7 @@ class FlatDoubleSerializerPga3DTest extends AnyFunSuiteLike with ScalaCheckPrope
     assert(FlatDoubleSerializer.getSize[Pga3dBivector] == Pga3dBivector.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dVector] == Pga3dVector.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dProjectivePoint] == Pga3dProjectivePoint.componentsCount)
-    assert(FlatDoubleSerializer.getSize[Pga3dQuaternion] == Pga3dQuaternion.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dRotor] == Pga3dRotor.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dPlane] == Pga3dPlane.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dPlaneIdeal] == Pga3dPlaneIdeal.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dTranslator] == Pga3dTranslator.componentsCount)
@@ -26,12 +26,12 @@ class FlatDoubleSerializerPga3DTest extends AnyFunSuiteLike with ScalaCheckPrope
     myCheck(Pga3dGenerators.points)
     myCheck(Pga3dGenerators.bivectors)
     myCheck(Pga3dGenerators.vectors)
-    myCheck(Pga3dGenerators.quaternions)
-    myCheck(Pga3dGenerators.normalizedQuaternions)
+    myCheck(Pga3dGenerators.rotors)
+    myCheck(Pga3dGenerators.normalizedRotors)
   }
 
 object FlatDoubleSerializerPga3DTest:
-  inline def myCheck[T](gen: Gen[T]): Unit = {
+  inline def myCheck[T](gen: Gen[T])(using CanEqual[T, T]): Unit = {
     forAll(gen, gen) { (a, b) =>
       val size = FlatDoubleSerializer.getSize[T]
       val arr = new Array[Double](size * 2)

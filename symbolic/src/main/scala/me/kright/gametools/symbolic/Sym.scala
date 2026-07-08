@@ -10,7 +10,7 @@ import scala.math.Numeric.Implicits.infixNumericOps
 /**
  * Simple, but not customizable implementation for working with SymbolicStr
  */
-case class Sym(symbol: SymbolicStr):
+case class Sym(symbol: SymbolicStr) derives CanEqual:
   override def toString: String = SymbolicToPrettyString(symbol)
 
   def size: Int =

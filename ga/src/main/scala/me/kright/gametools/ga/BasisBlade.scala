@@ -1,6 +1,6 @@
 package me.kright.gametools.ga
 
-case class BasisBlade(bits: Int, signature: Signature):
+case class BasisBlade(bits: Int, signature: Signature) derives CanEqual:
   require(bits >= 0 && bits < signature.bladesCount)
 
   def contains(v: Generator): Boolean =

@@ -91,7 +91,7 @@ final case class Pga3dInertiaSimple(mass: Double,
   override def movedBy(translator: Pga3dTranslator): Pga3dInertiaMovedSimple =
     Pga3dInertiaMovedSimple(translator, this)
 
-  override def movedBy(quaternion: Pga3dQuaternion): Pga3dInertiaSimple =
+  override def movedBy(rotor: Pga3dRotor): Pga3dInertiaSimple =
     this
 
   override def movedBy(motor: Pga3dMotor): Pga3dInertiaMovedSimple =

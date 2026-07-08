@@ -8,8 +8,8 @@ class PermutationTest extends AnyFunSuite:
     check(arr, arr.sorted, expected)
 
   private def check(left: Array[Int], right: Array[Int], expected: Boolean) =
-    assert(Permutation.parity(left, right) == expected)
-    assert(Permutation.parity(right, left) == expected)
+    assert(Permutation.parity(left.toIndexedSeq, right.toIndexedSeq) == expected)
+    assert(Permutation.parity(right.toIndexedSeq, left.toIndexedSeq) == expected)
 
   test("parity") {
     check(Array(0, 1, 2), true)

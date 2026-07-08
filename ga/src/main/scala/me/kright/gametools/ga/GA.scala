@@ -1,9 +1,10 @@
 package me.kright.gametools.ga
 
 import scala.language.implicitConversions
+import scala.math.Ordering.Implicits.seqOrdering
 import scala.util.chaining.*
 
-case class GA(representationConfig: GARepresentationConfig):
+case class GA(representationConfig: GARepresentationConfig) derives CanEqual:
   val signature = representationConfig.signature
 
   val generators: IndexedSeq[Generator] = (0 until signature.generatorsCount).map(i => Generator(i, signature))

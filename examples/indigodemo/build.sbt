@@ -34,7 +34,6 @@ lazy val indigodemo =
       version      := "0.0.1",
       scalaVersion := "3.8.3",
       organization := "com.github.kright",
-      resolvers += "jitpack" at "https://jitpack.io",
       libraryDependencies ++= Seq(
         "org.scalameta" %%% "munit" % "1.1.1" % Test,
       ),

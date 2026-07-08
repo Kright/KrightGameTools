@@ -2,6 +2,8 @@ package me.kright.gametools.ga
 
 import me.kright.gametools.mathutil.Sign
 
+import scala.math.Ordering.Implicits.seqOrdering
+
 
 class GAOperations(val signature: Signature):
   val multiplication = GAMultiplication(signature)

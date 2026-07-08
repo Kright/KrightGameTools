@@ -22,12 +22,12 @@ object SymbolicStr:
   extension (expr: SymbolicStr)
     def isZero: Boolean =
       expr match
-        case Symbolic.Symbol(0.0) => true
+        case Symbolic.Symbol(v: Double) if v == 0.0 => true
         case _ => false
 
     def isOne: Boolean =
       expr match
-        case Symbolic.Symbol(1.0) => true
+        case Symbolic.Symbol(v: Double) if v == 1.0 => true
         case _ => false
 
     def isNumber: Boolean =

@@ -5,7 +5,7 @@ import me.kright.gametools.pga3d.*
 final case class Pga3dInertiaLocal(mass: Double,
                                    mryz: Double,
                                    mrxz: Double,
-                                   mrxy: Double) extends Pga3dInertia:
+                                   mrxy: Double) extends Pga3dInertia derives CanEqual:
 
   override def toString: String =
     s"Pga3dInertiaLocal(mass = $mass, mryz = $mryz, mrxz = $mrxz, mrxy = $mrxy)"
@@ -79,8 +79,8 @@ final case class Pga3dInertiaLocal(mass: Double,
   override def movedBy(motor: Pga3dMotor): Pga3dInertiaMovedLocal =
     Pga3dInertiaMovedLocal(motor, this)
 
-  override def movedBy(quaternion: Pga3dQuaternion): Pga3dInertiaMovedLocal =
-    movedBy(quaternion.toMotor)
+  override def movedBy(rotor: Pga3dRotor): Pga3dInertiaMovedLocal =
+    movedBy(rotor.toMotor)
 
   override def movedBy(translator: Pga3dTranslator): Pga3dInertiaMovedLocal =
     movedBy(translator.toMotor)

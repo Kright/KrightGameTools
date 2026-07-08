@@ -34,7 +34,7 @@ trait Pga3dInertia:
 
   def movedBy(translator: Pga3dTranslator): Pga3dInertia
 
-  def movedBy(quaternion: Pga3dQuaternion): Pga3dInertia
+  def movedBy(rotor: Pga3dRotor): Pga3dInertia
 
 
 /**
@@ -104,6 +104,6 @@ object Pga3dInertia:
     transparent inline def sandwich(inertia: Pga3dInertia) =
       inertia.movedBy(translator)
 
-  extension (quaternion: Pga3dQuaternion)
+  extension (rotor: Pga3dRotor)
     transparent inline def sandwich(inertia: Pga3dInertia) =
-      inertia.movedBy(quaternion)
+      inertia.movedBy(rotor)

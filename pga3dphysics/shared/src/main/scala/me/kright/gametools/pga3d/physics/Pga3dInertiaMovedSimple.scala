@@ -60,8 +60,8 @@ class Pga3dInertiaMovedSimple(val localToGlobal: Pga3dTranslator, val localInert
     val translator = Pga3dTranslator.addVector(motor.geometric(localToGlobal).sandwich(Pga3dPointCenter).toVectorUnsafe)
     Pga3dInertiaMovedSimple(translator, localInertia)
 
-  override def movedBy(quaternion: Pga3dQuaternion): Pga3dInertiaMovedSimple =
-    val translator = Pga3dTranslator.addVector(quaternion.geometric(localToGlobal).sandwich(Pga3dPointCenter).toVectorUnsafe)
+  override def movedBy(rotor: Pga3dRotor): Pga3dInertiaMovedSimple =
+    val translator = Pga3dTranslator.addVector(rotor.geometric(localToGlobal).sandwich(Pga3dPointCenter).toVectorUnsafe)
     Pga3dInertiaMovedSimple(translator, localInertia)
 
   override def movedBy(translator: Pga3dTranslator): Pga3dInertiaMovedSimple =

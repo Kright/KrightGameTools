@@ -53,8 +53,8 @@ class Pga3dInertiaMovedLocal(val localToGlobal: Pga3dMotor,
   override def toInertiaMovedLocal: Pga3dInertiaMovedLocal =
     this
 
-  override def movedBy(quaternion: Pga3dQuaternion) =
-    Pga3dInertiaMovedLocal(quaternion.geometric(localToGlobal), localInertia)
+  override def movedBy(rotor: Pga3dRotor) =
+    Pga3dInertiaMovedLocal(rotor.geometric(localToGlobal), localInertia)
 
   override def movedBy(motor: Pga3dMotor) =
     Pga3dInertiaMovedLocal(motor.geometric(localToGlobal), localInertia)

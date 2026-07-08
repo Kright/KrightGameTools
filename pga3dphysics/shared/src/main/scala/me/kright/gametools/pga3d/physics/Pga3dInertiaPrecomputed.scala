@@ -41,8 +41,8 @@ class Pga3dInertiaPrecomputed(val inertia: Pga3dInertia) extends Pga3dInertia:
     this
 
 
-  override def movedBy(quaternion: Pga3dQuaternion): Pga3dInertia =
-    inertia.movedBy(quaternion)
+  override def movedBy(rotor: Pga3dRotor): Pga3dInertia =
+    inertia.movedBy(rotor)
 
   override def movedBy(motor: Pga3dMotor): Pga3dInertia =
     inertia.movedBy(motor)
