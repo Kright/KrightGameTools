@@ -58,7 +58,7 @@ class ScalaMultivectorSubClass(name: String,
 
   override def generateImports(): String =
     """import scala.annotation.targetName
-      |import me.kright.gametools.mathutil.FlatDoubleSerializer
+      |import me.kright.gametools.flatarray.FlatDoubleSerializer
       |
       |""".stripMargin
 

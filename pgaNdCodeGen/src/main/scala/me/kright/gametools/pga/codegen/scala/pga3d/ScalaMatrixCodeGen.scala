@@ -18,7 +18,7 @@ class ScalaMatrixCodeGen extends ScalaCodeGenClass:
 
   override def generateImports(): String =
     s"""import me.kright.gametools.matrix.Matrix
-       |import me.kright.gametools.mathutil.FlatDoubleSerializer
+       |import me.kright.gametools.flatarray.FlatDoubleSerializer
        |""".stripMargin
 
   override def generateCode(): String =

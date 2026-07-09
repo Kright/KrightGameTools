@@ -1,7 +1,7 @@
 package me.kright.gametools.pga3d.geom
 
 import me.kright.gametools.pga3d.{Pga3dPlane, Pga3dPoint, Pga3dVector}
-import me.kright.gametools.mathutil.FlatDoubleSerializer
+import me.kright.gametools.flatarray.FlatDoubleSerializer
 
 case class Pga3dTriangle(a: Pga3dPoint,
                          b: Pga3dPoint,

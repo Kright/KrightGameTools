@@ -29,19 +29,6 @@ FastRange.cfor(0, _ < n, _ + 1) { i =>
 }
 ```
 
-### FlatDoubleSerializer and FlatDoubleView
-
-`FlatDoubleSerializer[T]` is a typeclass for reading and writing an object as a flat run of `Double`s in an
-`Array[Double]` at a given offset. `derived` uses a macro that inspects a case class whose fields are all `Double`
-and generates the `read`/`write`/`size` code at compile time:
-
-```scala
-case class Vec3(x: Double, y: Double, z: Double) derives FlatDoubleSerializer
-```
-
-`FlatDoubleView[T]` builds on it: a mutable `IndexedSeq[T]` view over an `Array[Double]`, so a packed double buffer
-can be used as a sequence of `T` (with `apply`/`update`, `slice`, `:+`, a builder, etc.) without per-element boxing.
-
 ### Precision helpers
 
 * `EqualityEps` — a wrapper around an epsilon value, passed implicitly.

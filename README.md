@@ -85,8 +85,11 @@ The concepts shared by the pga2d and pga3d modules (the products, bulk and weigh
 the narrowest-result-type rule) are described in [pga-concepts.md](pga-concepts.md).
 
 * [**mathutil**](mathutil/README.md): small utilities shared by the other modules - fast math operations, fast ranges
-  for loop iterations, precision-related helpers, `FlatDoubleSerializer` typeclass for reading and writing objects as
-  flat arrays of doubles.
+  for loop iterations, precision-related helpers.
+* [**flatarray**](flatarray/README.md): home of the `FlatDoubleSerializer` typeclass for reading and writing
+  all-Double case classes as flat runs of `Double`s in an `Array[Double]`. Planned to grow into flat storage of small
+  all-Double structs (PGA points, vectors, quaternions, etc.) with a compile-time-inlined hot path
+  (`FlatView`/`FlatArray`/`FlatBuffer`) so the JVM can scalar-replace temporary struct objects — not implemented yet.
 * [**symbolic**](symbolic/README.md): simple implementation for AST like `(1.0 + ("y" * "x"))` with simplification
   rules. Used by the code generators to derive formulas symbolically.
 * [**ga**](ga/README.md): experimental support for geometric algebra (GA) and plane-based geometric algebra (PGA).

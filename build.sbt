@@ -1,3 +1,5 @@
+import pl.project13.scala.sbt.JmhPlugin
+
 ThisBuild / organization := "me.kright"
 ThisBuild / version := "0.9.1-SNAPSHOT"
 ThisBuild / scalaVersion := "3.8.3"
@@ -62,6 +64,7 @@ lazy val root = (project in file("."))
   ).aggregate(
     symbolic,
     mathutil.jvm, mathutil.js,
+    flatarray.jvm, flatarray.js,
     vector.jvm, vector.js,
     ga,
     matrix.jvm, matrix.js,
@@ -69,6 +72,7 @@ lazy val root = (project in file("."))
     pga2d.jvm, pga2d.js,
     pga3dgeom.jvm, pga3dgeom.js,
     pga3dphysics.jvm, pga3dphysics.js,
+    benchmark,
   )
 
 lazy val mathutil = crossProject(JSPlatform, JVMPlatform)
@@ -76,6 +80,13 @@ lazy val mathutil = crossProject(JSPlatform, JVMPlatform)
   .in(file("mathutil"))
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-mathutil")
+
+lazy val flatarray = crossProject(JSPlatform, JVMPlatform)
+  .withoutSuffixFor(JVMPlatform)
+  .in(file("flatarray"))
+  .settings(scalatestSettings, strictSettings)
+  .settings(sonatypeSettings, name := "gametools-flatarray")
+  .dependsOn(mathutil)
 
 lazy val vector = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
@@ -124,6 +135,7 @@ lazy val pga3d = crossProject(JSPlatform, JVMPlatform)
   .dependsOn(
     matrix,
     mathutil % "test",
+    flatarray,
   )
 
 lazy val pga2d = crossProject(JSPlatform, JVMPlatform)
@@ -134,6 +146,7 @@ lazy val pga2d = crossProject(JSPlatform, JVMPlatform)
   .dependsOn(
     mathutil,
     matrix % "test",
+    flatarray,
   )
 
 lazy val pga3dgeom = crossProject(JSPlatform, JVMPlatform)
@@ -154,4 +167,18 @@ lazy val pga3dphysics = crossProject(JSPlatform, JVMPlatform)
   .dependsOn(
     pga3d % "compile->compile;test->test",
     matrix,
+  )
+
+lazy val benchmark = (project in file("benchmark"))
+  .enablePlugins(JmhPlugin)
+  .settings(scalatestSettings, strictSettings)
+  .settings(
+    name := "gametools-benchmark",
+    publish / skip := true,
+    libraryDependencies += "org.openjdk.jmh" % "jmh-core" % "1.37",
+    libraryDependencies += "org.openjdk.jmh" % "jmh-generator-annprocess" % "1.37",
+  )
+  .dependsOn(
+    flatarray.jvm,
+    pga3d.jvm,
   )

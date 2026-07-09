@@ -1,7 +1,7 @@
 package me.kright.gametools.pga2d
 
 import me.kright.gametools.pga2d.FlatDoubleSerializerPga2dTest.myCheck
-import me.kright.gametools.mathutil.FlatDoubleSerializer
+import me.kright.gametools.flatarray.FlatDoubleSerializer
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

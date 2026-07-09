@@ -1,6 +1,5 @@
-package me.kright.gametools.mathutil
+package me.kright.gametools.flatarray
 
-import me.kright.gametools.mathutil.FlatDoubleSerializer
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

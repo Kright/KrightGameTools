@@ -1,4 +1,4 @@
-package me.kright.gametools.mathutil
+package me.kright.gametools.flatarray
 
 import scala.annotation.nowarn
 import scala.quoted.*

@@ -1,6 +1,6 @@
 package me.kright.gametools.pga2d
 
-import me.kright.gametools.mathutil.FlatDoubleSerializer
+import me.kright.gametools.flatarray.FlatDoubleSerializer
 import org.scalacheck.Gen
 
 object Pga2dGenerators:

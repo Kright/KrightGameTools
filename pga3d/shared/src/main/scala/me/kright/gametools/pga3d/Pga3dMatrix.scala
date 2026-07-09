@@ -1,7 +1,7 @@
 package me.kright.gametools.pga3d
 
 import me.kright.gametools.matrix.Matrix
-import me.kright.gametools.mathutil.FlatDoubleSerializer
+import me.kright.gametools.flatarray.FlatDoubleSerializer
 
 /** this code is generated, see me.kright.gametools.pga.codegen.scala.pga3d.ScalaMatrixCodeGen */
 object Pga3dMatrix:
