@@ -51,11 +51,13 @@ lazy val strictEquality =
 
 lazy val strictSettings = Seq(explicitNulls, wError, strictEquality)
 
-lazy val scalatestSettings =
+lazy val scalatestSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % "3.2.19" % "test",
     "org.scalatestplus" %% "scalacheck-1-18" % "3.2.19.0" % "test"
-  )
+  ),
+  Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-S", "42"),
+)
 
 lazy val root = (project in file("."))
   .settings(

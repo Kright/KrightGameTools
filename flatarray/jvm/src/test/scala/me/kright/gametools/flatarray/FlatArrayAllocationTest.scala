@@ -5,6 +5,7 @@ import FlatMutableView.*
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import java.lang.management.ManagementFactory
+import scala.annotation.nowarn
 
 /**
  * The core performance claim of this module: an `inline def` hot-path method that calls the
@@ -47,7 +48,10 @@ class FlatArrayAllocationTest extends AnyFunSuiteLike:
       runOnce()
     }
 
-    val threadId = Thread.currentThread().threadId()
+    @nowarn("msg=deprecated")
+    def getThreadId(): Long = Thread.currentThread().getId()
+
+    val threadId = getThreadId()
     val before = sunBean.getThreadAllocatedBytes(threadId)
     if (before < 0) {
       cancel("getThreadAllocatedBytes returned an unsupported/negative value on this JVM")

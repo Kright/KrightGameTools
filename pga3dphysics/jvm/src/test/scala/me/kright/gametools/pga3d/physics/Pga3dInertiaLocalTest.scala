@@ -77,7 +77,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
         }
 
       val maxError = errors.reduce(_ max _)
-      println(s"center = $center, maxError = $maxError")
+      // println(s"center = $center, maxError = $maxError")
 
       assert(maxError < expectedMaxError, s"center = $center, maxError = $maxError, but expected $expectedMaxError")
     }
@@ -138,8 +138,8 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
       system.doStep(dt = 0.001, _ => ())
     }
     val end = System.nanoTime()
-    println(s"dt = ${(end - start) / stepsCount}ns")
-    println(system.state.head)
+    // println(s"dt = ${(end - start) / stepsCount}ns")
+    // println(system.state.head)
   }
 
   test("calculate energy accumulation for linear force during rotation") {
@@ -314,7 +314,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
       Pga3dPhysicsSolverGaussLegendre(iterations = 10),
     )
 
-    println(s"mass = ${mass}, k=${k}, freq = ${Math.round(freq)}, dt = ${dt}")
+    // println(s"mass = ${mass}, k=${k}, freq = ${Math.round(freq)}, dt = ${dt}")
 
     for (solver <- solvers) {
       val body = Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(mass, 1.0, 1.0, 1.0), Pga3dMotor.id)
@@ -345,7 +345,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
         maxDpos = Math.max(maxDpos, dPos)
 
         if (step == stepsCount - 1) {
-          println(s"${solver}: dE = ${maxDe}, dPos = ${maxDpos}")
+          // println(s"${solver}: dE = ${maxDe}, dPos = ${maxDpos}")
         }
         // assert(dE <= 1.2e-10)
         // assert(dPos <= 2.4e-8)
@@ -383,6 +383,6 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
           system.getError()
         }
       val maxError = errors.reduce(_ max _)
-      println(s"solver = ${solver}: error = ${maxError}")
+      // println(s"solver = ${solver}: error = ${maxError}")
     }
   }

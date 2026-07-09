@@ -2,6 +2,7 @@ package me.kright.gametools.pga2d
 
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalacheck.Gen
 import scala.language.unsafeNulls
 
 class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
@@ -23,10 +24,15 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
     classOf[Pga2dVector],
   )
 
-  def makeRandom(cls: Class[?]): AnyRef = {
+  def genInstance(cls: Class[?]): Gen[AnyRef] = {
     val constructor = cls.getConstructors.nn.head.nn
-    val args = constructor.getParameterTypes.map(_ => scala.util.Random.nextDouble())
-    constructor.newInstance(args *)
+    val arity = constructor.getParameterCount
+    // Exclude exact 0.0 per component: normalizedByNorm/normalizedByBulk are x / norm, and at zero norm the
+    // generic Pga2dMultivector yields NaN while the typed reps keep structural zeros as 0.0, so the consistency
+    // check would spuriously fail at that singularity. Non-zero components keep every norm non-zero.
+    Gen.listOfN(arity, Gen.double.suchThat(_ != 0.0)).map { args =>
+      constructor.newInstance(args.map(_.asInstanceOf[AnyRef]) *).asInstanceOf[AnyRef]
+    }
   }
 
   private def toMultivector(instance: AnyRef): Pga2dMultivector = {
@@ -60,15 +66,15 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
         val otherType = parameterTypes.head
 
         if (classes.contains(otherType) || (otherType eq classOf[Double])) {
-          val first = makeRandom(cls)
-          val second = makeRandom(otherType)
+          val pairs = for (a <- genInstance(cls); b <- genInstance(otherType)) yield (a, b)
+          forAll(pairs, MinSuccessful(10)) { case (first, second) =>
+            val result = toMultivector(method.invoke(first, second))
+            val result2 = call(toMultivector(first), methodName, toMultivector(second)).asInstanceOf[Pga2dMultivector]
 
-          val result = toMultivector(method.invoke(first, second))
-          val result2 = call(toMultivector(first), methodName, toMultivector(second)).asInstanceOf[Pga2dMultivector]
+            val diff = (result - result2).norm
 
-          val diff = (result - result2).norm
-
-          assert(diff < eps, s"diff = $diff, result1 = {$result}, result2 = {$result2}, first = {$first}, second = {$second}, methodName = $methodName, otherType = $otherType")
+            assert(diff < eps, s"diff = $diff, result1 = {$result}, result2 = {$result2}, first = {$first}, second = {$second}, methodName = $methodName, otherType = $otherType")
+          }
         }
       }
     }
@@ -79,13 +85,13 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
       for (method <- cls.getMethods.filter(_.getName == methodName)) {
         val returnType = method.getReturnType
 
-        val instance = makeRandom(cls)
+        forAll(genInstance(cls), MinSuccessful(10)) { instance =>
+          val result = toMultivector(method.invoke(instance))
+          val result2 = toMultivector(call(toMultivector(instance), methodName))
 
-        val result = toMultivector(method.invoke(instance))
-        val result2 = toMultivector(call(toMultivector(instance), methodName))
-
-        val diff = (result - result2).norm
-        assert(diff < eps, s"diff = $diff, result1 = {$result}, result2 = {$result2}, first = {$instance}, methodName = $methodName, returnType = $returnType")
+          val diff = (result - result2).norm
+          assert(diff < eps, s"diff = $diff, result1 = {$result}, result2 = {$result2}, first = {$instance}, methodName = $methodName, returnType = $returnType")
+        }
       }
     }
   }

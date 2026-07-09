@@ -46,10 +46,11 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     } yield Pga3dVector(x, y, z),
   )
 
-  def p(p: Pga3dInertiaSummable): Unit =
-    println(p.str)
-    println(p)
-    println()
+  def p(p: Pga3dInertiaSummable): Unit = {
+    // println(p.str)
+    // println(p)
+    // println()
+  }
 
   def assertEq(a: Pga3dInertiaSummable, b: Pga3dInertiaSummable, eps: Double = 1e-9): Unit = {
     val n = (a - b).norm

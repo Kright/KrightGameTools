@@ -2,10 +2,7 @@ package me.kright.gametools.pga3d
 
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-
-import scala.annotation.tailrec
-import scala.collection.mutable.ArrayBuffer
-import scala.util.Random
+import org.scalacheck.Gen
 
 class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("rotation is same vectors") {
@@ -18,13 +15,13 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("check for angles near zero") {
     val angles = Seq(0.0, 1e-20, 1e-12, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.1, 1.0)
 
-    val rnd = new Random()
-    rnd.setSeed(123)
-
-    @tailrec
-    def makeQ(): Pga3dRotor =
-      val q = Pga3dRotor(rnd.nextGaussian(), rnd.nextGaussian(), rnd.nextGaussian(), rnd.nextGaussian())
-      if (q.norm < 1e-3) makeQ() else q.normalizedByNorm
+    val scales: Gen[Double] = Gen.chooseNum(0.001, 2.001)
+    val samples: Gen[(Pga3dRotor, Double, Double)] =
+      for (
+        q <- Pga3dGenerators.normalizedRotors;
+        m1 <- scales;
+        m2 <- scales
+      ) yield (q, m1, m2)
 
     for (isNormalizedInput <- Seq(false, true);
          isNearPi <- Seq(false, true);
@@ -35,22 +32,17 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
         if (isNearPi) Pga3dPlaneIdeal(-Math.cos(angle), Math.sin(angle), 0.0)
         else Pga3dPlaneIdeal(Math.cos(angle), Math.sin(angle), 0.0)
 
-      val errors = new ArrayBuffer[Double]()
-      for (i <- 0 until 1000) {
-        val q = makeQ()
+      forAll(samples, MinSuccessful(1000)) { case (q, rawM1, rawM2) =>
         val qFrom = q.sandwich(from)
         val qTo = q.sandwich(to)
 
-        val m1 = if (isNormalizedInput) 1.0 else rnd.nextDouble() * 2 + 0.001
-        val m2 = if (isNormalizedInput) 1.0 else rnd.nextDouble() * 2 + 0.001
+        val m1 = if (isNormalizedInput) 1.0 else rawM1
+        val m2 = if (isNormalizedInput) 1.0 else rawM2
 
         val real = Pga3dRotor.rotation(qFrom * m1, qTo * m2).sandwich(qFrom)
         val err = (real - qTo).norm
-        errors += err
+        assert(err < 2e-8)
       }
-
-      require(errors.max < 2e-8)
-      // println(s"${if (isNormalizedInput) "normalized" else "non normalized"} angle = ${if (isNearPi) "Pi - " else ""}${angle}, errors max ${errors.max}, average ${errors.sum / errors.size}")
     }
   }
 
