@@ -26,7 +26,25 @@ jobs:
         run: |
           echo "${{ secrets.PGP_SECRET }}" | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
-          
+
+      - name: Probe snapshot endpoint auth
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        run: |
+          if [ -z "$SONATYPE_USERNAME" ]; then echo "::error::SONATYPE_USERNAME secret is empty"; exit 1; fi
+          if [ -z "$SONATYPE_PASSWORD" ]; then echo "::error::SONATYPE_PASSWORD secret is empty"; exit 1; fi
+          code=$(curl -s -o /tmp/probe-resp.txt -w "%{http_code}" -X PUT --data "ci auth probe $(date -u +%s)" \
+            -u "$SONATYPE_USERNAME:$SONATYPE_PASSWORD" \
+            "https://central.sonatype.com/repository/maven-snapshots/me/kright/ci-auth-probe/0.0.1-SNAPSHOT/probe.txt")
+          echo "probe PUT status: $code"
+          head -c 500 /tmp/probe-resp.txt || true
+          case "$code" in
+            2*) echo "auth OK" ;;
+            *) echo "::error::snapshot endpoint rejected credentials (HTTP $code)"; exit 1 ;;
+          esac
+
       - name: Publish
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
@@ -34,7 +52,15 @@ jobs:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
         run: |
           sbt +publishSigned
-          
+
+      - name: Verify snapshot landed
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        run: |
+          url="https://central.sonatype.com/repository/maven-snapshots/me/kright/gametools-mathutil_3/0.9.1-SNAPSHOT/maven-metadata.xml"
+          code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+          echo "metadata status: $code for $url"
+          if [ "$code" != "200" ]; then echo "::error::snapshot did not appear in maven-snapshots repo"; exit 1; fi
+
       - name: Release Bundle (only for tags)
         if: startsWith(github.ref, 'refs/tags/v')
         env:
