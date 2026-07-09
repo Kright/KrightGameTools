@@ -37,7 +37,7 @@ jobs:
           if [ -z "$SONATYPE_PASSWORD" ]; then echo "::error::SONATYPE_PASSWORD secret is empty"; exit 1; fi
           code=$(curl -s -o /tmp/probe-resp.txt -w "%{http_code}" -X PUT --data "ci auth probe $(date -u +%s)" \
             -u "$SONATYPE_USERNAME:$SONATYPE_PASSWORD" \
-            "https://central.sonatype.com/repository/maven-snapshots/me/kright/ci-auth-probe/0.0.1-SNAPSHOT/probe.txt")
+            "https://central.sonatype.com/repository/maven-snapshots/me/kright/ci-auth-probe/0.0.1-SNAPSHOT/ci-auth-probe-0.0.1-SNAPSHOT.txt")
           echo "probe PUT status: $code"
           head -c 500 /tmp/probe-resp.txt || true
           case "$code" in
@@ -56,10 +56,11 @@ jobs:
       - name: Verify snapshot landed
         if: "!startsWith(github.ref, 'refs/tags/')"
         run: |
-          url="https://central.sonatype.com/repository/maven-snapshots/me/kright/gametools-mathutil_3/0.9.1-SNAPSHOT/maven-metadata.xml"
-          code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
-          echo "metadata status: $code for $url"
-          if [ "$code" != "200" ]; then echo "::error::snapshot did not appear in maven-snapshots repo"; exit 1; fi
+          url="https://central.sonatype.com/repository/maven-snapshots/me/kright/gametools-mathutil_3/0.9.1-SNAPSHOT/gametools-mathutil_3-0.9.1-SNAPSHOT.pom"
+          code=$(curl -s -o /dev/null -D /tmp/headers.txt -w "%{http_code}" "$url")
+          echo "pom status: $code for $url"
+          grep -i "last-modified" /tmp/headers.txt || true
+          if [ "$code" != "200" ]; then echo "::error::snapshot pom not found in maven-snapshots repo"; exit 1; fi
 
       - name: Release Bundle (only for tags)
         if: startsWith(github.ref, 'refs/tags/v')
