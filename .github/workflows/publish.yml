@@ -58,7 +58,13 @@ jobs:
       - name: Verify snapshot landed
         if: "!startsWith(github.ref, 'refs/tags/')"
         run: |
-          url="https://central.sonatype.com/repository/maven-snapshots/me/kright/gametools-mathutil_3/0.9.1-SNAPSHOT/gametools-mathutil_3-0.9.1-SNAPSHOT.pom"
+          version=$(grep -oP '(?<=ThisBuild / version := ")[^"]+' build.sbt)
+          if [ -z "$version" ]; then echo "::error::could not extract version from build.sbt"; exit 1; fi
+          if [[ "$version" != *-SNAPSHOT ]]; then
+            echo "::notice::non-snapshot version $version on branch push, skipping snapshot verification"
+            exit 0
+          fi
+          url="https://central.sonatype.com/repository/maven-snapshots/me/kright/gametools-mathutil_3/${version}/gametools-mathutil_3-${version}.pom"
           code=$(curl -s -o /dev/null -D /tmp/headers.txt -w "%{http_code}" "$url")
           echo "pom status: $code for $url"
           grep -i "last-modified" /tmp/headers.txt || true
