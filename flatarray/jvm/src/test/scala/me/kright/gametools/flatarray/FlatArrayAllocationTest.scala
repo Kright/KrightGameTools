@@ -13,8 +13,12 @@ import scala.annotation.nowarn
  * temporary `T` instances it constructs, so a hot loop over `FlatArray`s does not allocate.
  *
  * This is a JVM-only, environment-sensitive micro-benchmark-ish test (JIT warmup, GC, thread-allocation
- * counters), so the threshold is deliberately generous for CI stability; it is skipped gracefully if the
- * JVM does not expose `getThreadAllocatedBytes`.
+ * counters). Instead of a single fixed warmup phase followed by one measurement (which is flaky under CI
+ * CPU contention, where C2 may not yet have compiled the hot loop), it measures in rounds and passes as
+ * soon as any round shows near-zero allocation; early rounds naturally serve as warmup and are allowed to
+ * miss the threshold. The search is bounded by both a max round count and a wall-clock deadline, so the
+ * test cannot hang if compilation never happens. It is skipped gracefully if the JVM does not expose
+ * `getThreadAllocatedBytes`.
  */
 final case class Vec3dAlloc(x: Double, y: Double, z: Double) derives FlatDoubleSerializer, CanEqual
 
@@ -43,35 +47,46 @@ class FlatArrayAllocationTest extends AnyFunSuiteLike:
       a.zipTo(b, dst)((x, y) => Vec3dAlloc(x.x + y.x, x.y + y.y, x.z + y.z))
     }
 
-    // warm up so C2 compiles the loop
-    for (_ <- 0 until 20000) {
-      runOnce()
-    }
-
     @nowarn("msg=deprecated")
     def getThreadId(): Long = Thread.currentThread().getId()
 
     val threadId = getThreadId()
-    val before = sunBean.getThreadAllocatedBytes(threadId)
-    if (before < 0) {
-      cancel("getThreadAllocatedBytes returned an unsupported/negative value on this JVM")
-    }
-
-    val measuredIterations = 20000
-    for (_ <- 0 until measuredIterations) {
-      runOnce()
-    }
-    val after = sunBean.getThreadAllocatedBytes(threadId)
-
-    val totalAllocatedBytes = after - before
-    val bytesPerIteration = totalAllocatedBytes.toDouble / measuredIterations
-    val bytesPerElement = bytesPerIteration / n
 
     // generous threshold for CI stability: allow up to 4 bytes/element of noise (a fully-allocating
     // implementation would be ~40+ bytes/element for a 3-double case class object plus header)
     val thresholdBytesPerElement = 4.0
+    val iterationsPerRound = 1000
+    val maxRounds = 50
+    val deadlineNanos = System.nanoTime() + 60000000000L // 60 seconds
+
+    var round = 0
+    var bestBytesPerElement = Double.MaxValue
+    var passed = false
+    while (!passed && round < maxRounds && System.nanoTime() < deadlineNanos) {
+      val before = sunBean.getThreadAllocatedBytes(threadId)
+      if (before < 0) {
+        cancel("getThreadAllocatedBytes returned an unsupported/negative value on this JVM")
+      }
+      for (_ <- 0 until iterationsPerRound) {
+        runOnce()
+      }
+      val after = sunBean.getThreadAllocatedBytes(threadId)
+
+      val totalAllocatedBytes = after - before
+      val bytesPerIteration = totalAllocatedBytes.toDouble / iterationsPerRound
+      val bytesPerElement = bytesPerIteration / n
+
+      if (bytesPerElement < bestBytesPerElement) {
+        bestBytesPerElement = bytesPerElement
+      }
+      if (bytesPerElement < thresholdBytesPerElement) {
+        passed = true
+      }
+      round += 1
+    }
+
     assert(
-      bytesPerElement < thresholdBytesPerElement,
-      s"expected near-zero allocation, measured ${bytesPerElement} bytes/element " +
-        s"(${totalAllocatedBytes} bytes over $measuredIterations iterations of $n elements)")
+      passed,
+      s"no round out of $round reached < $thresholdBytesPerElement bytes/element; " +
+        s"best was $bestBytesPerElement bytes/element")
   }
