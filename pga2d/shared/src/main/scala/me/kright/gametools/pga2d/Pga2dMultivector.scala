@@ -179,16 +179,28 @@ final case class Pga2dMultivector(s: Double = 0.0,
       i = (i + mult * v.i),
     )
 
-  def multiplyElementwise(v: Pga2dMultivector): Pga2dMultivector =
+  def scale(v: Pga2dMultivector): Pga2dMultivector =
     Pga2dMultivector(
       s = s * v.s,
-      w = v.w * w,
-      x = v.x * x,
-      y = v.y * y,
-      wx = v.wx * wx,
-      wy = v.wy * wy,
-      xy = v.xy * xy,
+      w = w * v.w,
+      x = x * v.x,
+      y = y * v.y,
+      wx = wx * v.wx,
+      wy = wy * v.wy,
+      xy = xy * v.xy,
       i = i * v.i,
+    )
+
+  def reciprocal: Pga2dMultivector =
+    Pga2dMultivector(
+      s = 1.0 / s,
+      w = 1.0 / w,
+      x = 1.0 / x,
+      y = 1.0 / y,
+      wx = 1.0 / wx,
+      wy = 1.0 / wy,
+      xy = 1.0 / xy,
+      i = 1.0 / i,
     )
 
   def toMotorUnsafe: Pga2dMotor =

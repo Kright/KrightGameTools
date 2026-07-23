@@ -186,12 +186,20 @@ final case class Pga3dProjectivePoint(x: Double = 0.0,
       w = w,
     )
 
-  def multiplyElementwise(v: Pga3dProjectivePoint): Pga3dProjectivePoint =
+  def scale(v: Pga3dProjectivePoint): Pga3dProjectivePoint =
     Pga3dProjectivePoint(
-      x = -v.x * x,
-      y = v.y * y,
-      z = -v.z * z,
-      w = v.w * w,
+      x = x * v.x,
+      y = y * v.y,
+      z = z * v.z,
+      w = w * v.w,
+    )
+
+  def reciprocal: Pga3dProjectivePoint =
+    Pga3dProjectivePoint(
+      x = 1.0 / x,
+      y = 1.0 / y,
+      z = 1.0 / z,
+      w = 1.0 / w,
     )
 
   def toMultivector: Pga3dMultivector =

@@ -90,10 +90,16 @@ final case class Pga2dLineIdeal(x: Double = 0.0,
       y = (y + mult * v.y),
     )
 
-  def multiplyElementwise(v: Pga2dLineIdeal): Pga2dLineIdeal =
+  def scale(v: Pga2dLineIdeal): Pga2dLineIdeal =
     Pga2dLineIdeal(
-      x = v.x * x,
-      y = v.y * y,
+      x = x * v.x,
+      y = y * v.y,
+    )
+
+  def reciprocal: Pga2dLineIdeal =
+    Pga2dLineIdeal(
+      x = 1.0 / x,
+      y = 1.0 / y,
     )
 
   def toMultivector: Pga2dMultivector =

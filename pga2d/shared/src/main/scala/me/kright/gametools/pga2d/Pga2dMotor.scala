@@ -163,12 +163,20 @@ final case class Pga2dMotor(s: Double = 0.0,
       xy = (xy + mult * v.xy),
     )
 
-  def multiplyElementwise(v: Pga2dMotor): Pga2dMotor =
+  def scale(v: Pga2dMotor): Pga2dMotor =
     Pga2dMotor(
       s = s * v.s,
-      wx = v.wx * wx,
-      wy = v.wy * wy,
-      xy = v.xy * xy,
+      wx = wx * v.wx,
+      wy = wy * v.wy,
+      xy = xy * v.xy,
+    )
+
+  def reciprocal: Pga2dMotor =
+    Pga2dMotor(
+      s = 1.0 / s,
+      wx = 1.0 / wx,
+      wy = 1.0 / wy,
+      xy = 1.0 / xy,
     )
 
   def log(): Pga2dProjectivePoint =

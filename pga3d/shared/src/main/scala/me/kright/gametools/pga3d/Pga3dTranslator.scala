@@ -133,11 +133,18 @@ final case class Pga3dTranslator(wx: Double = 0.0,
       wz = (wz + mult * v.wz),
     )
 
-  def multiplyElementwise(v: Pga3dTranslator): Pga3dTranslator =
+  def scale(v: Pga3dTranslator): Pga3dTranslator =
     Pga3dTranslator(
-      wx = v.wx * wx,
-      wy = v.wy * wy,
-      wz = v.wz * wz,
+      wx = wx * v.wx,
+      wy = wy * v.wy,
+      wz = wz * v.wz,
+    )
+
+  def reciprocal: Pga3dTranslator =
+    Pga3dTranslator(
+      wx = 1.0 / wx,
+      wy = 1.0 / wy,
+      wz = 1.0 / wz,
     )
 
   def log(): Pga3dBivectorWeight =

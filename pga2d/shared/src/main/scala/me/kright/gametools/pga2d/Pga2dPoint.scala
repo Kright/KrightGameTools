@@ -174,10 +174,16 @@ final case class Pga2dPoint(x: Double = 0.0,
       y = (y + mult * v.y),
     )
 
-  def multiplyElementwise(v: Pga2dPoint): Pga2dPoint =
+  def scale(v: Pga2dPoint): Pga2dPoint =
     Pga2dPoint(
-      x = -v.x * x,
-      y = v.y * y,
+      x = x * v.x,
+      y = y * v.y,
+    )
+
+  def reciprocal: Pga2dPoint =
+    Pga2dPoint(
+      x = 1.0 / x,
+      y = 1.0 / y,
     )
 
   def toMultivector: Pga2dMultivector =

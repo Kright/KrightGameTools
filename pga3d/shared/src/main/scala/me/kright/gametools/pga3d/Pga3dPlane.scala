@@ -125,12 +125,20 @@ final case class Pga3dPlane(x: Double = 0.0,
       w = (w + mult * v.w),
     )
 
-  def multiplyElementwise(v: Pga3dPlane): Pga3dPlane =
+  def scale(v: Pga3dPlane): Pga3dPlane =
     Pga3dPlane(
-      x = v.x * x,
-      y = v.y * y,
-      z = v.z * z,
-      w = v.w * w,
+      x = x * v.x,
+      y = y * v.y,
+      z = z * v.z,
+      w = w * v.w,
+    )
+
+  def reciprocal: Pga3dPlane =
+    Pga3dPlane(
+      x = 1.0 / x,
+      y = 1.0 / y,
+      z = 1.0 / z,
+      w = 1.0 / w,
     )
 
   def toMultivector: Pga3dMultivector =

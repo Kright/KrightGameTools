@@ -125,10 +125,16 @@ final case class Pga2dTranslator(wx: Double = 0.0,
       wy = (wy + mult * v.wy),
     )
 
-  def multiplyElementwise(v: Pga2dTranslator): Pga2dTranslator =
+  def scale(v: Pga2dTranslator): Pga2dTranslator =
     Pga2dTranslator(
-      wx = v.wx * wx,
-      wy = v.wy * wy,
+      wx = wx * v.wx,
+      wy = wy * v.wy,
+    )
+
+  def reciprocal: Pga2dTranslator =
+    Pga2dTranslator(
+      wx = 1.0 / wx,
+      wy = 1.0 / wy,
     )
 
   def log(): Pga2dVector =

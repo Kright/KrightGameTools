@@ -38,6 +38,35 @@ object DefPlusMinusMadd:
           makeMethod(self + v * Sym("mult"), s"def madd(v: ${cls.typeName}, mult: Double)", targetName = null)
       }
 
-      makeMethod(self.multiplyElementwise(cls.makeSymbolic("v")), s"def multiplyElementwise(v: ${cls.typeName})", targetName = null)
+      // Unlike other operations, `scale` and `reciprocal` work on raw class fields, not on basis
+      // blade coefficients: for classes whose fields differ from blade coefficients by sign
+      // (e.g. vector/point trivectors) a blade-wise product would reintroduce those signs and
+      // surprise users expecting plain componentwise arithmetic. They are intentionally NOT
+      // consistent with any multivector operation. `reciprocal` pairs with `scale` to express
+      // componentwise division: a.scale(b.reciprocal).
+      if (!cls.isObject) {
+        code("")
+        code(s"def scale(v: ${cls.typeName}): ${cls.typeName} =")
+        code.block {
+          code(s"${cls.typeName}(")
+          code.block {
+            for (f <- cls.variableFields) {
+              code(s"${f.name} = ${f.name} * v.${f.name},")
+            }
+          }
+          code(")")
+        }
+        code("")
+        code(s"def reciprocal: ${cls.typeName} =")
+        code.block {
+          code(s"${cls.typeName}(")
+          code.block {
+            for (f <- cls.variableFields) {
+              code(s"${f.name} = 1.0 / ${f.name},")
+            }
+          }
+          code(")")
+        }
+      }
     }
   }

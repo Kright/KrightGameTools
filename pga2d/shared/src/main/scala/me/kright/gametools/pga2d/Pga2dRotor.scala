@@ -103,10 +103,16 @@ final case class Pga2dRotor(s: Double = 0.0,
       xy = (xy + mult * v.xy),
     )
 
-  def multiplyElementwise(v: Pga2dRotor): Pga2dRotor =
+  def scale(v: Pga2dRotor): Pga2dRotor =
     Pga2dRotor(
       s = s * v.s,
-      xy = v.xy * xy,
+      xy = xy * v.xy,
+    )
+
+  def reciprocal: Pga2dRotor =
+    Pga2dRotor(
+      s = 1.0 / s,
+      xy = 1.0 / xy,
     )
 
   /**

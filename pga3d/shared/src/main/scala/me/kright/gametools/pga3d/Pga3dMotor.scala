@@ -210,16 +210,28 @@ final case class Pga3dMotor(s: Double = 0.0,
       i = (i + mult * v.i),
     )
 
-  def multiplyElementwise(v: Pga3dMotor): Pga3dMotor =
+  def scale(v: Pga3dMotor): Pga3dMotor =
     Pga3dMotor(
       s = s * v.s,
-      wx = v.wx * wx,
-      wy = v.wy * wy,
-      wz = v.wz * wz,
-      xy = v.xy * xy,
-      xz = v.xz * xz,
-      yz = v.yz * yz,
+      wx = wx * v.wx,
+      wy = wy * v.wy,
+      wz = wz * v.wz,
+      xy = xy * v.xy,
+      xz = xz * v.xz,
+      yz = yz * v.yz,
       i = i * v.i,
+    )
+
+  def reciprocal: Pga3dMotor =
+    Pga3dMotor(
+      s = 1.0 / s,
+      wx = 1.0 / wx,
+      wy = 1.0 / wy,
+      wz = 1.0 / wz,
+      xy = 1.0 / xy,
+      xz = 1.0 / xz,
+      yz = 1.0 / yz,
+      i = 1.0 / i,
     )
 
   def log(): Pga3dBivector =

@@ -116,11 +116,18 @@ final case class Pga2dLine(x: Double = 0.0,
       w = (w + mult * v.w),
     )
 
-  def multiplyElementwise(v: Pga2dLine): Pga2dLine =
+  def scale(v: Pga2dLine): Pga2dLine =
     Pga2dLine(
-      x = v.x * x,
-      y = v.y * y,
-      w = v.w * w,
+      x = x * v.x,
+      y = y * v.y,
+      w = w * v.w,
+    )
+
+  def reciprocal: Pga2dLine =
+    Pga2dLine(
+      x = 1.0 / x,
+      y = 1.0 / y,
+      w = 1.0 / w,
     )
 
   def toMultivector: Pga2dMultivector =

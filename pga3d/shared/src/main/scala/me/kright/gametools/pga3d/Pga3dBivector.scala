@@ -203,14 +203,24 @@ final case class Pga3dBivector(wx: Double = 0.0,
       yz = yz,
     )
 
-  def multiplyElementwise(v: Pga3dBivector): Pga3dBivector =
+  def scale(v: Pga3dBivector): Pga3dBivector =
     Pga3dBivector(
-      wx = v.wx * wx,
-      wy = v.wy * wy,
-      wz = v.wz * wz,
-      xy = v.xy * xy,
-      xz = v.xz * xz,
-      yz = v.yz * yz,
+      wx = wx * v.wx,
+      wy = wy * v.wy,
+      wz = wz * v.wz,
+      xy = xy * v.xy,
+      xz = xz * v.xz,
+      yz = yz * v.yz,
+    )
+
+  def reciprocal: Pga3dBivector =
+    Pga3dBivector(
+      wx = 1.0 / wx,
+      wy = 1.0 / wy,
+      wz = 1.0 / wz,
+      xy = 1.0 / xy,
+      xz = 1.0 / xz,
+      yz = 1.0 / yz,
     )
 
   def exp(): Pga3dMotor =

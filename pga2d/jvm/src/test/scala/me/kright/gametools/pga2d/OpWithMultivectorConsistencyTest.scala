@@ -101,7 +101,6 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
       // generated +/- carry @targetName("plus")/("minus"), so reflection sees those names
       "plus",
       "minus",
-      "multiplyElementwise",
       "geometric",
       "dot",
       "wedge",

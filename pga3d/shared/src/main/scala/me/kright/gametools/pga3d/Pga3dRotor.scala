@@ -118,12 +118,20 @@ final case class Pga3dRotor(s: Double = 0.0,
       yz = (yz + mult * v.yz),
     )
 
-  def multiplyElementwise(v: Pga3dRotor): Pga3dRotor =
+  def scale(v: Pga3dRotor): Pga3dRotor =
     Pga3dRotor(
       s = s * v.s,
-      xy = v.xy * xy,
-      xz = v.xz * xz,
-      yz = v.yz * yz,
+      xy = xy * v.xy,
+      xz = xz * v.xz,
+      yz = yz * v.yz,
+    )
+
+  def reciprocal: Pga3dRotor =
+    Pga3dRotor(
+      s = 1.0 / s,
+      xy = 1.0 / xy,
+      xz = 1.0 / xz,
+      yz = 1.0 / yz,
     )
 
   def log(): Pga3dBivectorBulk =

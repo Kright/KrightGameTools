@@ -80,9 +80,14 @@ final case class Pga3dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
       i = (i + mult * v.i),
     )
 
-  def multiplyElementwise(v: Pga3dPseudoScalar): Pga3dPseudoScalar =
+  def scale(v: Pga3dPseudoScalar): Pga3dPseudoScalar =
     Pga3dPseudoScalar(
       i = i * v.i,
+    )
+
+  def reciprocal: Pga3dPseudoScalar =
+    Pga3dPseudoScalar(
+      i = 1.0 / i,
     )
 
   def toMultivector: Pga3dMultivector =

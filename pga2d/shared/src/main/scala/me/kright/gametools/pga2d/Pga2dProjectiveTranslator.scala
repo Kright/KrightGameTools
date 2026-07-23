@@ -124,11 +124,18 @@ final case class Pga2dProjectiveTranslator(s: Double = 0.0,
       wy = (wy + mult * v.wy),
     )
 
-  def multiplyElementwise(v: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator =
+  def scale(v: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator =
     Pga2dProjectiveTranslator(
       s = s * v.s,
-      wx = v.wx * wx,
-      wy = v.wy * wy,
+      wx = wx * v.wx,
+      wy = wy * v.wy,
+    )
+
+  def reciprocal: Pga2dProjectiveTranslator =
+    Pga2dProjectiveTranslator(
+      s = 1.0 / s,
+      wx = 1.0 / wx,
+      wy = 1.0 / wy,
     )
 
   def toMultivector: Pga2dMultivector =

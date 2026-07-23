@@ -97,9 +97,6 @@ object Pga2dPointCenter:
       xy = (1.0 + mult),
     )
 
-  def multiplyElementwise(v: Pga2dPointCenter.type): Pga2dPointCenter.type =
-    Pga2dPointCenter
-
   def toMultivector: Pga2dMultivector =
     Pga2dMultivector(
       s = 0.0,

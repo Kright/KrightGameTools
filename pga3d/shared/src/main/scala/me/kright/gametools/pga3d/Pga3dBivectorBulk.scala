@@ -161,11 +161,18 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       yz = yz,
     )
 
-  def multiplyElementwise(v: Pga3dBivectorBulk): Pga3dBivectorBulk =
+  def scale(v: Pga3dBivectorBulk): Pga3dBivectorBulk =
     Pga3dBivectorBulk(
-      xy = v.xy * xy,
-      xz = v.xz * xz,
-      yz = v.yz * yz,
+      xy = xy * v.xy,
+      xz = xz * v.xz,
+      yz = yz * v.yz,
+    )
+
+  def reciprocal: Pga3dBivectorBulk =
+    Pga3dBivectorBulk(
+      xy = 1.0 / xy,
+      xz = 1.0 / xz,
+      yz = 1.0 / yz,
     )
 
   def exp(): Pga3dRotor =

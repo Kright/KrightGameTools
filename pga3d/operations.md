@@ -267,7 +267,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dMultivector): Pga3dMultivector`
 - `-(v: Pga3dMultivector): Pga3dMultivector`
 - `madd(v: Pga3dMultivector, mult: Double): Pga3dMultivector`
-- `multiplyElementwise(v: Pga3dMultivector): Pga3dMultivector`
+- `scale(v: Pga3dMultivector): Pga3dMultivector`
+- `reciprocal: Pga3dMultivector`
 - `toMotorUnsafe: Pga3dMotor`
 - `toPlaneUnsafe: Pga3dPlane`
 - `toBivectorUnsafe: Pga3dBivector`
@@ -304,7 +305,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dMotor): Pga3dMotor`
 - `-(v: Pga3dMotor): Pga3dMotor`
 - `madd(v: Pga3dMotor, mult: Double): Pga3dMotor`
-- `multiplyElementwise(v: Pga3dMotor): Pga3dMotor`
+- `scale(v: Pga3dMotor): Pga3dMotor`
+- `reciprocal: Pga3dMotor`
 - `log(): Pga3dBivector`
 - `toMultivector: Pga3dMultivector`
 - `toBivectorUnsafe: Pga3dBivector`
@@ -341,7 +343,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dPlane): Pga3dPlane`
 - `-(v: Pga3dPlane): Pga3dPlane`
 - `madd(v: Pga3dPlane, mult: Double): Pga3dPlane`
-- `multiplyElementwise(v: Pga3dPlane): Pga3dPlane`
+- `scale(v: Pga3dPlane): Pga3dPlane`
+- `reciprocal: Pga3dPlane`
 - `toMultivector: Pga3dMultivector`
 - `toPlaneIdealUnsafe: Pga3dPlaneIdeal`
 
@@ -373,7 +376,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dBivectorWeight): Pga3dBivector`
 - `-(v: Pga3dBivectorWeight): Pga3dBivector`
 - `madd(v: Pga3dBivectorWeight, mult: Double): Pga3dBivector`
-- `multiplyElementwise(v: Pga3dBivector): Pga3dBivector`
+- `scale(v: Pga3dBivector): Pga3dBivector`
+- `reciprocal: Pga3dBivector`
 - `exp(): Pga3dMotor`
 - `exp(t: Double): Pga3dMotor`
 - `split(): (Pga3dBivector, Pga3dBivectorWeight)`
@@ -415,7 +419,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dVector): Pga3dProjectivePoint`
 - `-(v: Pga3dVector): Pga3dProjectivePoint`
 - `madd(v: Pga3dVector, mult: Double): Pga3dProjectivePoint`
-- `multiplyElementwise(v: Pga3dProjectivePoint): Pga3dProjectivePoint`
+- `scale(v: Pga3dProjectivePoint): Pga3dProjectivePoint`
+- `reciprocal: Pga3dProjectivePoint`
 - `toMultivector: Pga3dMultivector`
 - `toVectorUnsafe: Pga3dVector`
 - `toPointUnsafe: Pga3dPoint`
@@ -441,7 +446,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dRotor): Pga3dRotor`
 - `-(v: Pga3dRotor): Pga3dRotor`
 - `madd(v: Pga3dRotor, mult: Double): Pga3dRotor`
-- `multiplyElementwise(v: Pga3dRotor): Pga3dRotor`
+- `scale(v: Pga3dRotor): Pga3dRotor`
+- `reciprocal: Pga3dRotor`
 - `log(): Pga3dBivectorBulk`
 - `toMultivector: Pga3dMultivector`
 - `toMotor: Pga3dMotor`
@@ -481,7 +487,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dProjectiveTranslator): Pga3dProjectiveTranslator`
 - `-(v: Pga3dProjectiveTranslator): Pga3dProjectiveTranslator`
 - `madd(v: Pga3dProjectiveTranslator, mult: Double): Pga3dProjectiveTranslator`
-- `multiplyElementwise(v: Pga3dProjectiveTranslator): Pga3dProjectiveTranslator`
+- `scale(v: Pga3dProjectiveTranslator): Pga3dProjectiveTranslator`
+- `reciprocal: Pga3dProjectiveTranslator`
 - `toMultivector: Pga3dMultivector`
 - `toMotor: Pga3dMotor`
 - `toBivectorUnsafe: Pga3dBivector`
@@ -512,7 +519,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dTranslator): Pga3dProjectiveTranslator`
 - `-(v: Pga3dTranslator): Pga3dBivectorWeight`
 - `madd(v: Pga3dTranslator, mult: Double): Pga3dProjectiveTranslator`
-- `multiplyElementwise(v: Pga3dTranslator): Pga3dTranslator`
+- `scale(v: Pga3dTranslator): Pga3dTranslator`
+- `reciprocal: Pga3dTranslator`
 - `log(): Pga3dBivectorWeight`
 - `toMultivector: Pga3dMultivector`
 - `toMotor: Pga3dMotor`
@@ -545,7 +553,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dVector): Pga3dVector`
 - `-(v: Pga3dVector): Pga3dVector`
 - `madd(v: Pga3dVector, mult: Double): Pga3dVector`
-- `multiplyElementwise(v: Pga3dVector): Pga3dVector`
+- `scale(v: Pga3dVector): Pga3dVector`
+- `reciprocal: Pga3dVector`
 - `toMultivector: Pga3dMultivector`
 - `toProjectivePoint: Pga3dProjectivePoint`
 - `toPointUnsafe: Pga3dPoint`
@@ -579,7 +588,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dVector): Pga3dPoint`
 - `-(v: Pga3dVector): Pga3dPoint`
 - `madd(v: Pga3dVector, mult: Double): Pga3dPoint`
-- `multiplyElementwise(v: Pga3dPoint): Pga3dPoint`
+- `scale(v: Pga3dPoint): Pga3dPoint`
+- `reciprocal: Pga3dPoint`
 - `toMultivector: Pga3dMultivector`
 - `toProjectivePoint: Pga3dProjectivePoint`
 - `toVectorUnsafe: Pga3dVector`
@@ -604,7 +614,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dPlaneIdeal): Pga3dPlaneIdeal`
 - `-(v: Pga3dPlaneIdeal): Pga3dPlaneIdeal`
 - `madd(v: Pga3dPlaneIdeal, mult: Double): Pga3dPlaneIdeal`
-- `multiplyElementwise(v: Pga3dPlaneIdeal): Pga3dPlaneIdeal`
+- `scale(v: Pga3dPlaneIdeal): Pga3dPlaneIdeal`
+- `reciprocal: Pga3dPlaneIdeal`
 - `toMultivector: Pga3dMultivector`
 - `toPlane: Pga3dPlane`
 
@@ -632,7 +643,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dBivectorWeight): Pga3dBivector`
 - `-(v: Pga3dBivectorWeight): Pga3dBivector`
 - `madd(v: Pga3dBivectorWeight, mult: Double): Pga3dBivector`
-- `multiplyElementwise(v: Pga3dBivectorBulk): Pga3dBivectorBulk`
+- `scale(v: Pga3dBivectorBulk): Pga3dBivectorBulk`
+- `reciprocal: Pga3dBivectorBulk`
 - `exp(): Pga3dRotor`
 - `exp(t: Double): Pga3dRotor`
 - `toMultivector: Pga3dMultivector`
@@ -664,7 +676,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dBivectorWeight): Pga3dBivectorWeight`
 - `-(v: Pga3dBivectorWeight): Pga3dBivectorWeight`
 - `madd(v: Pga3dBivectorWeight, mult: Double): Pga3dBivectorWeight`
-- `multiplyElementwise(v: Pga3dBivectorWeight): Pga3dBivectorWeight`
+- `scale(v: Pga3dBivectorWeight): Pga3dBivectorWeight`
+- `reciprocal: Pga3dBivectorWeight`
 - `exp(): Pga3dTranslator`
 - `exp(t: Double): Pga3dTranslator`
 - `toMultivector: Pga3dMultivector`
@@ -691,7 +704,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `+(v: Pga3dPseudoScalar): Pga3dPseudoScalar`
 - `-(v: Pga3dPseudoScalar): Pga3dPseudoScalar`
 - `madd(v: Pga3dPseudoScalar, mult: Double): Pga3dPseudoScalar`
-- `multiplyElementwise(v: Pga3dPseudoScalar): Pga3dPseudoScalar`
+- `scale(v: Pga3dPseudoScalar): Pga3dPseudoScalar`
+- `reciprocal: Pga3dPseudoScalar`
 - `toMultivector: Pga3dMultivector`
 - `toMotor: Pga3dMotor`
 
@@ -712,7 +726,6 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `/(v: Double): Pga3dProjectivePoint`
 - `+(v: Pga3dPointCenter.type): Pga3dProjectivePoint`
 - `madd(v: Pga3dPointCenter.type, mult: Double): Pga3dProjectivePoint`
-- `multiplyElementwise(v: Pga3dPointCenter.type): Pga3dPointCenter.type`
 - `toMultivector: Pga3dMultivector`
 - `toProjectivePoint: Pga3dProjectivePoint`
 - `toVectorUnsafe: Pga3dVector`

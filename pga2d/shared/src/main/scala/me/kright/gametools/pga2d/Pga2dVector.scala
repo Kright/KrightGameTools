@@ -146,10 +146,16 @@ final case class Pga2dVector(x: Double = 0.0,
       y = (y + mult * v.y),
     )
 
-  def multiplyElementwise(v: Pga2dVector): Pga2dVector =
+  def scale(v: Pga2dVector): Pga2dVector =
     Pga2dVector(
-      x = -v.x * x,
-      y = v.y * y,
+      x = x * v.x,
+      y = y * v.y,
+    )
+
+  def reciprocal: Pga2dVector =
+    Pga2dVector(
+      x = 1.0 / x,
+      y = 1.0 / y,
     )
 
   def exp(): Pga2dTranslator =

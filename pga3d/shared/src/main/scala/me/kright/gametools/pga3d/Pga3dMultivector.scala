@@ -267,24 +267,44 @@ final case class Pga3dMultivector(s: Double = 0.0,
       i = (i + mult * v.i),
     )
 
-  def multiplyElementwise(v: Pga3dMultivector): Pga3dMultivector =
+  def scale(v: Pga3dMultivector): Pga3dMultivector =
     Pga3dMultivector(
       s = s * v.s,
-      w = v.w * w,
-      x = v.x * x,
-      y = v.y * y,
-      z = v.z * z,
-      wx = v.wx * wx,
-      wy = v.wy * wy,
-      wz = v.wz * wz,
-      xy = v.xy * xy,
-      xz = v.xz * xz,
-      yz = v.yz * yz,
-      wxy = v.wxy * wxy,
-      wxz = v.wxz * wxz,
-      wyz = v.wyz * wyz,
-      xyz = v.xyz * xyz,
+      w = w * v.w,
+      x = x * v.x,
+      y = y * v.y,
+      z = z * v.z,
+      wx = wx * v.wx,
+      wy = wy * v.wy,
+      wz = wz * v.wz,
+      xy = xy * v.xy,
+      xz = xz * v.xz,
+      yz = yz * v.yz,
+      wxy = wxy * v.wxy,
+      wxz = wxz * v.wxz,
+      wyz = wyz * v.wyz,
+      xyz = xyz * v.xyz,
       i = i * v.i,
+    )
+
+  def reciprocal: Pga3dMultivector =
+    Pga3dMultivector(
+      s = 1.0 / s,
+      w = 1.0 / w,
+      x = 1.0 / x,
+      y = 1.0 / y,
+      z = 1.0 / z,
+      wx = 1.0 / wx,
+      wy = 1.0 / wy,
+      wz = 1.0 / wz,
+      xy = 1.0 / xy,
+      xz = 1.0 / xz,
+      yz = 1.0 / yz,
+      wxy = 1.0 / wxy,
+      wxz = 1.0 / wxz,
+      wyz = 1.0 / wyz,
+      xyz = 1.0 / xyz,
+      i = 1.0 / i,
     )
 
   def toMotorUnsafe: Pga3dMotor =

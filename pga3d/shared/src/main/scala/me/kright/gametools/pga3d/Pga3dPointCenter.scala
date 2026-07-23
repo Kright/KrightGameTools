@@ -111,9 +111,6 @@ object Pga3dPointCenter:
       w = (1.0 + mult),
     )
 
-  def multiplyElementwise(v: Pga3dPointCenter.type): Pga3dPointCenter.type =
-    Pga3dPointCenter
-
   def toMultivector: Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,

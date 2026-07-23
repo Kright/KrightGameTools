@@ -102,7 +102,6 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
     val methodNames = Seq(
       "$plus",
       "$minus",
-      "multiplyElementwise",
       "geometric",
       "dot",
       "wedge",
