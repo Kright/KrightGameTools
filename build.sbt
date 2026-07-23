@@ -73,6 +73,7 @@ lazy val root = (project in file("."))
     pga3d.jvm, pga3d.js,
     pga2d.jvm, pga2d.js,
     pga3dgeom.jvm, pga3dgeom.js,
+    pga2dgeom.jvm, pga2dgeom.js,
     pga3dphysics.jvm, pga3dphysics.js,
     benchmark,
   )
@@ -160,6 +161,16 @@ lazy val pga3dgeom = crossProject(JSPlatform, JVMPlatform)
     pga3d % "compile->compile;test->test",
     mathutil,
     matrix,
+  )
+
+lazy val pga2dgeom = crossProject(JSPlatform, JVMPlatform)
+  .withoutSuffixFor(JVMPlatform)
+  .in(file("pga2dgeom"))
+  .settings(scalatestSettings, strictSettings)
+  .settings(sonatypeSettings, name := "gametools-pga2dgeom")
+  .dependsOn(
+    pga2d % "compile->compile;test->test",
+    mathutil,
   )
 
 lazy val pga3dphysics = crossProject(JSPlatform, JVMPlatform)
