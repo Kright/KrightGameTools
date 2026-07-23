@@ -26,6 +26,34 @@ object MathUtil:
   def interpolate(a: Double, b: Double, t: Double): Double =
     a * (1.0 - t) + b * t
 
+  /**
+   * like math.min, but if exactly one argument is NaN, returns the other one
+   * (math.min propagates NaN). Returns NaN only if both arguments are NaN.
+   * Unlike math.min, does not distinguish -0.0 and +0.0.
+   */
+  inline def minNanSafe(a: Double, b: Double): Double =
+    if (b.isNaN) a else if (a < b) a else b
+
+  /**
+   * like math.max, but if exactly one argument is NaN, returns the other one
+   * (math.max propagates NaN). Returns NaN only if both arguments are NaN.
+   * Unlike math.max, does not distinguish -0.0 and +0.0.
+   */
+  inline def maxNanSafe(a: Double, b: Double): Double =
+    if (b.isNaN) a else if (a > b) a else b
+
+  /**
+   * minimum of the non-NaN arguments; NaN only if all three are NaN
+   */
+  inline def minNanSafe(a: Double, b: Double, c: Double): Double =
+    minNanSafe(minNanSafe(a, b), c)
+
+  /**
+   * maximum of the non-NaN arguments; NaN only if all three are NaN
+   */
+  inline def maxNanSafe(a: Double, b: Double, c: Double): Double =
+    maxNanSafe(maxNanSafe(a, b), c)
+
   extension (d: Double)
     /**
      * @return value in range [lower, upper] or NaN if d is NaN

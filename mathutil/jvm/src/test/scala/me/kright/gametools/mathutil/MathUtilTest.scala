@@ -43,3 +43,56 @@ class MathUtilTest extends AnyFunSuite:
     assert(MathUtil.pow(2, 10, _ * _) == 1024)
     assert(MathUtil.pow(1, 100, _ + _) == 100)
   }
+
+  test("minNanSafe and maxNanSafe on regular values") {
+    assert(minNanSafe(1.0, 2.0) == 1.0)
+    assert(minNanSafe(2.0, 1.0) == 1.0)
+    assert(maxNanSafe(1.0, 2.0) == 2.0)
+    assert(maxNanSafe(2.0, 1.0) == 2.0)
+
+    assert(minNanSafe(Double.NegativeInfinity, 1.0) == Double.NegativeInfinity)
+    assert(maxNanSafe(Double.PositiveInfinity, 1.0) == Double.PositiveInfinity)
+  }
+
+  test("minNanSafe and maxNanSafe ignore NaN") {
+    val nan = Double.NaN
+
+    assert(minNanSafe(nan, 1.0) == 1.0)
+    assert(minNanSafe(1.0, nan) == 1.0)
+    assert(maxNanSafe(nan, 1.0) == 1.0)
+    assert(maxNanSafe(1.0, nan) == 1.0)
+
+    assert(minNanSafe(nan, Double.PositiveInfinity) == Double.PositiveInfinity)
+    assert(maxNanSafe(nan, Double.NegativeInfinity) == Double.NegativeInfinity)
+
+    assert(minNanSafe(nan, nan).isNaN)
+    assert(maxNanSafe(nan, nan).isNaN)
+  }
+
+  test("minNanSafe and maxNanSafe with three arguments") {
+    assert(minNanSafe(1.0, 2.0, 3.0) == 1.0)
+    assert(minNanSafe(3.0, 2.0, 1.0) == 1.0)
+    assert(minNanSafe(2.0, 1.0, 3.0) == 1.0)
+    assert(maxNanSafe(1.0, 2.0, 3.0) == 3.0)
+    assert(maxNanSafe(3.0, 2.0, 1.0) == 3.0)
+    assert(maxNanSafe(2.0, 3.0, 1.0) == 3.0)
+
+    val nan = Double.NaN
+
+    assert(minNanSafe(nan, 2.0, 3.0) == 2.0)
+    assert(minNanSafe(2.0, nan, 3.0) == 2.0)
+    assert(minNanSafe(2.0, 3.0, nan) == 2.0)
+    assert(maxNanSafe(nan, 2.0, 3.0) == 3.0)
+    assert(maxNanSafe(2.0, nan, 3.0) == 3.0)
+    assert(maxNanSafe(2.0, 3.0, nan) == 3.0)
+
+    assert(minNanSafe(nan, nan, 1.0) == 1.0)
+    assert(minNanSafe(nan, 1.0, nan) == 1.0)
+    assert(minNanSafe(1.0, nan, nan) == 1.0)
+    assert(maxNanSafe(nan, nan, 1.0) == 1.0)
+    assert(maxNanSafe(nan, 1.0, nan) == 1.0)
+    assert(maxNanSafe(1.0, nan, nan) == 1.0)
+
+    assert(minNanSafe(nan, nan, nan).isNaN)
+    assert(maxNanSafe(nan, nan, nan).isNaN)
+  }

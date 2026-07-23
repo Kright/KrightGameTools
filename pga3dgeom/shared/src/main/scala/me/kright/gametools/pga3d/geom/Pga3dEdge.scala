@@ -47,6 +47,12 @@ case class Pga3dEdge(a: Pga3dPoint,
 
   def toAABB: Pga3dAABB =
     Pga3dAABB(this)
+    
+  def toRay: Pga3dRay =
+    Pga3dRay(a, direction)
+    
+  def toRayNormalized: Pga3dRay =
+    Pga3dRay(a, direction.normalizedByNorm)
 
   def distanceFromLineTo(p: Pga3dPoint): Double =
     val projected = p.projectOntoLine(line).toPoint

@@ -158,6 +158,7 @@ lazy val pga3dgeom = crossProject(JSPlatform, JVMPlatform)
   .settings(sonatypeSettings, name := "gametools-pga3dgeom")
   .dependsOn(
     pga3d % "compile->compile;test->test",
+    mathutil,
     matrix,
   )
 
