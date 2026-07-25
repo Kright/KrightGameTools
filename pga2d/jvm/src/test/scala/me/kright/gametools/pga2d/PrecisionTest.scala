@@ -198,12 +198,12 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     assert(piTiny.s == 0.0 && Math.abs(piTiny.xy) == 1.0, s"tiny pi rotor: $piTiny")
     assert((piTiny.sandwich(from) - (-from)).norm == 0.0)
 
-    // the lineIdeal overload hits the same code path directly
-    val piLine = Pga2dRotor.rotation(Pga2dLineIdeal(1, 0), Pga2dLineIdeal(-1, 0))
-    assert(piLine.s == 0.0 && Math.abs(piLine.xy) == 1.0, s"lineIdeal pi rotor: $piLine")
-    val tinyLine = Pga2dRotor.rotation(Pga2dLineIdeal(1, 0), Pga2dLineIdeal(1, 1e-200))
-    assert(tinyLine.s == 1.0, s"lineIdeal tiny rotation: $tinyLine")
-    assertRel(Math.abs(tinyLine.xy), 5e-201, 1e-15, s"lineIdeal tiny rotation: $tinyLine")
+    // the lineCentral overload hits the same code path directly
+    val piLine = Pga2dRotor.rotation(Pga2dLineCentral(1, 0), Pga2dLineCentral(-1, 0))
+    assert(piLine.s == 0.0 && Math.abs(piLine.xy) == 1.0, s"lineCentral pi rotor: $piLine")
+    val tinyLine = Pga2dRotor.rotation(Pga2dLineCentral(1, 0), Pga2dLineCentral(1, 1e-200))
+    assert(tinyLine.s == 1.0, s"lineCentral tiny rotation: $tinyLine")
+    assertRel(Math.abs(tinyLine.xy), 5e-201, 1e-15, s"lineCentral tiny rotation: $tinyLine")
   }
 
   test("motor log angle recovery is continuous across the 1e-5 branch threshold") {

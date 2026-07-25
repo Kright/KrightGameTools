@@ -70,7 +70,7 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
 
   override val vector = ScalaMultivectorSubClass("Pga3dVector", projectivePoint.variableFields.filter(f => f.basisBlade.contains(genW)),
     description = "A vector: the difference between two points, a direction with magnitude; an ideal point with w = 0.\nStored in dual representation with fields x, y, z. Translators move points but do not change vectors.")
-  val planeIdeal = ScalaMultivectorSubClass("Pga3dPlaneIdeal", plane.variableFields.filter(f => !f.basisBlade.contains(genW)),
+  val planeCentral = ScalaMultivectorSubClass("Pga3dPlaneCentral", plane.variableFields.filter(f => !f.basisBlade.contains(genW)),
     description = "A plane ax + by + cz = 0 passing through the center of coordinates: a Pga3dPlane with w = 0.\nDual to Pga3dVector.")
   override val point = {
     val (weight, bulk) = projectivePoint.variableFields.partition(_.basisBlade.contains(genW))
@@ -102,7 +102,7 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
 
     vector,
     point,
-    planeIdeal,
+    planeCentral,
 
     bivectorBulk,
     bivectorWeight,

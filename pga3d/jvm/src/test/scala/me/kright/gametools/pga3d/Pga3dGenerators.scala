@@ -98,14 +98,14 @@ object Pga3dGenerators:
   val planes: Gen[Pga3dPlane] =
     makeGenT(4, FlatDoubleSerializer.read[Pga3dPlane])
 
-  val planeIdeals: Gen[Pga3dPlaneIdeal] =
+  val planeCentrals: Gen[Pga3dPlaneCentral] =
     Gen.oneOf(
       Gen.oneOf(
-        Pga3dPlaneIdeal(1, 0, 0),
-        Pga3dPlaneIdeal(0, 1, 0),
-        Pga3dPlaneIdeal(0, 0, 1),
+        Pga3dPlaneCentral(1, 0, 0),
+        Pga3dPlaneCentral(0, 1, 0),
+        Pga3dPlaneCentral(0, 0, 1),
       ),
-      makeGenT(3, FlatDoubleSerializer.read[Pga3dPlaneIdeal])
+      makeGenT(3, FlatDoubleSerializer.read[Pga3dPlaneCentral])
     )
 
   val projectivePoints: Gen[Pga3dProjectivePoint] =

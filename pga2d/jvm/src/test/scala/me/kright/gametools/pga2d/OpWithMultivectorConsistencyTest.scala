@@ -13,7 +13,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
   private val classes = ArraySeq(
     classOf[java.lang.Double],
     classOf[Pga2dLine],
-    classOf[Pga2dLineIdeal],
+    classOf[Pga2dLineCentral],
     classOf[Pga2dMotor],
     classOf[Pga2dMultivector],
     classOf[Pga2dProjectivePoint],

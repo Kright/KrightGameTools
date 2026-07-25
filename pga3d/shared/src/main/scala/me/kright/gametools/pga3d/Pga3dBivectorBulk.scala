@@ -398,7 +398,7 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       i = 0.0,
     )
 
-  infix def geometric(r: Pga3dPlaneIdeal): Pga3dMultivector =
+  infix def geometric(r: Pga3dPlaneCentral): Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,
       w = 0.0,
@@ -445,8 +445,8 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       wz = -r.i * xy,
     )
 
-  infix def geometric(r: Pga3dPointCenter.type): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def geometric(r: Pga3dPointCenter.type): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -yz,
       y = xz,
       z = -xy,
@@ -464,8 +464,8 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       i = 0.0,
     )
 
-  infix def dot(r: Pga3dPlane): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def dot(r: Pga3dPlane): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
@@ -516,8 +516,8 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       w = (r.x * yz + r.z * xy - r.y * xz),
     )
 
-  infix def dot(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def dot(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
@@ -533,8 +533,8 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       wz = -r.i * xy,
     )
 
-  infix def dot(r: Pga3dPointCenter.type): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def dot(r: Pga3dPointCenter.type): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -yz,
       y = xz,
       z = -xy,
@@ -620,7 +620,7 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
 
   inline infix def meet(r: Pga3dTranslator): Pga3dMotor = wedge(r)
 
-  infix def wedge(r: Pga3dPlaneIdeal): Pga3dProjectivePoint =
+  infix def wedge(r: Pga3dPlaneCentral): Pga3dProjectivePoint =
     Pga3dProjectivePoint(
       x = 0.0,
       y = 0.0,
@@ -628,9 +628,9 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       w = (r.x * yz + r.z * xy - r.y * xz),
     )
 
-  inline infix def ^(r: Pga3dPlaneIdeal): Pga3dProjectivePoint = wedge(r)
+  inline infix def ^(r: Pga3dPlaneCentral): Pga3dProjectivePoint = wedge(r)
 
-  inline infix def meet(r: Pga3dPlaneIdeal): Pga3dProjectivePoint = wedge(r)
+  inline infix def meet(r: Pga3dPlaneCentral): Pga3dProjectivePoint = wedge(r)
 
   infix def wedge(r: Pga3dBivectorWeight): Pga3dPseudoScalar =
     Pga3dPseudoScalar(
@@ -649,8 +649,8 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       yz = (r.i * yz + r.wy * xy + r.wz * xz),
     )
 
-  infix def antiGeometric(r: Pga3dPlane): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiGeometric(r: Pga3dPlane): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.w * yz,
       y = r.w * xz,
       z = -r.w * xy,
@@ -812,16 +812,16 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
 
   inline infix def join(r: Pga3dBivector): Double = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dProjectivePoint): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dProjectivePoint): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
     )
 
-  inline infix def v(r: Pga3dProjectivePoint): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dProjectivePoint): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dProjectivePoint): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dProjectivePoint): Pga3dPlaneCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga3dProjectiveTranslator): Double =
     (r.wx * yz + r.wz * xy - r.wy * xz)
@@ -837,27 +837,27 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
 
   inline infix def join(r: Pga3dTranslator): Double = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dVector): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dVector): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
     )
 
-  inline infix def v(r: Pga3dVector): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dVector): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dVector): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dVector): Pga3dPlaneCentral = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dPoint): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dPoint): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
     )
 
-  inline infix def v(r: Pga3dPoint): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dPoint): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dPoint): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dPoint): Pga3dPlaneCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga3dBivectorWeight): Double =
     (r.wx * yz + r.wz * xy - r.wy * xz)
@@ -1008,14 +1008,14 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       w = (xyMxy + xzMxz + yzMyz),
     )
 
-  infix def sandwich(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
+  infix def sandwich(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
     val xyMxy = xy * xy
     val xyMxz = xy * xz
     val xyMyz = xy * yz
     val xzMxz = xz * xz
     val xzMyz = xz * yz
     val yzMyz = yz * yz
-    Pga3dPlaneIdeal(
+    Pga3dPlaneCentral(
       x = (2.0 * (r.z * xyMyz - r.y * xzMyz) + r.x * (yzMyz - xyMxy - xzMxz)),
       y = (2.0 * (-r.x * xzMyz - r.z * xyMxz) + r.y * (xzMxz - xyMxy - yzMyz)),
       z = (2.0 * (r.x * xyMyz - r.y * xyMxz) + r.z * (xyMxy - xzMxz - yzMyz)),
@@ -1191,14 +1191,14 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       w = (xyMxy + xzMxz + yzMyz),
     )
 
-  infix def reverseSandwich(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
+  infix def reverseSandwich(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
     val xyMxy = xy * xy
     val xyMxz = xy * xz
     val xyMyz = xy * yz
     val xzMxz = xz * xz
     val xzMyz = xz * yz
     val yzMyz = yz * yz
-    Pga3dPlaneIdeal(
+    Pga3dPlaneCentral(
       x = (2.0 * (r.z * xyMyz - r.y * xzMyz) + r.x * (yzMyz - xyMxy - xzMxz)),
       y = (2.0 * (-r.x * xzMyz - r.z * xyMxz) + r.y * (xzMxz - xyMxy - yzMyz)),
       z = (2.0 * (r.x * xyMyz - r.y * xyMxz) + r.z * (xyMxy - xzMxz - yzMyz)),
@@ -1253,8 +1253,8 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       yz = (r.xy * xz - r.xz * xy),
     )
 
-  infix def cross(r: Pga3dPlane): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def cross(r: Pga3dPlane): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
@@ -1312,8 +1312,8 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       z = (-r.x * xz - r.y * yz),
     )
 
-  infix def cross(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def cross(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),

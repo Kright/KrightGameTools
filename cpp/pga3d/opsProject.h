@@ -11,14 +11,14 @@
 
 namespace pga3d {
     [[nodiscard]] constexpr Bivector Bivector::projectOntoPlane(const Plane& plane) const noexcept { return -plane.dot(*this).geometric(plane).toBivectorUnsafe(); }
-    [[nodiscard]] constexpr Bivector Bivector::projectOntoPlane(const PlaneIdeal& plane) const noexcept { return -plane.dot(*this).geometric(plane).toBivectorUnsafe(); }
+    [[nodiscard]] constexpr Bivector Bivector::projectOntoPlane(const PlaneCentral& plane) const noexcept { return -plane.dot(*this).geometric(plane).toBivectorUnsafe(); }
     [[nodiscard]] constexpr ProjectivePoint ProjectivePoint::projectOntoPlane(const Plane& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }
-    [[nodiscard]] constexpr ProjectivePoint ProjectivePoint::projectOntoPlane(const PlaneIdeal& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }
+    [[nodiscard]] constexpr ProjectivePoint ProjectivePoint::projectOntoPlane(const PlaneCentral& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }
     [[nodiscard]] constexpr ProjectivePoint ProjectivePoint::projectOntoLine(const Bivector& line) const noexcept { return -line.dot(*this).geometric(line).toProjectivePointUnsafe(); }
     [[nodiscard]] constexpr ProjectivePoint Point::projectOntoPlane(const Plane& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }
-    [[nodiscard]] constexpr ProjectivePoint Point::projectOntoPlane(const PlaneIdeal& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }
+    [[nodiscard]] constexpr ProjectivePoint Point::projectOntoPlane(const PlaneCentral& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }
     [[nodiscard]] constexpr ProjectivePoint Point::projectOntoLine(const Bivector& line) const noexcept { return -line.dot(*this).geometric(line).toProjectivePointUnsafe(); }
     [[nodiscard]] constexpr ProjectivePoint PointCenter::projectOntoPlane(const Plane& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }
-    [[nodiscard]] constexpr ProjectivePoint PointCenter::projectOntoPlane(const PlaneIdeal& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }
+    [[nodiscard]] constexpr ProjectivePoint PointCenter::projectOntoPlane(const PlaneCentral& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }
     [[nodiscard]] constexpr ProjectivePoint PointCenter::projectOntoLine(const Bivector& line) const noexcept { return -line.dot(*this).geometric(line).toProjectivePointUnsafe(); }
 }

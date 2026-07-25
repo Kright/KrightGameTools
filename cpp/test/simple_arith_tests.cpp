@@ -19,7 +19,7 @@ TEST_CASE("convert to multivector and back") {
     CHECK(mv.toTranslatorUnsafe().toMultivector().toTranslatorUnsafe() == mv.toTranslatorUnsafe());
     CHECK(mv.toVectorUnsafe().toMultivector().toVectorUnsafe() == mv.toVectorUnsafe());
     CHECK(mv.toPointUnsafe().toMultivector().toPointUnsafe() == mv.toPointUnsafe());
-    CHECK(mv.toPlaneIdealUnsafe().toMultivector().toPlaneIdealUnsafe() == mv.toPlaneIdealUnsafe());
+    CHECK(mv.toPlaneCentralUnsafe().toMultivector().toPlaneCentralUnsafe() == mv.toPlaneCentralUnsafe());
     CHECK(mv.toBivectorBulkUnsafe().toMultivector().toBivectorBulkUnsafe() == mv.toBivectorBulkUnsafe());
     CHECK(mv.toBivectorWeightUnsafe().toMultivector().toBivectorWeightUnsafe() == mv.toBivectorWeightUnsafe());
 }

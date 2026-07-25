@@ -12,13 +12,13 @@ class RotorOpsGenerator extends CppCodeGenerator {
 
     if (CppSubclasses.rotor == cls) {
       code(s"[[nodiscard]] static inline ${cls.name} rotation(const ${CppSubclasses.vector.name}& from, const ${CppSubclasses.vector.name}& to) noexcept;")
-      code(s"[[nodiscard]] static inline ${cls.name} rotation(const ${CppSubclasses.planeIdeal.name}& from, const ${CppSubclasses.planeIdeal.name}& to) noexcept;")
+      code(s"[[nodiscard]] static inline ${cls.name} rotation(const ${CppSubclasses.planeCentral.name}& from, const ${CppSubclasses.planeCentral.name}& to) noexcept;")
       code("")
       code(s"[[nodiscard]] inline ${CppSubclasses.bivectorBulk.name} log() const noexcept;")
       code(s"[[nodiscard]] inline ${CppSubclasses.rotor.name} pow(double p) const noexcept;")
       code("")
-      code(s"[[nodiscard]] inline ${CppSubclasses.rotor.name} projectToRotationInPlane(const ${CppSubclasses.planeIdeal.name}& plane) const noexcept;")
-      code(s"[[nodiscard]] inline double restoreRotationInPlane(const ${CppSubclasses.planeIdeal.name}& plane) const noexcept;")
+      code(s"[[nodiscard]] inline ${CppSubclasses.rotor.name} projectToRotationInPlane(const ${CppSubclasses.planeCentral.name}& plane) const noexcept;")
+      code(s"[[nodiscard]] inline double restoreRotationInPlane(const ${CppSubclasses.planeCentral.name}& plane) const noexcept;")
       code("")
       RotorAndMotorAxes.makeDeclaration(code, cls)
     }
@@ -62,7 +62,7 @@ class RotorOpsGenerator extends CppCodeGenerator {
 
       code(
         s"""
-           |[[nodiscard]] inline ${cls.name} ${cls.name}::rotation(const ${CppSubclasses.planeIdeal.name}& from, const ${CppSubclasses.planeIdeal.name}& to) noexcept {
+           |[[nodiscard]] inline ${cls.name} ${cls.name}::rotation(const ${CppSubclasses.planeCentral.name}& from, const ${CppSubclasses.planeCentral.name}& to) noexcept {
            |    // not std::sqrt(from.normSquare() * to.normSquare()): the product overflows/underflows
            |    // for extreme magnitudes (~1e100 or ~1e-100) where each norm alone is still fine
            |    const double norm = from.norm() * to.norm();
@@ -97,8 +97,8 @@ class RotorOpsGenerator extends CppCodeGenerator {
            |    }
            |
            |    // exactly antipodal inputs: the axis is any direction orthogonal to from
-           |    const PlaneIdeal orthogonalPlane =
-           |        (std::abs(from.x) > std::abs(from.z)) ? PlaneIdeal{-from.y, from.x, 0} : PlaneIdeal{0, -from.z, from.y};
+           |    const PlaneCentral orthogonalPlane =
+           |        (std::abs(from.x) > std::abs(from.z)) ? PlaneCentral{-from.y, from.x, 0} : PlaneCentral{0, -from.z, from.y};
            |
            |    return Rotor(0, orthogonalPlane.z, -orthogonalPlane.y, orthogonalPlane.x).normalizedByNorm();
            |}""".stripMargin)
@@ -140,13 +140,13 @@ class RotorOpsGenerator extends CppCodeGenerator {
 
       code(
         s"""
-           |[[nodiscard]] inline ${CppSubclasses.rotor.name} ${CppSubclasses.rotor.name}::projectToRotationInPlane(const ${CppSubclasses.planeIdeal.name}& plane) const noexcept {
+           |[[nodiscard]] inline ${CppSubclasses.rotor.name} ${CppSubclasses.rotor.name}::projectToRotationInPlane(const ${CppSubclasses.planeCentral.name}& plane) const noexcept {
            |    const ${CppSubclasses.rotor.name} q = normalizedByNorm();
            |    const ${CppSubclasses.rotor.name} qPart = ${CppSubclasses.rotor.name}::rotation(q.sandwich(plane), plane);
            |    return qPart.geometric(q);
            |}
            |
-           |[[nodiscard]] inline double ${CppSubclasses.rotor.name}::restoreRotationInPlane(const ${CppSubclasses.planeIdeal.name}& plane) const noexcept {
+           |[[nodiscard]] inline double ${CppSubclasses.rotor.name}::restoreRotationInPlane(const ${CppSubclasses.planeCentral.name}& plane) const noexcept {
            |    const ${CppSubclasses.rotor.name} q0 = projectToRotationInPlane(plane);
            |    const ${CppSubclasses.bivectorWeight.name} logDual = q0.log().dual();
            |    const double currentAngle = 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm();

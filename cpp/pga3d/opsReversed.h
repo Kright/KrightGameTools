@@ -104,12 +104,12 @@ namespace pga3d {
     }; }
     constexpr ProjectivePoint Point::reversed() const noexcept { return pga3d::reversed(*this); }
 
-    constexpr PlaneIdeal reversed(const PlaneIdeal& a) noexcept { return {
+    constexpr PlaneCentral reversed(const PlaneCentral& a) noexcept { return {
         .x = a.x,
         .y = a.y,
         .z = a.z
     }; }
-    constexpr PlaneIdeal PlaneIdeal::reversed() const noexcept { return pga3d::reversed(*this); }
+    constexpr PlaneCentral PlaneCentral::reversed() const noexcept { return pga3d::reversed(*this); }
 
     constexpr BivectorBulk reversed(const BivectorBulk& a) noexcept { return {
         .xy = -a.xy,

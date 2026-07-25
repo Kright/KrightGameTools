@@ -2,7 +2,7 @@ package me.kright.gametools.pga.codegen.scalagen.pga3d.ops
 
 import me.kright.gametools.ga.PGA3
 import me.kright.gametools.pga.codegen.scalagen.common.{GeneratedCode, MultivectorUnaryOp}
-import me.kright.gametools.pga.codegen.scalagen.pga3d.Pga3dScalaAlgebra.{planeIdeal, rotor, vector}
+import me.kright.gametools.pga.codegen.scalagen.pga3d.Pga3dScalaAlgebra.{planeCentral, rotor, vector}
 
 object DefObjectMethodsForRotor:
   def apply()(using pga3: PGA3): MultivectorUnaryOp =
@@ -13,7 +13,7 @@ object DefObjectMethodsForRotor:
             s"""
                |val id: ${cls.typeName} = ${cls.typeName}(1.0, 0.0, 0.0, 0.0)
                |
-               |def rotation(from: ${planeIdeal.name}, to: ${planeIdeal.name}): ${cls.name} = {
+               |def rotation(from: ${planeCentral.name}, to: ${planeCentral.name}): ${cls.name} = {
                |  // not Math.sqrt(from.normSquare * to.normSquare): the product overflows/underflows
                |  // for extreme magnitudes (~1e100 or ~1e-100) where each norm alone is still fine
                |  val norm = from.norm * to.norm
@@ -50,8 +50,8 @@ object DefObjectMethodsForRotor:
                |
                |  // exactly antipodal inputs: the axis is any direction orthogonal to from
                |  val orthogonalPlane =
-               |    if (Math.abs(from.x) > Math.abs(from.z)) ${planeIdeal.name}(-from.y, from.x, 0)
-               |    else ${planeIdeal.name}(0, -from.z, from.y)
+               |    if (Math.abs(from.x) > Math.abs(from.z)) ${planeCentral.name}(-from.y, from.x, 0)
+               |    else ${planeCentral.name}(0, -from.z, from.y)
                |
                |  ${cls.name}(0, orthogonalPlane.z, -orthogonalPlane.y, orthogonalPlane.x).normalizedByNorm
                |}

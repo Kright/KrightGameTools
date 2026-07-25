@@ -35,7 +35,7 @@ object CppSubclasses:
   val projectiveTranslator = CppSubclass("ProjectiveTranslator", motor.variableFields.filter(f => f.basisBlade.grade == 0 || f.basisBlade.grade == 2 && f.basisBlade.contains(genW)))
 
   val vector = CppSubclass("Vector", projectivePoint.variableFields.filter(f => f.basisBlade.contains(genW)))
-  val planeIdeal = CppSubclass("PlaneIdeal", plane.variableFields.filter(f => !f.basisBlade.contains(genW)))
+  val planeCentral = CppSubclass("PlaneCentral", plane.variableFields.filter(f => !f.basisBlade.contains(genW)))
   val point: CppSubclass = {
     val (weight, bulk) = projectivePoint.variableFields.partition(_.basisBlade.contains(genW))
     CppSubclass("Point", weight, bulk.map(f => (f, 1.0)))
@@ -62,7 +62,7 @@ object CppSubclasses:
 
     vector,
     point,
-    planeIdeal,
+    planeCentral,
 
     bivectorBulk,
     bivectorWeight,

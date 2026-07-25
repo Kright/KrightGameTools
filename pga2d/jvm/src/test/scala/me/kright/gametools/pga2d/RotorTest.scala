@@ -31,7 +31,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("rotation between random ideal lines") {
-    forAll(Pga2dGenerators.lineIdeals.filter(_.norm > 1e-3), Pga2dGenerators.lineIdeals.filter(_.norm > 1e-3), MinSuccessful(1000)) { (from, to) =>
+    forAll(Pga2dGenerators.lineCentrals.filter(_.norm > 1e-3), Pga2dGenerators.lineCentrals.filter(_.norm > 1e-3), MinSuccessful(1000)) { (from, to) =>
       val f = from.normalizedByNorm
       val t = to.normalizedByNorm
       whenever(f.x * t.x + f.y * t.y > -0.999) {

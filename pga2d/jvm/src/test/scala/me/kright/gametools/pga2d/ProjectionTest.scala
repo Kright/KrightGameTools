@@ -33,8 +33,8 @@ class ProjectionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     assert(projected.toPointUnsafe == Pga2dPoint(3, 0))
   }
 
-  test("project point onto ideal line") {
-    val projected = Pga2dPoint(3, 4).projectOntoLine(Pga2dLineIdeal(0, 1)) // the line y = 0
+  test("project point onto central line") {
+    val projected = Pga2dPoint(3, 4).projectOntoLine(Pga2dLineCentral(0, 1)) // the line y = 0
     assert(projected.w == 1.0)
     assert(projected.toPointUnsafe == Pga2dPoint(3, 0))
   }

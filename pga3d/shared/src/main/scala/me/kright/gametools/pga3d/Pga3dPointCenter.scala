@@ -158,7 +158,7 @@ object Pga3dPointCenter:
     )
 
   /** fused plane.dot(point).geometric(plane); w of the result is plane.normSquare > 0, so w = 1 for a normalized plane */
-  def projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dProjectivePoint =
+  def projectOntoPlane(plane: Pga3dPlaneCentral): Pga3dProjectivePoint =
     Pga3dProjectivePoint(
       x = 0.0,
       y = 0.0,
@@ -307,15 +307,15 @@ object Pga3dPointCenter:
       wz = -r.z,
     )
 
-  infix def geometric(r: Pga3dPlaneIdeal): Pga3dBivectorBulk =
+  infix def geometric(r: Pga3dPlaneCentral): Pga3dBivectorBulk =
     Pga3dBivectorBulk(
       xy = r.z,
       xz = -r.y,
       yz = r.x,
     )
 
-  infix def geometric(r: Pga3dBivectorBulk): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def geometric(r: Pga3dBivectorBulk): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.yz,
       y = r.xz,
       z = -r.xy,
@@ -366,8 +366,8 @@ object Pga3dPointCenter:
       yz = r.x,
     )
 
-  infix def dot(r: Pga3dBivector): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def dot(r: Pga3dBivector): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.yz,
       y = r.xz,
       z = -r.xy,
@@ -410,15 +410,15 @@ object Pga3dPointCenter:
   infix def dot(r: Pga3dPoint): Double =
     -1.0
 
-  infix def dot(r: Pga3dPlaneIdeal): Pga3dBivectorBulk =
+  infix def dot(r: Pga3dPlaneCentral): Pga3dBivectorBulk =
     Pga3dBivectorBulk(
       xy = r.z,
       xz = -r.y,
       yz = r.x,
     )
 
-  infix def dot(r: Pga3dBivectorBulk): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def dot(r: Pga3dBivectorBulk): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.yz,
       y = r.xz,
       z = -r.xy,
@@ -510,8 +510,8 @@ object Pga3dPointCenter:
   infix def antiGeometric(r: Pga3dPlane): Double =
     r.w
 
-  infix def antiGeometric(r: Pga3dBivector): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiGeometric(r: Pga3dBivector): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.wx,
       y = -r.wy,
       z = -r.wz,
@@ -524,15 +524,15 @@ object Pga3dPointCenter:
       yz = r.x,
     )
 
-  infix def antiGeometric(r: Pga3dProjectiveTranslator): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiGeometric(r: Pga3dProjectiveTranslator): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.wx,
       y = -r.wy,
       z = -r.wz,
     )
 
-  infix def antiGeometric(r: Pga3dTranslator): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiGeometric(r: Pga3dTranslator): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.wx,
       y = -r.wy,
       z = -r.wz,
@@ -552,8 +552,8 @@ object Pga3dPointCenter:
       yz = r.x,
     )
 
-  infix def antiGeometric(r: Pga3dBivectorWeight): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiGeometric(r: Pga3dBivectorWeight): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.wx,
       y = -r.wy,
       z = -r.wz,
@@ -614,16 +614,16 @@ object Pga3dPointCenter:
 
   inline infix def join(r: Pga3dPlane): Double = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dBivector): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dBivector): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.wx,
       y = -r.wy,
       z = -r.wz,
     )
 
-  inline infix def v(r: Pga3dBivector): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dBivector): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dBivector): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dBivector): Pga3dPlaneCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga3dProjectivePoint): Pga3dBivectorBulk =
     Pga3dBivectorBulk(
@@ -636,27 +636,27 @@ object Pga3dPointCenter:
 
   inline infix def join(r: Pga3dProjectivePoint): Pga3dBivectorBulk = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dProjectiveTranslator): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dProjectiveTranslator): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.wx,
       y = -r.wy,
       z = -r.wz,
     )
 
-  inline infix def v(r: Pga3dProjectiveTranslator): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dProjectiveTranslator): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dProjectiveTranslator): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dProjectiveTranslator): Pga3dPlaneCentral = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dTranslator): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dTranslator): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.wx,
       y = -r.wy,
       z = -r.wz,
     )
 
-  inline infix def v(r: Pga3dTranslator): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dTranslator): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dTranslator): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dTranslator): Pga3dPlaneCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga3dVector): Pga3dBivectorBulk =
     Pga3dBivectorBulk(
@@ -680,16 +680,16 @@ object Pga3dPointCenter:
 
   inline infix def join(r: Pga3dPoint): Pga3dBivectorBulk = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dBivectorWeight): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dBivectorWeight): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = -r.wx,
       y = -r.wy,
       z = -r.wz,
     )
 
-  inline infix def v(r: Pga3dBivectorWeight): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dBivectorWeight): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dBivectorWeight): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dBivectorWeight): Pga3dPlaneCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga3dPseudoScalar): Pga3dProjectivePoint =
     Pga3dProjectivePoint(
@@ -774,8 +774,8 @@ object Pga3dPointCenter:
       z = -r.z,
     )
 
-  infix def sandwich(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def sandwich(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = r.x,
       y = r.y,
       z = r.z,
@@ -868,8 +868,8 @@ object Pga3dPointCenter:
       z = -r.z,
     )
 
-  infix def reverseSandwich(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def reverseSandwich(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = r.x,
       y = r.y,
       z = r.z,

@@ -20,7 +20,7 @@ add_executable(cpp
         pga3d/Motor.h
         pga3d/Multivector.h
         pga3d/Plane.h
-        pga3d/PlaneIdeal.h
+        pga3d/PlaneCentral.h
         pga3d/Point.h
         pga3d/PointCenter.h
         pga3d/ProjectivePoint.h

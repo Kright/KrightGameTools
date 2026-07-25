@@ -52,8 +52,8 @@ class ProjectionTest extends AnyFunSuiteLike:
     assert(p.projectOntoPlane(center v x v -y).w == 1.0)
   }
 
-  test("project point onto ideal plane") {
-    val projected = Pga3dPoint(3, 4, 5).projectOntoPlane(Pga3dPlaneIdeal(0, 0, 1)) // the plane z = 0
+  test("project point onto central plane") {
+    val projected = Pga3dPoint(3, 4, 5).projectOntoPlane(Pga3dPlaneCentral(0, 0, 1)) // the plane z = 0
     assert(projected.w == 1.0)
     assert(projected.toPointUnsafe == Pga3dPoint(3, 4, 0))
   }

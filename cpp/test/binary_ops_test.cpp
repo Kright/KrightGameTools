@@ -23,7 +23,7 @@ using TestTypes = std::tuple<
     pg::Translator,
     pg::Vector,
     pg::Point,
-    pg::PlaneIdeal,
+    pg::PlaneCentral,
     pg::BivectorBulk,
     pg::BivectorWeight,
     pg::PseudoScalar,

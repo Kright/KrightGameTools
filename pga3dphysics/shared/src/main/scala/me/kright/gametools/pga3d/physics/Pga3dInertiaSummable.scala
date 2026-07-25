@@ -240,9 +240,9 @@ object Pga3dInertiaSummable:
       sandwichImpl(b, q.sandwich)
 
   private val planesByAxis = ArraySeq(
-    Pga3dPlaneIdeal(1, 0, 0),
-    Pga3dPlaneIdeal(0, 1, 0),
-    Pga3dPlaneIdeal(0, 0, 1),
+    Pga3dPlaneCentral(1, 0, 0),
+    Pga3dPlaneCentral(0, 1, 0),
+    Pga3dPlaneCentral(0, 0, 1),
   )
 
   private def diagonalyzeSymmetricInplace(i: Matrix): Pga3dRotor = {

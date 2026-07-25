@@ -18,7 +18,7 @@ Each type is a constexpr struct with fields of type `double`.
 **Geometric objects:**
 
 * [**Plane**](Plane.h): 3D plane, consists of 4 numbers.
-* [**PlaneIdeal**](PlaneIdeal.h): 3D plane containing center of coordinates, consists of 3 numbers.
+* [**PlaneCentral**](PlaneCentral.h): 3D plane containing center of coordinates, consists of 3 numbers.
 * [**Bivector**](Bivector.h): 3D bivector, could represent line, consists of 6 numbers.
 * [**BivectorWeight**](BivectorWeight.h): narrow case of 3D bivector, consists of 3 numbers only.
 * [**BivectorBulk**](BivectorBulk.h): narrow case, consists of other 3 numbers of bivector.

@@ -75,7 +75,7 @@ dry-run of amalgamation when the per-file C++ output has itself drifted.
 
 The 2d algebra has basis (x, y, w) and 8 basis blades: scalar; x, y, w; xy, wx, wy; xyw.
 
-* a grade-1 element is called a line instead of a plane (Pga2dLine, Pga2dLineIdeal), because in 2d a hyperplane is a line
+* a grade-1 element is called a line instead of a plane (Pga2dLine, Pga2dLineCentral), because in 2d a hyperplane is a line
 * the analog of Pga3dRotor is Pga2dRotor with just 2 fields (cos and sin of the half-angle)
 * there is no bivector family (Pga3dBivector, Pga3dBivectorBulk, Pga3dBivectorWeight): in 2d the grade-2 elements
   are the point family (Pga2dProjectivePoint, Pga2dPoint, Pga2dVector). exp and log are defined on them directly

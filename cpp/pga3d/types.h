@@ -13,7 +13,7 @@
 #include "Translator.h"
 #include "Vector.h"
 #include "Point.h"
-#include "PlaneIdeal.h"
+#include "PlaneCentral.h"
 #include "BivectorBulk.h"
 #include "BivectorWeight.h"
 #include "PseudoScalar.h"

@@ -16,7 +16,7 @@ namespace pga3d {
     struct Translator;
     struct Vector;
     struct Point;
-    struct PlaneIdeal;
+    struct PlaneCentral;
     struct BivectorBulk;
     struct BivectorWeight;
     struct PseudoScalar;

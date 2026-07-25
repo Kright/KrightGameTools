@@ -36,12 +36,12 @@ namespace pga3d {
     }; }
     constexpr Rotor Motor::bulk() const noexcept { return pga3d::bulk(*this); }
 
-    constexpr PlaneIdeal bulk(const Plane& a) noexcept { return {
+    constexpr PlaneCentral bulk(const Plane& a) noexcept { return {
         .x = a.x,
         .y = a.y,
         .z = a.z
     }; }
-    constexpr PlaneIdeal Plane::bulk() const noexcept { return pga3d::bulk(*this); }
+    constexpr PlaneCentral Plane::bulk() const noexcept { return pga3d::bulk(*this); }
 
     constexpr BivectorBulk bulk(const Bivector& a) noexcept { return {
         .xy = a.xy,
@@ -75,12 +75,12 @@ namespace pga3d {
     constexpr PointCenter bulk(const Point& a) noexcept { return {}; }
     constexpr PointCenter Point::bulk() const noexcept { return pga3d::bulk(*this); }
 
-    constexpr PlaneIdeal bulk(const PlaneIdeal& a) noexcept { return {
+    constexpr PlaneCentral bulk(const PlaneCentral& a) noexcept { return {
         .x = a.x,
         .y = a.y,
         .z = a.z
     }; }
-    constexpr PlaneIdeal PlaneIdeal::bulk() const noexcept { return pga3d::bulk(*this); }
+    constexpr PlaneCentral PlaneCentral::bulk() const noexcept { return pga3d::bulk(*this); }
 
     constexpr BivectorBulk bulk(const BivectorBulk& a) noexcept { return {
         .xy = a.xy,

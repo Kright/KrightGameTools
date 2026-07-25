@@ -157,7 +157,7 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
       w = -i,
     )
 
-  infix def geometric(r: Pga2dLineIdeal): Pga2dVector =
+  infix def geometric(r: Pga2dLineCentral): Pga2dVector =
     Pga2dVector(
       x = i * r.x,
       y = i * r.y,
@@ -222,7 +222,7 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
       w = -i,
     )
 
-  infix def dot(r: Pga2dLineIdeal): Pga2dVector =
+  infix def dot(r: Pga2dLineCentral): Pga2dVector =
     Pga2dVector(
       x = i * r.x,
       y = i * r.y,
@@ -324,8 +324,8 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
       w = i,
     )
 
-  infix def antiGeometric(r: Pga2dLineIdeal): Pga2dLineIdeal =
-    Pga2dLineIdeal(
+  infix def antiGeometric(r: Pga2dLineCentral): Pga2dLineCentral =
+    Pga2dLineCentral(
       x = i * r.x,
       y = i * r.y,
     )
@@ -396,8 +396,8 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
       w = i,
     )
 
-  infix def antiDot(r: Pga2dLineIdeal): Pga2dLineIdeal =
-    Pga2dLineIdeal(
+  infix def antiDot(r: Pga2dLineCentral): Pga2dLineCentral =
+    Pga2dLineCentral(
       x = i * r.x,
       y = i * r.y,
     )
@@ -503,15 +503,15 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
 
   inline infix def join(r: Pga2dPoint): Pga2dProjectivePoint = antiWedge(r)
 
-  infix def antiWedge(r: Pga2dLineIdeal): Pga2dLineIdeal =
-    Pga2dLineIdeal(
+  infix def antiWedge(r: Pga2dLineCentral): Pga2dLineCentral =
+    Pga2dLineCentral(
       x = i * r.x,
       y = i * r.y,
     )
 
-  inline infix def v(r: Pga2dLineIdeal): Pga2dLineIdeal = antiWedge(r)
+  inline infix def v(r: Pga2dLineCentral): Pga2dLineCentral = antiWedge(r)
 
-  inline infix def join(r: Pga2dLineIdeal): Pga2dLineIdeal = antiWedge(r)
+  inline infix def join(r: Pga2dLineCentral): Pga2dLineCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga2dPseudoScalar): Pga2dPseudoScalar =
     Pga2dPseudoScalar(

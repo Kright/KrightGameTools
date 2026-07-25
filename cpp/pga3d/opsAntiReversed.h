@@ -103,12 +103,12 @@ namespace pga3d {
     }; }
     constexpr Point Point::antiReversed() const noexcept { return pga3d::antiReversed(*this); }
 
-    constexpr PlaneIdeal antiReversed(const PlaneIdeal& a) noexcept { return {
+    constexpr PlaneCentral antiReversed(const PlaneCentral& a) noexcept { return {
         .x = -a.x,
         .y = -a.y,
         .z = -a.z
     }; }
-    constexpr PlaneIdeal PlaneIdeal::antiReversed() const noexcept { return pga3d::antiReversed(*this); }
+    constexpr PlaneCentral PlaneCentral::antiReversed() const noexcept { return pga3d::antiReversed(*this); }
 
     constexpr BivectorBulk antiReversed(const BivectorBulk& a) noexcept { return {
         .xy = -a.xy,

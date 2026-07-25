@@ -38,8 +38,8 @@ namespace pga3d {
     inline std::ostream &operator<<(std::ostream &os, const Point &v) {
         return os << "Point{" << ".x = " << v.x << ", "".y = " << v.y << ", "".z = " << v.z << "}";
     }
-    inline std::ostream &operator<<(std::ostream &os, const PlaneIdeal &v) {
-        return os << "PlaneIdeal{" << ".x = " << v.x << ", "".y = " << v.y << ", "".z = " << v.z << "}";
+    inline std::ostream &operator<<(std::ostream &os, const PlaneCentral &v) {
+        return os << "PlaneCentral{" << ".x = " << v.x << ", "".y = " << v.y << ", "".z = " << v.z << "}";
     }
     inline std::ostream &operator<<(std::ostream &os, const BivectorBulk &v) {
         return os << "BivectorBulk{" << ".xy = " << v.xy << ", "".xz = " << v.xz << ", "".yz = " << v.yz << "}";

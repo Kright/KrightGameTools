@@ -122,13 +122,13 @@ namespace pga3d {
     inline double Point::weightNorm() const noexcept { return std::sqrt(weightNormSquare()); }
     inline ProjectivePoint Point::normalizedByWeight() const noexcept { return *this / weightNorm(); }
 
-    constexpr double PlaneIdeal::normSquare() const noexcept { return (x * x + y * y + z * z); }
-    inline double PlaneIdeal::norm() const noexcept { return std::sqrt(normSquare()); }
-    inline PlaneIdeal PlaneIdeal::normalizedByNorm() const noexcept { return *this / norm(); }
+    constexpr double PlaneCentral::normSquare() const noexcept { return (x * x + y * y + z * z); }
+    inline double PlaneCentral::norm() const noexcept { return std::sqrt(normSquare()); }
+    inline PlaneCentral PlaneCentral::normalizedByNorm() const noexcept { return *this / norm(); }
 
-    constexpr double PlaneIdeal::bulkNormSquare() const noexcept { return (x * x + y * y + z * z); }
-    inline double PlaneIdeal::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }
-    inline PlaneIdeal PlaneIdeal::normalizedByBulk() const noexcept { return *this / bulkNorm(); }
+    constexpr double PlaneCentral::bulkNormSquare() const noexcept { return (x * x + y * y + z * z); }
+    inline double PlaneCentral::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }
+    inline PlaneCentral PlaneCentral::normalizedByBulk() const noexcept { return *this / bulkNorm(); }
 
     constexpr double BivectorBulk::normSquare() const noexcept { return (xy * xy + xz * xz + yz * yz); }
     inline double BivectorBulk::norm() const noexcept { return std::sqrt(normSquare()); }

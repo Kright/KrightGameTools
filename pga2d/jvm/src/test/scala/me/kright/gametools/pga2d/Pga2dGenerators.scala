@@ -46,14 +46,14 @@ object Pga2dGenerators:
   val lines: Gen[Pga2dLine] =
     makeGenT(3, FlatDoubleSerializer.read[Pga2dLine])
 
-  val lineIdeals: Gen[Pga2dLineIdeal] =
+  val lineCentrals: Gen[Pga2dLineCentral] =
     Gen.oneOf(
       Gen.oneOf(
-        Pga2dLineIdeal(1, 0),
-        Pga2dLineIdeal(0, 1),
-        Pga2dLineIdeal(1, 1),
+        Pga2dLineCentral(1, 0),
+        Pga2dLineCentral(0, 1),
+        Pga2dLineCentral(1, 1),
       ),
-      makeGenT(2, FlatDoubleSerializer.read[Pga2dLineIdeal])
+      makeGenT(2, FlatDoubleSerializer.read[Pga2dLineCentral])
     )
 
   val translators: Gen[Pga2dTranslator] =

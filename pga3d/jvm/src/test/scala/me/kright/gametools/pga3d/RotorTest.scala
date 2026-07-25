@@ -27,11 +27,11 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     for (isNormalizedInput <- ArraySeq(false, true);
          isNearPi <- ArraySeq(false, true);
          angle <- angles) {
-      val from = Pga3dPlaneIdeal(1.0, 0.0, 0.0)
+      val from = Pga3dPlaneCentral(1.0, 0.0, 0.0)
 
       val to =
-        if (isNearPi) Pga3dPlaneIdeal(-Math.cos(angle), Math.sin(angle), 0.0)
-        else Pga3dPlaneIdeal(Math.cos(angle), Math.sin(angle), 0.0)
+        if (isNearPi) Pga3dPlaneCentral(-Math.cos(angle), Math.sin(angle), 0.0)
+        else Pga3dPlaneCentral(Math.cos(angle), Math.sin(angle), 0.0)
 
       forAll(samples, MinSuccessful(1000)) { case (q, rawM1, rawM2) =>
         val qFrom = q.sandwich(from)
@@ -63,7 +63,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("rotation along axis for zero rotation is zero") {
-    assert(Pga3dRotor.id.restoreRotationInPlane(Pga3dPlaneIdeal(1, 1, 1)) == 0.0)
+    assert(Pga3dRotor.id.restoreRotationInPlane(Pga3dPlaneCentral(1, 1, 1)) == 0.0)
     assert(Pga3dRotor.id.restoreRotationInPlaneX == 0.0)
     assert(Pga3dRotor.id.restoreRotationInPlaneY == 0.0)
     assert(Pga3dRotor.id.restoreRotationInPlaneZ == 0.0)
@@ -71,8 +71,8 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("rotation in X") {
     val q = Pga3dRotor.rotation(Pga3dVector(0, 0, 1), Pga3dVector(0, 1, 0))
-    assert(q.restoreRotationInPlane(Pga3dPlaneIdeal(1, 0, 0)) == 1.5707963267948963)
-    assert(q.restoreRotationInPlane(Pga3dPlaneIdeal(-1, 0, 0)) == -1.5707963267948963)
+    assert(q.restoreRotationInPlane(Pga3dPlaneCentral(1, 0, 0)) == 1.5707963267948963)
+    assert(q.restoreRotationInPlane(Pga3dPlaneCentral(-1, 0, 0)) == -1.5707963267948963)
     assert(q.restoreRotationInPlaneX == 1.5707963267948963)
   }
 

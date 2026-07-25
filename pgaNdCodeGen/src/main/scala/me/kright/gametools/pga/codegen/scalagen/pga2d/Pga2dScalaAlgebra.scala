@@ -65,7 +65,7 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
 
   override val vector = ScalaMultivectorSubClass("Pga2dVector", projectivePoint.variableFields.filter(f => f.basisBlade.contains(genW)),
     description = "A vector: the difference between two points, a direction with magnitude; an ideal point with w = 0.\nStored in dual representation with fields x, y. Translators move points but do not change vectors.")
-  val lineIdeal = ScalaMultivectorSubClass("Pga2dLineIdeal", line.variableFields.filter(f => !f.basisBlade.contains(genW)),
+  val lineCentral = ScalaMultivectorSubClass("Pga2dLineCentral", line.variableFields.filter(f => !f.basisBlade.contains(genW)),
     description = "A line ax + by = 0 passing through the center of coordinates: a Pga2dLine with w = 0.\nDual to Pga2dVector.")
   override val point = {
     val (weight, bulk) = projectivePoint.variableFields.partition(_.basisBlade.contains(genW))
@@ -81,7 +81,7 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
     multivector, motor,
     line, projectivePoint,
     rotor, projectiveTranslator, translator,
-    vector, point, lineIdeal,
+    vector, point, lineCentral,
     scalar, pseudoScalar,
     pointCenter, zeroCls,
   )

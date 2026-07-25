@@ -102,12 +102,12 @@ namespace pga3d {
     }; }
     constexpr Motor Translator::dual() const noexcept { return pga3d::dual(*this); }
 
-    constexpr PlaneIdeal dual(const Vector& a) noexcept { return {
+    constexpr PlaneCentral dual(const Vector& a) noexcept { return {
         .x = a.x,
         .y = a.y,
         .z = a.z
     }; }
-    constexpr PlaneIdeal Vector::dual() const noexcept { return pga3d::dual(*this); }
+    constexpr PlaneCentral Vector::dual() const noexcept { return pga3d::dual(*this); }
 
     constexpr Plane dual(const Point& a) noexcept { return {
         .x = a.x,
@@ -117,12 +117,12 @@ namespace pga3d {
     }; }
     constexpr Plane Point::dual() const noexcept { return pga3d::dual(*this); }
 
-    constexpr Vector dual(const PlaneIdeal& a) noexcept { return {
+    constexpr Vector dual(const PlaneCentral& a) noexcept { return {
         .x = a.x,
         .y = a.y,
         .z = a.z
     }; }
-    constexpr Vector PlaneIdeal::dual() const noexcept { return pga3d::dual(*this); }
+    constexpr Vector PlaneCentral::dual() const noexcept { return pga3d::dual(*this); }
 
     constexpr BivectorWeight dual(const BivectorBulk& a) noexcept { return {
         .wx = a.yz,

@@ -259,8 +259,8 @@ final case class Pga2dMultivector(s: Double = 0.0,
       y = wx,
     )
 
-  def toLineIdealUnsafe: Pga2dLineIdeal =
-    Pga2dLineIdeal(
+  def toLineCentralUnsafe: Pga2dLineCentral =
+    Pga2dLineCentral(
       x = x,
       y = y,
     )

@@ -25,7 +25,7 @@ namespace pga3d {
         return rotation(from.dual(), to.dual());
     }
 
-    [[nodiscard]] inline Rotor Rotor::rotation(const PlaneIdeal& from, const PlaneIdeal& to) noexcept {
+    [[nodiscard]] inline Rotor Rotor::rotation(const PlaneCentral& from, const PlaneCentral& to) noexcept {
         // not std::sqrt(from.normSquare() * to.normSquare()): the product overflows/underflows
         // for extreme magnitudes (~1e100 or ~1e-100) where each norm alone is still fine
         const double norm = from.norm() * to.norm();
@@ -60,8 +60,8 @@ namespace pga3d {
         }
 
         // exactly antipodal inputs: the axis is any direction orthogonal to from
-        const PlaneIdeal orthogonalPlane =
-            (std::abs(from.x) > std::abs(from.z)) ? PlaneIdeal{-from.y, from.x, 0} : PlaneIdeal{0, -from.z, from.y};
+        const PlaneCentral orthogonalPlane =
+            (std::abs(from.x) > std::abs(from.z)) ? PlaneCentral{-from.y, from.x, 0} : PlaneCentral{0, -from.z, from.y};
 
         return Rotor(0, orthogonalPlane.z, -orthogonalPlane.y, orthogonalPlane.x).normalizedByNorm();
     }
@@ -95,13 +95,13 @@ namespace pga3d {
        return (log() * p).exp();
     }
 
-    [[nodiscard]] inline Rotor Rotor::projectToRotationInPlane(const PlaneIdeal& plane) const noexcept {
+    [[nodiscard]] inline Rotor Rotor::projectToRotationInPlane(const PlaneCentral& plane) const noexcept {
         const Rotor q = normalizedByNorm();
         const Rotor qPart = Rotor::rotation(q.sandwich(plane), plane);
         return qPart.geometric(q);
     }
 
-    [[nodiscard]] inline double Rotor::restoreRotationInPlane(const PlaneIdeal& plane) const noexcept {
+    [[nodiscard]] inline double Rotor::restoreRotationInPlane(const PlaneCentral& plane) const noexcept {
         const Rotor q0 = projectToRotationInPlane(plane);
         const BivectorWeight logDual = q0.log().dual();
         const double currentAngle = 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm();

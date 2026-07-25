@@ -13,7 +13,7 @@ class FlatDoubleSerializerPga2dTest extends AnyFunSuiteLike with ScalaCheckPrope
     assert(FlatDoubleSerializer.getSize[Pga2dMultivector] == Pga2dMultivector.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga2dMotor] == Pga2dMotor.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga2dLine] == Pga2dLine.componentsCount)
-    assert(FlatDoubleSerializer.getSize[Pga2dLineIdeal] == Pga2dLineIdeal.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga2dLineCentral] == Pga2dLineCentral.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga2dProjectivePoint] == Pga2dProjectivePoint.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga2dPoint] == Pga2dPoint.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga2dVector] == Pga2dVector.componentsCount)
@@ -29,7 +29,7 @@ class FlatDoubleSerializerPga2dTest extends AnyFunSuiteLike with ScalaCheckPrope
     myCheck(Pga2dGenerators.rotors)
     myCheck(Pga2dGenerators.normalizedRotors)
     myCheck(Pga2dGenerators.lines)
-    myCheck(Pga2dGenerators.lineIdeals)
+    myCheck(Pga2dGenerators.lineCentrals)
     myCheck(Pga2dGenerators.anyMotors)
     myCheck(Pga2dGenerators.projectivePoints)
   }

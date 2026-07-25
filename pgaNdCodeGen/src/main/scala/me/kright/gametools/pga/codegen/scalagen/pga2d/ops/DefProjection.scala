@@ -18,7 +18,7 @@ object DefProjection:
         GeneratedCode { code =>
           val point = cls.self
 
-          for (hyperplaneClass <- ArraySeq(Pga2dScalaAlgebra.line, Pga2dScalaAlgebra.lineIdeal)) {
+          for (hyperplaneClass <- ArraySeq(Pga2dScalaAlgebra.line, Pga2dScalaAlgebra.lineCentral)) {
             val line = hyperplaneClass.makeSymbolic("line")
             val result = -line.dot(point).geometric(line)
             val resultCls = Pga2dScalaAlgebra.findMatchingClass(result)

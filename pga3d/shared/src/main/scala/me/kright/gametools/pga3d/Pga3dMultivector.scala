@@ -385,8 +385,8 @@ final case class Pga3dMultivector(s: Double = 0.0,
       z = -wxy,
     )
 
-  def toPlaneIdealUnsafe: Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  def toPlaneCentralUnsafe: Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = x,
       y = y,
       z = z,

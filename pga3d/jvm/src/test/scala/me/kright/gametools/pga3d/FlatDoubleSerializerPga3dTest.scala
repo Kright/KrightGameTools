@@ -15,7 +15,7 @@ class FlatDoubleSerializerPga3dTest extends AnyFunSuiteLike with ScalaCheckPrope
     assert(FlatDoubleSerializer.getSize[Pga3dProjectivePoint] == Pga3dProjectivePoint.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dRotor] == Pga3dRotor.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dPlane] == Pga3dPlane.componentsCount)
-    assert(FlatDoubleSerializer.getSize[Pga3dPlaneIdeal] == Pga3dPlaneIdeal.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dPlaneCentral] == Pga3dPlaneCentral.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dTranslator] == Pga3dTranslator.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dBivectorWeight] == Pga3dBivectorWeight.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dBivectorBulk] == Pga3dBivectorBulk.componentsCount)
@@ -35,7 +35,7 @@ class FlatDoubleSerializerPga3dTest extends AnyFunSuiteLike with ScalaCheckPrope
     myCheck(Pga3dGenerators.anyMotors)
     myCheck(Pga3dGenerators.multivectors)
     myCheck(Pga3dGenerators.planes)
-    myCheck(Pga3dGenerators.planeIdeals)
+    myCheck(Pga3dGenerators.planeCentrals)
     myCheck(Pga3dGenerators.projectivePoints)
     myCheck(Pga3dGenerators.translators)
   }

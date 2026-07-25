@@ -2,7 +2,7 @@ package me.kright.gametools.pga.codegen.scalagen.pga2d.ops
 
 import me.kright.gametools.ga.PGA2
 import me.kright.gametools.pga.codegen.scalagen.common.{GeneratedCode, MultivectorUnaryOp}
-import me.kright.gametools.pga.codegen.scalagen.pga2d.Pga2dScalaAlgebra.{lineIdeal, rotor, vector}
+import me.kright.gametools.pga.codegen.scalagen.pga2d.Pga2dScalaAlgebra.{lineCentral, rotor, vector}
 
 object DefObjectMethodsForRotor:
   def apply()(using pga2: PGA2): MultivectorUnaryOp =
@@ -17,7 +17,7 @@ object DefObjectMethodsForRotor:
                |def exp(xy: Double): ${cls.name} =
                |  ${cls.name}(Math.cos(xy), Math.sin(xy))
                |
-               |def rotation(from: ${lineIdeal.name}, to: ${lineIdeal.name}): ${cls.name} = {
+               |def rotation(from: ${lineCentral.name}, to: ${lineCentral.name}): ${cls.name} = {
                |  // not Math.sqrt(from.normSquare * to.normSquare): the product overflows/underflows
                |  // for extreme magnitudes (~1e100 or ~1e-100) where each norm alone is still fine
                |  val norm = from.norm * to.norm

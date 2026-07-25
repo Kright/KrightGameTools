@@ -525,7 +525,7 @@ final case class Pga3dMotor(s: Double = 0.0,
       i = 0.0,
     )
 
-  infix def geometric(r: Pga3dPlaneIdeal): Pga3dMultivector =
+  infix def geometric(r: Pga3dPlaneCentral): Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,
       w = (r.x * wx + r.y * wy + r.z * wz),
@@ -741,7 +741,7 @@ final case class Pga3dMotor(s: Double = 0.0,
       i = 0.0,
     )
 
-  infix def dot(r: Pga3dPlaneIdeal): Pga3dMultivector =
+  infix def dot(r: Pga3dPlaneCentral): Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,
       w = (r.x * wx + r.y * wy + r.z * wz),
@@ -951,7 +951,7 @@ final case class Pga3dMotor(s: Double = 0.0,
 
   inline infix def meet(r: Pga3dPoint): Pga3dProjectivePoint = wedge(r)
 
-  infix def wedge(r: Pga3dPlaneIdeal): Pga3dMultivector =
+  infix def wedge(r: Pga3dPlaneCentral): Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,
       w = 0.0,
@@ -971,9 +971,9 @@ final case class Pga3dMotor(s: Double = 0.0,
       i = 0.0,
     )
 
-  inline infix def ^(r: Pga3dPlaneIdeal): Pga3dMultivector = wedge(r)
+  inline infix def ^(r: Pga3dPlaneCentral): Pga3dMultivector = wedge(r)
 
-  inline infix def meet(r: Pga3dPlaneIdeal): Pga3dMultivector = wedge(r)
+  inline infix def meet(r: Pga3dPlaneCentral): Pga3dMultivector = wedge(r)
 
   infix def wedge(r: Pga3dBivectorBulk): Pga3dMotor =
     Pga3dMotor(
@@ -1164,7 +1164,7 @@ final case class Pga3dMotor(s: Double = 0.0,
       i = 0.0,
     )
 
-  infix def antiGeometric(r: Pga3dPlaneIdeal): Pga3dMultivector =
+  infix def antiGeometric(r: Pga3dPlaneCentral): Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,
       w = 0.0,
@@ -1372,7 +1372,7 @@ final case class Pga3dMotor(s: Double = 0.0,
       i = 0.0,
     )
 
-  infix def antiDot(r: Pga3dPlaneIdeal): Pga3dMultivector =
+  infix def antiDot(r: Pga3dPlaneCentral): Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,
       w = 0.0,
@@ -1583,16 +1583,16 @@ final case class Pga3dMotor(s: Double = 0.0,
 
   inline infix def join(r: Pga3dPoint): Pga3dMultivector = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = i * r.x,
       y = i * r.y,
       z = i * r.z,
     )
 
-  inline infix def v(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dPlaneCentral): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dPlaneCentral): Pga3dPlaneCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga3dBivectorBulk): Pga3dRotor =
     Pga3dRotor(
@@ -1885,7 +1885,7 @@ final case class Pga3dMotor(s: Double = 0.0,
       w = (sMs + xyMxy + xzMxz + yzMyz),
     )
 
-  infix def sandwich(r: Pga3dPlaneIdeal): Pga3dPlane =
+  infix def sandwich(r: Pga3dPlaneCentral): Pga3dPlane =
     val sMs = s * s
     val sMxy = s * xy
     val sMxz = s * xz
@@ -2196,7 +2196,7 @@ final case class Pga3dMotor(s: Double = 0.0,
       w = (sMs + xyMxy + xzMxz + yzMyz),
     )
 
-  infix def reverseSandwich(r: Pga3dPlaneIdeal): Pga3dPlane =
+  infix def reverseSandwich(r: Pga3dPlaneCentral): Pga3dPlane =
     val sMs = s * s
     val sMxy = s * xy
     val sMxz = s * xz
@@ -2391,7 +2391,7 @@ final case class Pga3dMotor(s: Double = 0.0,
       i = 0.0,
     )
 
-  infix def cross(r: Pga3dPlaneIdeal): Pga3dMultivector =
+  infix def cross(r: Pga3dPlaneCentral): Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,
       w = (r.x * wx + r.y * wy + r.z * wz),

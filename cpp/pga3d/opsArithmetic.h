@@ -298,18 +298,18 @@ namespace pga3d {
     }; }
     constexpr Point& operator-=(Point& a, const Vector& b) noexcept { a = a - b; return a; }
 
-    [[nodiscard]] constexpr PlaneIdeal operator+(const PlaneIdeal& a, const PlaneIdeal& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneCentral operator+(const PlaneCentral& a, const PlaneCentral& b) noexcept { return {
         .x = (a.x + b.x),
         .y = (a.y + b.y),
         .z = (a.z + b.z)
     }; }
-    constexpr PlaneIdeal& operator+=(PlaneIdeal& a, const PlaneIdeal& b) noexcept { a = a + b; return a; }
-    [[nodiscard]] constexpr PlaneIdeal operator-(const PlaneIdeal& a, const PlaneIdeal& b) noexcept { return {
+    constexpr PlaneCentral& operator+=(PlaneCentral& a, const PlaneCentral& b) noexcept { a = a + b; return a; }
+    [[nodiscard]] constexpr PlaneCentral operator-(const PlaneCentral& a, const PlaneCentral& b) noexcept { return {
         .x = (a.x - b.x),
         .y = (a.y - b.y),
         .z = (a.z - b.z)
     }; }
-    constexpr PlaneIdeal& operator-=(PlaneIdeal& a, const PlaneIdeal& b) noexcept { a = a - b; return a; }
+    constexpr PlaneCentral& operator-=(PlaneCentral& a, const PlaneCentral& b) noexcept { a = a - b; return a; }
 
     [[nodiscard]] constexpr Bivector operator+(const BivectorBulk& a, const Bivector& b) noexcept { return {
         .wx = b.wx,
@@ -428,7 +428,7 @@ namespace pga3d {
     [[nodiscard]] constexpr ProjectiveTranslator operator-(const Translator& a) noexcept { return {.s = -1.0, .wx = -a.wx, .wy = -a.wy, .wz = -a.wz}; }
     [[nodiscard]] constexpr Vector operator-(const Vector& a) noexcept { return {.x = -a.x, .y = -a.y, .z = -a.z}; }
     [[nodiscard]] constexpr ProjectivePoint operator-(const Point& a) noexcept { return {.x = -a.x, .y = -a.y, .z = -a.z, .w = -1.0}; }
-    [[nodiscard]] constexpr PlaneIdeal operator-(const PlaneIdeal& a) noexcept { return {.x = -a.x, .y = -a.y, .z = -a.z}; }
+    [[nodiscard]] constexpr PlaneCentral operator-(const PlaneCentral& a) noexcept { return {.x = -a.x, .y = -a.y, .z = -a.z}; }
     [[nodiscard]] constexpr BivectorBulk operator-(const BivectorBulk& a) noexcept { return {.xy = -a.xy, .xz = -a.xz, .yz = -a.yz}; }
     [[nodiscard]] constexpr BivectorWeight operator-(const BivectorWeight& a) noexcept { return {.wx = -a.wx, .wy = -a.wy, .wz = -a.wz}; }
     [[nodiscard]] constexpr PseudoScalar operator-(const PseudoScalar& a) noexcept { return {.i = -a.i}; }
@@ -558,15 +558,15 @@ namespace pga3d {
     [[nodiscard]] constexpr ProjectivePoint operator*(double d, const Point& a) noexcept { return a * d; }
     [[nodiscard]] constexpr ProjectivePoint operator/(const Point& a, double d) noexcept { return a * (1.0 / d); }
 
-    [[nodiscard]] constexpr PlaneIdeal operator*(const PlaneIdeal& a, double d) noexcept { return {
+    [[nodiscard]] constexpr PlaneCentral operator*(const PlaneCentral& a, double d) noexcept { return {
         .x = a.x * d,
         .y = a.y * d,
         .z = a.z * d
     }; }
-    [[nodiscard]] constexpr PlaneIdeal operator*(double d, const PlaneIdeal& a) noexcept { return a * d; }
-    [[nodiscard]] constexpr PlaneIdeal operator/(const PlaneIdeal& a, double d) noexcept { return a * (1.0 / d); }
-    constexpr PlaneIdeal& operator*=(PlaneIdeal& a, double d) noexcept { a = a * d; return a; }
-    constexpr PlaneIdeal& operator/=(PlaneIdeal& a, double d) noexcept { a = a / d; return a; }
+    [[nodiscard]] constexpr PlaneCentral operator*(double d, const PlaneCentral& a) noexcept { return a * d; }
+    [[nodiscard]] constexpr PlaneCentral operator/(const PlaneCentral& a, double d) noexcept { return a * (1.0 / d); }
+    constexpr PlaneCentral& operator*=(PlaneCentral& a, double d) noexcept { a = a * d; return a; }
+    constexpr PlaneCentral& operator/=(PlaneCentral& a, double d) noexcept { a = a / d; return a; }
 
     [[nodiscard]] constexpr BivectorBulk operator*(const BivectorBulk& a, double d) noexcept { return {
         .xy = a.xy * d,
@@ -676,7 +676,7 @@ namespace pga3d {
         .y = std::fma(other.y, mult, y),
         .z = std::fma(other.z, mult, z)
     }; }
-    inline PlaneIdeal PlaneIdeal::madd(const PlaneIdeal& other, double mult) const noexcept { return {
+    inline PlaneCentral PlaneCentral::madd(const PlaneCentral& other, double mult) const noexcept { return {
         .x = std::fma(other.x, mult, x),
         .y = std::fma(other.y, mult, y),
         .z = std::fma(other.z, mult, z)
@@ -706,7 +706,7 @@ namespace pga3d {
     [[nodiscard]] constexpr bool operator==(const Translator& a, const Translator& b) noexcept { return a.wx == b.wx && a.wy == b.wy && a.wz == b.wz; }
     [[nodiscard]] constexpr bool operator==(const Vector& a, const Vector& b) noexcept { return a.x == b.x && a.y == b.y && a.z == b.z; }
     [[nodiscard]] constexpr bool operator==(const Point& a, const Point& b) noexcept { return a.x == b.x && a.y == b.y && a.z == b.z; }
-    [[nodiscard]] constexpr bool operator==(const PlaneIdeal& a, const PlaneIdeal& b) noexcept { return a.x == b.x && a.y == b.y && a.z == b.z; }
+    [[nodiscard]] constexpr bool operator==(const PlaneCentral& a, const PlaneCentral& b) noexcept { return a.x == b.x && a.y == b.y && a.z == b.z; }
     [[nodiscard]] constexpr bool operator==(const BivectorBulk& a, const BivectorBulk& b) noexcept { return a.xy == b.xy && a.xz == b.xz && a.yz == b.yz; }
     [[nodiscard]] constexpr bool operator==(const BivectorWeight& a, const BivectorWeight& b) noexcept { return a.wx == b.wx && a.wy == b.wy && a.wz == b.wz; }
     [[nodiscard]] constexpr bool operator==(const PseudoScalar& a, const PseudoScalar& b) noexcept { return a.i == b.i; }

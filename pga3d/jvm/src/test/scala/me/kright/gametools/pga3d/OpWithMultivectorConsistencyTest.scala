@@ -19,7 +19,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
     classOf[Pga3dMotor],
     classOf[Pga3dMultivector],
     classOf[Pga3dPlane],
-    classOf[Pga3dPlaneIdeal],
+    classOf[Pga3dPlaneCentral],
     classOf[Pga3dProjectivePoint],
     classOf[Pga3dPoint],
     classOf[Pga3dPseudoScalar],

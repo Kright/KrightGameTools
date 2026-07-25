@@ -19,7 +19,7 @@ with each other, but not with `Pga3dMultivector`.
 
 The geometric product.
 
-| geometric | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| geometric | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Motor | Multivector | Motor | Multivector | Motor | Motor | Motor | Multivector | Multivector | Multivector | Motor | Motor | Motor | Multivector |
@@ -31,33 +31,33 @@ The geometric product.
 | **Translator** |  | Motor | Multivector | Motor | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Multivector | Motor | BivectorWeight | PseudoScalar | Point |
 | **Vector** |  | Multivector | Motor | Multivector | BivectorWeight | Multivector | Vector | Vector |  | BivectorWeight | Motor | Multivector |  |  | BivectorWeight |
 | **Point** |  | Multivector | Motor | Multivector | ProjectiveTranslator | Multivector | ProjectivePoint | Point | BivectorWeight | ProjectiveTranslator | Motor | Multivector | Vector | Plane | ProjectiveTranslator |
-| **PlaneIdeal** |  | Multivector | Motor | Multivector | Motor | Multivector | Multivector | Multivector | Motor | Motor | Rotor | Multivector | Multivector | Vector | BivectorBulk |
-| **BivectorBulk** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | BivectorWeight | PlaneIdeal |
+| **PlaneCentral** |  | Multivector | Motor | Multivector | Motor | Multivector | Multivector | Multivector | Motor | Motor | Rotor | Multivector | Multivector | Vector | BivectorBulk |
+| **BivectorBulk** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | BivectorWeight | PlaneCentral |
 | **BivectorWeight** |  | Motor | Multivector | Motor | Vector | Motor | BivectorWeight | BivectorWeight |  | Vector | Multivector | Motor |  |  | Vector |
 | **PseudoScalar** |  | Motor | Vector | BivectorWeight | Plane | Motor | PseudoScalar | PseudoScalar |  | Plane | Vector | BivectorWeight |  |  | Plane |
-| **PointCenter** |  | Multivector | Motor | Multivector | ProjectiveTranslator | Multivector | ProjectivePoint | Point | BivectorWeight | ProjectiveTranslator | BivectorBulk | PlaneIdeal | Vector | Plane | Double |
+| **PointCenter** |  | Multivector | Motor | Multivector | ProjectiveTranslator | Multivector | ProjectivePoint | Point | BivectorWeight | ProjectiveTranslator | BivectorBulk | PlaneCentral | Vector | Plane | Double |
 
 ### dot
 
 The dot (inner) product.
 
-| dot | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| dot | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Motor | Multivector | Motor | Multivector | Motor | Motor | Motor | Multivector | Multivector | Multivector | Motor | BivectorWeight | Motor | Multivector |
-| **Plane** |  | Multivector | Double | Plane | Bivector | Plane | Plane | Plane | BivectorWeight | Bivector | Double | PlaneIdeal | Plane | Vector | BivectorBulk |
-| **Bivector** |  | Motor | Plane | Double | Plane | Motor | Bivector | Bivector | Plane | Plane | Plane | Double |  | BivectorWeight | PlaneIdeal |
+| **Plane** |  | Multivector | Double | Plane | Bivector | Plane | Plane | Plane | BivectorWeight | Bivector | Double | PlaneCentral | Plane | Vector | BivectorBulk |
+| **Bivector** |  | Motor | Plane | Double | Plane | Motor | Bivector | Bivector | Plane | Plane | Plane | Double |  | BivectorWeight | PlaneCentral |
 | **ProjectivePoint** |  | Multivector | Bivector | Plane | Double | Multivector | ProjectivePoint | ProjectivePoint |  | Double | Bivector | Plane |  | Plane | Double |
-| **Rotor** |  | Motor | Plane | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | PlaneIdeal | Rotor | BivectorWeight | Motor | Multivector |
+| **Rotor** |  | Motor | Plane | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | PlaneCentral | Rotor | BivectorWeight | Motor | Multivector |
 | **ProjectiveTranslator** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Plane | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **Translator** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Plane | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 | **Vector** |  | Multivector | BivectorWeight | Plane |  | Multivector | Vector | Vector |  |  | BivectorWeight | Plane |  |  |  |
 | **Point** |  | Multivector | Bivector | Plane | Double | Multivector | ProjectivePoint | Point |  | Double | Bivector | Plane |  | Plane | Double |
-| **PlaneIdeal** |  | Multivector | Double | Plane | Bivector | PlaneIdeal | Plane | Plane | BivectorWeight | Bivector | Double | PlaneIdeal | Plane | Vector | BivectorBulk |
-| **BivectorBulk** |  | Motor | PlaneIdeal | Double | Plane | Rotor | BivectorBulk | BivectorBulk | Plane | Plane | PlaneIdeal | Double |  | BivectorWeight | PlaneIdeal |
+| **PlaneCentral** |  | Multivector | Double | Plane | Bivector | PlaneCentral | Plane | Plane | BivectorWeight | Bivector | Double | PlaneCentral | Plane | Vector | BivectorBulk |
+| **BivectorBulk** |  | Motor | PlaneCentral | Double | Plane | Rotor | BivectorBulk | BivectorBulk | Plane | Plane | PlaneCentral | Double |  | BivectorWeight | PlaneCentral |
 | **BivectorWeight** |  | BivectorWeight | Plane |  |  | BivectorWeight | BivectorWeight | BivectorWeight |  |  | Plane |  |  |  |  |
 | **PseudoScalar** |  | Motor | Vector | BivectorWeight | Plane | Motor | PseudoScalar | PseudoScalar |  | Plane | Vector | BivectorWeight |  |  | Plane |
-| **PointCenter** |  | Multivector | BivectorBulk | PlaneIdeal | Double | Multivector | ProjectivePoint | PointCenter |  | Double | BivectorBulk | PlaneIdeal |  | Plane | Double |
+| **PointCenter** |  | Multivector | BivectorBulk | PlaneCentral | Double | Multivector | ProjectivePoint | PointCenter |  | Double | BivectorBulk | PlaneCentral |  | Plane | Double |
 
 ### wedge
 
@@ -65,7 +65,7 @@ Aliases: `^`, `meet`.
 
 The wedge (outer) product, also known as `meet`: the intersection of geometric elements.
 
-| wedge | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| wedge | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Motor | Multivector | Motor | ProjectivePoint | Motor | Motor | Motor | Vector | ProjectivePoint | Multivector | Motor | Motor | PseudoScalar | ProjectivePoint |
@@ -77,7 +77,7 @@ The wedge (outer) product, also known as `meet`: the intersection of geometric e
 | **Translator** |  | Motor | Multivector | Motor | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Multivector | Motor | BivectorWeight | PseudoScalar | PointCenter |
 | **Vector** |  | Vector | PseudoScalar |  |  | Vector | Vector | Vector |  |  | PseudoScalar |  |  |  |  |
 | **Point** |  | ProjectivePoint | PseudoScalar |  |  | ProjectivePoint | ProjectivePoint | Point |  |  | PseudoScalar |  |  |  |  |
-| **PlaneIdeal** |  | Multivector | Bivector | ProjectivePoint | PseudoScalar | Multivector | Multivector | Multivector | PseudoScalar | PseudoScalar | BivectorBulk | ProjectivePoint | Vector |  |  |
+| **PlaneCentral** |  | Multivector | Bivector | ProjectivePoint | PseudoScalar | Multivector | Multivector | Multivector | PseudoScalar | PseudoScalar | BivectorBulk | ProjectivePoint | Vector |  |  |
 | **BivectorBulk** |  | Motor | ProjectivePoint | PseudoScalar |  | BivectorBulk | Motor | Motor |  |  | ProjectivePoint |  | PseudoScalar |  |  |
 | **BivectorWeight** |  | Motor | Vector | PseudoScalar |  | Motor | BivectorWeight | BivectorWeight |  |  | Vector | PseudoScalar |  |  |  |
 | **PseudoScalar** |  | PseudoScalar |  |  |  | PseudoScalar | PseudoScalar | PseudoScalar |  |  |  |  |  |  |  |
@@ -87,29 +87,29 @@ The wedge (outer) product, also known as `meet`: the intersection of geometric e
 
 The dual of the geometric product.
 
-| antiGeometric | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| antiGeometric | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | Motor | Multivector |
-| **Plane** |  | Multivector | Motor | Multivector | Motor | Multivector | Multivector | Multivector | Motor | Motor | BivectorBulk | PlaneIdeal | Multivector | Plane | Double |
-| **Bivector** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | Bivector | PlaneIdeal |
+| **Plane** |  | Multivector | Motor | Multivector | Motor | Multivector | Multivector | Multivector | Motor | Motor | BivectorBulk | PlaneCentral | Multivector | Plane | Double |
+| **Bivector** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | Bivector | PlaneCentral |
 | **ProjectivePoint** |  | Multivector | Motor | Multivector | Motor | Multivector | Multivector | Multivector | Motor | Motor | Rotor | Multivector | Multivector | ProjectivePoint | BivectorBulk |
 | **Rotor** |  | Rotor | Multivector | Rotor | Multivector |  | Rotor | Rotor | Multivector | Multivector |  |  | Rotor | Rotor |  |
-| **ProjectiveTranslator** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | ProjectiveTranslator | PlaneIdeal |
-| **Translator** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | ProjectiveTranslator | PlaneIdeal |
+| **ProjectiveTranslator** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | ProjectiveTranslator | PlaneCentral |
+| **Translator** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | ProjectiveTranslator | PlaneCentral |
 | **Vector** |  | Multivector | Motor | Multivector | Motor | Multivector | Multivector | Multivector | Motor | Motor | Rotor | Multivector | Multivector | Vector | BivectorBulk |
 | **Point** |  | Multivector | Motor | Multivector | Motor | Multivector | Multivector | Multivector | Motor | Motor | Rotor | Multivector | Multivector | ProjectivePoint | BivectorBulk |
-| **PlaneIdeal** |  | Multivector | BivectorBulk | Multivector | Rotor |  | Multivector | Multivector | Rotor | Rotor |  |  | Multivector | PlaneIdeal |  |
-| **BivectorBulk** |  | Rotor | PlaneIdeal | Rotor | Multivector |  | Rotor | Rotor | Multivector | Multivector |  |  | Rotor | BivectorBulk |  |
-| **BivectorWeight** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | BivectorWeight | PlaneIdeal |
-| **PseudoScalar** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
-| **PointCenter** |  | Multivector | Double | PlaneIdeal | BivectorBulk |  | PlaneIdeal | PlaneIdeal | BivectorBulk | BivectorBulk |  |  | PlaneIdeal | ProjectivePoint |  |
+| **PlaneCentral** |  | Multivector | BivectorBulk | Multivector | Rotor |  | Multivector | Multivector | Rotor | Rotor |  |  | Multivector | PlaneCentral |  |
+| **BivectorBulk** |  | Rotor | PlaneCentral | Rotor | Multivector |  | Rotor | Rotor | Multivector | Multivector |  |  | Rotor | BivectorBulk |  |
+| **BivectorWeight** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | Rotor | Motor | BivectorWeight | PlaneCentral |
+| **PseudoScalar** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
+| **PointCenter** |  | Multivector | Double | PlaneCentral | BivectorBulk |  | PlaneCentral | PlaneCentral | BivectorBulk | BivectorBulk |  |  | PlaneCentral | ProjectivePoint |  |
 
 ### antiDot
 
 The dual of the dot product.
 
-| antiDot | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| antiDot | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Motor | Multivector | Motor | Multivector | Rotor | Motor | Motor | Multivector | Multivector | Multivector | BivectorBulk | Motor | Motor | ProjectivePoint |
@@ -121,17 +121,17 @@ The dual of the dot product.
 | **Translator** |  | Motor | ProjectivePoint | Motor | Multivector | BivectorBulk | Motor | Motor | Multivector | Multivector | ProjectivePoint |  | Motor | ProjectiveTranslator |  |
 | **Vector** |  | Multivector | Bivector | ProjectivePoint | PseudoScalar | Multivector | Multivector | Multivector | PseudoScalar | PseudoScalar | BivectorBulk | ProjectivePoint | Vector | Vector |  |
 | **Point** |  | Multivector | Bivector | ProjectivePoint | PseudoScalar | Multivector | Multivector | Multivector | PseudoScalar | PseudoScalar | BivectorBulk | ProjectivePoint | Vector | ProjectivePoint |  |
-| **PlaneIdeal** |  | Multivector |  | ProjectivePoint | BivectorBulk |  | ProjectivePoint | ProjectivePoint | BivectorBulk | BivectorBulk |  |  | ProjectivePoint | PlaneIdeal |  |
+| **PlaneCentral** |  | Multivector |  | ProjectivePoint | BivectorBulk |  | ProjectivePoint | ProjectivePoint | BivectorBulk | BivectorBulk |  |  | ProjectivePoint | PlaneCentral |  |
 | **BivectorBulk** |  | BivectorBulk |  |  | ProjectivePoint |  |  |  | ProjectivePoint | ProjectivePoint |  |  |  | BivectorBulk |  |
 | **BivectorWeight** |  | Motor | ProjectivePoint | PseudoScalar | Vector | BivectorBulk | Motor | Motor | Vector | Vector | ProjectivePoint |  | PseudoScalar | BivectorWeight |  |
-| **PseudoScalar** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
+| **PseudoScalar** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **PointCenter** |  | ProjectivePoint |  |  |  |  |  |  |  |  |  |  |  | ProjectivePoint |  |
 
 ### antiDotI
 
 The pseudoscalar component of `antiDot`, returned as a `Double`.
 
-| antiDotI | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| antiDotI | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
@@ -143,7 +143,7 @@ The pseudoscalar component of `antiDot`, returned as a `Double`.
 | **Translator** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Vector** |  |  |  |  | Double |  |  |  | Double | Double |  |  |  |  |  |
 | **Point** |  |  |  |  | Double |  |  |  | Double | Double |  |  |  |  |  |
-| **PlaneIdeal** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| **PlaneCentral** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **BivectorBulk** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **BivectorWeight** |  |  |  | Double |  |  |  |  |  |  |  |  | Double |  |  |
 | **PseudoScalar** |  |  |  |  |  |  |  |  |  |  |  |  |  | Double |  |
@@ -155,86 +155,86 @@ Aliases: `v`, `join`.
 
 The dual of the wedge product, also known as `join`: the element spanned by the arguments (e.g. the line through two points).
 
-| antiWedge | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| antiWedge | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| **Motor** |  | Motor | Plane | Motor | Multivector | Rotor | ProjectiveTranslator | ProjectiveTranslator | Multivector | Multivector | PlaneIdeal | Rotor | ProjectiveTranslator | Motor | Multivector |
+| **Motor** |  | Motor | Plane | Motor | Multivector | Rotor | ProjectiveTranslator | ProjectiveTranslator | Multivector | Multivector | PlaneCentral | Rotor | ProjectiveTranslator | Motor | Multivector |
 | **Plane** |  | Plane |  |  | Double |  |  |  | Double | Double |  |  |  | Plane | Double |
-| **Bivector** |  | Motor |  | Double | Plane | Double | Double | Double | Plane | Plane |  | Double | Double | Bivector | PlaneIdeal |
-| **ProjectivePoint** |  | Multivector | Double | Plane | Bivector | PlaneIdeal | Plane | Plane | Bivector | Bivector | Double | PlaneIdeal | Plane | ProjectivePoint | BivectorBulk |
-| **Rotor** |  | Rotor |  | Double | PlaneIdeal |  | Double | Double | PlaneIdeal | PlaneIdeal |  |  | Double | Rotor |  |
-| **ProjectiveTranslator** |  | ProjectiveTranslator |  | Double | Plane | Double |  |  | Plane | Plane |  | Double |  | ProjectiveTranslator | PlaneIdeal |
-| **Translator** |  | ProjectiveTranslator |  | Double | Plane | Double |  |  | Plane | Plane |  | Double |  | ProjectiveTranslator | PlaneIdeal |
-| **Vector** |  | Multivector | Double | Plane | Bivector | PlaneIdeal | Plane | Plane | BivectorWeight | Bivector | Double | PlaneIdeal | Plane | Vector | BivectorBulk |
-| **Point** |  | Multivector | Double | Plane | Bivector | PlaneIdeal | Plane | Plane | Bivector | Bivector | Double | PlaneIdeal | Plane | ProjectivePoint | BivectorBulk |
-| **PlaneIdeal** |  | PlaneIdeal |  |  | Double |  |  |  | Double | Double |  |  |  | PlaneIdeal |  |
-| **BivectorBulk** |  | Rotor |  | Double | PlaneIdeal |  | Double | Double | PlaneIdeal | PlaneIdeal |  |  | Double | BivectorBulk |  |
-| **BivectorWeight** |  | ProjectiveTranslator |  | Double | Plane | Double |  |  | Plane | Plane |  | Double |  | BivectorWeight | PlaneIdeal |
-| **PseudoScalar** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
-| **PointCenter** |  | Multivector | Double | PlaneIdeal | BivectorBulk |  | PlaneIdeal | PlaneIdeal | BivectorBulk | BivectorBulk |  |  | PlaneIdeal | ProjectivePoint |  |
+| **Bivector** |  | Motor |  | Double | Plane | Double | Double | Double | Plane | Plane |  | Double | Double | Bivector | PlaneCentral |
+| **ProjectivePoint** |  | Multivector | Double | Plane | Bivector | PlaneCentral | Plane | Plane | Bivector | Bivector | Double | PlaneCentral | Plane | ProjectivePoint | BivectorBulk |
+| **Rotor** |  | Rotor |  | Double | PlaneCentral |  | Double | Double | PlaneCentral | PlaneCentral |  |  | Double | Rotor |  |
+| **ProjectiveTranslator** |  | ProjectiveTranslator |  | Double | Plane | Double |  |  | Plane | Plane |  | Double |  | ProjectiveTranslator | PlaneCentral |
+| **Translator** |  | ProjectiveTranslator |  | Double | Plane | Double |  |  | Plane | Plane |  | Double |  | ProjectiveTranslator | PlaneCentral |
+| **Vector** |  | Multivector | Double | Plane | Bivector | PlaneCentral | Plane | Plane | BivectorWeight | Bivector | Double | PlaneCentral | Plane | Vector | BivectorBulk |
+| **Point** |  | Multivector | Double | Plane | Bivector | PlaneCentral | Plane | Plane | Bivector | Bivector | Double | PlaneCentral | Plane | ProjectivePoint | BivectorBulk |
+| **PlaneCentral** |  | PlaneCentral |  |  | Double |  |  |  | Double | Double |  |  |  | PlaneCentral |  |
+| **BivectorBulk** |  | Rotor |  | Double | PlaneCentral |  | Double | Double | PlaneCentral | PlaneCentral |  |  | Double | BivectorBulk |  |
+| **BivectorWeight** |  | ProjectiveTranslator |  | Double | Plane | Double |  |  | Plane | Plane |  | Double |  | BivectorWeight | PlaneCentral |
+| **PseudoScalar** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
+| **PointCenter** |  | Multivector | Double | PlaneCentral | BivectorBulk |  | PlaneCentral | PlaneCentral | BivectorBulk | BivectorBulk |  |  | PlaneCentral | ProjectivePoint |  |
 
 ### sandwich
 
 `a.sandwich(b)` transforms `b` by `a`: rotation for a rotor, translation for a translator, rigid motion for a motor, reflection for a plane.
 
-| sandwich | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| sandwich | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | Motor | Motor | Vector | ProjectivePoint | Plane | Bivector | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **Plane** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Plane | Bivector | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **Bivector** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | Motor | Motor | Vector | ProjectivePoint | Plane | Bivector | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **ProjectivePoint** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Plane | Bivector | BivectorWeight | PseudoScalar | ProjectivePoint |
-| **Rotor** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
+| **Rotor** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **ProjectiveTranslator** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Plane | Bivector | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **Translator** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Plane | Bivector | BivectorWeight | PseudoScalar | Point |
 | **Vector** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Point** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Plane | Bivector | BivectorWeight | PseudoScalar | Point |
-| **PlaneIdeal** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
-| **BivectorBulk** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
+| **PlaneCentral** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
+| **BivectorBulk** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **BivectorWeight** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **PseudoScalar** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| **PointCenter** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| **PointCenter** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 
 ### reverseSandwich
 
 `a.reverseSandwich(b)` equals `a.reverse.sandwich(b)`: the inverse transformation of `sandwich`.
 
-| reverseSandwich | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| reverseSandwich | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | Motor | Motor | Vector | ProjectivePoint | Plane | Bivector | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **Plane** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Plane | Bivector | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **Bivector** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | Motor | Motor | Vector | ProjectivePoint | Plane | Bivector | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **ProjectivePoint** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Plane | Bivector | BivectorWeight | PseudoScalar | ProjectivePoint |
-| **Rotor** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
+| **Rotor** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **ProjectiveTranslator** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Plane | Bivector | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **Translator** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Plane | Bivector | BivectorWeight | PseudoScalar | Point |
 | **Vector** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Point** |  | Motor | Plane | Bivector | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Plane | Bivector | BivectorWeight | PseudoScalar | Point |
-| **PlaneIdeal** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
-| **BivectorBulk** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
+| **PlaneCentral** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
+| **BivectorBulk** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | ProjectivePoint |
 | **BivectorWeight** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **PseudoScalar** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| **PointCenter** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| **PointCenter** |  | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 
 ### cross
 
 The commutator product `(a * b - b * a) / 2`.
 
-| cross | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneIdeal | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
+| cross | Multivector | Motor | Plane | Bivector | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | PlaneCentral | BivectorBulk | BivectorWeight | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Bivector | Multivector | Bivector | Multivector | Bivector | BivectorWeight | BivectorWeight | Vector | Multivector | Multivector | Bivector | BivectorWeight |  | Multivector |
-| **Plane** |  | Multivector | Bivector | Plane | PseudoScalar | PlaneIdeal | Plane | Plane | PseudoScalar | PseudoScalar | Bivector | PlaneIdeal | Plane | Vector | PseudoScalar |
+| **Plane** |  | Multivector | Bivector | Plane | PseudoScalar | PlaneCentral | Plane | Plane | PseudoScalar | PseudoScalar | Bivector | PlaneCentral | Plane | Vector | PseudoScalar |
 | **Bivector** |  | Bivector | Plane | Bivector | Vector | Bivector | BivectorWeight | BivectorWeight | Vector | Vector | Plane | Bivector | BivectorWeight |  | Vector |
 | **ProjectivePoint** |  | Multivector | PseudoScalar | Vector | BivectorWeight | Vector | Vector | Vector | BivectorWeight | BivectorWeight | PseudoScalar | Vector | Vector | Plane | BivectorWeight |
-| **Rotor** |  | Bivector | PlaneIdeal | Bivector | Vector | BivectorBulk | BivectorWeight | BivectorWeight | Vector | Vector | PlaneIdeal | BivectorBulk | BivectorWeight |  |  |
+| **Rotor** |  | Bivector | PlaneCentral | Bivector | Vector | BivectorBulk | BivectorWeight | BivectorWeight | Vector | Vector | PlaneCentral | BivectorBulk | BivectorWeight |  |  |
 | **ProjectiveTranslator** |  | BivectorWeight | Plane | BivectorWeight | Vector | BivectorWeight |  |  |  | Vector | Plane | BivectorWeight |  |  | Vector |
 | **Translator** |  | BivectorWeight | Plane | BivectorWeight | Vector | BivectorWeight |  |  |  | Vector | Plane | BivectorWeight |  |  | Vector |
 | **Vector** |  | Vector | PseudoScalar | Vector | BivectorWeight | Vector |  |  |  | BivectorWeight | PseudoScalar | Vector |  |  | BivectorWeight |
 | **Point** |  | Multivector | PseudoScalar | Vector | BivectorWeight | Vector | Vector | Vector | BivectorWeight | BivectorWeight | PseudoScalar | Vector | Vector | Plane | BivectorWeight |
-| **PlaneIdeal** |  | Multivector | Bivector | Plane | PseudoScalar | PlaneIdeal | Plane | Plane | PseudoScalar | PseudoScalar | BivectorBulk | PlaneIdeal | Plane | Vector |  |
-| **BivectorBulk** |  | Bivector | PlaneIdeal | Bivector | Vector | BivectorBulk | BivectorWeight | BivectorWeight | Vector | Vector | PlaneIdeal | BivectorBulk | BivectorWeight |  |  |
+| **PlaneCentral** |  | Multivector | Bivector | Plane | PseudoScalar | PlaneCentral | Plane | Plane | PseudoScalar | PseudoScalar | BivectorBulk | PlaneCentral | Plane | Vector |  |
+| **BivectorBulk** |  | Bivector | PlaneCentral | Bivector | Vector | BivectorBulk | BivectorWeight | BivectorWeight | Vector | Vector | PlaneCentral | BivectorBulk | BivectorWeight |  |  |
 | **BivectorWeight** |  | BivectorWeight | Plane | BivectorWeight | Vector | BivectorWeight |  |  |  | Vector | Plane | BivectorWeight |  |  | Vector |
 | **PseudoScalar** |  |  | Vector |  | Plane |  |  |  |  | Plane | Vector |  |  |  | Plane |
 | **PointCenter** |  | Multivector | PseudoScalar | Vector | BivectorWeight |  | Vector | Vector | BivectorWeight | BivectorWeight |  |  | Vector | Plane |  |
@@ -278,7 +278,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `toTranslatorUnsafe: Pga3dTranslator`
 - `toVectorUnsafe: Pga3dVector`
 - `toPointUnsafe: Pga3dPoint`
-- `toPlaneIdealUnsafe: Pga3dPlaneIdeal`
+- `toPlaneCentralUnsafe: Pga3dPlaneCentral`
 - `toBivectorBulkUnsafe: Pga3dBivectorBulk`
 - `toBivectorWeightUnsafe: Pga3dBivectorWeight`
 
@@ -325,7 +325,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 
 - `dual: Pga3dProjectivePoint`
 - `weight: Pga3dPlane`
-- `bulk: Pga3dPlaneIdeal`
+- `bulk: Pga3dPlaneCentral`
 - `unary_- : Pga3dPlane`
 - `reverse: Pga3dPlane`
 - `antiReverse: Pga3dPlane`
@@ -346,7 +346,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `scale(r: Pga3dPlane): Pga3dPlane`
 - `reciprocal: Pga3dPlane`
 - `toMultivector: Pga3dMultivector`
-- `toPlaneIdealUnsafe: Pga3dPlaneIdeal`
+- `toPlaneCentralUnsafe: Pga3dPlaneCentral`
 
 ### Pga3dBivector
 
@@ -389,7 +389,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `toBivectorBulkUnsafe: Pga3dBivectorBulk`
 - `toBivectorWeightUnsafe: Pga3dBivectorWeight`
 - `projectOntoPlane(plane: Pga3dPlane): Pga3dBivector`
-- `projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dBivector`
+- `projectOntoPlane(plane: Pga3dPlaneCentral): Pga3dBivector`
 
 ### Pga3dProjectivePoint
 
@@ -426,7 +426,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `toPointUnsafe: Pga3dPoint`
 - `toPoint: Pga3dPoint`
 - `projectOntoPlane(plane: Pga3dPlane): Pga3dProjectivePoint`
-- `projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dProjectivePoint`
+- `projectOntoPlane(plane: Pga3dPlaneCentral): Pga3dProjectivePoint`
 - `projectOntoLine(line: Pga3dBivector): Pga3dProjectivePoint`
 
 ### Pga3dRotor
@@ -458,8 +458,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `axisX: Pga3dVector`
 - `axisY: Pga3dVector`
 - `axisZ: Pga3dVector`
-- `projectToRotationInPlane(plane: Pga3dPlaneIdeal): Pga3dRotor`
-- `restoreRotationInPlane(plane: Pga3dPlaneIdeal): Double`
+- `projectToRotationInPlane(plane: Pga3dPlaneCentral): Pga3dRotor`
+- `restoreRotationInPlane(plane: Pga3dPlaneCentral): Double`
 - `restoreRotationInPlaneX: Double`
 - `restoreRotationInPlaneY: Double`
 - `restoreRotationInPlaneZ: Double`
@@ -529,7 +529,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 
 ### Pga3dVector
 
-- `dual: Pga3dPlaneIdeal`
+- `dual: Pga3dPlaneCentral`
 - `weight: Pga3dVector`
 - `unary_- : Pga3dVector`
 - `reverse: Pga3dVector`
@@ -589,29 +589,29 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `toProjectivePoint: Pga3dProjectivePoint`
 - `toVectorUnsafe: Pga3dVector`
 - `projectOntoPlane(plane: Pga3dPlane): Pga3dProjectivePoint`
-- `projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dProjectivePoint`
+- `projectOntoPlane(plane: Pga3dPlaneCentral): Pga3dProjectivePoint`
 - `projectOntoLine(line: Pga3dBivector): Pga3dProjectivePoint`
 
-### Pga3dPlaneIdeal
+### Pga3dPlaneCentral
 
 - `dual: Pga3dVector`
-- `bulk: Pga3dPlaneIdeal`
-- `unary_- : Pga3dPlaneIdeal`
-- `reverse: Pga3dPlaneIdeal`
-- `antiReverse: Pga3dPlaneIdeal`
+- `bulk: Pga3dPlaneCentral`
+- `unary_- : Pga3dPlaneCentral`
+- `reverse: Pga3dPlaneCentral`
+- `antiReverse: Pga3dPlaneCentral`
 - `bulkNormSquare: Double`
 - `bulkNorm: Double`
 - `normalizedByBulk`
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(r: Double): Pga3dPlaneIdeal`
-- `/(r: Double): Pga3dPlaneIdeal`
-- `+(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal`
-- `-(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal`
-- `madd(r: Pga3dPlaneIdeal, mult: Double): Pga3dPlaneIdeal`
-- `scale(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal`
-- `reciprocal: Pga3dPlaneIdeal`
+- `*(r: Double): Pga3dPlaneCentral`
+- `/(r: Double): Pga3dPlaneCentral`
+- `+(r: Pga3dPlaneCentral): Pga3dPlaneCentral`
+- `-(r: Pga3dPlaneCentral): Pga3dPlaneCentral`
+- `madd(r: Pga3dPlaneCentral, mult: Double): Pga3dPlaneCentral`
+- `scale(r: Pga3dPlaneCentral): Pga3dPlaneCentral`
+- `reciprocal: Pga3dPlaneCentral`
 - `toMultivector: Pga3dMultivector`
 - `toPlane: Pga3dPlane`
 
@@ -721,5 +721,5 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `toVectorUnsafe: Pga3dVector`
 - `toPoint: Pga3dPoint`
 - `projectOntoPlane(plane: Pga3dPlane): Pga3dProjectivePoint`
-- `projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dProjectivePoint`
+- `projectOntoPlane(plane: Pga3dPlaneCentral): Pga3dProjectivePoint`
 - `projectOntoLine(line: Pga3dBivector): Pga3dProjectivePoint`

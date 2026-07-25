@@ -17,7 +17,7 @@ namespace pga3d {
     constexpr Translator Multivector::toTranslatorUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz}; }
     constexpr Vector Multivector::toVectorUnsafe() const noexcept { return {.x = -wyz, .y = wxz, .z = -wxy}; }
     constexpr Point Multivector::toPointUnsafe() const noexcept { return {.x = -wyz, .y = wxz, .z = -wxy}; }
-    constexpr PlaneIdeal Multivector::toPlaneIdealUnsafe() const noexcept { return {.x = x, .y = y, .z = z}; }
+    constexpr PlaneCentral Multivector::toPlaneCentralUnsafe() const noexcept { return {.x = x, .y = y, .z = z}; }
     constexpr BivectorBulk Multivector::toBivectorBulkUnsafe() const noexcept { return {.xy = xy, .xz = xz, .yz = yz}; }
     constexpr BivectorWeight Multivector::toBivectorWeightUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz}; }
 
@@ -30,7 +30,7 @@ namespace pga3d {
     constexpr BivectorWeight Motor::toBivectorWeightUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz}; }
 
     constexpr Multivector Plane::toMultivector() const noexcept { return {.s = 0.0, .w = w, .x = x, .y = y, .z = z, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = 0.0, .xz = 0.0, .yz = 0.0, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
-    constexpr PlaneIdeal Plane::toPlaneIdealUnsafe() const noexcept { return {.x = x, .y = y, .z = z}; }
+    constexpr PlaneCentral Plane::toPlaneCentralUnsafe() const noexcept { return {.x = x, .y = y, .z = z}; }
 
     constexpr Multivector Bivector::toMultivector() const noexcept { return {.s = 0.0, .w = 0.0, .x = 0.0, .y = 0.0, .z = 0.0, .wx = wx, .wy = wy, .wz = wz, .xy = xy, .xz = xz, .yz = yz, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
     constexpr Motor Bivector::toMotor() const noexcept { return {.s = 0.0, .wx = wx, .wy = wy, .wz = wz, .xy = xy, .xz = xz, .yz = yz, .i = 0.0}; }
@@ -74,8 +74,8 @@ namespace pga3d {
     constexpr ProjectivePoint Point::toProjectivePoint() const noexcept { return {.x = x, .y = y, .z = z, .w = 1.0}; }
     constexpr Vector Point::toVectorUnsafe() const noexcept { return {.x = x, .y = y, .z = z}; }
 
-    constexpr Multivector PlaneIdeal::toMultivector() const noexcept { return {.s = 0.0, .w = 0.0, .x = x, .y = y, .z = z, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = 0.0, .xz = 0.0, .yz = 0.0, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
-    constexpr Plane PlaneIdeal::toPlane() const noexcept { return {.x = x, .y = y, .z = z, .w = 0.0}; }
+    constexpr Multivector PlaneCentral::toMultivector() const noexcept { return {.s = 0.0, .w = 0.0, .x = x, .y = y, .z = z, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = 0.0, .xz = 0.0, .yz = 0.0, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
+    constexpr Plane PlaneCentral::toPlane() const noexcept { return {.x = x, .y = y, .z = z, .w = 0.0}; }
 
     constexpr Multivector BivectorBulk::toMultivector() const noexcept { return {.s = 0.0, .w = 0.0, .x = 0.0, .y = 0.0, .z = 0.0, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
     constexpr Motor BivectorBulk::toMotor() const noexcept { return {.s = 0.0, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz, .i = 0.0}; }

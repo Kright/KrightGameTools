@@ -187,7 +187,7 @@ final case class Pga3dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
       w = -i,
     )
 
-  infix def geometric(r: Pga3dPlaneIdeal): Pga3dVector =
+  infix def geometric(r: Pga3dPlaneCentral): Pga3dVector =
     Pga3dVector(
       x = -i * r.x,
       y = -i * r.y,
@@ -271,7 +271,7 @@ final case class Pga3dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
       w = -i,
     )
 
-  infix def dot(r: Pga3dPlaneIdeal): Pga3dVector =
+  infix def dot(r: Pga3dPlaneCentral): Pga3dVector =
     Pga3dVector(
       x = -i * r.x,
       y = -i * r.y,
@@ -404,8 +404,8 @@ final case class Pga3dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
       w = i,
     )
 
-  infix def antiGeometric(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiGeometric(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = i * r.x,
       y = i * r.y,
       z = i * r.z,
@@ -515,8 +515,8 @@ final case class Pga3dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
       w = i,
     )
 
-  infix def antiDot(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiDot(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = i * r.x,
       y = i * r.y,
       z = i * r.z,
@@ -665,16 +665,16 @@ final case class Pga3dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
 
   inline infix def join(r: Pga3dPoint): Pga3dProjectivePoint = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = i * r.x,
       y = i * r.y,
       z = i * r.z,
     )
 
-  inline infix def v(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dPlaneCentral): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dPlaneCentral): Pga3dPlaneCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga3dBivectorBulk): Pga3dBivectorBulk =
     Pga3dBivectorBulk(
@@ -742,7 +742,7 @@ final case class Pga3dPseudoScalar(i: Double = 0.0) derives CanEqual, FlatDouble
       w = -i,
     )
 
-  infix def cross(r: Pga3dPlaneIdeal): Pga3dVector =
+  infix def cross(r: Pga3dPlaneCentral): Pga3dVector =
     Pga3dVector(
       x = -i * r.x,
       y = -i * r.y,

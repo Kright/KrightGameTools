@@ -243,25 +243,25 @@ final case class Pga3dRotor(s: Double = 0.0,
       z = (s * s + xy * xy - xz * xz - yz * yz),
     )
 
-  def projectToRotationInPlane(plane: Pga3dPlaneIdeal): Pga3dRotor =
+  def projectToRotationInPlane(plane: Pga3dPlaneCentral): Pga3dRotor =
     val q = this.normalizedByNorm
     val qPart = Pga3dRotor.rotation(q.sandwich(plane), plane)
     qPart.geometric(q)
 
-  def restoreRotationInPlane(plane: Pga3dPlaneIdeal): Double =
+  def restoreRotationInPlane(plane: Pga3dPlaneCentral): Double =
     val q0 = this.projectToRotationInPlane(plane)
     val logDual = q0.log().dual
     val currentAngle = 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm
     currentAngle
 
   def restoreRotationInPlaneX: Double =
-    restoreRotationInPlane(Pga3dPlaneIdeal(1, 0, 0))
+    restoreRotationInPlane(Pga3dPlaneCentral(1, 0, 0))
 
   def restoreRotationInPlaneY: Double =
-    restoreRotationInPlane(Pga3dPlaneIdeal(0, 1, 0))
+    restoreRotationInPlane(Pga3dPlaneCentral(0, 1, 0))
 
   def restoreRotationInPlaneZ: Double =
-    restoreRotationInPlane(Pga3dPlaneIdeal(0, 0, 1))
+    restoreRotationInPlane(Pga3dPlaneCentral(0, 0, 1))
 
   /**
    * Spherical linear interpolation along the geodesic from this (t = 0) to b (t = 1),
@@ -418,7 +418,7 @@ final case class Pga3dRotor(s: Double = 0.0,
       i = 0.0,
     )
 
-  infix def geometric(r: Pga3dPlaneIdeal): Pga3dMultivector =
+  infix def geometric(r: Pga3dPlaneCentral): Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,
       w = 0.0,
@@ -614,8 +614,8 @@ final case class Pga3dRotor(s: Double = 0.0,
       i = 0.0,
     )
 
-  infix def dot(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def dot(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.x * s + r.y * xy + r.z * xz),
       y = (r.y * s + r.z * yz - r.x * xy),
       z = (r.z * s - r.x * xz - r.y * yz),
@@ -803,7 +803,7 @@ final case class Pga3dRotor(s: Double = 0.0,
 
   inline infix def meet(r: Pga3dPoint): Pga3dProjectivePoint = wedge(r)
 
-  infix def wedge(r: Pga3dPlaneIdeal): Pga3dMultivector =
+  infix def wedge(r: Pga3dPlaneCentral): Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,
       w = 0.0,
@@ -823,9 +823,9 @@ final case class Pga3dRotor(s: Double = 0.0,
       i = 0.0,
     )
 
-  inline infix def ^(r: Pga3dPlaneIdeal): Pga3dMultivector = wedge(r)
+  inline infix def ^(r: Pga3dPlaneCentral): Pga3dMultivector = wedge(r)
 
-  inline infix def meet(r: Pga3dPlaneIdeal): Pga3dMultivector = wedge(r)
+  inline infix def meet(r: Pga3dPlaneCentral): Pga3dMultivector = wedge(r)
 
   infix def wedge(r: Pga3dBivectorBulk): Pga3dBivectorBulk =
     Pga3dBivectorBulk(
@@ -1134,16 +1134,16 @@ final case class Pga3dRotor(s: Double = 0.0,
 
   inline infix def join(r: Pga3dBivector): Double = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dProjectivePoint): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dProjectivePoint): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
     )
 
-  inline infix def v(r: Pga3dProjectivePoint): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dProjectivePoint): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dProjectivePoint): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dProjectivePoint): Pga3dPlaneCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga3dProjectiveTranslator): Double =
     (r.wx * yz + r.wz * xy - r.wy * xz)
@@ -1159,27 +1159,27 @@ final case class Pga3dRotor(s: Double = 0.0,
 
   inline infix def join(r: Pga3dTranslator): Double = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dVector): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dVector): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
     )
 
-  inline infix def v(r: Pga3dVector): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dVector): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dVector): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dVector): Pga3dPlaneCentral = antiWedge(r)
 
-  infix def antiWedge(r: Pga3dPoint): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def antiWedge(r: Pga3dPoint): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
     )
 
-  inline infix def v(r: Pga3dPoint): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def v(r: Pga3dPoint): Pga3dPlaneCentral = antiWedge(r)
 
-  inline infix def join(r: Pga3dPoint): Pga3dPlaneIdeal = antiWedge(r)
+  inline infix def join(r: Pga3dPoint): Pga3dPlaneCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga3dBivectorWeight): Double =
     (r.wx * yz + r.wz * xy - r.wy * xz)
@@ -1367,7 +1367,7 @@ final case class Pga3dRotor(s: Double = 0.0,
       w = (sMs + xyMxy + xzMxz + yzMyz),
     )
 
-  infix def sandwich(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
+  infix def sandwich(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
     val sMs = s * s
     val sMxy = s * xy
     val sMxz = s * xz
@@ -1378,7 +1378,7 @@ final case class Pga3dRotor(s: Double = 0.0,
     val xzMxz = xz * xz
     val xzMyz = xz * yz
     val yzMyz = yz * yz
-    Pga3dPlaneIdeal(
+    Pga3dPlaneCentral(
       x = (2.0 * (r.y * (sMxy - xzMyz) + r.z * (sMxz + xyMyz)) + r.x * (sMs + yzMyz - xyMxy - xzMxz)),
       y = (2.0 * (r.x * (-sMxy - xzMyz) + r.z * (sMyz - xyMxz)) + r.y * (sMs + xzMxz - xyMxy - yzMyz)),
       z = (2.0 * (r.x * (xyMyz - sMxz) + r.y * (-sMyz - xyMxz)) + r.z * (sMs + xyMxy - xzMxz - yzMyz)),
@@ -1598,7 +1598,7 @@ final case class Pga3dRotor(s: Double = 0.0,
       w = (sMs + xyMxy + xzMxz + yzMyz),
     )
 
-  infix def reverseSandwich(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
+  infix def reverseSandwich(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
     val sMs = s * s
     val sMxy = s * xy
     val sMxz = s * xz
@@ -1609,7 +1609,7 @@ final case class Pga3dRotor(s: Double = 0.0,
     val xzMxz = xz * xz
     val xzMyz = xz * yz
     val yzMyz = yz * yz
-    Pga3dPlaneIdeal(
+    Pga3dPlaneCentral(
       x = (2.0 * (r.y * (-sMxy - xzMyz) + r.z * (xyMyz - sMxz)) + r.x * (sMs + yzMyz - xyMxy - xzMxz)),
       y = (2.0 * (r.x * (sMxy - xzMyz) + r.z * (-sMyz - xyMxz)) + r.y * (sMs + xzMxz - xyMxy - yzMyz)),
       z = (2.0 * (r.x * (sMxz + xyMyz) + r.y * (sMyz - xyMxz)) + r.z * (sMs + xyMxy - xzMxz - yzMyz)),
@@ -1672,8 +1672,8 @@ final case class Pga3dRotor(s: Double = 0.0,
       yz = (r.xy * xz - r.xz * xy),
     )
 
-  infix def cross(r: Pga3dPlane): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def cross(r: Pga3dPlane): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
@@ -1731,8 +1731,8 @@ final case class Pga3dRotor(s: Double = 0.0,
       z = (-r.x * xz - r.y * yz),
     )
 
-  infix def cross(r: Pga3dPlaneIdeal): Pga3dPlaneIdeal =
-    Pga3dPlaneIdeal(
+  infix def cross(r: Pga3dPlaneCentral): Pga3dPlaneCentral =
+    Pga3dPlaneCentral(
       x = (r.y * xy + r.z * xz),
       y = (r.z * yz - r.x * xy),
       z = (-r.x * xz - r.y * yz),
@@ -1759,7 +1759,7 @@ object Pga3dRotor:
 
   val id: Pga3dRotor = Pga3dRotor(1.0, 0.0, 0.0, 0.0)
 
-  def rotation(from: Pga3dPlaneIdeal, to: Pga3dPlaneIdeal): Pga3dRotor = {
+  def rotation(from: Pga3dPlaneCentral, to: Pga3dPlaneCentral): Pga3dRotor = {
     // not Math.sqrt(from.normSquare * to.normSquare): the product overflows/underflows
     // for extreme magnitudes (~1e100 or ~1e-100) where each norm alone is still fine
     val norm = from.norm * to.norm
@@ -1796,8 +1796,8 @@ object Pga3dRotor:
 
     // exactly antipodal inputs: the axis is any direction orthogonal to from
     val orthogonalPlane =
-      if (Math.abs(from.x) > Math.abs(from.z)) Pga3dPlaneIdeal(-from.y, from.x, 0)
-      else Pga3dPlaneIdeal(0, -from.z, from.y)
+      if (Math.abs(from.x) > Math.abs(from.z)) Pga3dPlaneCentral(-from.y, from.x, 0)
+      else Pga3dPlaneCentral(0, -from.z, from.y)
 
     Pga3dRotor(0, orthogonalPlane.z, -orthogonalPlane.y, orthogonalPlane.x).normalizedByNorm
   }

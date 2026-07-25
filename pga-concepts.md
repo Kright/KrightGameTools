@@ -126,6 +126,11 @@ reasoning behind there being no `inverse` method: `reverse` plus an explicit ren
   `Double` is used instead.
 * A grade-1 element is a hyperplane: `Pga3dPlane` in 3d, `Pga2dLine` in 2d — otherwise the two
   modules use the same names (`Pga2dRotor` is the 2d sibling of `Pga3dRotor`).
+* The `-Central` suffix (adjective) marks the family of elements passing through the center of
+  coordinates (`Pga3dPlaneCentral`, `Pga2dLineCentral` — the pure-bulk hyperplanes), while the
+  `-Center` suffix (noun) is the center itself (`Pga3dPointCenter`, a singleton). "Ideal" is
+  reserved for its standard PGA meaning: the at-infinity (pure-weight) part, e.g. an ideal
+  point is a `Vector`.
 * `toXxx` conversions are lossless widenings; `toXxxUnsafe` drop components that may be non-zero.
 * The generated classes are never edited by hand: change the generator
   (pgaNdCodeGen) and re-run it.

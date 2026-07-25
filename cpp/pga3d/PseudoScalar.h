@@ -66,7 +66,7 @@ namespace pga3d {
         [[nodiscard]] constexpr PseudoScalar geometric(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar geometric(const Translator& b) const noexcept;
         [[nodiscard]] constexpr Plane geometric(const Point& b) const noexcept;
-        [[nodiscard]] constexpr Vector geometric(const PlaneIdeal& b) const noexcept;
+        [[nodiscard]] constexpr Vector geometric(const PlaneCentral& b) const noexcept;
         [[nodiscard]] constexpr BivectorWeight geometric(const BivectorBulk& b) const noexcept;
         [[nodiscard]] constexpr Plane geometric(const PointCenter& b) const noexcept;
 
@@ -81,7 +81,7 @@ namespace pga3d {
         [[nodiscard]] constexpr ProjectiveTranslator antiGeometric(const Translator& b) const noexcept;
         [[nodiscard]] constexpr Vector antiGeometric(const Vector& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint antiGeometric(const Point& b) const noexcept;
-        [[nodiscard]] constexpr PlaneIdeal antiGeometric(const PlaneIdeal& b) const noexcept;
+        [[nodiscard]] constexpr PlaneCentral antiGeometric(const PlaneCentral& b) const noexcept;
         [[nodiscard]] constexpr BivectorBulk antiGeometric(const BivectorBulk& b) const noexcept;
         [[nodiscard]] constexpr BivectorWeight antiGeometric(const BivectorWeight& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar antiGeometric(const PseudoScalar& b) const noexcept;
@@ -97,7 +97,7 @@ namespace pga3d {
         [[nodiscard]] constexpr PseudoScalar dot(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar dot(const Translator& b) const noexcept;
         [[nodiscard]] constexpr Plane dot(const Point& b) const noexcept;
-        [[nodiscard]] constexpr Vector dot(const PlaneIdeal& b) const noexcept;
+        [[nodiscard]] constexpr Vector dot(const PlaneCentral& b) const noexcept;
         [[nodiscard]] constexpr BivectorWeight dot(const BivectorBulk& b) const noexcept;
         [[nodiscard]] constexpr Plane dot(const PointCenter& b) const noexcept;
 
@@ -112,7 +112,7 @@ namespace pga3d {
         [[nodiscard]] constexpr ProjectiveTranslator antiDot(const Translator& b) const noexcept;
         [[nodiscard]] constexpr Vector antiDot(const Vector& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint antiDot(const Point& b) const noexcept;
-        [[nodiscard]] constexpr PlaneIdeal antiDot(const PlaneIdeal& b) const noexcept;
+        [[nodiscard]] constexpr PlaneCentral antiDot(const PlaneCentral& b) const noexcept;
         [[nodiscard]] constexpr BivectorBulk antiDot(const BivectorBulk& b) const noexcept;
         [[nodiscard]] constexpr BivectorWeight antiDot(const BivectorWeight& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar antiDot(const PseudoScalar& b) const noexcept;
@@ -149,8 +149,8 @@ namespace pga3d {
         [[nodiscard]] constexpr Vector join(const Vector& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint antiWedge(const Point& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint join(const Point& b) const noexcept;
-        [[nodiscard]] constexpr PlaneIdeal antiWedge(const PlaneIdeal& b) const noexcept;
-        [[nodiscard]] constexpr PlaneIdeal join(const PlaneIdeal& b) const noexcept;
+        [[nodiscard]] constexpr PlaneCentral antiWedge(const PlaneCentral& b) const noexcept;
+        [[nodiscard]] constexpr PlaneCentral join(const PlaneCentral& b) const noexcept;
         [[nodiscard]] constexpr BivectorBulk antiWedge(const BivectorBulk& b) const noexcept;
         [[nodiscard]] constexpr BivectorBulk join(const BivectorBulk& b) const noexcept;
         [[nodiscard]] constexpr BivectorWeight antiWedge(const BivectorWeight& b) const noexcept;
@@ -165,7 +165,7 @@ namespace pga3d {
         [[nodiscard]] constexpr Vector cross(const Plane& b) const noexcept;
         [[nodiscard]] constexpr Plane cross(const ProjectivePoint& b) const noexcept;
         [[nodiscard]] constexpr Plane cross(const Point& b) const noexcept;
-        [[nodiscard]] constexpr Vector cross(const PlaneIdeal& b) const noexcept;
+        [[nodiscard]] constexpr Vector cross(const PlaneCentral& b) const noexcept;
         [[nodiscard]] constexpr Plane cross(const PointCenter& b) const noexcept;
     };
 

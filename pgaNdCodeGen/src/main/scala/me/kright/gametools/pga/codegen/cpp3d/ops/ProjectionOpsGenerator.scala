@@ -18,13 +18,13 @@ class ProjectionOpsGenerator extends CppCodeGenerator:
     if (cls == CppSubclasses.bivector) {
       val line = cls.self
 
-      for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
+      for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeCentral)) {
         code(s"[[nodiscard]] constexpr ${cls.name} projectOntoPlane(const ${planeClass.name}& plane) const noexcept;")
       }
     }
 
     if (pointClasses.contains(cls)) {
-      for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
+      for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeCentral)) {
         code(s"[[nodiscard]] constexpr ${CppSubclasses.projectivePoint.name} projectOntoPlane(const ${planeClass.name}& plane) const noexcept;")
       }
 
@@ -47,12 +47,12 @@ class ProjectionOpsGenerator extends CppCodeGenerator:
     )
 
     code.namespace(codeGen.namespace) {
-      for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
+      for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeCentral)) {
         code(s"[[nodiscard]] constexpr ${CppSubclasses.bivector.name} ${CppSubclasses.bivector.name}::projectOntoPlane(const ${planeClass.name}& plane) const noexcept { return -plane.dot(*this).geometric(plane).toBivectorUnsafe(); }")
       }
 
       for (pointClass <- pointClasses) {
-        for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
+        for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeCentral)) {
           code(s"[[nodiscard]] constexpr ${CppSubclasses.projectivePoint.name} ${pointClass.name}::projectOntoPlane(const ${planeClass.name}& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }")
         }
 

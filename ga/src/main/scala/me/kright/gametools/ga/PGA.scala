@@ -48,8 +48,8 @@ object PGA extends CommonMethods:
      *         wz -> -0.5 * d.z
      *         )
      */
-    def translatorByIdealLine[T](idealLine: MultiVector[T])(using ga: PGA, num: Numeric[T]): MultiVector[T] =
-      MultiVector.scalar[T](num.one) + idealLine * half
+    def translatorByIdealLine[T](centralLine: MultiVector[T])(using ga: PGA, num: Numeric[T]): MultiVector[T] =
+      MultiVector.scalar[T](num.one) + centralLine * half
 
     def rotor(angle: Double, line: MultiVector[Double])(using ga: GA): MultiVector[Double] =
       expForLine(line * angle * 0.5)

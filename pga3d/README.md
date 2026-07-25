@@ -13,11 +13,11 @@ Full operation/result-type reference: [operations.md](operations.md).
 ### Plane:
 
 * [**Pga3dPlane**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dPlane.scala): plane, 4 fields.
-* [**Pga3dPlaneIdeal**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dPlaneIdeal.scala): plane passing through the center of coordinates, 3 fields. Dual to Pga3dVector
+* [**Pga3dPlaneCentral**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dPlaneCentral.scala): plane passing through the center of coordinates, 3 fields. Dual to Pga3dVector
 
 ```scala
 val plane = Pga3dPlane(a, b, c, d)  // ax + by + cz + d = 0
-val idealPlane = Pga3dPlaneIdeal(a, b, c)  // ax + by + cz = 0
+val centralPlane = Pga3dPlaneCentral(a, b, c)  // ax + by + cz = 0
 val point = Pga3dPoint(x, y, z)
 
 // Projecting a point onto a plane
