@@ -1,6 +1,7 @@
 package me.kright.gametools.pga.codegen.cpp3d.ops
 
-import me.kright.gametools.pga.codegen.common.FileContent
+import me.kright.gametools.pga.codegen.common.{FileContent, SharedFormulas}
+import me.kright.gametools.pga.codegen.cpp3d.Pga3dProvider.pga3
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
 import scala.collection.immutable.ArraySeq
 
@@ -18,16 +19,12 @@ class BivectorWeightOpsGenerator extends CppCodeGenerator {
     code.myHeader(ArraySeq(s"#include \"${codeGen.Headers.types}\""), code.generatorName(this))
 
     code.namespace(codeGen.namespace) {
-      code(
-        s"""
-           |[[nodiscard]] constexpr ${CppSubclasses.translator.name} ${CppSubclasses.bivectorWeight.name}::exp() const noexcept {
-           |    return ${CppSubclasses.translator.name}{
-           |        .wx = wx,
-           |        .wy = wy,
-           |        .wz = wz,
-           |    };
-           |}
-           |""".stripMargin)
+      code("")
+      code(s"[[nodiscard]] constexpr ${CppSubclasses.translator.name} ${CppSubclasses.bivectorWeight.name}::exp() const noexcept {")
+      code.block {
+        code(s"return ${CppSubclasses.translator.name} ${CppSubclasses.translator.makeBracesInit(SharedFormulas.weightExpResult(CppSubclasses.bivectorWeight.self), multiline = true)};")
+      }
+      code("}")
     }
 
     ArraySeq(FileContent(codeGen.directory.resolve("opsBivectorWeight.h"), code.toString))

@@ -234,7 +234,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     // relative term is far below 1e-17, so the second-order form is exact in double
     val sinDivLen = if (len > 1e-5) {
       Math.sin(len) / len
-    } else 1.0 - (len * len) / 6.0
+    } else {
+      1.0 - (len * len) / 6.0
+    }
 
     // (sin(x)/x - cos(x)) / x^2, step by step:
     //   sin(x)   = x - x^3/6 + x^5/120 - x^7/5040 + ...
@@ -247,7 +249,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     // so the second-order form is exact in double
     val sinMinusCosDivLen2 = if (len > 1e-5) {
       (sinDivLen - cos) / (len * len)
-    } else 1.0 / 3.0 - (len * len) / 30.0
+    } else {
+      1.0 / 3.0 - (len * len) / 30.0
+    }
 
     Pga3dMotor(
       s = cos,
@@ -269,7 +273,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     // relative term is far below 1e-17, so the second-order form is exact in double
     val sinDivLen = if (len > 1e-5) {
       Math.sin(len) / len
-    } else 1.0 - (len * len) / 6.0
+    } else {
+      1.0 - (len * len) / 6.0
+    }
 
     // (sin(x)/x - cos(x)) / x^2, step by step:
     //   sin(x)   = x - x^3/6 + x^5/120 - x^7/5040 + ...
@@ -282,7 +288,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     // so the second-order form is exact in double
     val sinMinusCosDivLen2 = if (len > 1e-5) {
       (sinDivLen - cos) / (len * len)
-    } else 1.0 / 3.0 - (len * len) / 30.0
+    } else {
+      1.0 / 3.0 - (len * len) / 30.0
+    }
 
     Pga3dMotor(
       s = cos,
@@ -301,9 +309,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
       return (Pga3dBivector(0.0, 0.0, 0.0, xy, xz, yz), Pga3dBivectorWeight(wx, wy, wz))
     }
 
-    // val shiftAlongLine = this.geometric((this ^ this.reverse) / div / 2.0)
-    // pseudoScalar = this ^ this.reverse
-
+    // shiftAlongLine = this.geometric((this ^ this.reverse) / div / 2.0)
     val pseudoScalar = (wy * xz - wx * yz - wz * xy) / div
     val shiftAlongLine = Pga3dBivectorWeight(
       wx = -pseudoScalar * yz,

@@ -1,6 +1,7 @@
 package me.kright.gametools.pga.codegen.cpp3d.ops
 
-import me.kright.gametools.pga.codegen.common.FileContent
+import me.kright.gametools.pga.codegen.common.{FileContent, FormulaTemplate, SharedFormulas}
+import me.kright.gametools.pga.codegen.cpp3d.Pga3dProvider.pga3
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
 import scala.collection.immutable.ArraySeq
 
@@ -24,24 +25,14 @@ class BivectorBulkOpsGenerator extends CppCodeGenerator {
       code.generatorName(this))
 
     code.namespace(codeGen.namespace) {
-      code(
-        s"""
-           |[[nodiscard]] inline ${CppSubclasses.rotor.name} ${CppSubclasses.bivectorBulk.name}::exp() const noexcept {
-           |    const double len = bulkNorm();
-           |    const double cos = std::cos(len);
-           |
-           |    const double sinDivLen = (len > 1e-5)
-           |        ? (std::sin(len) / len)
-           |        : (1.0 - (len * len) / 6.0);
-           |
-           |    return ${CppSubclasses.rotor.name}{
-           |        .s = cos,
-           |        .xy = sinDivLen * xy,
-           |        .xz = sinDivLen * xz,
-           |        .yz = sinDivLen * yz,
-           |    };
-           |}
-           |""".stripMargin)
+      code("")
+      code(s"[[nodiscard]] inline ${CppSubclasses.rotor.name} ${CppSubclasses.bivectorBulk.name}::exp() const noexcept {")
+      code.block {
+        code(FormulaTemplate.renderCpp(SharedFormulas.expSinDivLen("bulkNorm")))
+        code("")
+        code(s"return ${CppSubclasses.rotor.name} ${CppSubclasses.rotor.makeBracesInit(SharedFormulas.bivectorExpResult(CppSubclasses.bivectorBulk.self), multiline = true)};")
+      }
+      code("}")
     }
 
     ArraySeq(FileContent(codeGen.directory.resolve("opsBivectorBulk.h"), code.toString))

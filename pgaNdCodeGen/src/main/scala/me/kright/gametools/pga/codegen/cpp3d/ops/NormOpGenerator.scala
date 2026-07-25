@@ -1,12 +1,29 @@
 package me.kright.gametools.pga.codegen.cpp3d.ops
 
-import me.kright.gametools.pga.codegen.common.FileContent
+import me.kright.gametools.ga.MultiVector
+import me.kright.gametools.pga.codegen.common.{FileContent, NormSymbolics}
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
 import me.kright.gametools.symbolic.Sym
-import scala.math.Numeric.Implicits.infixNumericOps
+
 import scala.collection.immutable.ArraySeq
 
 class NormOpGenerator extends CppCodeGenerator {
+  private case class Family(squareName: String, normName: String, normalizedName: String, square: MultiVector[Sym]) {
+    def isConstantOne: Boolean = NormSymbolics.isConstantOne(square)
+  }
+
+  private def families(cls: CppSubclass): Seq[Family] = {
+    val self = cls.self
+    ArraySeq(
+      Family("normSquare", "norm", "normalizedByNorm", NormSymbolics.fullSquare(self)),
+      Family("bulkNormSquare", "bulkNorm", "normalizedByBulk", NormSymbolics.bulkSquare(self)),
+      Family("weightNormSquare", "weightNorm", "normalizedByWeight", NormSymbolics.weightSquare(self)),
+    ).filter(_.square.values.nonEmpty)
+  }
+
+  private def normalizedResultCls(cls: CppSubclass): CppSubclass =
+    CppSubclasses.findMatchingClass(cls.makeSymbolic("a") * Sym("b"))
+
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = CppCodeBuilder()
 
@@ -18,46 +35,23 @@ class NormOpGenerator extends CppCodeGenerator {
       ),
       code.generatorName(this),
     )
-    
+
     code.namespace(codeGen.namespace) {
       for (cls <- CppSubclasses.all if cls.shouldBeGenerated) {
-        // Common result type for normalization by scalar
-        val a = cls.makeSymbolic("a")
-        val scaled = a * Sym("b")
-        val resultCls = CppSubclasses.findMatchingClass(scaled)
+        val resultCls = normalizedResultCls(cls)
 
-        // normSquare over all coefficients
-        val coeffs: Seq[Sym] = cls.self.values.values.toSeq
-        if (coeffs.nonEmpty) {
-          val normSqExpr: Sym = coeffs.map(c => c * c).reduce(_ + _)
-          code(s"constexpr double ${cls.name}::normSquare() const noexcept { return ${normSqExpr.toString}; }")
-          code(s"inline double ${cls.name}::norm() const noexcept { return std::sqrt(normSquare()); }")
-          if (resultCls != CppSubclasses.zeroCls) {
-            code(s"inline ${resultCls.name} ${cls.name}::normalizedByNorm() const noexcept { return *this / norm(); }")
-          }
-          code("")
-        }
-
-        // bulkNormSquare over bulk coefficients only
-        val bulkCoeffs: Seq[Sym] = cls.self.bulk.values.values.toSeq
-        if (bulkCoeffs.nonEmpty) {
-          val bulkNormSqExpr: Sym = bulkCoeffs.map(c => c * c).reduce(_ + _)
-          code(s"constexpr double ${cls.name}::bulkNormSquare() const noexcept { return ${bulkNormSqExpr.toString}; }")
-          code(s"inline double ${cls.name}::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }")
-          if (resultCls != CppSubclasses.zeroCls) {
-            code(s"inline ${resultCls.name} ${cls.name}::normalizedByBulk() const noexcept { return *this / bulkNorm(); }")
-          }
-          code("")
-        }
-
-        // weightNormSquare over weight coefficients only
-        val weightCoeffs: Seq[Sym] = cls.self.weight.values.values.toSeq
-        if (weightCoeffs.nonEmpty) {
-          val weightNormSqExpr: Sym = weightCoeffs.map(c => c * c).reduce(_ + _)
-          code(s"constexpr double ${cls.name}::weightNormSquare() const noexcept { return ${weightNormSqExpr.toString}; }")
-          code(s"inline double ${cls.name}::weightNorm() const noexcept { return std::sqrt(weightNormSquare()); }")
-          if (resultCls != CppSubclasses.zeroCls) {
-            code(s"inline ${resultCls.name} ${cls.name}::normalizedByWeight() const noexcept { return *this / weightNorm(); }")
+        for (f <- families(cls)) {
+          if (f.isConstantOne) {
+            code(s"constexpr double ${cls.name}::${f.squareName}() const noexcept { return 1.0; }")
+            code(s"inline double ${cls.name}::${f.normName}() const noexcept { return 1.0; }")
+            code(s"inline ${cls.name} ${cls.name}::${f.normalizedName}() const noexcept { return *this; }")
+          } else {
+            val expr = f.square.values.values.head
+            code(s"constexpr double ${cls.name}::${f.squareName}() const noexcept { return ${expr.toString}; }")
+            code(s"inline double ${cls.name}::${f.normName}() const noexcept { return std::sqrt(${f.squareName}()); }")
+            if (resultCls != CppSubclasses.zeroCls) {
+              code(s"inline ${resultCls.name} ${cls.name}::${f.normalizedName}() const noexcept { return *this / ${f.normName}(); }")
+            }
           }
           code("")
         }
@@ -68,35 +62,20 @@ class NormOpGenerator extends CppCodeGenerator {
   }
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
-    val a = cls.makeSymbolic("a")
-    val scaled = a * Sym("b")
-    val resultCls = CppSubclasses.findMatchingClass(scaled)
+    val resultCls = normalizedResultCls(cls)
 
-    val bulkHas = cls.self.bulk.values.nonEmpty
-    val weightHas = cls.self.weight.values.nonEmpty
+    val parts = families(cls).flatMap { f =>
+      val normalizedDecl =
+        if (f.isConstantOne) Some(s"[[nodiscard]] inline ${cls.name} ${f.normalizedName}() const noexcept;")
+        else if (resultCls != CppSubclasses.zeroCls) Some(s"[[nodiscard]] inline ${resultCls.name} ${f.normalizedName}() const noexcept;")
+        else None
 
-    val normalizedByNormDecl = if (resultCls == CppSubclasses.zeroCls) "" else s"[[nodiscard]] inline ${resultCls.name} normalizedByNorm() const noexcept;"
-    val normalizedByBulkDecl = if (bulkHas && resultCls != CppSubclasses.zeroCls) s"[[nodiscard]] inline ${resultCls.name} normalizedByBulk() const noexcept;" else ""
-    val normalizedByWeightDecl = if (weightHas && resultCls != CppSubclasses.zeroCls) s"[[nodiscard]] inline ${resultCls.name} normalizedByWeight() const noexcept;" else ""
-
-    val bulkDecls = if (bulkHas) Some(
-      "[[nodiscard]] constexpr double bulkNormSquare() const noexcept;\n[[nodiscard]] inline double bulkNorm() const noexcept;"
-    ) else None
-
-    val weightDecls = if (weightHas) Some(
-      "[[nodiscard]] constexpr double weightNormSquare() const noexcept;\n[[nodiscard]] inline double weightNorm() const noexcept;"
-    ) else None
-
-    // norm is always declared (as before)
-    val parts = ArraySeq(
-      "[[nodiscard]] constexpr double normSquare() const noexcept;",
-      "[[nodiscard]] inline double norm() const noexcept;",
-      normalizedByNormDecl,
-      bulkDecls.getOrElse(""),
-      normalizedByBulkDecl,
-      weightDecls.getOrElse(""),
-      normalizedByWeightDecl
-    ).filter(_.nonEmpty)
+      ArraySeq(
+        Some(s"[[nodiscard]] constexpr double ${f.squareName}() const noexcept;"),
+        Some(s"[[nodiscard]] inline double ${f.normName}() const noexcept;"),
+        normalizedDecl,
+      ).flatten
+    }
 
     structBodyPart(parts.mkString("\n"))
   }

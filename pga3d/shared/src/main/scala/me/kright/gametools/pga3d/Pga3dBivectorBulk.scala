@@ -186,7 +186,9 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
     // relative term is far below 1e-17, so the second-order form is exact in double
     val sinDivLen = if (len > 1e-5) {
       Math.sin(len) / len
-    } else 1.0 - (len * len) / 6.0
+    } else {
+      1.0 - (len * len) / 6.0
+    }
 
     Pga3dRotor(
       s = cos,
@@ -203,7 +205,9 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
     // relative term is far below 1e-17, so the second-order form is exact in double
     val sinDivLen = if (len > 1e-5) {
       Math.sin(len) / len
-    } else 1.0 - (len * len) / 6.0
+    } else {
+      1.0 - (len * len) / 6.0
+    }
 
     Pga3dRotor(
       s = cos,

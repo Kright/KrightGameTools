@@ -1,7 +1,8 @@
 package me.kright.gametools.pga.codegen.cpp3d.ops
 
+import me.kright.gametools.pga.codegen.common.AxesSymbolics
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppSubclass, CppSubclasses}
-import me.kright.gametools.symbolic.Sym
+
 import scala.collection.immutable.ArraySeq
 
 object RotorAndMotorAxes {
@@ -12,35 +13,17 @@ object RotorAndMotorAxes {
   }
 
   def makeForRotor(code: CppCodeBuilder): Unit = {
-    val self = CppSubclasses.rotor.self
-    val vec = CppSubclasses.vector.self
-    val axes = vec.values.keys.toSeq.sortBy(_.bits).reverse.map(blade => vec.filter((b, _) => b == blade))
-
-    for (axe <- axes) {
-      val axeOne = axe.mapValues(_ => Sym(1.0))
-
-      val isMinus = axe.values.values.head.toString.contains("-")
-      val methodName = s"axis${axe.values.values.head.toString.replace("-", "").toUpperCase}"
-
-      val result = if (isMinus) self.sandwich(axeOne) * Sym(-1.0) else self.sandwich(axeOne)
-      val resultCls = CppSubclasses.findMatchingClass(result)
-
+    for (axis <- AxesSymbolics.rotorAxes(CppSubclasses.rotor.self, CppSubclasses.vector.self)) {
+      val resultCls = CppSubclasses.findMatchingClass(axis.result)
       require(resultCls == CppSubclasses.vector)
 
-      code(s"[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.rotor.name}::${methodName}() const noexcept { return ${resultCls.makeBracesInit(result)}; }")
+      code(s"[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.rotor.name}::${axis.methodName}() const noexcept { return ${resultCls.makeBracesInit(axis.result)}; }")
     }
   }
 
   def makeForMotor(code: CppCodeBuilder): Unit = {
-    val self = CppSubclasses.rotor.self
-    val vec = CppSubclasses.vector.self
-    val axes = vec.values.keys.toSeq.sortBy(_.bits).reverse.map(blade => vec.filter((b, _) => b == blade))
-
-    code(
-      s"""[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.motor.name}::axisX() const noexcept { return toRotorUnsafe().axisX(); }
-         |[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.motor.name}::axisY() const noexcept { return toRotorUnsafe().axisY(); }
-         |[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.motor.name}::axisZ() const noexcept { return toRotorUnsafe().axisZ(); }
-         |""".stripMargin
-    )
+    for (axis <- AxesSymbolics.rotorAxes(CppSubclasses.rotor.self, CppSubclasses.vector.self)) {
+      code(s"[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.motor.name}::${axis.methodName}() const noexcept { return toRotorUnsafe().${axis.methodName}(); }")
+    }
   }
 }

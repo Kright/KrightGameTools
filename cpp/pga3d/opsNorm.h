@@ -95,8 +95,8 @@ namespace pga3d {
     inline ProjectiveTranslator Translator::normalizedByNorm() const noexcept { return *this / norm(); }
 
     constexpr double Translator::bulkNormSquare() const noexcept { return 1.0; }
-    inline double Translator::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }
-    inline ProjectiveTranslator Translator::normalizedByBulk() const noexcept { return *this / bulkNorm(); }
+    inline double Translator::bulkNorm() const noexcept { return 1.0; }
+    inline Translator Translator::normalizedByBulk() const noexcept { return *this; }
 
     constexpr double Translator::weightNormSquare() const noexcept { return (wx * wx + wy * wy + wz * wz); }
     inline double Translator::weightNorm() const noexcept { return std::sqrt(weightNormSquare()); }
@@ -115,8 +115,8 @@ namespace pga3d {
     inline ProjectivePoint Point::normalizedByNorm() const noexcept { return *this / norm(); }
 
     constexpr double Point::bulkNormSquare() const noexcept { return 1.0; }
-    inline double Point::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }
-    inline ProjectivePoint Point::normalizedByBulk() const noexcept { return *this / bulkNorm(); }
+    inline double Point::bulkNorm() const noexcept { return 1.0; }
+    inline Point Point::normalizedByBulk() const noexcept { return *this; }
 
     constexpr double Point::weightNormSquare() const noexcept { return (x * x + y * y + z * z); }
     inline double Point::weightNorm() const noexcept { return std::sqrt(weightNormSquare()); }
@@ -155,12 +155,12 @@ namespace pga3d {
     inline PseudoScalar PseudoScalar::normalizedByWeight() const noexcept { return *this / weightNorm(); }
 
     constexpr double PointCenter::normSquare() const noexcept { return 1.0; }
-    inline double PointCenter::norm() const noexcept { return std::sqrt(normSquare()); }
-    inline ProjectivePoint PointCenter::normalizedByNorm() const noexcept { return *this / norm(); }
+    inline double PointCenter::norm() const noexcept { return 1.0; }
+    inline PointCenter PointCenter::normalizedByNorm() const noexcept { return *this; }
 
     constexpr double PointCenter::bulkNormSquare() const noexcept { return 1.0; }
-    inline double PointCenter::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }
-    inline ProjectivePoint PointCenter::normalizedByBulk() const noexcept { return *this / bulkNorm(); }
+    inline double PointCenter::bulkNorm() const noexcept { return 1.0; }
+    inline PointCenter PointCenter::normalizedByBulk() const noexcept { return *this; }
 
     constexpr double PointCenter::weightNormSquare() const noexcept { return 0.0; }
     inline double PointCenter::weightNorm() const noexcept { return std::sqrt(weightNormSquare()); }

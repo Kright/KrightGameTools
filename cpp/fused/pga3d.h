@@ -1599,7 +1599,7 @@ namespace pga3d {
         [[nodiscard]] inline ProjectiveTranslator normalizedByNorm() const noexcept;
         [[nodiscard]] constexpr double bulkNormSquare() const noexcept;
         [[nodiscard]] inline double bulkNorm() const noexcept;
-        [[nodiscard]] inline ProjectiveTranslator normalizedByBulk() const noexcept;
+        [[nodiscard]] inline Translator normalizedByBulk() const noexcept;
         [[nodiscard]] constexpr double weightNormSquare() const noexcept;
         [[nodiscard]] inline double weightNorm() const noexcept;
         [[nodiscard]] inline ProjectiveTranslator normalizedByWeight() const noexcept;
@@ -2024,7 +2024,7 @@ namespace pga3d {
         [[nodiscard]] inline ProjectivePoint normalizedByNorm() const noexcept;
         [[nodiscard]] constexpr double bulkNormSquare() const noexcept;
         [[nodiscard]] inline double bulkNorm() const noexcept;
-        [[nodiscard]] inline ProjectivePoint normalizedByBulk() const noexcept;
+        [[nodiscard]] inline Point normalizedByBulk() const noexcept;
         [[nodiscard]] constexpr double weightNormSquare() const noexcept;
         [[nodiscard]] inline double weightNorm() const noexcept;
         [[nodiscard]] inline ProjectivePoint normalizedByWeight() const noexcept;
@@ -2952,10 +2952,10 @@ namespace pga3d {
 
         [[nodiscard]] constexpr double normSquare() const noexcept;
         [[nodiscard]] inline double norm() const noexcept;
-        [[nodiscard]] inline ProjectivePoint normalizedByNorm() const noexcept;
+        [[nodiscard]] inline PointCenter normalizedByNorm() const noexcept;
         [[nodiscard]] constexpr double bulkNormSquare() const noexcept;
         [[nodiscard]] inline double bulkNorm() const noexcept;
-        [[nodiscard]] inline ProjectivePoint normalizedByBulk() const noexcept;
+        [[nodiscard]] inline PointCenter normalizedByBulk() const noexcept;
         [[nodiscard]] constexpr double weightNormSquare() const noexcept;
         [[nodiscard]] inline double weightNorm() const noexcept;
         [[nodiscard]] inline ProjectivePoint normalizedByWeight() const noexcept;
@@ -3950,8 +3950,8 @@ namespace pga3d {
     inline ProjectiveTranslator Translator::normalizedByNorm() const noexcept { return *this / norm(); }
 
     constexpr double Translator::bulkNormSquare() const noexcept { return 1.0; }
-    inline double Translator::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }
-    inline ProjectiveTranslator Translator::normalizedByBulk() const noexcept { return *this / bulkNorm(); }
+    inline double Translator::bulkNorm() const noexcept { return 1.0; }
+    inline Translator Translator::normalizedByBulk() const noexcept { return *this; }
 
     constexpr double Translator::weightNormSquare() const noexcept { return (wx * wx + wy * wy + wz * wz); }
     inline double Translator::weightNorm() const noexcept { return std::sqrt(weightNormSquare()); }
@@ -3970,8 +3970,8 @@ namespace pga3d {
     inline ProjectivePoint Point::normalizedByNorm() const noexcept { return *this / norm(); }
 
     constexpr double Point::bulkNormSquare() const noexcept { return 1.0; }
-    inline double Point::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }
-    inline ProjectivePoint Point::normalizedByBulk() const noexcept { return *this / bulkNorm(); }
+    inline double Point::bulkNorm() const noexcept { return 1.0; }
+    inline Point Point::normalizedByBulk() const noexcept { return *this; }
 
     constexpr double Point::weightNormSquare() const noexcept { return (x * x + y * y + z * z); }
     inline double Point::weightNorm() const noexcept { return std::sqrt(weightNormSquare()); }
@@ -4010,12 +4010,12 @@ namespace pga3d {
     inline PseudoScalar PseudoScalar::normalizedByWeight() const noexcept { return *this / weightNorm(); }
 
     constexpr double PointCenter::normSquare() const noexcept { return 1.0; }
-    inline double PointCenter::norm() const noexcept { return std::sqrt(normSquare()); }
-    inline ProjectivePoint PointCenter::normalizedByNorm() const noexcept { return *this / norm(); }
+    inline double PointCenter::norm() const noexcept { return 1.0; }
+    inline PointCenter PointCenter::normalizedByNorm() const noexcept { return *this; }
 
     constexpr double PointCenter::bulkNormSquare() const noexcept { return 1.0; }
-    inline double PointCenter::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }
-    inline ProjectivePoint PointCenter::normalizedByBulk() const noexcept { return *this / bulkNorm(); }
+    inline double PointCenter::bulkNorm() const noexcept { return 1.0; }
+    inline PointCenter PointCenter::normalizedByBulk() const noexcept { return *this; }
 
     constexpr double PointCenter::weightNormSquare() const noexcept { return 0.0; }
     inline double PointCenter::weightNorm() const noexcept { return std::sqrt(weightNormSquare()); }
@@ -6435,7 +6435,7 @@ namespace pga3d {
     }
 
     [[nodiscard]] inline Rotor Rotor::rotation(const PlaneCentral& from, const PlaneCentral& to) noexcept {
-        // not std::sqrt(from.normSquare() * to.normSquare()): the product overflows/underflows
+        // not sqrt(from.normSquare * to.normSquare): the product overflows/underflows
         // for extreme magnitudes (~1e100 or ~1e-100) where each norm alone is still fine
         const double norm = from.norm() * to.norm();
         const Rotor q2a = to.geometric(from) / norm;
@@ -6469,34 +6469,35 @@ namespace pga3d {
         }
 
         // exactly antipodal inputs: the axis is any direction orthogonal to from
-        const PlaneCentral orthogonalPlane =
-            (std::abs(from.x) > std::abs(from.z)) ? PlaneCentral{-from.y, from.x, 0} : PlaneCentral{0, -from.z, from.y};
-
-        return Rotor(0, orthogonalPlane.z, -orthogonalPlane.y, orthogonalPlane.x).normalizedByNorm();
+        if (std::abs(from.x) > std::abs(from.z)) {
+            return Rotor(0.0, 0.0, -from.x, -from.y).normalizedByNorm();
+        }
+        return Rotor(0.0, from.y, from.z, 0.0).normalizedByNorm();
     }
-
     [[nodiscard]] inline BivectorBulk Rotor::log() const noexcept {
         const double scalar = s;
-        if (s < 0.0) return (-(*this)).log();
+        if (s < 0.0) {
+            return (-(*this)).log();
+        }
 
         const double lenXYZ = std::sqrt(xy * xy + xz * xz + yz * yz);
         const double angle = std::atan2(lenXYZ, scalar);
 
-        // for a normalized rotor sin(angle) = lenXYZ, so this is angle / sin(angle);
-        // dividing by lenXYZ directly avoids the catastrophic cancellation that the
-        // equivalent sqrt(1.0 - scalar * scalar) form has for small angles. The series branch:
+        // for a normalized rotor sin(angle) = lenXYZ, so this is angle / sin(angle); the series branch:
         // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
         // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
         //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
         //            = 1 + x^2/6 + 7*x^4/360 + ...
         // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
         // so the second-order form is exact in double
-        const double b = (std::abs(angle) > 1e-5) ? (angle / lenXYZ) : (1.0 + angle * angle / 6.0);
+        const double b = (std::abs(angle) > 1e-5)
+            ? (angle / lenXYZ)
+            : (1.0 + angle * angle / 6.0);
 
         return BivectorBulk {
             .xy = b * xy,
             .xz = b * xz,
-            .yz = b * yz,
+            .yz = b * yz
         };
     }
 
@@ -6559,7 +6560,9 @@ namespace pga3d {
 
     [[nodiscard]] inline Bivector Motor::log() const noexcept {
         const double scalar = s;
-        if (s < 0.0) return (-(*this)).log();
+        if (s < 0.0) {
+            return (-(*this)).log();
+        }
 
         const double lenXYZ2 = xy * xy + xz * xz + yz * yz;
         const double lenXYZ = std::sqrt(lenXYZ2);
@@ -6603,7 +6606,7 @@ namespace pga3d {
             .wz = (b * wz + c * xy),
             .xy = b * xy,
             .xz = b * xz,
-            .yz = b * yz,
+            .yz = b * yz
         };
     }
 
@@ -6632,13 +6635,13 @@ namespace pga3d {
         const double b = (s * i - wx * yz + wy * xz - wz * xy) * a * a2;
         return Motor {
             .s = a * s,
-            .wx = a * wx + b * yz,
-            .wy = a * wy - b * xz,
-            .wz = a * wz + b * xy,
+            .wx = (a * wx + b * yz),
+            .wy = (a * wy - b * xz),
+            .wz = (a * wz + b * xy),
             .xy = a * xy,
             .xz = a * xz,
             .yz = a * yz,
-            .i = a * i - b * s,
+            .i = (a * i - b * s)
         };
     }
 
@@ -6662,6 +6665,7 @@ namespace pga3d {
             };
         }
 
+        // shiftAlongLine = this.geometric((this ^ this.reverse) / div / 2.0)
         const double pseudoScalar = (wy * xz - wx * yz - wz * xy) / div;
         const BivectorWeight shiftAlongLine{
             .wx = -pseudoScalar * yz,
@@ -6679,9 +6683,9 @@ namespace pga3d {
 
         // sin(x)/x = 1 - x^2/6 + x^4/120 - ...; at x <= 1e-5 the dropped x^4/120 <= 8.4e-23
         // relative term is far below 1e-17, so the second-order form is exact in double
-        const double sinDivLen = (len > 1e-5) ?
-            (std::sin(len) / len) :
-            (1.0 - (len * len) / 6.0);
+        const double sinDivLen = (len > 1e-5)
+            ? (std::sin(len) / len)
+            : (1.0 - (len * len) / 6.0);
 
         // (sin(x)/x - cos(x)) / x^2, step by step:
         //   sin(x)   = x - x^3/6 + x^5/120 - x^7/5040 + ...
@@ -6692,19 +6696,19 @@ namespace pga3d {
         //   divide by x^2:      1/3   - x^2/30 + x^4/840 - ...
         // at x <= 1e-5 the dropped x^4/840 <= 1.2e-23 is relatively far below 1e-17,
         // so the second-order form is exact in double
-        const double sinMinusCosDivLen2 = (len > 1e-5) ?
-            (sinDivLen - cos) / (len * len) :
-            (1.0 / 3.0 - (len * len) / 30.0);
+        const double sinMinusCosDivLen2 = (len > 1e-5)
+            ? ((sinDivLen - cos) / (len * len))
+            : (1.0 / 3.0 - (len * len) / 30.0);
 
         return Motor {
-          .s = cos,
-          .wx = (sinDivLen * wx + sinMinusCosDivLen2 * yz * (wy * xz - wx * yz - wz * xy)),
-          .wy = (sinDivLen * wy + sinMinusCosDivLen2 * xz * (wx * yz + wz * xy - wy * xz)),
-          .wz = (sinDivLen * wz + sinMinusCosDivLen2 * xy * (wy * xz - wx * yz - wz * xy)),
-          .xy = sinDivLen * xy,
-          .xz = sinDivLen * xz,
-          .yz = sinDivLen * yz,
-          .i = sinDivLen * (wx * yz + wz * xy - wy * xz),
+            .s = cos,
+            .wx = (sinDivLen * wx + sinMinusCosDivLen2 * yz * (wy * xz - wx * yz - wz * xy)),
+            .wy = (sinDivLen * wy + sinMinusCosDivLen2 * xz * (wx * yz + wz * xy - wy * xz)),
+            .wz = (sinDivLen * wz + sinMinusCosDivLen2 * xy * (wy * xz - wx * yz - wz * xy)),
+            .xy = sinDivLen * xy,
+            .xz = sinDivLen * xz,
+            .yz = sinDivLen * yz,
+            .i = sinDivLen * (wx * yz + wz * xy - wy * xz)
         };
     }
 }
@@ -6719,15 +6723,17 @@ namespace pga3d {
         const double len = bulkNorm();
         const double cos = std::cos(len);
 
+        // sin(x)/x = 1 - x^2/6 + x^4/120 - ...; at x <= 1e-5 the dropped x^4/120 <= 8.4e-23
+        // relative term is far below 1e-17, so the second-order form is exact in double
         const double sinDivLen = (len > 1e-5)
             ? (std::sin(len) / len)
             : (1.0 - (len * len) / 6.0);
 
-        return Rotor{
+        return Rotor {
             .s = cos,
             .xy = sinDivLen * xy,
             .xz = sinDivLen * xz,
-            .yz = sinDivLen * yz,
+            .yz = sinDivLen * yz
         };
     }
 }
@@ -6739,10 +6745,10 @@ namespace pga3d {
 namespace pga3d {
 
     [[nodiscard]] constexpr Translator BivectorWeight::exp() const noexcept {
-        return Translator{
+        return Translator {
             .wx = wx,
             .wy = wy,
-            .wz = wz,
+            .wz = wz
         };
     }
 }

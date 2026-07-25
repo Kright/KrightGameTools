@@ -139,23 +139,23 @@ final case class Pga3dRotor(s: Double = 0.0,
 
   def log: Pga3dBivectorBulk =
     val scalar = s
-    if (s < 0.0) return (-this).log
+    if (s < 0.0) {
+      return (-this).log
+    }
 
     val lenXYZ = Math.sqrt(xy * xy + xz * xz + yz * yz)
     val angle = Math.atan2(lenXYZ, scalar)
 
-    // for a normalized rotor sin(angle) = lenXYZ, so this is angle / sin(angle);
-    // dividing by lenXYZ directly avoids the catastrophic cancellation that the
-    // equivalent sqrt(1.0 - scalar * scalar) form has for small angles
+    // for a normalized rotor sin(angle) = lenXYZ, so this is angle / sin(angle); the series branch:
+    // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
+    // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
+    //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
+    //            = 1 + x^2/6 + 7*x^4/360 + ...
+    // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
+    // so the second-order form is exact in double
     val b = if (Math.abs(angle) > 1e-5) {
       angle / lenXYZ
     } else {
-      // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
-      // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
-      //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
-      //            = 1 + x^2/6 + 7*x^4/360 + ...
-      // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
-      // so the second-order form is exact in double
       1.0 + angle * angle / 6.0
     }
 
@@ -1762,7 +1762,9 @@ object Pga3dRotor:
   val id: Pga3dRotor = Pga3dRotor(1.0, 0.0, 0.0, 0.0)
 
   def rotation(from: Pga3dPlaneCentral, to: Pga3dPlaneCentral): Pga3dRotor = {
-    // not Math.sqrt(from.normSquare * to.normSquare): the product overflows/underflows
+    import me.kright.gametools.mathutil.ExactArith.diffOfProducts
+
+    // not sqrt(from.normSquare * to.normSquare): the product overflows/underflows
     // for extreme magnitudes (~1e100 or ~1e-100) where each norm alone is still fine
     val norm = from.norm * to.norm
     val q2a = to.geometric(from) / norm
@@ -1780,7 +1782,6 @@ object Pga3dRotor:
     // near pi the wedge components of q2a cancel catastrophically (~1e-17 absolute
     // noise, which would tilt the axis by ~1e-17/sin2a), so the axis is recomputed
     // with error-free products
-    import me.kright.gametools.mathutil.ExactArith.diffOfProducts
     val invNorm = 1.0 / norm
     val bxy = diffOfProducts(from.y, to.x, from.x, to.y) * invNorm
     val bxz = diffOfProducts(from.z, to.x, from.x, to.z) * invNorm
@@ -1797,11 +1798,10 @@ object Pga3dRotor:
     }
 
     // exactly antipodal inputs: the axis is any direction orthogonal to from
-    val orthogonalPlane =
-      if (Math.abs(from.x) > Math.abs(from.z)) Pga3dPlaneCentral(-from.y, from.x, 0)
-      else Pga3dPlaneCentral(0, -from.z, from.y)
-
-    Pga3dRotor(0, orthogonalPlane.z, -orthogonalPlane.y, orthogonalPlane.x).normalizedByNorm
+    if (Math.abs(from.x) > Math.abs(from.z)) {
+      return Pga3dRotor(0.0, 0.0, -from.x, -from.y).normalizedByNorm
+    }
+    return Pga3dRotor(0.0, from.y, from.z, 0.0).normalizedByNorm
   }
 
   def rotation(from: Pga3dVector, to: Pga3dVector): Pga3dRotor =

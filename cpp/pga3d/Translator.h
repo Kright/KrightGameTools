@@ -70,7 +70,7 @@ namespace pga3d {
         [[nodiscard]] inline ProjectiveTranslator normalizedByNorm() const noexcept;
         [[nodiscard]] constexpr double bulkNormSquare() const noexcept;
         [[nodiscard]] inline double bulkNorm() const noexcept;
-        [[nodiscard]] inline ProjectiveTranslator normalizedByBulk() const noexcept;
+        [[nodiscard]] inline Translator normalizedByBulk() const noexcept;
         [[nodiscard]] constexpr double weightNormSquare() const noexcept;
         [[nodiscard]] inline double weightNorm() const noexcept;
         [[nodiscard]] inline ProjectiveTranslator normalizedByWeight() const noexcept;

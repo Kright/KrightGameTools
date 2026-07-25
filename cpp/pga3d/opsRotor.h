@@ -26,7 +26,7 @@ namespace pga3d {
     }
 
     [[nodiscard]] inline Rotor Rotor::rotation(const PlaneCentral& from, const PlaneCentral& to) noexcept {
-        // not std::sqrt(from.normSquare() * to.normSquare()): the product overflows/underflows
+        // not sqrt(from.normSquare * to.normSquare): the product overflows/underflows
         // for extreme magnitudes (~1e100 or ~1e-100) where each norm alone is still fine
         const double norm = from.norm() * to.norm();
         const Rotor q2a = to.geometric(from) / norm;
@@ -60,36 +60,38 @@ namespace pga3d {
         }
 
         // exactly antipodal inputs: the axis is any direction orthogonal to from
-        const PlaneCentral orthogonalPlane =
-            (std::abs(from.x) > std::abs(from.z)) ? PlaneCentral{-from.y, from.x, 0} : PlaneCentral{0, -from.z, from.y};
-
-        return Rotor(0, orthogonalPlane.z, -orthogonalPlane.y, orthogonalPlane.x).normalizedByNorm();
+        if (std::abs(from.x) > std::abs(from.z)) {
+            return Rotor(0.0, 0.0, -from.x, -from.y).normalizedByNorm();
+        }
+        return Rotor(0.0, from.y, from.z, 0.0).normalizedByNorm();
     }
-
     [[nodiscard]] inline BivectorBulk Rotor::log() const noexcept {
         const double scalar = s;
-        if (s < 0.0) return (-(*this)).log();
+        if (s < 0.0) {
+            return (-(*this)).log();
+        }
 
         const double lenXYZ = std::sqrt(xy * xy + xz * xz + yz * yz);
         const double angle = std::atan2(lenXYZ, scalar);
 
-        // for a normalized rotor sin(angle) = lenXYZ, so this is angle / sin(angle);
-        // dividing by lenXYZ directly avoids the catastrophic cancellation that the
-        // equivalent sqrt(1.0 - scalar * scalar) form has for small angles. The series branch:
+        // for a normalized rotor sin(angle) = lenXYZ, so this is angle / sin(angle); the series branch:
         // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
         // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
         //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
         //            = 1 + x^2/6 + 7*x^4/360 + ...
         // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
         // so the second-order form is exact in double
-        const double b = (std::abs(angle) > 1e-5) ? (angle / lenXYZ) : (1.0 + angle * angle / 6.0);
+        const double b = (std::abs(angle) > 1e-5)
+            ? (angle / lenXYZ)
+            : (1.0 + angle * angle / 6.0);
 
         return BivectorBulk {
             .xy = b * xy,
             .xz = b * xz,
-            .yz = b * yz,
+            .yz = b * yz
         };
     }
+
 
     [[nodiscard]] inline Rotor Rotor::pow(double p) const noexcept {
        return (log() * p).exp();

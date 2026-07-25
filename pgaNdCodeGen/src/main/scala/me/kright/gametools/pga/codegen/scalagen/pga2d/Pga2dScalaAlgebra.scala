@@ -2,7 +2,7 @@ package me.kright.gametools.pga.codegen.scalagen.pga2d
 
 import me.kright.gametools.ga.*
 import me.kright.gametools.mathutil.Sign
-import me.kright.gametools.pga.codegen.common.MultivectorField
+import me.kright.gametools.pga.codegen.common.{MultivectorField, NormSymbolics, PgaSubclassFields}
 import me.kright.gametools.pga.codegen.scalagen.common.*
 import me.kright.gametools.pga.codegen.scalagen.common.ops.*
 import me.kright.gametools.pga.codegen.scalagen.pga2d.ops.*
@@ -25,15 +25,7 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
 
   override given pga: PGA2 = PGA2(representationConfig)
 
-  private val genW = pga.generators.find(_.squareSign == Sign.Zero).get
-
-  private val orderedFields = pga.blades.map(b => MultivectorField(pga.representation(b), BasisBladeWithSign(b)))
-  private val orderedDualFields = orderedFields.zip(orderedFields.reverse).map { (n, r) =>
-    val sign: Sign = Sign(MultiVector[Int](n.basisBlade).dual(r.basisBlade))
-    MultivectorField(r.name, BasisBladeWithSign(n.basisBlade, sign))
-  }
-
-  private val fields = orderedFields.map(f => f.name -> f).toMap
+  private val structure = PgaSubclassFields(using pga)
 
   override val typeNamePrefix: String = "Pga2d"
 
@@ -44,36 +36,33 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
 
   override val hyperplaneElementName: String = "line"
 
-  override val multivector = ScalaMultivectorSubClass("Pga2dMultivector", orderedFields,
+  override val multivector = ScalaMultivectorSubClass("Pga2dMultivector", structure.multivector,
     description = "A generic multivector of 2d PGA with all 8 components, used when no specialized class fits the value.")
-  override val motor = ScalaMultivectorSubClass("Pga2dMotor", orderedFields.filter(b => ArraySeq(0, 2).contains(b.basisBlade.grade)),
+  override val motor = ScalaMultivectorSubClass("Pga2dMotor", structure.motor,
     description = "A motor: a rigid transformation of the 2d plane (combined rotation and translation),\nthe even-graded (0, 2) element of 2d PGA. Applied with motor.sandwich(obj).\nA motor is the exponent of a grade-2 element (projectivePoint.exp), and motor.log returns that element back.")
-  override val scalar = ScalaMultivectorSubClass("Double", orderedFields.take(1), shouldBeGenerated = false)
-  val line = ScalaMultivectorSubClass("Pga2dLine", orderedFields.filter(_.basisBlade.grade == 1).tail :+ orderedFields.filter(_.basisBlade.grade == 1).head,
+  override val scalar = ScalaMultivectorSubClass("Double", structure.scalar, shouldBeGenerated = false)
+  val line = ScalaMultivectorSubClass("Pga2dLine", structure.hyperplane,
     description = "A line ax + by + c = 0 with the coefficients (a, b, c) stored in the fields (x, y, w);\nthe grade-1 element of 2d PGA. The 2d sibling of Pga3dPlane.")
-  override val projectivePoint = ScalaMultivectorSubClass("Pga2dProjectivePoint", orderedDualFields.filter(_.basisBlade.grade == 2).take(2).reverse ++ orderedDualFields.filter(_.basisBlade.grade == 2).drop(2),
+  override val projectivePoint = ScalaMultivectorSubClass("Pga2dProjectivePoint", structure.projectivePoint,
     description = "A point with three homogeneous coordinates: (x/w, y/w) when w != 0, or an ideal point (a direction) when w == 0.\nThe grade-2 element of 2d PGA, stored in dual representation.\nprojectivePoint.exp is a Pga2dMotor (rotation around the point), and motor.log is a Pga2dProjectivePoint.")
-  override val pseudoScalar = ScalaMultivectorSubClass("Pga2dPseudoScalar", orderedFields.takeRight(1),
+  override val pseudoScalar = ScalaMultivectorSubClass("Pga2dPseudoScalar", structure.pseudoScalar,
     description = "The pseudoscalar, the grade-3 element of 2d PGA with the single component i = wxy.")
 
-  override val rotor = ScalaMultivectorSubClass("Pga2dRotor", motor.variableFields.filter(f => !f.basisBlade.contains(genW)),
+  override val rotor = ScalaMultivectorSubClass("Pga2dRotor", structure.rotor,
     description = "A rotor: rotation around the center of coordinates, applied with rotor.sandwich(obj).\nThe fields s and xy hold the cosine and sine of the half-angle. The 2d analog of Pga3dRotor;\na rotor is the exponent of a grade-2 element concentrated at the origin (the xy blade).")
-  override val translator = ScalaMultivectorSubClass("Pga2dTranslator", motor.variableFields.filter(f => f.basisBlade.grade == 2 && f.basisBlade.contains(genW)), ArraySeq(scalar.variableFields.head -> 1.0),
+  override val translator = ScalaMultivectorSubClass("Pga2dTranslator", structure.translatorVariable, structure.translatorConstants,
     description = "A translator: translation of the 2d plane, applied with translator.sandwich(obj). Moves points but not vectors.\nA translator is the exponent of a Pga2dVector (vector.exp), and translator.log returns that vector back.")
-  override val projectiveTranslator = ScalaMultivectorSubClass("Pga2dProjectiveTranslator", motor.variableFields.filter(f => f.basisBlade.grade == 0 || f.basisBlade.grade == 2 && f.basisBlade.contains(genW)),
+  override val projectiveTranslator = ScalaMultivectorSubClass("Pga2dProjectiveTranslator", structure.projectiveTranslator,
     description = "A translator with an explicit (not necessarily 1.0) scalar part: an unnormalized version of Pga2dTranslator.")
 
-  override val vector = ScalaMultivectorSubClass("Pga2dVector", projectivePoint.variableFields.filter(f => f.basisBlade.contains(genW)),
+  override val vector = ScalaMultivectorSubClass("Pga2dVector", structure.vector,
     description = "A vector: the difference between two points, a direction with magnitude; an ideal point with w = 0.\nStored in dual representation with fields x, y. Translators move points but do not change vectors.")
-  val lineCentral = ScalaMultivectorSubClass("Pga2dLineCentral", line.variableFields.filter(f => !f.basisBlade.contains(genW)),
+  val lineCentral = ScalaMultivectorSubClass("Pga2dLineCentral", structure.hyperplaneCentral,
     description = "A line ax + by = 0 passing through the center of coordinates: a Pga2dLine with w = 0.\nDual to Pga2dVector.")
-  override val point = {
-    val (weight, bulk) = projectivePoint.variableFields.partition(_.basisBlade.contains(genW))
-    ScalaMultivectorSubClass("Pga2dPoint", weight, bulk.map(f => (f, 1.0)),
-      description = "A point on the 2d plane, stored in dual representation with human-friendly fields x, y and constant w = 1.")
-  }
+  override val point = ScalaMultivectorSubClass("Pga2dPoint", structure.pointVariable, structure.pointConstants,
+    description = "A point on the 2d plane, stored in dual representation with human-friendly fields x, y and constant w = 1.")
 
-  override val pointCenter = ScalaMultivectorSubClass("Pga2dPointCenter", ArraySeq(), projectivePoint.variableFields.map(f => (f, (if (f.basisBlade.contains(genW)) 0.0 else 1.0))),
+  override val pointCenter = ScalaMultivectorSubClass("Pga2dPointCenter", ArraySeq(), structure.pointCenterConstants,
     description = "The center of coordinates as a singleton object: a Pga2dPoint with x = y = 0 and w = 1.")
   override val zeroCls = ScalaMultivectorSubClass("Pga2dZero", ArraySeq(), shouldBeGenerated = false)
 
@@ -101,9 +90,9 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
     MultivectorUnaryOp((cls, v) => GeneratedValue(cls, "antiReverse", pga.operations.antiReverse(v))),
     DefRenormalizedForMotor(),
     DefMotorToRotorAndTranslator(),
-    DefNorm("bulkNormSquare", "bulkNorm", "normalizedByBulk", s => s.geometric(s.reverse).grade(0)),
-    DefNorm("weightNormSquare", "weightNorm", "normalizedByWeight", s => s.dual.geometric(s.dual.reverse).grade(0)),
-    DefNorm("normSquare", "norm", "normalizedByNorm", s => s.geometric(s.reverse).grade(0) + s.dual.geometric(s.dual.reverse).grade(0)),
+    DefNorm("bulkNormSquare", "bulkNorm", "normalizedByBulk", NormSymbolics.bulkSquare),
+    DefNorm("weightNormSquare", "weightNorm", "normalizedByWeight", NormSymbolics.weightSquare),
+    DefNorm("normSquare", "norm", "normalizedByNorm", NormSymbolics.fullSquare),
     DefMultiplyToScalar(),
     DefDivideByScalar(),
     DefMinMaxForPointOrVector(),

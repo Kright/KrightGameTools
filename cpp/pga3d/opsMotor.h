@@ -15,7 +15,9 @@ namespace pga3d {
 
     [[nodiscard]] inline Bivector Motor::log() const noexcept {
         const double scalar = s;
-        if (s < 0.0) return (-(*this)).log();
+        if (s < 0.0) {
+            return (-(*this)).log();
+        }
 
         const double lenXYZ2 = xy * xy + xz * xz + yz * yz;
         const double lenXYZ = std::sqrt(lenXYZ2);
@@ -59,9 +61,10 @@ namespace pga3d {
             .wz = (b * wz + c * xy),
             .xy = b * xy,
             .xz = b * xz,
-            .yz = b * yz,
+            .yz = b * yz
         };
     }
+
 
     [[nodiscard]] inline Motor Motor::pow(double p) const noexcept {
        return (log() * p).exp();
@@ -88,15 +91,16 @@ namespace pga3d {
         const double b = (s * i - wx * yz + wy * xz - wz * xy) * a * a2;
         return Motor {
             .s = a * s,
-            .wx = a * wx + b * yz,
-            .wy = a * wy - b * xz,
-            .wz = a * wz + b * xy,
+            .wx = (a * wx + b * yz),
+            .wy = (a * wy - b * xz),
+            .wz = (a * wz + b * xy),
             .xy = a * xy,
             .xz = a * xz,
             .yz = a * yz,
-            .i = a * i - b * s,
+            .i = (a * i - b * s)
         };
     }
+
 
     [[nodiscard]] constexpr Vector Motor::axisX() const noexcept { return toRotorUnsafe().axisX(); }
     [[nodiscard]] constexpr Vector Motor::axisY() const noexcept { return toRotorUnsafe().axisY(); }

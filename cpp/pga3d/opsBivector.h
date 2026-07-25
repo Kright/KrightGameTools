@@ -21,6 +21,7 @@ namespace pga3d {
             };
         }
 
+        // shiftAlongLine = this.geometric((this ^ this.reverse) / div / 2.0)
         const double pseudoScalar = (wy * xz - wx * yz - wz * xy) / div;
         const BivectorWeight shiftAlongLine{
             .wx = -pseudoScalar * yz,
@@ -38,9 +39,9 @@ namespace pga3d {
 
         // sin(x)/x = 1 - x^2/6 + x^4/120 - ...; at x <= 1e-5 the dropped x^4/120 <= 8.4e-23
         // relative term is far below 1e-17, so the second-order form is exact in double
-        const double sinDivLen = (len > 1e-5) ?
-            (std::sin(len) / len) :
-            (1.0 - (len * len) / 6.0);
+        const double sinDivLen = (len > 1e-5)
+            ? (std::sin(len) / len)
+            : (1.0 - (len * len) / 6.0);
 
         // (sin(x)/x - cos(x)) / x^2, step by step:
         //   sin(x)   = x - x^3/6 + x^5/120 - x^7/5040 + ...
@@ -51,19 +52,19 @@ namespace pga3d {
         //   divide by x^2:      1/3   - x^2/30 + x^4/840 - ...
         // at x <= 1e-5 the dropped x^4/840 <= 1.2e-23 is relatively far below 1e-17,
         // so the second-order form is exact in double
-        const double sinMinusCosDivLen2 = (len > 1e-5) ?
-            (sinDivLen - cos) / (len * len) :
-            (1.0 / 3.0 - (len * len) / 30.0);
+        const double sinMinusCosDivLen2 = (len > 1e-5)
+            ? ((sinDivLen - cos) / (len * len))
+            : (1.0 / 3.0 - (len * len) / 30.0);
 
         return Motor {
-          .s = cos,
-          .wx = (sinDivLen * wx + sinMinusCosDivLen2 * yz * (wy * xz - wx * yz - wz * xy)),
-          .wy = (sinDivLen * wy + sinMinusCosDivLen2 * xz * (wx * yz + wz * xy - wy * xz)),
-          .wz = (sinDivLen * wz + sinMinusCosDivLen2 * xy * (wy * xz - wx * yz - wz * xy)),
-          .xy = sinDivLen * xy,
-          .xz = sinDivLen * xz,
-          .yz = sinDivLen * yz,
-          .i = sinDivLen * (wx * yz + wz * xy - wy * xz),
+            .s = cos,
+            .wx = (sinDivLen * wx + sinMinusCosDivLen2 * yz * (wy * xz - wx * yz - wz * xy)),
+            .wy = (sinDivLen * wy + sinMinusCosDivLen2 * xz * (wx * yz + wz * xy - wy * xz)),
+            .wz = (sinDivLen * wz + sinMinusCosDivLen2 * xy * (wy * xz - wx * yz - wz * xy)),
+            .xy = sinDivLen * xy,
+            .xz = sinDivLen * xz,
+            .yz = sinDivLen * yz,
+            .i = sinDivLen * (wx * yz + wz * xy - wy * xz)
         };
     }
 }

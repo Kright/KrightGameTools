@@ -1,35 +1,31 @@
 package me.kright.gametools.pga.codegen.scalagen.pga3d.ops
 
-import me.kright.gametools.ga.{MultiVector, PGA3}
+import me.kright.gametools.ga.PGA3
+import me.kright.gametools.pga.codegen.common.{FormulaTemplate, SharedFormulas}
 import me.kright.gametools.pga.codegen.scalagen.common.{GeneratedCode, MultivectorUnaryOp}
+import me.kright.gametools.pga.codegen.scalagen.pga3d.Pga3dScalaAlgebra
 import me.kright.gametools.pga.codegen.scalagen.pga3d.Pga3dScalaAlgebra.{bivector, bivectorWeight}
-import me.kright.gametools.symbolic.Sym
-
-import scala.math.Numeric.Implicits.infixNumericOps
 
 object DefBivectorSplit:
   def apply()(using pga3: PGA3): MultivectorUnaryOp = MultivectorUnaryOp { (cls, v) =>
     if (cls == bivector) {
       GeneratedCode { code =>
         val self = cls.self
+        val prefix = Pga3dScalaAlgebra.typeNamePrefix
+
         code(s"\ndef split: (${bivector.name}, ${bivectorWeight.name}) =")
         code.block {
-          code(
-            s"""val div = bulkNormSquare
-               |if (div < 1e-100) {
-               |  return (${bivector.name}(0.0, 0.0, 0.0, xy, xz, yz), ${bivectorWeight.name}(wx, wy, wz))
-               |}
-               |
-               |// val shiftAlongLine = this.geometric((this ^ this.reverse) / div / 2.0)
-               |// pseudoScalar = this ^ this.reverse
-               |
-               |val pseudoScalar = ${(self ^ self.reverse).pseudoScalar * Sym(0.5)} / div
-               |val shiftAlongLine = ${bivectorWeight.makeConstructor(self.geometric(MultiVector("i" -> Sym("pseudoScalar"))))}
-               |
-               |val line = this - shiftAlongLine
-               |(line, shiftAlongLine)
-               |""".stripMargin
-          )
+          code(FormulaTemplate.renderScala(SharedFormulas.bivectorSplitGuard, prefix))
+          code.block {
+            code(s"return (${bivector.name}(0.0, 0.0, 0.0, xy, xz, yz), ${bivectorWeight.name}(wx, wy, wz))")
+          }
+          code("}")
+          code("")
+          code(FormulaTemplate.renderScala(SharedFormulas.bivectorSplitPseudoScalar(self), prefix))
+          code(s"val shiftAlongLine = ${bivectorWeight.makeConstructor(SharedFormulas.bivectorSplitShift(self))}")
+          code("")
+          code("val line = this - shiftAlongLine")
+          code("(line, shiftAlongLine)")
         }
       }
     } else None

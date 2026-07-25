@@ -15,15 +15,17 @@ namespace pga3d {
         const double len = bulkNorm();
         const double cos = std::cos(len);
 
+        // sin(x)/x = 1 - x^2/6 + x^4/120 - ...; at x <= 1e-5 the dropped x^4/120 <= 8.4e-23
+        // relative term is far below 1e-17, so the second-order form is exact in double
         const double sinDivLen = (len > 1e-5)
             ? (std::sin(len) / len)
             : (1.0 - (len * len) / 6.0);
 
-        return Rotor{
+        return Rotor {
             .s = cos,
             .xy = sinDivLen * xy,
             .xz = sinDivLen * xz,
-            .yz = sinDivLen * yz,
+            .yz = sinDivLen * yz
         };
     }
 }

@@ -56,10 +56,10 @@ namespace pga3d {
 
         [[nodiscard]] constexpr double normSquare() const noexcept;
         [[nodiscard]] inline double norm() const noexcept;
-        [[nodiscard]] inline ProjectivePoint normalizedByNorm() const noexcept;
+        [[nodiscard]] inline PointCenter normalizedByNorm() const noexcept;
         [[nodiscard]] constexpr double bulkNormSquare() const noexcept;
         [[nodiscard]] inline double bulkNorm() const noexcept;
-        [[nodiscard]] inline ProjectivePoint normalizedByBulk() const noexcept;
+        [[nodiscard]] inline PointCenter normalizedByBulk() const noexcept;
         [[nodiscard]] constexpr double weightNormSquare() const noexcept;
         [[nodiscard]] inline double weightNorm() const noexcept;
         [[nodiscard]] inline ProjectivePoint normalizedByWeight() const noexcept;

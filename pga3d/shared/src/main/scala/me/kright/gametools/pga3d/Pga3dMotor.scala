@@ -105,13 +105,13 @@ final case class Pga3dMotor(s: Double = 0.0,
     val b = (s * i - wx * yz + wy * xz - wz * xy) * a * a2
     Pga3dMotor(
       s = a * s,
-      wx = a * wx + b * yz,
-      wy = a * wy - b * xz,
-      wz = a * wz + b * xy,
+      wx = (a * wx + b * yz),
+      wy = (a * wy - b * xz),
+      wz = (a * wz + b * xy),
       xy = a * xy,
       xz = a * xz,
       yz = a * yz,
-      i = a * i - b * s,
+      i = (a * i - b * s),
     )
 
   /** motor has to be normalized */
@@ -239,7 +239,9 @@ final case class Pga3dMotor(s: Double = 0.0,
 
   def log: Pga3dBivector =
     val scalar = s
-    if (s < 0.0) return (-this).log
+    if (s < 0.0) {
+      return (-this).log
+    }
 
     val lenXYZ2 = xy * xy + xz * xz + yz * yz
     val lenXYZ = Math.sqrt(lenXYZ2)
@@ -249,16 +251,16 @@ final case class Pga3dMotor(s: Double = 0.0,
     // but cancels catastrophically for small angles (relative error ~eps / angle^2)
     val a = 1.0 / lenXYZ2
 
-    // for a normalized motor sin(angle) = lenXYZ, so this is angle / sin(angle)
+    // for a normalized motor sin(angle) = lenXYZ, so this is angle / sin(angle); the series branch:
+    // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
+    // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
+    //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
+    //            = 1 + x^2/6 + 7*x^4/360 + ...
+    // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
+    // so the second-order form is exact in double
     val b = if (Math.abs(angle) > 1e-5) {
       angle / lenXYZ
     } else {
-      // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
-      // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
-      //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
-      //            = 1 + x^2/6 + 7*x^4/360 + ...
-      // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
-      // so the second-order form is exact in double
       1.0 + angle * angle / 6.0
     }
 

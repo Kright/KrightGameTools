@@ -83,7 +83,7 @@ namespace pga3d {
         [[nodiscard]] inline ProjectivePoint normalizedByNorm() const noexcept;
         [[nodiscard]] constexpr double bulkNormSquare() const noexcept;
         [[nodiscard]] inline double bulkNorm() const noexcept;
-        [[nodiscard]] inline ProjectivePoint normalizedByBulk() const noexcept;
+        [[nodiscard]] inline Point normalizedByBulk() const noexcept;
         [[nodiscard]] constexpr double weightNormSquare() const noexcept;
         [[nodiscard]] inline double weightNorm() const noexcept;
         [[nodiscard]] inline ProjectivePoint normalizedByWeight() const noexcept;

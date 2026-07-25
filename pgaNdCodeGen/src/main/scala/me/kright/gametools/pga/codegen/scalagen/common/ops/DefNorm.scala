@@ -1,6 +1,7 @@
 package me.kright.gametools.pga.codegen.scalagen.common.ops
 
 import me.kright.gametools.ga.MultiVector
+import me.kright.gametools.pga.codegen.common.NormSymbolics
 import me.kright.gametools.pga.codegen.scalagen.common.{GeneratedCode, GeneratedValue, MultivectorUnaryOp, ScalaPgaAlgebra}
 import me.kright.gametools.symbolic.Sym
 
@@ -11,10 +12,7 @@ object DefNorm:
             normSquare: MultiVector[Sym] => MultiVector[Sym])(using algebra: ScalaPgaAlgebra): MultivectorUnaryOp =
     MultivectorUnaryOp { (cls, s) =>
       val squareValue = normSquare(s)
-      val isConstantOne = squareValue.values.toSeq match
-        case Seq((blade, value)) => blade.grade == 0 && value == Sym.one
-        case _ => false
-      if (isConstantOne) {
+      if (NormSymbolics.isConstantOne(squareValue)) {
         // constant-norm classes (e.g. a point with its fixed unit blade): fold to constants
         // and keep the class type instead of widening through the division
         GeneratedCode { code =>

@@ -10,10 +10,10 @@
 namespace pga3d {
 
     [[nodiscard]] constexpr Translator BivectorWeight::exp() const noexcept {
-        return Translator{
+        return Translator {
             .wx = wx,
             .wy = wy,
-            .wz = wz,
+            .wz = wz
         };
     }
 }
