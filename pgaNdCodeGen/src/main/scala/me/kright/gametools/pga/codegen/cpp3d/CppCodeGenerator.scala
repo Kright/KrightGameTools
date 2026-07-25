@@ -2,19 +2,20 @@ package me.kright.gametools.pga.codegen.cpp3d
 
 import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppSubclass, Pga3dCodeGenCpp}
+import scala.collection.immutable.ArraySeq
 
 trait CppCodeGenerator:
-  def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = Seq()
+  def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = ArraySeq()
 
   protected def structBodyPart(code: String,
-                               includes: Seq[String] = Seq()): Seq[StructBodyPart] = {
+                               includes: Seq[String] = ArraySeq()): Seq[StructBodyPart] = {
     if (code.nonEmpty || includes.nonEmpty) {
-      Seq(StructBodyPart(includes, code, this))
+      ArraySeq(StructBodyPart(includes, code, this))
     } else
-      Seq()
+      ArraySeq()
   }
 
-  def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = Seq()
+  def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = ArraySeq()
 
 
 class CppCodeGeneratorSum(val generators: Seq[CppCodeGenerator]) extends CppCodeGenerator {

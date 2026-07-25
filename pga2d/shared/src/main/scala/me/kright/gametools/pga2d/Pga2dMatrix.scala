@@ -2,6 +2,7 @@ package me.kright.gametools.pga2d
 
 import me.kright.gametools.matrix.Matrix
 import me.kright.gametools.flatarray.FlatDoubleSerializer
+import scala.collection.immutable.ArraySeq
 
 /**
  * Conversions between linear operators on Pga2dProjectivePoint and 3x3 matrices.
@@ -10,7 +11,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
  * Do not edit by hand: change the generator and re-run it.
  */
 object Pga2dMatrix:
-  private val basis = Seq[Pga2dProjectivePoint](
+  private val basis = ArraySeq[Pga2dProjectivePoint](
     Pga2dProjectivePoint(1, 0, 0),
     Pga2dProjectivePoint(0, 1, 0),
     Pga2dProjectivePoint(0, 0, 1),

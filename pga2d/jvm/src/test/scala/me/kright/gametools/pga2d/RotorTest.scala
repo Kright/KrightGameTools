@@ -2,6 +2,7 @@ package me.kright.gametools.pga2d
 
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private val restoreEps = 1e-12
@@ -52,7 +53,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("rotation for nearly opposite vectors") {
     // pins the atan2 branch and the first-order near-pi fallback of rotation():
     // no deviation from pi may be dropped, however small
-    for (angle <- Seq(0.0, 1e-12, 1e-8, 1e-6, 1e-4, 1e-3, 0.01)) {
+    for (angle <- ArraySeq(0.0, 1e-12, 1e-8, 1e-6, 1e-4, 1e-3, 0.01)) {
       val from = Pga2dVector(1, 0)
       val to = Pga2dVector(-Math.cos(angle), Math.sin(angle))
       val r = Pga2dRotor.rotation(from, to)
@@ -94,7 +95,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("restore rotations near the branch cut") {
     // Math.PI exercises the 180-degree case, +-(PI - 0.01) sit just inside the cosT <= -0.9 branch
-    for (angle <- Seq(0.0, 0.5, 1.0, 2.0, 2.5, Math.PI - 0.01, Math.PI, -1.0, -2.5, -Math.PI + 0.01)) {
+    for (angle <- ArraySeq(0.0, 0.5, 1.0, 2.0, 2.5, Math.PI - 0.01, Math.PI, -1.0, -2.5, -Math.PI + 0.01)) {
       val r = rotorForAngle(angle)
       val restored = Pga2dRotor.restore(r.sandwich(Pga2dVector(1, 0)), r.sandwich(Pga2dVector(0, 1)))
       assert((restored - r).norm < restoreEps || (restored + r).norm < restoreEps, s"angle = $angle, restored = $restored, r = $r")
@@ -102,7 +103,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("log returns the half-angle and exp is its inverse") {
-    for (h <- Seq(0.0, 1e-300, 1e-20, 1e-15, 1e-8, 0.1, 1.0, Math.PI / 2 - 1e-9, -0.3, -1.5)) {
+    for (h <- ArraySeq(0.0, 1e-300, 1e-20, 1e-15, 1e-8, 0.1, 1.0, Math.PI / 2 - 1e-9, -0.3, -1.5)) {
       val r = Pga2dRotor.exp(h)
       assert(Math.abs(r.log() - h) <= 1e-15 * Math.abs(h), s"h = $h, log = ${r.log()}")
     }

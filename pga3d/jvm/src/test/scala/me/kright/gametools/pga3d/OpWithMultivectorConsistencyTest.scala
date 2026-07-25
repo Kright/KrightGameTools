@@ -111,7 +111,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
   }
 
   test("binaryOperations") {
-    val methodNames = Seq(
+    val methodNames = ArraySeq(
       // generated +/- carry @targetName("plus")/("minus"), so reflection sees those names
       "plus",
       "minus",
@@ -129,7 +129,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
   }
 
   test("unaryOperations") {
-    val methodNames = Seq(
+    val methodNames = ArraySeq(
       "dual",
       "weight",
       "bulk",

@@ -2,6 +2,7 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 
 import me.kright.gametools.pga.codegen.cpp3d.Pga3dProvider.pga3
 import me.kright.gametools.pga.codegen.cpp3d.*
+import scala.collection.immutable.ArraySeq
 
 class StructFieldsGenerator extends CppCodeGenerator:
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] =
@@ -37,8 +38,8 @@ class StructFieldsGenerator extends CppCodeGenerator:
     code(s"[[nodiscard]] static constexpr ${cls.name} from(const std::span<double, componentsCount>& values) noexcept { return { ${cls.variableFields.zipWithIndex.map((f, i) => s".${f.name} = values[$i]").mkString(", ")} }; }")
 
     val includes =
-      if (cls.variableFields.nonEmpty) Seq("<array>", "<span>")
-      else Seq()
+      if (cls.variableFields.nonEmpty) ArraySeq("<array>", "<span>")
+      else Seq.empty
 
     structBodyPart(
       code.toString,

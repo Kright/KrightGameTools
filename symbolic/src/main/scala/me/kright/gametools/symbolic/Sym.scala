@@ -6,6 +6,7 @@ import me.kright.gametools.symbolic.transform.PartialTransform
 import me.kright.gametools.symbolic.transform.simplifiers.{GroupMultipliersInSumOfProducts, ProductFlattener, SymbolicStrSimplifier}
 
 import scala.math.Numeric.Implicits.infixNumericOps
+import scala.collection.immutable.ArraySeq
 
 /**
  * Simple, but not customizable implementation for working with SymbolicStr
@@ -23,7 +24,7 @@ case class Sym(symbol: SymbolicStr) derives CanEqual:
     map(Sym.groupMultipliers)
 
   def /(other: Sym): Sym =
-    Sym(Func("/", Seq(symbol, other.symbol)) )
+    Sym(Func("/", ArraySeq(symbol, other.symbol)) )
 
 
 

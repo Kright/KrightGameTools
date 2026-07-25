@@ -18,13 +18,13 @@ class ProjectionOpsGenerator extends CppCodeGenerator:
     if (cls == CppSubclasses.bivector) {
       val line = cls.self
 
-      for (planeClass <- Seq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
+      for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
         code(s"[[nodiscard]] constexpr ${cls.name} projectOntoPlane(const ${planeClass.name}& plane) const noexcept;")
       }
     }
 
     if (pointClasses.contains(cls)) {
-      for (planeClass <- Seq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
+      for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
         code(s"[[nodiscard]] constexpr ${CppSubclasses.projectivePoint.name} projectOntoPlane(const ${planeClass.name}& plane) const noexcept;")
       }
 
@@ -38,7 +38,7 @@ class ProjectionOpsGenerator extends CppCodeGenerator:
     val code = CppCodeBuilder()
 
     code.myHeader(
-      Seq(
+      ArraySeq(
         s"#include \"${codeGen.Headers.types}\"",
         s"#include \"opsGeometric.h\"",
         s"#include \"opsDot.h\"",
@@ -47,12 +47,12 @@ class ProjectionOpsGenerator extends CppCodeGenerator:
     )
 
     code.namespace(codeGen.namespace) {
-      for (planeClass <- Seq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
+      for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
         code(s"[[nodiscard]] constexpr ${CppSubclasses.bivector.name} ${CppSubclasses.bivector.name}::projectOntoPlane(const ${planeClass.name}& plane) const noexcept { return -plane.dot(*this).geometric(plane).toBivectorUnsafe(); }")
       }
 
       for (pointClass <- pointClasses) {
-        for (planeClass <- Seq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
+        for (planeClass <- ArraySeq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
           code(s"[[nodiscard]] constexpr ${CppSubclasses.projectivePoint.name} ${pointClass.name}::projectOntoPlane(const ${planeClass.name}& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }")
         }
 
@@ -60,5 +60,5 @@ class ProjectionOpsGenerator extends CppCodeGenerator:
       }
     }
 
-    Seq(FileContent(codeGen.directory.resolve("opsProject.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve("opsProject.h"), code.toString))
   }

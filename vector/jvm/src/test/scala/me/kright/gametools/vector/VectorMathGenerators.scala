@@ -2,6 +2,7 @@ package me.kright.gametools.vector
 
 import me.kright.gametools.mathutil.MathUtil
 import org.scalacheck.Gen
+import scala.collection.immutable.ArraySeq
 
 object VectorMathGenerators:
   val gaussian: Gen[Double] = Gen.gaussian(mean = 0, stdDev = 1)
@@ -11,13 +12,13 @@ object VectorMathGenerators:
 
   def doubleInRange(min: Double, max: Double): Gen[Double] =
     Gen.oneOf(
-      Gen.oneOf(Seq(
+      Gen.oneOf(ArraySeq(
         min,
         max,
         0.5 * (min + max),
       )),
       Gen.oneOf(
-        Seq(
+        ArraySeq(
           1e-1,
           1e-2,
           1e-3,
@@ -30,7 +31,7 @@ object VectorMathGenerators:
           1e-15,
           1e-20
         ).flatMap { eps =>
-          Seq(
+          ArraySeq(
             MathUtil.interpolate(min, max, eps),
             MathUtil.interpolate(min, max, 1.0 - eps),
             MathUtil.interpolate(min, max, 0.5 + eps),
@@ -52,7 +53,7 @@ object VectorMathGenerators:
 
   val axisVector3: Gen[Vector3d] =
     Gen.oneOf(
-      Seq(
+      ArraySeq(
         Vector3d(1.0, 0.0, 0.0),
         Vector3d(0.0, 1.0, 0.0),
         Vector3d(0.0, 0.0, 1.0),

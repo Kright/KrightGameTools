@@ -5,6 +5,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalacheck.Gen
 
 import scala.language.unsafeNulls
+import scala.collection.immutable.ArraySeq
 
 class ExactArithTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
@@ -56,7 +57,7 @@ class ExactArithTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     forAll(normalDoubles, normalDoubles, normalDoubles) { (a, b, c) =>
       whenever(Math.abs(a * b) > 1e-280 && Math.abs(a * b) < 1e280 && Math.abs(c) < 1e280) {
         val expected = exactFma(a, b, c)
-        for ((result, name) <- Seq((ExactArith.fma(a, b, c), "fma"), (ExactArith.fmaPortable(a, b, c), "portable"))) {
+        for ((result, name) <- ArraySeq((ExactArith.fma(a, b, c), "fma"), (ExactArith.fmaPortable(a, b, c), "portable"))) {
           // hardware fma is correctly rounded (<= 0.5 ulp); the portable emulation may
           // double-round, staying within 1 ulp
           val err = exact(result).subtract(expected).abs
@@ -69,7 +70,7 @@ class ExactArithTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("fma product-error extraction is exact at extreme magnitudes") {
     val fullMantissa = 9007199254740991.0 // 2^53 - 1, the edge of integer-exact doubles
-    val pairs = Seq(
+    val pairs = ArraySeq(
       (1e150, 1e150), (-1e150, 1e130), (1e290, 1e-290), (1e290, 1.0),
       (1e-140, 1e-140), (3.14e200, -2.71e-100), (1e-300, 1e290),
       (Math.PI, Math.E), (1.0 + Math.ulp(1.0), 1.0 - Math.ulp(0.5)),
@@ -109,7 +110,7 @@ class ExactArithTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val perpNorm = Math.sqrt(fx * fx + fy * fy)
     val (px, py, pz) = (fy / perpNorm, -fx / perpNorm, 0.0)
 
-    for (eps <- Seq(1e-3, 1e-8, 1e-10, 1e-13, 1e-16, 0.0)) {
+    for (eps <- ArraySeq(1e-3, 1e-8, 1e-10, 1e-13, 1e-16, 0.0)) {
       val (tx, ty, tz) = (
         -(fx * Math.cos(eps) + px * Math.sin(eps)),
         -(fy * Math.cos(eps) + py * Math.sin(eps)),

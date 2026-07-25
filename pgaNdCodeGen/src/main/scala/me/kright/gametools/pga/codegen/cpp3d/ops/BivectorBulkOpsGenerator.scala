@@ -2,20 +2,21 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 
 import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
+import scala.collection.immutable.ArraySeq
 
 class BivectorBulkOpsGenerator extends CppCodeGenerator {
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
     if (cls == CppSubclasses.bivectorBulk) {
       structBodyPart(s"""[[nodiscard]] inline ${CppSubclasses.rotor.name} exp() const noexcept;""")
-    } else Seq()
+    } else ArraySeq()
   }
 
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = new CppCodeBuilder()
 
     code.myHeader(
-      Seq(
+      ArraySeq(
         "#include <cmath>",
         s"#include \"${codeGen.Headers.types}\"",
         "#include \"opsNorm.h\""
@@ -43,6 +44,6 @@ class BivectorBulkOpsGenerator extends CppCodeGenerator {
            |""".stripMargin)
     }
 
-    Seq(FileContent(codeGen.directory.resolve("opsBivectorBulk.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve("opsBivectorBulk.h"), code.toString))
   }
 }

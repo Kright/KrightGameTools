@@ -9,6 +9,7 @@ import me.kright.gametools.pga.codegen.scalagen.pga3d.ops.*
 import me.kright.gametools.symbolic.Sym
 
 import scala.collection.immutable.ListSet
+import scala.collection.immutable.ArraySeq
 
 object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
 
@@ -46,7 +47,7 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
   override val multivector = ScalaMultivectorSubClass("Pga3dMultivector", orderedFields,
     description = "A generic multivector of 3d PGA with all 16 components, used when no specialized class fits the value.")
 
-  override val motor = ScalaMultivectorSubClass("Pga3dMotor", orderedFields.filter(b => Seq(0, 2, 4).contains(b.basisBlade.grade)),
+  override val motor = ScalaMultivectorSubClass("Pga3dMotor", orderedFields.filter(b => ArraySeq(0, 2, 4).contains(b.basisBlade.grade)),
     description = "A motor: a rigid transformation of 3d space (combined rotation and translation),\nthe even-graded (0, 2, 4) element of 3d PGA. Applied with motor.sandwich(obj).\nA motor is the exponent of a Pga3dBivector (bivector.exp()), and motor.log() returns that bivector back.")
 
   override val scalar = ScalaMultivectorSubClass("Double", orderedFields.take(1), shouldBeGenerated = false)
@@ -62,7 +63,7 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
   override val rotor = ScalaMultivectorSubClass("Pga3dRotor", motor.variableFields.filter(f => !f.basisBlade.contains(genW)),
     description = "A rotor: rotation around an axis passing through the origin, applied with rotor.sandwich(obj).\nA rotor is the exponent of a Pga3dBivectorBulk (bivectorBulk.exp()), and rotor.log() returns that bivector back.")
   //  val rotorDual = MultivectorSubClass("RotorDual", motor.variableFields.filter(f => f.basisBlade.contains(genW)))
-  override val translator = ScalaMultivectorSubClass("Pga3dTranslator", motor.variableFields.filter(f => f.basisBlade.grade == 2 && f.basisBlade.contains(genW)), Seq(scalar.variableFields.head -> 1.0),
+  override val translator = ScalaMultivectorSubClass("Pga3dTranslator", motor.variableFields.filter(f => f.basisBlade.grade == 2 && f.basisBlade.contains(genW)), ArraySeq(scalar.variableFields.head -> 1.0),
     description = "A translator: translation of 3d space, applied with translator.sandwich(obj). Moves points but not vectors.\nA translator is the exponent of a Pga3dBivectorWeight (bivectorWeight.exp()), and translator.log() returns that bivector back.")
   override val projectiveTranslator = ScalaMultivectorSubClass("Pga3dProjectiveTranslator", motor.variableFields.filter(f => f.basisBlade.grade == 0 || f.basisBlade.grade == 2 && f.basisBlade.contains(genW)),
     description = "A translator with an explicit (not necessarily 1.0) scalar part: an unnormalized version of Pga3dTranslator.")
@@ -82,11 +83,11 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
   val bivectorBulk = ScalaMultivectorSubClass("Pga3dBivectorBulk", bivector.variableFields.filter(f => !f.basisBlade.contains(genW)),
     description = "The bulk part (xy, xz, yz) of a Pga3dBivector: a line passing through the center of coordinates,\nor the angular part of a rate of motion. bivectorBulk.exp() is a Pga3dRotor.")
 
-  override val pointCenter = ScalaMultivectorSubClass("Pga3dPointCenter", Seq(), projectivePoint.variableFields.map(f => (f, (if (f.basisBlade.contains(genW)) 0.0 else 1.0))),
+  override val pointCenter = ScalaMultivectorSubClass("Pga3dPointCenter", ArraySeq(), projectivePoint.variableFields.map(f => (f, (if (f.basisBlade.contains(genW)) 0.0 else 1.0))),
     description = "The center of coordinates as a singleton object: a Pga3dPoint with x = y = z = 0 and w = 1.")
-  override val zeroCls = ScalaMultivectorSubClass("Pga3dZero", Seq(), shouldBeGenerated = false)
+  override val zeroCls = ScalaMultivectorSubClass("Pga3dZero", ArraySeq(), shouldBeGenerated = false)
 
-  override val pgaClasses = Seq(
+  override val pgaClasses = ArraySeq(
     multivector, // all
     motor, // blade 0 + 2 + 4
 
@@ -113,12 +114,12 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
     zeroCls, // no fields
   )
 
-  override val additionGroups: Seq[ListSet[ScalaMultivectorSubClass]] = Seq(
+  override val additionGroups: Seq[ListSet[ScalaMultivectorSubClass]] = ArraySeq(
     ListSet(projectivePoint, point, vector),
     ListSet(bivector, bivectorBulk, bivectorWeight),
   )
 
-  override val unaryOperations = Seq(
+  override val unaryOperations = ArraySeq(
     DefConstAndDualFields(),
     DefToString(),
     MultivectorUnaryOp((cls, v) => GeneratedValue(cls, "dual", pga.operations.dual(v))),
@@ -147,22 +148,22 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
     DefInterpolation(),
   )
 
-  override val binaryOperations = Seq(
-    MultivectorBinaryOp(Seq("geometric"), pga.operations.multiplication.geometric(_, _)),
-    MultivectorBinaryOp(Seq("dot"), pga.operations.multiplication.dot(_, _)),
-    MultivectorBinaryOp(Seq("wedge", "^", "meet"), pga.operations.multiplication.wedge(_, _)),
+  override val binaryOperations = ArraySeq(
+    MultivectorBinaryOp(ArraySeq("geometric"), pga.operations.multiplication.geometric(_, _)),
+    MultivectorBinaryOp(ArraySeq("dot"), pga.operations.multiplication.dot(_, _)),
+    MultivectorBinaryOp(ArraySeq("wedge", "^", "meet"), pga.operations.multiplication.wedge(_, _)),
 
-    MultivectorBinaryOp(Seq("antiGeometric"), pga.operations.anti.geometric(_, _)),
-    MultivectorBinaryOp(Seq("antiDot"), pga.operations.anti.dot(_, _)),
-    MultivectorBinaryOp.option(Seq("antiDotI"), (a, b) => Option(pga.operations.anti.dot(a, b).dual).filter(findMatchingClass(_) == scalar)),
-    MultivectorBinaryOp(Seq("antiWedge", "v", "join"), pga.operations.anti.wedge(_, _)),
+    MultivectorBinaryOp(ArraySeq("antiGeometric"), pga.operations.anti.geometric(_, _)),
+    MultivectorBinaryOp(ArraySeq("antiDot"), pga.operations.anti.dot(_, _)),
+    MultivectorBinaryOp.option(ArraySeq("antiDotI"), (a, b) => Option(pga.operations.anti.dot(a, b).dual).filter(findMatchingClass(_) == scalar)),
+    MultivectorBinaryOp(ArraySeq("antiWedge", "v", "join"), pga.operations.anti.wedge(_, _)),
 
-    MultivectorBinaryOp(Seq("sandwich"), (a, b) => a.sandwich(b)),
-    MultivectorBinaryOp(Seq("reverseSandwich"), (a, b) => a.reverse.sandwich(b)),
-    MultivectorBinaryOp(Seq("cross"), (a, b) => a.crossX2(b) * Sym(0.5)),
+    MultivectorBinaryOp(ArraySeq("sandwich"), (a, b) => a.sandwich(b)),
+    MultivectorBinaryOp(ArraySeq("reverseSandwich"), (a, b) => a.reverse.sandwich(b)),
+    MultivectorBinaryOp(ArraySeq("cross"), (a, b) => a.crossX2(b) * Sym(0.5)),
   )
 
-  override val companionObjectOperations = Seq(
+  override val companionObjectOperations = ArraySeq(
     DefVariablesComponentsCount(),
     DefZeroObjectMethods(),
     DefMethodsIfAnyPoint(),

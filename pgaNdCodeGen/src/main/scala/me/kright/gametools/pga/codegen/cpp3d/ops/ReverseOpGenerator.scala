@@ -4,6 +4,7 @@ import me.kright.gametools.ga.MultiVector
 import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
 import me.kright.gametools.symbolic.Sym
+import scala.collection.immutable.ArraySeq
 
 class ReverseOpGenerator extends ReverseOrAntiReverseOpsGenerator("reversed", _.reverse)
 
@@ -15,7 +16,7 @@ private class ReverseOrAntiReverseOpsGenerator(name: String,
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = CppCodeBuilder()
 
-    code.myHeader(Seq(s"#include \"${codeGen.Headers.types}\""), code.generatorName(this))
+    code.myHeader(ArraySeq(s"#include \"${codeGen.Headers.types}\""), code.generatorName(this))
 
     code.namespace(codeGen.namespace) {
       for (cls <- CppSubclasses.all if cls.shouldBeGenerated) {
@@ -29,7 +30,7 @@ private class ReverseOrAntiReverseOpsGenerator(name: String,
       }
     }
 
-    Seq(FileContent(codeGen.directory.resolve(s"ops${name.capitalize}.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve(s"ops${name.capitalize}.h"), code.toString))
   }
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {

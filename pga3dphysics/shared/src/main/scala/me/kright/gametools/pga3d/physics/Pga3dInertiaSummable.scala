@@ -3,6 +3,7 @@ package me.kright.gametools.pga3d.physics
 import me.kright.gametools.matrix.{Matrix, SymmetricMatrixDiagonalization}
 import me.kright.gametools.pga3d.*
 import me.kright.gametools.pga3d.physics.Pga3dInertiaSummable.sandwich
+import scala.collection.immutable.ArraySeq
 
 
 final case class Pga3dInertiaSummable(ww: Double,
@@ -238,7 +239,7 @@ object Pga3dInertiaSummable:
     def sandwich(b: Pga3dInertiaSummable): Pga3dInertiaSummable =
       sandwichImpl(b, q.sandwich)
 
-  private val planesByAxis = Seq(
+  private val planesByAxis = ArraySeq(
     Pga3dPlaneIdeal(1, 0, 0),
     Pga3dPlaneIdeal(0, 1, 0),
     Pga3dPlaneIdeal(0, 0, 1),

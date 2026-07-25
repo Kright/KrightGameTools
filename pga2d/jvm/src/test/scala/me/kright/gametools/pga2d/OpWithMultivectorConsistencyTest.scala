@@ -4,12 +4,13 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalacheck.Gen
 import scala.language.unsafeNulls
+import scala.collection.immutable.ArraySeq
 
 class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   private val eps = 1e-15
 
-  private val classes = Seq(
+  private val classes = ArraySeq(
     classOf[java.lang.Double],
     classOf[Pga2dLine],
     classOf[Pga2dLineIdeal],
@@ -107,7 +108,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
   }
 
   test("binaryOperations") {
-    val methodNames = Seq(
+    val methodNames = ArraySeq(
       // generated +/- carry @targetName("plus")/("minus"), so reflection sees those names
       "plus",
       "minus",
@@ -125,7 +126,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
   }
 
   test("unaryOperations") {
-    val methodNames = Seq(
+    val methodNames = ArraySeq(
       "dual",
       "weight",
       "bulk",

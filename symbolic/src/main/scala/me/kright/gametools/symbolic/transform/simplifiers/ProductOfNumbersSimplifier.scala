@@ -4,6 +4,7 @@ import me.kright.gametools.symbolic.Symbolic.Func
 import me.kright.gametools.symbolic.SymbolicStr.{Number, isNumber}
 import me.kright.gametools.symbolic.transform.simplifiers.ProductOfNumbersSimplifier.trySimplify
 import me.kright.gametools.symbolic.{Symbolic, SymbolicStr}
+import scala.collection.immutable.ArraySeq
 
 class ProductOfNumbersSimplifier extends SymbolicStrTransformDepthFirst({
   case Symbolic.Func("*", elems) =>
@@ -34,7 +35,7 @@ object ProductOfNumbersSimplifier:
 
     if (numbers.size == 1) {
       if (numbers.head == 1.0) return Option(makeProductOrSimplify(others))
-      if (!isNumber(elems.head)) return Option(makeProductOrSimplify(Seq(SymbolicStr(numbers.head)) ++ others))
+      if (!isNumber(elems.head)) return Option(makeProductOrSimplify(ArraySeq(SymbolicStr(numbers.head)) ++ others))
       return None
     }
 
@@ -42,7 +43,7 @@ object ProductOfNumbersSimplifier:
 
     Option {
       if (product != 1.0)
-        makeProductOrSimplify(Seq(SymbolicStr(product)) ++ others)
+        makeProductOrSimplify(ArraySeq(SymbolicStr(product)) ++ others)
       else {
         makeProductOrSimplify(others)
       }

@@ -3,6 +3,7 @@ package me.kright.gametools.symbolic.transform.simplifiers
 import me.kright.gametools.symbolic.Symbolic.Func
 import me.kright.gametools.symbolic.SymbolicStr
 import me.kright.gametools.symbolic.transform.simplifiers.CombineElemsInSum.trySimplify
+import scala.collection.immutable.ArraySeq
 
 
 class CombineElemsInSum(sortArgs: ArgsSorter) extends SymbolicStrTransformDepthFirst({
@@ -20,7 +21,7 @@ object CombineElemsInSum:
         NormalizedForm(args, sortArgs)
       }
       case SymbolicStr.Number(value) => NormalizedForm(value)
-      case other => NormalizedForm(Seq(other), sortArgs)
+      case other => NormalizedForm(ArraySeq(other), sortArgs)
     }
 
     val combined: Seq[SymbolicStr] = normalizedElems.zipWithIndex
@@ -48,7 +49,7 @@ private case class NormalizedForm(multiplier: Double,
 
     val allArgs: Seq[SymbolicStr] =
       if (multiplier == 1.0) otherOriginalArgs
-      else Seq(SymbolicStr(multiplier)) ++ otherOriginalArgs
+      else ArraySeq(SymbolicStr(multiplier)) ++ otherOriginalArgs
 
     Option {
       allArgs match
@@ -60,7 +61,7 @@ private case class NormalizedForm(multiplier: Double,
 
 object NormalizedForm:
   def apply(multiplier: Double): NormalizedForm =
-    NormalizedForm(multiplier, Seq(), Seq())
+    NormalizedForm(multiplier, ArraySeq(), ArraySeq())
 
   def apply(productElements: Seq[SymbolicStr], sortArgs: ArgsSorter): NormalizedForm =
     val (numbers, otherOriginalArgs) = productElements.partitionMap {

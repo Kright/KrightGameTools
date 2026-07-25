@@ -7,10 +7,11 @@ import me.kright.gametools.mathutil.Sign
 
 import scala.math.Numeric.Implicits.infixNumericOps
 import scala.util.chaining.scalaUtilChainingOps
+import scala.collection.immutable.ArraySeq
 
 class CppSubclass(name: String,
                   variableFields: Seq[MultivectorField],
-                  constantFields: Seq[(MultivectorField, Double)] = Seq(),
+                  constantFields: Seq[(MultivectorField, Double)] = ArraySeq(),
                   shouldBeGenerated: Boolean = true)(using pga3: PGA3) extends MultivectorSubClass(name, variableFields, constantFields, shouldBeGenerated) {
 
   val self: MultiVector[Sym] =

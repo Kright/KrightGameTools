@@ -10,6 +10,7 @@ import me.kright.gametools.mathutil.Sign
 import scala.math.Numeric.Implicits.infixNumericOps
 import scala.util.Try
 import scala.util.chaining.scalaUtilChainingOps
+import scala.collection.immutable.ArraySeq
 
 /**
  * The two former per-dimension `ScalaMultivectorSubClass` class bodies (pga3d, pga2d) were byte-identical:
@@ -19,7 +20,7 @@ import scala.util.chaining.scalaUtilChainingOps
  */
 class ScalaMultivectorSubClass(name: String,
                                variableFields: Seq[MultivectorField],
-                               constantFields: Seq[(MultivectorField, Double)] = Seq(),
+                               constantFields: Seq[(MultivectorField, Double)] = ArraySeq(),
                                shouldBeGenerated: Boolean = true,
                                val description: String = "")(using val algebra: ScalaPgaAlgebra)
   extends MultivectorSubClass(name, variableFields, constantFields, shouldBeGenerated)(using algebra.pga) with ScalaCodeGenClass:

@@ -6,6 +6,7 @@ import java.nio.file.{Files, Path}
 import scala.collection.mutable
 import scala.jdk.CollectionConverters.*
 import scala.util.Using
+import scala.collection.immutable.ArraySeq
 
 
 private class CustomAmalgamate(val files: Map[String, FileContent]) {
@@ -23,7 +24,7 @@ private class CustomAmalgamate(val files: Map[String, FileContent]) {
   }
 
   def fuse(text: String): String = {
-    val includes = getStdIncludes(Seq(text) ++ files.values.map(_.content))
+    val includes = getStdIncludes(ArraySeq(text) ++ files.values.map(_.content))
 
     {
       val code = CppCodeBuilder()
@@ -47,7 +48,7 @@ private class CustomAmalgamate(val files: Map[String, FileContent]) {
   private def removeRepeatingEmptyLines(text: String): String = {
     val lines = text.strip().split("\n")
 
-    lines.zip(Seq("") ++ lines)
+    lines.zip(ArraySeq("") ++ lines)
       .filterNot((cur, prev) => cur.isBlank && prev.isBlank)
       .map((cur, prev) => cur)
       .mkString("\n")
@@ -109,7 +110,7 @@ object CustomAmalgamate:
 
   def fuseMath(fs: GeneratedFileSystem): Unit = {
     fuse(
-      Seq(pga3d),
+      ArraySeq(pga3d),
       """
         |#include "pga3d.h"
         |""".stripMargin,
@@ -120,7 +121,7 @@ object CustomAmalgamate:
 
   def fusePhysicsWithMath(fs: GeneratedFileSystem): Unit = {
     fuse(
-      Seq(pga3d, pga3dphysics),
+      ArraySeq(pga3d, pga3dphysics),
       """
         |#include "pga3d.h"
         |#include "pga3dphysics.h"

@@ -3,6 +3,7 @@ package me.kright.gametools.symbolic.transform.simplifiers
 import me.kright.gametools.symbolic.Symbolic.Func
 import me.kright.gametools.symbolic.transform.PartialTransform
 import me.kright.gametools.symbolic.{Symbolic, SymbolicStr}
+import scala.collection.immutable.ArraySeq
 
 
 class GroupMultipliersInSumOfProducts extends PartialTransform[SymbolicStr]:
@@ -50,7 +51,7 @@ class GroupMultipliersInSumOfProducts extends PartialTransform[SymbolicStr]:
 
     val groupedWithElement = {
       val sumWithoutCommonElement = Func("+", withCommonElement.map(f => f.copy(args = remove(f.args, mostCommonElement))))
-      Func("*", Seq(mostCommonElement, apply(sumWithoutCommonElement).getOrElse(sumWithoutCommonElement)))
+      Func("*", ArraySeq(mostCommonElement, apply(sumWithoutCommonElement).getOrElse(sumWithoutCommonElement)))
     }
 
     val groupedWithoutElement =
@@ -58,7 +59,7 @@ class GroupMultipliersInSumOfProducts extends PartialTransform[SymbolicStr]:
         case None => withoutCommonElement
         case Some(grouped) =>
           grouped match
-            case f@Symbolic.Func("*", ee) => Seq(f)
+            case f@Symbolic.Func("*", ee) => ArraySeq(f)
             case Symbolic.Func("+", ee) => ee
             case _ => ???
 
@@ -85,7 +86,7 @@ class GroupMultipliersInSumOfProducts extends PartialTransform[SymbolicStr]:
 
   private def convertMinusConstToMinusOneAndConst(elems: Seq[SymbolicStr]): Seq[SymbolicStr] =
     elems.flatMap {
-      case SymbolicStr.Number(v) if ((v != -1.0) && (v < 0)) => Seq(SymbolicStr(-1.0), SymbolicStr(-v))
-      case e => Seq(e)
+      case SymbolicStr.Number(v) if ((v != -1.0) && (v < 0)) => ArraySeq(SymbolicStr(-1.0), SymbolicStr(-v))
+      case e => ArraySeq(e)
     }
   

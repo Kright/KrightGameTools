@@ -3,10 +3,11 @@ package me.kright.gametools.pga.codegen.common
 import me.kright.gametools.ga.{BasisBlade, MultiVector, PGA}
 import me.kright.gametools.pga.codegen.common.MultivectorField
 import me.kright.gametools.symbolic.Sym
+import scala.collection.immutable.ArraySeq
 
 class MultivectorSubClass(val name: String,
                           val variableFields: Seq[MultivectorField],
-                          val constantFields: Seq[(MultivectorField, Double)] = Seq(),
+                          val constantFields: Seq[(MultivectorField, Double)] = ArraySeq(),
                           val shouldBeGenerated: Boolean = true)(using pga: PGA):
 
   val fieldBlades: Set[BasisBlade] = {

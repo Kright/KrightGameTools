@@ -2,6 +2,7 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 
 import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
+import scala.collection.immutable.ArraySeq
 
 class VectorOpsGenerator extends CppCodeGenerator {
 
@@ -12,14 +13,14 @@ class VectorOpsGenerator extends CppCodeGenerator {
            |[[nodiscard]] constexpr ${CppSubclasses.vector.name} max(const ${CppSubclasses.vector.name}& other) const noexcept;
            |[[nodiscard]] constexpr ${CppSubclasses.vector.name} clamp(const ${CppSubclasses.vector.name}& minV, const ${CppSubclasses.vector.name}& maxV) const noexcept;""".stripMargin
       )
-    } else Seq()
+    } else ArraySeq()
   }
 
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = new CppCodeBuilder()
 
     code.myHeader(
-      Seq(
+      ArraySeq(
         "#include <algorithm>",
         s"#include \"Vector.h\"",
       ),
@@ -54,6 +55,6 @@ class VectorOpsGenerator extends CppCodeGenerator {
            |""".stripMargin)
     }
 
-    Seq(FileContent(codeGen.directory.resolve("opsVector.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve("opsVector.h"), code.toString))
   }
 }

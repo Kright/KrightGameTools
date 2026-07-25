@@ -2,6 +2,7 @@ package me.kright.gametools.pga3d
 
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class InterpolationTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private def minNorm(a: Pga3dRotor, b: Pga3dRotor): Double =
@@ -56,12 +57,12 @@ class InterpolationTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("rotor slerp approximates nlerp for small angles") {
-    val angles = Seq(1e-4, 1e-3, 5e-3, 1e-2)
+    val angles = ArraySeq(1e-4, 1e-3, 5e-3, 1e-2)
     forAll(Pga3dGenerators.normalizedRotors, MinSuccessful(200)) { a =>
       for (angle <- angles) {
         val delta = rotorForAngle(angle)
         val b = a.geometric(delta)
-        for (t <- Seq(0.0, 0.25, 0.5, 0.75, 1.0)) {
+        for (t <- ArraySeq(0.0, 0.25, 0.5, 0.75, 1.0)) {
           val diff = minNorm(a.slerp(b, t), a.nlerp(b, t))
           assert(diff < angle, s"angle = $angle, t = $t, diff = $diff")
         }
@@ -70,13 +71,13 @@ class InterpolationTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("motor slerp approximates nlerp for small angles") {
-    val angles = Seq(1e-4, 1e-3, 5e-3, 1e-2)
+    val angles = ArraySeq(1e-4, 1e-3, 5e-3, 1e-2)
     forAll(Pga3dGenerators.normalizedMotors, MinSuccessful(200)) { a =>
       for (angle <- angles) {
         val deltaRotor = rotorForAngle(angle)
         val deltaMotor = Pga3dTranslator.addVector(Pga3dVector(angle, 0, 0)).geometric(deltaRotor)
         val b = a.geometric(deltaMotor)
-        for (t <- Seq(0.0, 0.25, 0.5, 0.75, 1.0)) {
+        for (t <- ArraySeq(0.0, 0.25, 0.5, 0.75, 1.0)) {
           val diff = minNorm(a.slerp(b, t), a.nlerp(b, t))
           assert(diff < angle, s"angle = $angle, t = $t, diff = $diff")
         }

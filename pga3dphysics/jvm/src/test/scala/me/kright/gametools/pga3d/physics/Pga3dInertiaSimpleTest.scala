@@ -4,6 +4,7 @@ import me.kright.gametools.pga3d.*
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga3dInertiaSimpleTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("Pga3dInertiaSimple and Pga3dInertiaLocal cube are the same") {
@@ -88,7 +89,7 @@ class Pga3dInertiaSimpleTest extends AnyFunSuiteLike with ScalaCheckPropertyChec
 
   test("representations of simple are the same") {
     forAll(Pga3dInertiaGenerators.inertiaSimple(0.1, 10.0, 0.1, 10.0), MinSuccessful(1000)) { inertia =>
-      val representations = Seq[Pga3dInertia](
+      val representations = ArraySeq[Pga3dInertia](
         inertia.toInertiaLocal,
         inertia.toInertiaMovedLocal,
         inertia.toPrecomputed,

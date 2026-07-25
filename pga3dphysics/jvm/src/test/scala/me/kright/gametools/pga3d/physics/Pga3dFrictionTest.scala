@@ -5,6 +5,7 @@ import me.kright.gametools.pga3d.physics.Pga3dFriction.Clamped
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga3dFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
@@ -22,7 +23,7 @@ class Pga3dFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   private val zeroFriction: Gen[Pga3dFriction] =
     Gen.oneOf(
-      Seq(
+      ArraySeq(
         Pga3dFriction.Zero,
         Pga3dFriction.Linear(0.0),
         Pga3dFriction.Quadratic(0.0),

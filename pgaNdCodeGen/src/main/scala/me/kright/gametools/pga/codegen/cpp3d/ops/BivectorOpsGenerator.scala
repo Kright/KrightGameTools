@@ -2,6 +2,7 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 
 import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
+import scala.collection.immutable.ArraySeq
 
 class BivectorOpsGenerator extends CppCodeGenerator {
 
@@ -9,7 +10,7 @@ class BivectorOpsGenerator extends CppCodeGenerator {
     val code = new CppCodeBuilder()
 
     code.myHeader(
-      Seq(
+      ArraySeq(
         "#include <cmath>",
         s"#include \"${codeGen.Headers.types}\"",
         s"#include \"opsArithmetic.h\"",
@@ -82,14 +83,14 @@ class BivectorOpsGenerator extends CppCodeGenerator {
       )
     }
 
-    Seq(FileContent(codeGen.directory.resolve("opsBivector.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve("opsBivector.h"), code.toString))
   }
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
     val includes = if (cls == CppSubclasses.bivector) {
-      Seq("<utility>")
+      ArraySeq("<utility>")
     } else {
-      Seq()
+      Seq.empty
     }
 
     val code = if (cls == CppSubclasses.bivector) {

@@ -2,6 +2,7 @@ package me.kright.gametools.pga3d.geom
 
 import me.kright.gametools.mathutil.MathUtil
 import org.scalacheck.Gen
+import scala.collection.immutable.ArraySeq
 
 object Pga3dVectorMathGenerators:
   val gaussian: Gen[Double] = Gen.gaussian(mean = 0, stdDev = 1)
@@ -12,13 +13,13 @@ object Pga3dVectorMathGenerators:
 
   def doubleInRange(min: Double, max: Double): Gen[Double] =
     Gen.oneOf(
-      Gen.oneOf(Seq(
+      Gen.oneOf(ArraySeq(
         min,
         max,
         0.5 * (min + max),
       )),
       Gen.oneOf(
-        Seq(
+        ArraySeq(
           1e-1,
           1e-2,
           1e-3,
@@ -31,7 +32,7 @@ object Pga3dVectorMathGenerators:
           1e-15,
           1e-20
         ).flatMap { eps =>
-          Seq(
+          ArraySeq(
             MathUtil.interpolate(min, max, eps),
             MathUtil.interpolate(min, max, 1.0 - eps),
             MathUtil.interpolate(min, max, 0.5 + eps),

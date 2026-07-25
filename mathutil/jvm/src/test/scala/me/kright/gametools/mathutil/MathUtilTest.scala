@@ -3,6 +3,7 @@ package me.kright.gametools.mathutil
 import me.kright.gametools.mathutil.MathUtil
 import me.kright.gametools.mathutil.MathUtil.*
 import org.scalatest.funsuite.AnyFunSuite
+import scala.collection.immutable.ArraySeq
 
 class MathUtilTest extends AnyFunSuite:
   test("clamp") {
@@ -24,7 +25,7 @@ class MathUtilTest extends AnyFunSuite:
     val low = -1.0
     val high = 1.0
 
-    for (cornerValues <- Seq(Double.PositiveInfinity, Double.NegativeInfinity, Double.MinValue, Double.MaxValue, Double.MinPositiveValue, 0.0, low, high)) {
+    for (cornerValues <- ArraySeq(Double.PositiveInfinity, Double.NegativeInfinity, Double.MinValue, Double.MaxValue, Double.MinPositiveValue, 0.0, low, high)) {
       val clamped = cornerValues.clamp(low, high)
 
       assert(clamped >= low)

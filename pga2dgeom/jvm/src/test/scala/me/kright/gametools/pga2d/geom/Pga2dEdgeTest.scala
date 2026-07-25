@@ -4,6 +4,7 @@ import me.kright.gametools.pga2d.{Pga2dPoint, Pga2dRotor}
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga2dEdgeTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private val halfSize = 1000
@@ -71,7 +72,7 @@ class Pga2dEdgeTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val edge = Pga2dEdge(Pga2dPoint(0, 0), Pga2dPoint(1, 0))
     val edge2 = Pga2dEdge(Pga2dPoint(-1, 1), Pga2dPoint(2, 1))
 
-    for ((p1, p2) <- Seq(
+    for ((p1, p2) <- ArraySeq(
       edge.getNearestPoints(edge2),
       edge.getNearestPointsBinSearch(edge2)
     )) {

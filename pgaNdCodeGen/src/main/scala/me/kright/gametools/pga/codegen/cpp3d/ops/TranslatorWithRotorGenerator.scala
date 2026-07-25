@@ -3,13 +3,14 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.ops.TranslatorWithRotorGenerator.{rotorWithTranslator, translatorWithRotor}
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
+import scala.collection.immutable.ArraySeq
 
 class TranslatorWithRotorGenerator extends CppCodeGenerator {
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = CppCodeBuilder()
 
     code.myHeader(
-      Seq(
+      ArraySeq(
         s"#include \"${CppSubclasses.motor.name}.h\"",
         s"#include \"${CppSubclasses.rotor.name}.h\"",
         s"#include \"${CppSubclasses.translator.name}.h\"",
@@ -20,15 +21,15 @@ class TranslatorWithRotorGenerator extends CppCodeGenerator {
     val impl = CppCodeBuilder()
 
     code.namespace(codeGen.namespace) {
-      for (translatorFirst <- Seq(true, false)) {
+      for (translatorFirst <- ArraySeq(true, false)) {
         val structName = if (translatorFirst) translatorWithRotor else rotorWithTranslator
         val otherName = if (translatorFirst) rotorWithTranslator else translatorWithRotor
 
         code("")
         code.struct(structName) {
           val fieldClasses =
-            if (translatorFirst) Seq(CppSubclasses.translator, CppSubclasses.rotor)
-            else Seq(CppSubclasses.rotor, CppSubclasses.translator)
+            if (translatorFirst) ArraySeq(CppSubclasses.translator, CppSubclasses.rotor)
+            else ArraySeq(CppSubclasses.rotor, CppSubclasses.translator)
 
           for (field <- fieldClasses) {
             code(s"${field.name} ${field.name.toLowerCase}{};")
@@ -99,11 +100,11 @@ class TranslatorWithRotorGenerator extends CppCodeGenerator {
       code(impl.toString)
     }
 
-    Seq(FileContent(codeGen.directory.resolve(translatorWithRotor + ".h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve(translatorWithRotor + ".h"), code.toString))
   }
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
-    if (cls != CppSubclasses.motor) return Seq()
+    if (cls != CppSubclasses.motor) return ArraySeq()
 
     val code = CppCodeBuilder()
 

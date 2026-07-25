@@ -2,13 +2,14 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 
 import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp}
+import scala.collection.immutable.ArraySeq
 
 class ToStreamOpGenerator extends CppCodeGenerator {
 
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = CppCodeBuilder()
 
-    code.myHeader(Seq("#include <ostream>"), code.generatorName(this))
+    code.myHeader(ArraySeq("#include <ostream>"), code.generatorName(this))
 
     code.namespace(codeGen.namespace) {
       for (cls <- CppSubclasses.all if cls.shouldBeGenerated) {
@@ -39,6 +40,6 @@ class ToStreamOpGenerator extends CppCodeGenerator {
       code(s"""""")
     }
 
-    Seq(FileContent(codeGen.directory.resolve("opsStr.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve("opsStr.h"), code.toString))
   }
 }

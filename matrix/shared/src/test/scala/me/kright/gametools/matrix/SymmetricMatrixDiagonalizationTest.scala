@@ -52,11 +52,11 @@ class SymmetricMatrixDiagonalizationTest extends AnyFunSuiteLike with ScalaCheck
       r
     }
 
-    val smallValues = Seq(1e-1, 1e-3, 1e-6, 1e-9, 1e-12, 1e-15, 1e-50)
+    val smallValues = ArraySeq(1e-1, 1e-3, 1e-6, 1e-9, 1e-12, 1e-15, 1e-50)
     val angles =
       for (
-        offset <- Seq(0.0, Math.PI * 0.5, Math.PI * 0.25, Math.PI * 3 / 4, Math.PI);
-        sign <- Seq(1.0, -1.0);
+        offset <- ArraySeq(0.0, Math.PI * 0.5, Math.PI * 0.25, Math.PI * 3 / 4, Math.PI);
+        sign <- ArraySeq(1.0, -1.0);
         e <- smallValues
       ) yield offset + e * sign
 

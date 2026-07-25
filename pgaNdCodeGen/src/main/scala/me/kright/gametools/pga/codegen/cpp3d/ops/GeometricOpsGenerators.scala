@@ -7,9 +7,10 @@ import me.kright.gametools.pga.codegen.cpp3d.*
 import me.kright.gametools.symbolic.Sym
 import me.kright.gametools.symbolic.Sym.given_Numeric_Sym.mkNumericOps
 import me.kright.gametools.symbolic.transform.simplifiers.ReplaceSumOrProduct
+import scala.collection.immutable.ArraySeq
 
 class GeometricOpsGenerator extends CppCodeGeneratorSum(
-  Seq(
+  ArraySeq(
     new GeometricOpGenerator(),
     new AntiGeometricOpGenerator(),
 
@@ -55,14 +56,14 @@ class AntiDotOpGenerator extends BinaryMethodCodeGen(
 
 class WedgeOpGenerator extends BinaryMethodCodeGen(
   methodName = "wedge",
-  alternativeNames = Seq("meet"),
+  alternativeNames = ArraySeq("meet"),
   fileName = "opsWedge.h",
   op = (a: MultiVector[Sym], b: MultiVector[Sym]) => a.wedge(b)
 )
 
 class AntiWedgeOpGenerator extends BinaryMethodCodeGen(
   methodName = "antiWedge",
-  alternativeNames = Seq("join"),
+  alternativeNames = ArraySeq("join"),
   fileName = "opsAntiWedge.h",
   op = (a: MultiVector[Sym], b: MultiVector[Sym]) => a.antiWedge(b)
 )
@@ -145,14 +146,14 @@ private trait CustomFuncBody {
 private class BinaryMethodCodeGen(val methodName: String,
                                   val fileName: String,
                                   val op: (MultiVector[Sym], MultiVector[Sym]) => MultiVector[Sym],
-                                  val alternativeNames: Seq[String] = Seq(),
+                                  val alternativeNames: Seq[String] = ArraySeq(),
                                   val makeCustomBody: Option[CustomFuncBody] = None,
                                   val comment: Option[String] = None) extends CppCodeGenerator:
 
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] =
     val code = CppCodeBuilder()
 
-    code.myHeader(Seq(s"#include \"${codeGen.Headers.types}\""), code.generatorName(this))
+    code.myHeader(ArraySeq(s"#include \"${codeGen.Headers.types}\""), code.generatorName(this))
 
     comment.foreach(code(_))
 
@@ -190,7 +191,7 @@ private class BinaryMethodCodeGen(val methodName: String,
                   code(s"[[nodiscard]] constexpr ${target.name} ${altName}(const ${left.name}& a, const ${right.name}& b) noexcept { return ${methodName}(a, b); }")
                 }
 
-                (Seq(methodName) ++ alternativeNames).foreach { altName =>
+                (ArraySeq(methodName) ++ alternativeNames).foreach { altName =>
                   code(s"constexpr ${target.name} ${left.name}::${altName}(const ${right.name}& b) const noexcept { return pga3d::${methodName}(*this, b); }")
                 }
                 code("")
@@ -201,7 +202,7 @@ private class BinaryMethodCodeGen(val methodName: String,
       }
     }
 
-    Seq(FileContent(codeGen.directory.resolve(fileName), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve(fileName), code.toString))
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] =
     val decls =
@@ -215,7 +216,7 @@ private class BinaryMethodCodeGen(val methodName: String,
         val target = CppSubclasses.findMatchingClass(result)
         if target == CppSubclasses.zeroCls then ""
         else {
-          (Seq(methodName) ++ alternativeNames)
+          (ArraySeq(methodName) ++ alternativeNames)
             .map(name => s"[[nodiscard]] constexpr ${target.name} ${name}(const ${right.name}& b) const noexcept;")
             .mkString("\n")
         }
@@ -228,10 +229,10 @@ private class BinaryMethodCodeGen(val methodName: String,
 class SandwichAsMatrix extends CppCodeGenerator {
 
   private def motorClasses: Seq[CppSubclass] =
-    Seq(CppSubclasses.motor, CppSubclasses.rotor)
+    ArraySeq(CppSubclasses.motor, CppSubclasses.rotor)
 
   private def elemClasses: Seq[CppSubclass] =
-    Seq(CppSubclasses.projectivePoint, CppSubclasses.vector, CppSubclasses.bivector, CppSubclasses.plane)
+    ArraySeq(CppSubclasses.projectivePoint, CppSubclasses.vector, CppSubclasses.bivector, CppSubclasses.plane)
 
   private def generateCode(anyMotor: CppSubclass, element: CppSubclass): DeclarationWithImplementation = {
     val decl = CppCodeBuilder()
@@ -248,7 +249,7 @@ class SandwichAsMatrix extends CppCodeGenerator {
 
     val probes = element.variableFields.map { f =>
       MultiVector[Sym](
-        Seq(
+        ArraySeq(
           (f.basisBlade, if (f.sign == Positive) Sym(1) else Sym(-1))
         )
       )
@@ -275,7 +276,7 @@ class SandwichAsMatrix extends CppCodeGenerator {
   }
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
-    if (!Set(CppSubclasses.motor, CppSubclasses.rotor).contains(cls)) return Seq()
+    if (!Set(CppSubclasses.motor, CppSubclasses.rotor).contains(cls)) return ArraySeq()
 
     val code = CppCodeBuilder()
 
@@ -283,14 +284,14 @@ class SandwichAsMatrix extends CppCodeGenerator {
       code(generateCode(cls, elem).declaration)
     }
 
-    structBodyPart(code.toString, includes = Seq("<array>"))
+    structBodyPart(code.toString, includes = ArraySeq("<array>"))
   }
 
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = CppCodeBuilder()
 
     code.myHeader(
-      Seq(
+      ArraySeq(
         s"\"${CppSubclasses.motor.name}.h\"",
         s"\"${CppSubclasses.rotor.name}.h\"",
       ),
@@ -307,7 +308,7 @@ class SandwichAsMatrix extends CppCodeGenerator {
       code(impls.mkString("\n\n"))
     }
 
-    Seq(FileContent(codeGen.directory.resolve("opsSandwichAsMatrix.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve("opsSandwichAsMatrix.h"), code.toString))
   }
 }
 

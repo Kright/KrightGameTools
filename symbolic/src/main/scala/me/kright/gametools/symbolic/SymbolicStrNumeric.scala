@@ -1,16 +1,18 @@
 package me.kright.gametools.symbolic
 
+import scala.collection.immutable.ArraySeq
+
 /**
  * to use this: 
  * import scala.math.Numeric.Implicits.infixNumericOps
  * import me.kright.gametools.symbolic.SymbolicStr.{given, *}
  */
 class SymbolicStrNumeric extends Numeric[SymbolicStr]:
-  override def plus(x: SymbolicStr, y: SymbolicStr): SymbolicStr = SymbolicStr("+", Seq(x, y))
+  override def plus(x: SymbolicStr, y: SymbolicStr): SymbolicStr = SymbolicStr("+", ArraySeq(x, y))
 
-  override def minus(x: SymbolicStr, y: SymbolicStr): SymbolicStr = SymbolicStr("+", Seq(x, SymbolicStr("*", Seq(SymbolicStr(-1.0), y))))
+  override def minus(x: SymbolicStr, y: SymbolicStr): SymbolicStr = SymbolicStr("+", ArraySeq(x, SymbolicStr("*", ArraySeq(SymbolicStr(-1.0), y))))
 
-  override def times(x: SymbolicStr, y: SymbolicStr): SymbolicStr = SymbolicStr("*", Seq(x, y))
+  override def times(x: SymbolicStr, y: SymbolicStr): SymbolicStr = SymbolicStr("*", ArraySeq(x, y))
 
   override def negate(x: SymbolicStr): SymbolicStr = SymbolicStr(-1.0) * x
 

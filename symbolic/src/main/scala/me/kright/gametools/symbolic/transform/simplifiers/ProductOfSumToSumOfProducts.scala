@@ -2,6 +2,7 @@ package me.kright.gametools.symbolic.transform.simplifiers
 
 import me.kright.gametools.symbolic.Symbolic.Func
 import me.kright.gametools.symbolic.{Symbolic, SymbolicStr}
+import scala.collection.immutable.ArraySeq
 
 class ProductOfSumToSumOfProducts extends SymbolicStrTransformDepthFirst({
   case Func("*", elems) if elems.exists {
@@ -13,17 +14,17 @@ class ProductOfSumToSumOfProducts extends SymbolicStrTransformDepthFirst({
 
 
 private def flatten(elems: Seq[SymbolicStr]): SymbolicStr = {
-  var result: Seq[Seq[SymbolicStr]] = Seq(Seq.empty)
+  var result: Seq[Seq[SymbolicStr]] = ArraySeq(Seq.empty)
   for (e <- elems) {
     result = e match
       case Func("+", sumElems) =>
         require(sumElems.size >= 2)
         result.flatMap { variant =>
           sumElems.map { a =>
-            variant ++ Seq(a)
+            variant ++ ArraySeq(a)
           }
         }
-      case other => result.map(_ ++ Seq(other))
+      case other => result.map(_ ++ ArraySeq(other))
   }
 
   Symbolic.Func("+", result.map {

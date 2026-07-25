@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d
 
 import org.scalatest.funsuite.AnyFunSuiteLike
+import scala.collection.immutable.ArraySeq
 
 class ProjectionTest extends AnyFunSuiteLike:
   private def x: Pga3dVector = Pga3dVector(1, 0, 0)
@@ -67,7 +68,7 @@ class ProjectionTest extends AnyFunSuiteLike:
     val p1 = p
     val p2 = p1 + x + y + z
 
-    for (plane <- Seq(cxy, cxz, cyz)) {
+    for (plane <- ArraySeq(cxy, cxz, cyz)) {
       val line = p1 v p2
       val projectedLine = line.projectOntoPlane(plane)
       val lineOnProjectedPoints = p1.projectOntoPlane(plane) v p2.projectOntoPlane(plane)

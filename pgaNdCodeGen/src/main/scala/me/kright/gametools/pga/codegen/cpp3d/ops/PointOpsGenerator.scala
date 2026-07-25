@@ -2,6 +2,7 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 
 import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
+import scala.collection.immutable.ArraySeq
 
 class PointOpsGenerator extends CppCodeGenerator {
 
@@ -14,14 +15,14 @@ class PointOpsGenerator extends CppCodeGenerator {
            |[[nodiscard]] constexpr ${CppSubclasses.point.name} max(const ${CppSubclasses.point.name}& other) const noexcept;
            |[[nodiscard]] constexpr ${CppSubclasses.point.name} clamp(const ${CppSubclasses.point.name}& minV, const ${CppSubclasses.point.name}& maxV) const noexcept;""".stripMargin
       )
-    } else Seq()
+    } else ArraySeq()
   }
 
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = new CppCodeBuilder()
 
     code.myHeader(
-      Seq(
+      ArraySeq(
         "#include <algorithm>",
         s"#include \"${codeGen.Headers.types}\"",
         "#include \"opsArithmetic.h\"",
@@ -63,6 +64,6 @@ class PointOpsGenerator extends CppCodeGenerator {
            |""".stripMargin)
     }
 
-    Seq(FileContent(codeGen.directory.resolve("opsPoint.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve("opsPoint.h"), code.toString))
   }
 }

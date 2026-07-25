@@ -3,6 +3,7 @@ package me.kright.gametools.pga2d.geom
 import me.kright.gametools.pga2d.{Pga2dPoint, Pga2dVector}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga2dRayTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private val unitBox = Pga2dAABB(Pga2dPoint(0, 0), Pga2dPoint(1, 1))
@@ -102,7 +103,7 @@ class Pga2dRayTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       val belowY = aabb.min.y - 1.0
       val dirY = Pga2dVector(0, 1)
 
-      for (x <- Seq(aabb.min.x, aabb.max.x, c.x)) {
+      for (x <- ArraySeq(aabb.min.x, aabb.max.x, c.x)) {
         assert(Pga2dRay(Pga2dPoint(x, belowY), dirY).hasIntersection(aabb))
       }
 

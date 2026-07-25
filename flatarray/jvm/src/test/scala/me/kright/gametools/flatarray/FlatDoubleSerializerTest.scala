@@ -3,6 +3,7 @@ package me.kright.gametools.flatarray
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 private final case class Vector3d(x: Double, y: Double, z: Double)
 
@@ -53,7 +54,7 @@ class FlatDoubleSerializerTest extends AnyFunSuiteLike with ScalaCheckPropertyCh
     val arr = new Array[Double](6)
 
     FlatDoubleSerializer.write(bivector, arr, 0)
-    assert(arr.toSeq == Seq(1.0, 2.0, 3.0, 4.0, 5.0, 6.0))
+    assert(arr.toSeq == ArraySeq(1.0, 2.0, 3.0, 4.0, 5.0, 6.0))
 
     val restored = FlatDoubleSerializer.read[Pga3dBivector](arr, 0)
     assert(restored.wx == 1.0)

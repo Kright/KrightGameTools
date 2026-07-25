@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d
 
 import org.scalatest.funsuite.AnyFunSuiteLike
+import scala.collection.immutable.ArraySeq
 
 /**
  * Corner-case precision tests for the exp/log family of pga3d: bivector/bulk/weight exp,
@@ -33,7 +34,7 @@ class PrecisionTest extends AnyFunSuiteLike:
   test("bivector exp/log round trip is relatively precise for any half-angle") {
     // half-angles: zero, denormal-adjacent, tiny, both sides of the 1e-5 series/sin branch
     // threshold of exp() and log(), moderate, and close to pi/2 (where motor.s crosses 0)
-    val halfAngles = Seq(
+    val halfAngles = ArraySeq(
       0.0, 1e-300, 1e-100, 1e-50, 1e-20, 1e-10, 1e-6,
       9.9e-6, 1.01e-5, 2e-5, 1e-4, 1e-3, 1e-2, 0.1, 1.0, 1.5, Math.PI / 2 - 1e-6)
     // (2, -3, 6)/7 is a unit direction exercising all three bulk components
@@ -41,12 +42,12 @@ class PrecisionTest extends AnyFunSuiteLike:
     // exp/log mix the weight components through triple products of the same scale, so
     // same-scale shifts must be preserved with relative precision of that scale; the shift
     // (1, -2, 0.5) makes bulk*weight (and so the motor i and the log c term) non-zero
-    val shifts = Seq(
+    val shifts = ArraySeq(
       (0.0, 0.0, 0.0), (1.0, -2.0, 0.5), (1e-10, 2e-10, -0.5e-10),
       (1e-15, 2e-15, -0.5e-15), (1e-20, 2e-20, -0.5e-20),
       (1e10, -2e10, 0.5e10), (1e15, -2e15, 0.5e15), (1e20, -2e20, 0.5e20))
 
-    for (h <- halfAngles; sign <- Seq(1.0, -1.0); (sx, sy, sz) <- shifts) {
+    for (h <- halfAngles; sign <- ArraySeq(1.0, -1.0); (sx, sy, sz) <- shifts) {
       val b = Pga3dBivector(
         wx = sx, wy = sy, wz = sz,
         xy = sign * h * dx, xz = sign * h * dy, yz = sign * h * dz)
@@ -71,12 +72,12 @@ class PrecisionTest extends AnyFunSuiteLike:
   }
 
   test("rotor exp/log round trip is relatively precise for any half-angle") {
-    val halfAngles = Seq(
+    val halfAngles = ArraySeq(
       0.0, 1e-300, 1e-100, 1e-50, 1e-20, 1e-10, 1e-6,
       9.9e-6, 1.01e-5, 2e-5, 1e-4, 1e-3, 1e-2, 0.1, 1.0, 1.5, Math.PI / 2 - 1e-6)
     val (dx, dy, dz) = (2.0 / 7, -3.0 / 7, 6.0 / 7)
 
-    for (h <- halfAngles; sign <- Seq(1.0, -1.0)) {
+    for (h <- halfAngles; sign <- ArraySeq(1.0, -1.0)) {
       val b = Pga3dBivectorBulk(xy = sign * h * dx, xz = sign * h * dy, yz = sign * h * dz)
       val restored = b.exp().log()
       assertRel(restored.xy, b.xy, 1e-14, s"xy of $b")
@@ -86,7 +87,7 @@ class PrecisionTest extends AnyFunSuiteLike:
   }
 
   test("exp sin(len)/len is continuous and accurate across the 1e-5 branch threshold") {
-    for (w <- Seq(1e-300, 1e-20, 1e-7, 1e-6, 5e-6, 9.999999e-6, 1.0000001e-5, 2e-5, 1e-4, 1e-3)) {
+    for (w <- ArraySeq(1e-300, 1e-20, 1e-7, 1e-6, 5e-6, 9.999999e-6, 1.0000001e-5, 2e-5, 1e-4, 1e-3)) {
       val rotor = Pga3dBivectorBulk(xy = w).exp()
       assertRel(rotor.xy, Math.sin(w), 5e-16, s"rotor sin of half-angle $w")
       assertRel(rotor.s, Math.cos(w), 5e-16, s"rotor cos of half-angle $w")
@@ -103,8 +104,8 @@ class PrecisionTest extends AnyFunSuiteLike:
     // through the rotor and translator code paths and never touches sinMinusCosDivLen2.
     // This checks the full bivector exp (including the i component and the second-order
     // term) on both sides of the 1e-5 branch threshold.
-    for (h <- Seq(1e-7, 1e-6, 9.9e-6, 9.999999e-6, 1.0000001e-5, 2e-5, 1e-4, 1e-3, 0.1);
-         d <- Seq(0.0, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20)) {
+    for (h <- ArraySeq(1e-7, 1e-6, 9.9e-6, 9.999999e-6, 1.0000001e-5, 2e-5, 1e-4, 1e-3, 0.1);
+         d <- ArraySeq(0.0, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20)) {
       val direct = Pga3dBivector(wz = d, xy = h).exp()
       val expected = Pga3dBivectorBulk(xy = h).exp().geometric(Pga3dBivectorWeight(wz = d).exp())
 
@@ -120,14 +121,14 @@ class PrecisionTest extends AnyFunSuiteLike:
   }
 
   test("exp(t) matches (b * t).exp()") {
-    val bivectors = Seq(
+    val bivectors = ArraySeq(
       Pga3dBivector(0.2, 0.1, -0.3, 0.3, -0.4, 0.5),
       Pga3dBivector(1e-100, -2e-100, 1e-100, 2e-100, 1e-100, -1e-100),
       Pga3dBivector(wx = 1.0, wy = -2.0, wz = 0.5),
       Pga3dBivector(xy = 0.3, xz = -0.4, yz = 0.5))
     // t values keeping bulkNorm * t moderate: at huge angles the two sides legitimately
     // differ through the ~ulp difference of bulkNorm * t vs (b * t).bulkNorm before cos
-    for (t <- Seq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 0.5, 1.0, 2.0); b <- bivectors) {
+    for (t <- ArraySeq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 0.5, 1.0, 2.0); b <- bivectors) {
       val viaT = b.exp(t)
       val viaScale = (b * t).exp()
       assertRel(viaT.s, viaScale.s, 1e-14, s"s for b = $b, t = $t")
@@ -144,7 +145,7 @@ class PrecisionTest extends AnyFunSuiteLike:
     // the pairwise products inside the i component (~1e-300) stay in the normal range —
     // at 1e-200 they underflow to zero in the t-factored form of exp(t)
     val tiny = Pga3dBivector(1e-150, -1e-150, 1e-150, 2e-150, 1e-150, -1e-150)
-    for (t <- Seq(1e10, 1e15, 1e20, 1e100)) {
+    for (t <- ArraySeq(1e10, 1e15, 1e20, 1e100)) {
       val viaT = tiny.exp(t)
       val viaScale = (tiny * t).exp()
       assertRel(viaT.wx, viaScale.wx, 1e-14, s"wx for tiny bivector, t = $t")
@@ -154,8 +155,8 @@ class PrecisionTest extends AnyFunSuiteLike:
   }
 
   test("bivector weight exp and translator log round trips are exact at any magnitude") {
-    for (m <- Seq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100, 1e300);
-         (x, y, z) <- Seq((m, 0.0, 0.0), (0.0, -m, m), (m, -m, 0.5 * m), (m, 1.0, -m))) {
+    for (m <- ArraySeq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100, 1e300);
+         (x, y, z) <- ArraySeq((m, 0.0, 0.0), (0.0, -m, m), (m, -m, 0.5 * m), (m, 1.0, -m))) {
       val v = Pga3dBivectorWeight(x, y, z)
       assert(v.exp().log() == v, s"v = $v")
       val tr = Pga3dTranslator(x, y, z)
@@ -164,7 +165,7 @@ class PrecisionTest extends AnyFunSuiteLike:
   }
 
   test("motor log is exact for pure translation motors") {
-    for (m <- Seq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100)) {
+    for (m <- ArraySeq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100)) {
       val motor = Pga3dMotor(s = 1.0, wx = m, wy = -m, wz = 0.5 * m)
       val expected = Pga3dBivector(wx = m, wy = -m, wz = 0.5 * m)
       assert(motor.log() == expected, s"motor = $motor")
@@ -174,7 +175,7 @@ class PrecisionTest extends AnyFunSuiteLike:
   test("motor and rotor log angle recovery is continuous across the 1e-5 branch threshold") {
     // log must return the half-angle w through atan2 on both sides of the
     // b = angle/sin(angle) series/sqrt branch split
-    for (w <- Seq(9.99e-6, 9.999999e-6, 1.0000001e-5, 1.001e-5)) {
+    for (w <- ArraySeq(9.99e-6, 9.999999e-6, 1.0000001e-5, 1.001e-5)) {
       val motor = Pga3dMotor(s = Math.cos(w), xy = Math.sin(w))
       assertRel(motor.log().xy, w, 1e-15, s"motor recovered half-angle for w = $w")
 
@@ -185,7 +186,7 @@ class PrecisionTest extends AnyFunSuiteLike:
 
   test("rotation preserves tiny angles between vectors instead of stalling") {
     val from = Pga3dVector(1, 0, 0)
-    for (angle <- Seq(1e-8, 1e-10, 1e-20, 1e-50, 1e-100, 1e-200, 1e-300)) {
+    for (angle <- ArraySeq(1e-8, 1e-10, 1e-20, 1e-50, 1e-100, 1e-200, 1e-300)) {
       val to = Pga3dVector(Math.cos(angle), 0.6 * Math.sin(angle), 0.8 * Math.sin(angle))
       val r = Pga3dRotor.rotation(from, to)
       assert(Math.abs(r.xy) + Math.abs(r.xz) + Math.abs(r.yz) != 0.0, s"rotation by $angle collapsed to identity")
@@ -195,7 +196,7 @@ class PrecisionTest extends AnyFunSuiteLike:
 
   test("rotation works at extreme vector magnitudes") {
     val expected = Math.sqrt(0.5)
-    for (scale <- Seq(1e-140, 1e-100, 1e-50, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e50, 1e100, 1e150)) {
+    for (scale <- ArraySeq(1e-140, 1e-100, 1e-50, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e50, 1e100, 1e150)) {
       val r = Pga3dRotor.rotation(Pga3dVector(scale, 0.0, 0.0), Pga3dVector(0.0, scale, 0.0))
       assertRel(r.s, expected, 1e-15, s"s at scale $scale")
       assertRel(Math.abs(r.xy), expected, 1e-15, s"|xy| at scale $scale")
@@ -205,7 +206,7 @@ class PrecisionTest extends AnyFunSuiteLike:
   }
 
   test("rotation for exactly antipodal vectors gives an exact pi rotor at any magnitude") {
-    for (m <- Seq(1e-140, 1e-100, 1e-20, 1e-15, 1.0, 1e15, 1e20, 1e100, 1e150)) {
+    for (m <- ArraySeq(1e-140, 1e-100, 1e-20, 1e-15, 1.0, 1e15, 1e20, 1e100, 1e150)) {
       val from = Pga3dVector(3 * m, 4 * m, 12 * m)
       val r = Pga3dRotor.rotation(from, -from)
       assert(r.s == 0.0, s"s at magnitude $m")
@@ -219,7 +220,7 @@ class PrecisionTest extends AnyFunSuiteLike:
     // from the wedge cancellation noise and the mapping error stays flat down to eps = 0
     val from = Pga3dVector(3.0 / 13, 4.0 / 13, 12.0 / 13)
     val perp = Pga3dVector(from.y, -from.x, 0.0).normalizedByNorm
-    for (eps <- Seq(0.4, 0.1, 1e-2, 1.4e-3, 1e-4, 1e-5, 1e-6, 1e-7, 3e-8, 1.5e-8, 1.01e-8,
+    for (eps <- ArraySeq(0.4, 0.1, 1e-2, 1.4e-3, 1e-4, 1e-5, 1e-6, 1e-7, 3e-8, 1.5e-8, 1.01e-8,
       0.99e-8, 3e-9, 1e-10, 1e-12, 1e-14, 1e-16)) {
       val to = -(from * Math.cos(eps) + perp * Math.sin(eps))
       val r = Pga3dRotor.rotation(from, to)
@@ -237,7 +238,7 @@ class PrecisionTest extends AnyFunSuiteLike:
     val eps0 = Math.acos(0.9)
     val from = Pga3dVector(3.0 / 13, 4.0 / 13, 12.0 / 13)
     val perp = Pga3dVector(from.y, -from.x, 0.0).normalizedByNorm
-    for (eps <- Seq(eps0 * 0.98, eps0 * 0.999, eps0, eps0 * 1.001, eps0 * 1.02)) {
+    for (eps <- ArraySeq(eps0 * 0.98, eps0 * 0.999, eps0, eps0 * 1.001, eps0 * 1.02)) {
       val to = -(from * Math.cos(eps) + perp * Math.sin(eps))
       val r = Pga3dRotor.rotation(from, to)
       assert(Math.abs(r.norm - 1.0) <= 1e-14, s"norm at pi - $eps")
@@ -248,7 +249,7 @@ class PrecisionTest extends AnyFunSuiteLike:
 
   test("rotation near antipodal recovers the half-angle rotor to relative precision") {
     val from = Pga3dVector(1, 0, 0)
-    for (eps <- Seq(0.4, 1e-2, 1e-4, 1e-6, 1.01e-8, 0.99e-8, 1e-10, 1e-14)) {
+    for (eps <- ArraySeq(0.4, 1e-2, 1e-4, 1e-6, 1.01e-8, 0.99e-8, 1e-10, 1e-14)) {
       val to = Pga3dVector(-Math.cos(eps), 0.6 * Math.sin(eps), 0.8 * Math.sin(eps))
       val r = Pga3dRotor.rotation(from, to)
       assertRel(r.s, Math.sin(eps / 2), 5e-16, s"s at eps = $eps")
@@ -258,8 +259,8 @@ class PrecisionTest extends AnyFunSuiteLike:
   }
 
   test("motor log/exp round trip at corner half-angles and translations") {
-    for (h <- Seq(0.0, 1e-10, 1e-4, 0.5, Math.PI / 2 - 1e-8, Math.PI / 2 + 0.3, 3.0);
-         v <- Seq(Pga3dVector(0, 0, 0), Pga3dVector(1e-20, 1e-20, -1e-20), Pga3dVector(3, -4, 5))) {
+    for (h <- ArraySeq(0.0, 1e-10, 1e-4, 0.5, Math.PI / 2 - 1e-8, Math.PI / 2 + 0.3, 3.0);
+         v <- ArraySeq(Pga3dVector(0, 0, 0), Pga3dVector(1e-20, 1e-20, -1e-20), Pga3dVector(3, -4, 5))) {
       val rotor = Pga3dBivectorBulk(xy = h).exp()
       val motor = Pga3dTranslator.addVector(v).geometric(rotor)
       val restored = motor.log().exp()

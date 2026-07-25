@@ -2,6 +2,7 @@ package me.kright.gametools.symbolic
 
 import me.kright.gametools.symbolic.SymbolicStr.{*, given}
 import org.scalatest.funsuite.AnyFunSuiteLike
+import scala.collection.immutable.ArraySeq
 
 
 class SymbolicStrTest extends AnyFunSuiteLike:
@@ -9,8 +10,8 @@ class SymbolicStrTest extends AnyFunSuiteLike:
     assert(SymbolicStr(1.0) == Symbolic.Symbol(1.0))
     assert(SymbolicStr("x") == Symbolic.Symbol("x"))
 
-    assert(SymbolicStr("+", Seq(SymbolicStr("x"), SymbolicStr(1.0))) ==
-      Symbolic.Func("+", Seq(Symbolic.Symbol("x"), Symbolic.Symbol(1.0))))
+    assert(SymbolicStr("+", ArraySeq(SymbolicStr("x"), SymbolicStr(1.0))) ==
+      Symbolic.Func("+", ArraySeq(Symbolic.Symbol("x"), Symbolic.Symbol(1.0))))
   }
 
   test("isZero") {
@@ -20,7 +21,7 @@ class SymbolicStrTest extends AnyFunSuiteLike:
 
     assert(!SymbolicStr(1.0).isZero)
     assert(!SymbolicStr("x").isZero)
-    assert(!SymbolicStr("+", Seq(zero, one)).isZero)
+    assert(!SymbolicStr("+", ArraySeq(zero, one)).isZero)
   }
 
   test("isOne") {
@@ -30,7 +31,7 @@ class SymbolicStrTest extends AnyFunSuiteLike:
 
     assert(!SymbolicStr(0.0).isOne)
     assert(!SymbolicStr("x").isOne)
-    assert(!SymbolicStr("+", Seq(one, one)).isOne)
+    assert(!SymbolicStr("+", ArraySeq(one, one)).isOne)
   }
 
   test("isNumber") {
@@ -39,11 +40,11 @@ class SymbolicStrTest extends AnyFunSuiteLike:
     assert(SymbolicStr(2.0).isNumber)
 
     assert(!SymbolicStr("x").isNumber)
-    assert(!SymbolicStr("+", Seq(one, one)).isNumber)
+    assert(!SymbolicStr("+", ArraySeq(one, one)).isNumber)
   }
 
   test("numeric") {
     import scala.math.Numeric.Implicits.infixNumericOps
 
-    assert(SymbolicStr(1.0) + SymbolicStr("x") == SymbolicStr("+", Seq(SymbolicStr(1.0), SymbolicStr("x"))))
+    assert(SymbolicStr(1.0) + SymbolicStr("x") == SymbolicStr("+", ArraySeq(SymbolicStr(1.0), SymbolicStr("x"))))
   }

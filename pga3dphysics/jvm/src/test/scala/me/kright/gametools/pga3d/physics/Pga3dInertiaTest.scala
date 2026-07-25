@@ -21,7 +21,7 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
          |                 xy = ${p.xy}, xz = ${p.xz}, yz = ${p.yz})""".stripMargin
 
 
-  private val shifts: Seq[Pga3dVector] = Seq(
+  private val shifts: Seq[Pga3dVector] = ArraySeq(
     Pga3dVector(0.0, 0.0, 0.0),
     Pga3dVector(1.0, 0.0, 0.0),
     Pga3dVector(0.0, 1.0, 0.0),
@@ -109,7 +109,7 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val localInertia = Pga3dInertiaLocal(mass = 1.0, mryz = 1 + 1, mrxz = 1 + 1, mrxy = 1 + 1)
 
     var sumOfPoints = Pga3dInertiaSummable.zero
-    for (z <- Seq(-1, 1); y <- Seq(-1, 1); x <- Seq(-1, 1)) {
+    for (z <- ArraySeq(-1, 1); y <- ArraySeq(-1, 1); x <- ArraySeq(-1, 1)) {
       sumOfPoints += Pga3dInertiaSummable.point(Pga3dPoint(x, y, z), mass = 1.0 / 8.0)
     }
 
@@ -137,7 +137,7 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     )
 
     var sumOfPoints = Pga3dInertiaSummable.zero
-    for (z <- Seq(-rz, rz); y <- Seq(-ry, ry); x <- Seq(-rx, rx)) {
+    for (z <- ArraySeq(-rz, rz); y <- ArraySeq(-ry, ry); x <- ArraySeq(-rx, rx)) {
       sumOfPoints += Pga3dInertiaSummable.point(Pga3dPoint(x, y, z), mass = mass / 8.0)
     }
 
@@ -146,7 +146,7 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   private def getMainAxesSorted(inertia: Pga3dInertiaMovedLocal): Seq[Double] =
     val local = inertia.localInertia
-    Seq(local.mryz, local.mrxz, local.mrxy).sorted
+    ArraySeq(local.mryz, local.mrxz, local.mrxy).sorted
 
   private def maxDiff(lstA: Seq[Double], lstB: Seq[Double]): Double =
     lstA.zip(lstB).map((a, b) => Math.abs(a - b)).max
@@ -237,7 +237,7 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       Pga3dBivector(0, 0, 0, 0, 0, 1),
     )
 
-    val inertiaProbes = Seq(
+    val inertiaProbes = ArraySeq(
       Pga3dInertiaSummable(1, 1, 0, 0, 0, 0, 0, 0, 0, 0),
       Pga3dInertiaSummable(1, 0, 1, 0, 0, 0, 0, 0, 0, 0),
       Pga3dInertiaSummable(1, 0, 0, 1, 0, 0, 0, 0, 0, 0),
@@ -453,7 +453,7 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val smallCube = Pga3dInertia.cube(mass / 8, r / 2, r / 2, r / 2)
 
     val smallCubes =
-      for (dx <- Seq(-1, 1); dy <- Seq(-1, 1); dz <- Seq(-1, 1))
+      for (dx <- ArraySeq(-1, 1); dy <- ArraySeq(-1, 1); dz <- ArraySeq(-1, 1))
         yield smallCube.movedBy(Pga3dTranslator.addVector(Pga3dVector(dx * r / 2, dy * r / 2, dz * r / 2)))
 
     val sum = smallCubes.map(_.toSummable).reduce(_ + _)

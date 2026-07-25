@@ -3,6 +3,7 @@ package me.kright.gametools.pga.codegen.scalagen.pga3d.ops
 import me.kright.gametools.ga.PGA3
 import me.kright.gametools.pga.codegen.scalagen.common.{GeneratedCode, MultivectorUnaryOp}
 import me.kright.gametools.pga.codegen.scalagen.pga3d.Pga3dScalaAlgebra
+import scala.collection.immutable.ArraySeq
 
 object DefProjection:
   def apply()(using pga3: PGA3): MultivectorUnaryOp =
@@ -20,7 +21,7 @@ object DefProjection:
         GeneratedCode { code =>
           val line = cls.self
 
-          for (hyperplaneClass <- Seq(Pga3dScalaAlgebra.plane, Pga3dScalaAlgebra.planeIdeal)) {
+          for (hyperplaneClass <- ArraySeq(Pga3dScalaAlgebra.plane, Pga3dScalaAlgebra.planeIdeal)) {
             val plane = hyperplaneClass.makeSymbolic("plane")
             val result = -plane.dot(line).geometric(plane)
             val resultCls = Pga3dScalaAlgebra.findMatchingClass(result)

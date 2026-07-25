@@ -4,6 +4,7 @@ import me.kright.gametools.pga3d.{Pga3dPoint, Pga3dTranslator, Pga3dVector}
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga3dAABBTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private val halfSize = 1000
@@ -248,7 +249,7 @@ class Pga3dAABBTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("aabb intersecion with big triangles") {
-    val triangles = Seq(
+    val triangles = ArraySeq(
       Pga3dTriangle(Pga3dPoint(10, 0, 10), Pga3dPoint(10, 0, -10), Pga3dPoint(-10, 0, 10)),
       Pga3dTriangle(Pga3dPoint(-10, 0, -10), Pga3dPoint(10, 0, -10), Pga3dPoint(-10, 0, 10)),
     )

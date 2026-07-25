@@ -3,6 +3,7 @@ package me.kright.gametools.pga3d
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalacheck.Gen
+import scala.collection.immutable.ArraySeq
 
 class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("rotation is same vectors") {
@@ -13,7 +14,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("check for angles near zero") {
-    val angles = Seq(0.0, 1e-20, 1e-12, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.1, 1.0)
+    val angles = ArraySeq(0.0, 1e-20, 1e-12, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 0.01, 0.1, 1.0)
 
     val scales: Gen[Double] = Gen.chooseNum(0.001, 2.001)
     val samples: Gen[(Pga3dRotor, Double, Double)] =
@@ -23,8 +24,8 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
         m2 <- scales
       ) yield (q, m1, m2)
 
-    for (isNormalizedInput <- Seq(false, true);
-         isNearPi <- Seq(false, true);
+    for (isNormalizedInput <- ArraySeq(false, true);
+         isNearPi <- ArraySeq(false, true);
          angle <- angles) {
       val from = Pga3dPlaneIdeal(1.0, 0.0, 0.0)
 

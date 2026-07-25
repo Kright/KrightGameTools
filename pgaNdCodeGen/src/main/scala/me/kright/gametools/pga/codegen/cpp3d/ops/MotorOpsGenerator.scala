@@ -4,10 +4,11 @@ import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
 import TranslatorWithRotorGenerator.rotorWithTranslator
 import TranslatorWithRotorGenerator.translatorWithRotor
+import scala.collection.immutable.ArraySeq
 
 class MotorOpsGenerator extends CppCodeGenerator {
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
-    if (cls != CppSubclasses.motor) return Seq()
+    if (cls != CppSubclasses.motor) return ArraySeq()
 
     val code = new CppCodeBuilder()
     code(s"[[nodiscard]] static constexpr ${CppSubclasses.motor.name} id() noexcept { return { .s = 1.0 }; };")
@@ -24,14 +25,14 @@ class MotorOpsGenerator extends CppCodeGenerator {
     code("")
     RotorAndMotorAxes.makeDeclaration(code, cls)
 
-    structBodyPart(code.toString, Seq())
+    structBodyPart(code.toString, ArraySeq())
   }
 
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = new CppCodeBuilder()
 
     code.myHeader(
-      Seq(
+      ArraySeq(
         s"#include <cmath>",
         s"#include \"${codeGen.Headers.types}\"",
         s"#include \"opsArithmetic.h\"",
@@ -148,6 +149,6 @@ class MotorOpsGenerator extends CppCodeGenerator {
       RotorAndMotorAxes.makeForMotor(code)
     }
 
-    Seq(FileContent(codeGen.directory.resolve("opsMotor.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve("opsMotor.h"), code.toString))
   }
 }

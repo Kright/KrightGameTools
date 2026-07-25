@@ -4,6 +4,7 @@ import me.kright.gametools.pga3d.{Pga3dBivectorBulk, Pga3dPoint}
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga3dEdgeTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private val halfSize = 1000
@@ -70,7 +71,7 @@ class Pga3dEdgeTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val edge = Pga3dEdge(Pga3dPoint(0, 0, 0), Pga3dPoint(1, 0, 0))
     val edge2 = Pga3dEdge(Pga3dPoint(-1, 1, 0), Pga3dPoint(2, 1, 0))
 
-    for ((p1, p2) <- Seq(
+    for ((p1, p2) <- ArraySeq(
       edge.getNearestPoints(edge2),
       edge.getNearestPointsBinSearch(edge2)
     )) {

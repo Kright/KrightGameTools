@@ -2,6 +2,7 @@ package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.{Pga3dGenerators, Pga3dTranslator}
 import org.scalacheck.Gen
+import scala.collection.immutable.ArraySeq
 
 object Pga3dInertiaGenerators:
   def inertiaLocal(minMass: Double, maxMass: Double, minR: Double, maxR: Double): Gen[Pga3dInertiaLocal] =
@@ -18,7 +19,7 @@ object Pga3dInertiaGenerators:
       r <- Pga3dVectorMathGenerators.doubleInRange(minR, maxR)
     } yield Pga3dInertiaSimple.cube(mass, r)
 
-  val summableInertiaProbes = Seq(
+  val summableInertiaProbes = ArraySeq(
     Pga3dInertiaSummable(1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     Pga3dInertiaSummable(0, 1, 0, 0, 0, 0, 0, 0, 0, 0),
     Pga3dInertiaSummable(0, 0, 1, 0, 0, 0, 0, 0, 0, 0),

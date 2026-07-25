@@ -13,7 +13,7 @@ object Pga3dGenerators:
 
   val double1: Gen[Double] = Gen.double.map(_ * 2.0 - 1.0)
 
-  val bivectorProbes: Seq[Pga3dBivector] = Seq(
+  val bivectorProbes: Seq[Pga3dBivector] = ArraySeq(
     Pga3dBivector(1, 0, 0, 0, 0, 0),
     Pga3dBivector(0, 1, 0, 0, 0, 0),
     Pga3dBivector(0, 0, 1, 0, 0, 0),

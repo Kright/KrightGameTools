@@ -2,10 +2,11 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppSubclass, CppSubclasses}
 import me.kright.gametools.symbolic.Sym
+import scala.collection.immutable.ArraySeq
 
 object RotorAndMotorAxes {
   def makeDeclaration(code: CppCodeBuilder, cls: CppSubclass): Unit = {
-    for (methodName <- Seq("axisX", "axisY", "axisZ")) {
+    for (methodName <- ArraySeq("axisX", "axisY", "axisZ")) {
       code(s"[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${methodName}() const noexcept;")
     }
   }

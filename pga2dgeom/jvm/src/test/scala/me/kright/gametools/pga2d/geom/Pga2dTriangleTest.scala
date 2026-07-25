@@ -4,6 +4,7 @@ import me.kright.gametools.pga2d.Pga2dPoint
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga2dTriangleTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private val halfSize = 1000
@@ -31,7 +32,7 @@ class Pga2dTriangleTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("getInterpolationFactors for vertices") {
     forAll(suitableTriangles, MinSuccessful(1000)) { triangle =>
       for (
-        (point, tba, tbc) <- Seq(
+        (point, tba, tbc) <- ArraySeq(
           (triangle.a, 0.0, 0.0),
           (triangle.b, 1.0, 0.0),
           (triangle.c, 0.0, 1.0),

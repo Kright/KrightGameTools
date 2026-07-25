@@ -1,6 +1,7 @@
 package me.kright.gametools.pga.codegen.cpp3d
 
 import me.kright.gametools.pga.codegen.common.CodeBuilder
+import scala.collection.immutable.ArraySeq
 
 class CppCodeBuilder extends CodeBuilder:
   override val padding: String = " ".repeat(4)
@@ -57,7 +58,7 @@ class CppCodeBuilder extends CodeBuilder:
 
 object CppCodeBuilder:
   /** the single source of the license header; CustomAmalgamate strips these lines when fusing */
-  val licenseLines: Seq[String] = Seq(
+  val licenseLines: Seq[String] = ArraySeq(
     "// Copyright (c) 2025 Igor Slobodskov",
     "// SPDX-License-Identifier: MIT",
   )

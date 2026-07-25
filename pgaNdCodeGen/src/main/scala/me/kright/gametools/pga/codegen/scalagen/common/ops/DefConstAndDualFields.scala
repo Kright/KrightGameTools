@@ -1,6 +1,7 @@
 package me.kright.gametools.pga.codegen.scalagen.common.ops
 
 import me.kright.gametools.pga.codegen.scalagen.common.{GeneratedCode, MultivectorUnaryOp, ScalaPgaAlgebra}
+import scala.collection.immutable.ArraySeq
 
 object DefConstAndDualFields:
   def apply()(using algebra: ScalaPgaAlgebra): MultivectorUnaryOp =
@@ -10,7 +11,7 @@ object DefConstAndDualFields:
           code(s"inline val ${f.name} = ${v}")
         }
 
-        if (Seq(algebra.vector, algebra.projectivePoint, algebra.point, algebra.pointCenter).contains(cls)) {
+        if (ArraySeq(algebra.vector, algebra.projectivePoint, algebra.point, algebra.pointCenter).contains(cls)) {
           cls.self.values.foreach { (b, sym) =>
             val fName = s"${algebra.pga.representation(b)}"
             code("")

@@ -5,6 +5,7 @@ import me.kright.gametools.mathutil.{EqualityEps, FastRange}
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private val eps = 1e-12
@@ -27,7 +28,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     assume(false, "skip test")
     for (i <- FastRange(100)) {
       val system = Pga3dPhysicsSystemForTest(
-        state = Seq(0.0, 1e-2, 1e-1, 1.0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6).map { d =>
+        state = ArraySeq(0.0, 1e-2, 1e-1, 1.0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6).map { d =>
           Pga3dPhysicsSystemForTest.simpleBody(Pga3dTranslator.addVector(Pga3dVector(d, d, d)).toMotor)
         }.toArray,
         solver = Pga3dPhysicsSolverRK4
@@ -51,7 +52,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
 
     val expectedMaxError = ErrorOfEnergyAndMomentum(6.0E-11,2.0E-9)
 
-    val centersAndErrors = Seq[Pga3dPoint](
+    val centersAndErrors = ArraySeq[Pga3dPoint](
       Pga3dPoint(0, 0, 0),
       Pga3dPoint(1, 1, 1),
       Pga3dPoint(1e1, 1e1, 1e1),
@@ -88,7 +89,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     val dt = 0.01
     val forque = Pga3dBivector()
 
-    val motors = Seq(
+    val motors = ArraySeq(
       Pga3dMotor.id,
       Pga3dTranslator.addVector(Pga3dVector(1, 0, 0)).toMotor,
       Pga3dTranslator.addVector(Pga3dVector(0, 1, 0)).toMotor,
@@ -300,7 +301,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     val springCenter = Pga3dPoint(3.0, 4.0, 0.0) // len 5
 
     //    val solver = Pga3dPhysicsSolverRK4
-    val solvers = Seq(
+    val solvers = ArraySeq(
       Pga3dPhysicsSolverRK4,
       Pga3dPhysicsSolverGaussLegendre(iterations = 1),
       Pga3dPhysicsSolverGaussLegendre(iterations = 2),
@@ -359,7 +360,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     val stepsCount = 1000
     val dt = 0.01
 
-    val solvers = Seq(
+    val solvers = ArraySeq(
       Pga3dPhysicsSolverEuler,
       Pga3dPhysicsSolverHeun,
       Pga3dPhysicsSolverMidPoint,

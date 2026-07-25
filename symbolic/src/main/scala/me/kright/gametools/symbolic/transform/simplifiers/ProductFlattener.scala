@@ -4,6 +4,7 @@ import me.kright.gametools.symbolic.Symbolic
 import me.kright.gametools.symbolic.Symbolic.Func
 
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.immutable.ArraySeq
 
 class ProductFlattener extends SymbolicStrTransformDepthFirst({
   case Func("*", elems) => {
@@ -34,7 +35,7 @@ class ProductFlattener extends SymbolicStrTransformDepthFirst({
     } else if (divizors.isEmpty) {
       Option(makeProductOrSimplify(multipliers.toSeq))
     } else {
-      Option(Func("/", Seq(makeProductOrSimplify(multipliers.toSeq), makeProductOrSimplify(divizors.toSeq))))
+      Option(Func("/", ArraySeq(makeProductOrSimplify(multipliers.toSeq), makeProductOrSimplify(divizors.toSeq))))
     }
   }
 

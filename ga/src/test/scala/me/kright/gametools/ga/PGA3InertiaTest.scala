@@ -7,6 +7,7 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import scala.math.Numeric.Implicits.infixNumericOps
+import scala.collection.immutable.ArraySeq
 
 
 class PGA3InertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
@@ -36,9 +37,9 @@ class PGA3InertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val inertia = (x v x.crossX2(b) * Sym(0.5)) * mass
 
     val sq = {
-      for (dx <- Seq(-1, 1);
-           dy <- Seq(-2, 2);
-           dz <- Seq(-4, 4);
+      for (dx <- ArraySeq(-1, 1);
+           dy <- ArraySeq(-2, 2);
+           dz <- ArraySeq(-4, 4);
            point = PGA3.point(Sym(dx), Sym(dy), Sym(dz));
            inertia = (point v point.crossX2(b) * Sym(0.5)))
       yield inertia

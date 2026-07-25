@@ -4,6 +4,7 @@ import me.kright.gametools.pga.codegen.common.{FileContent, GeneratedFileSystem,
 import me.kright.gametools.pga.codegen.cpp3d.ops.*
 
 import java.nio.file.{Files, Path}
+import scala.collection.immutable.ArraySeq
 
 
 @main
@@ -32,7 +33,7 @@ class Pga3dCodeGenCpp(val directory: Path,
     val pga3d = "pga3d.h"
   }
 
-  private val codeGenerators = Seq(
+  private val codeGenerators = ArraySeq(
     new StructFieldsGenerator,
     new StructStaticConstructorGenerator,
 
@@ -78,7 +79,7 @@ class Pga3dCodeGenCpp(val directory: Path,
   private def generateStructForwardDeclarations(): FileContent = {
     val codeGen = new CppCodeBuilder()
 
-    codeGen.myHeader(Seq(), codeGen.generatorName(this))
+    codeGen.myHeader(ArraySeq(), codeGen.generatorName(this))
 
     codeGen.namespace(namespace) {
       for (cls <- CppSubclasses.all if cls.shouldBeGenerated) {
@@ -94,7 +95,7 @@ class Pga3dCodeGenCpp(val directory: Path,
   private def generatePga3d(ops: Seq[FileContent]): FileContent = {
     val code = new CppCodeBuilder()
 
-    val includes = Seq("#include \"types.h\"") ++ ops.map { op => s"#include \"${op.path.getFileName}\"" }
+    val includes = ArraySeq("#include \"types.h\"") ++ ops.map { op => s"#include \"${op.path.getFileName}\"" }
     code.myHeader(includes, code.generatorName(this))
 
     FileContent(directory.resolve(Headers.pga3d), code.toString)
@@ -120,7 +121,7 @@ class Pga3dCodeGenCpp(val directory: Path,
     val structBodyParts = codeGenerators.flatMap(_.generateStructBody(cls))
 
     val includes: Seq[String] =
-      (Seq("<type_traits>", "\"typesForward.h\"") ++ structBodyParts.flatMap(_.includes))
+      (ArraySeq("<type_traits>", "\"typesForward.h\"") ++ structBodyParts.flatMap(_.includes))
         .distinct.sorted.sortBy(s => if (s.startsWith("\"")) 1 else 0)
         .map(incl => s"#include $incl")
 

@@ -5,6 +5,7 @@ import me.kright.gametools.symbolic.{Sym, Symbolic, SymbolicStr}
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import scala.math.Numeric.Implicits.infixNumericOps
+import scala.collection.immutable.ArraySeq
 
 class SymbolicStrSimplifierTest extends AnyFunSuiteLike:
   val simplifier = SymbolicStrSimplifier.simplify()
@@ -20,7 +21,7 @@ class SymbolicStrSimplifierTest extends AnyFunSuiteLike:
     assertSimplified(expr.symbol, expected.symbol)
 
   test("don't touch primitives") {
-    val primitives = Seq(SymbolicStr("x"), SymbolicStr(1.0), SymbolicStr(0.0))
+    val primitives = ArraySeq(SymbolicStr("x"), SymbolicStr(1.0), SymbolicStr(0.0))
 
     for (p <- primitives) {
       assertSimplified(p, p)
@@ -53,7 +54,7 @@ class SymbolicStrSimplifierTest extends AnyFunSuiteLike:
     assertSimplified(x + SymbolicStr.zero, x)
     assertSimplified(x - x, SymbolicStr(0.0))
     assertSimplified(x * y - y * x, SymbolicStr(0.0))
-    assertSimplified(x * y - y * x * SymbolicStr(0.5), SymbolicStr("*", Seq(SymbolicStr(0.5), x, y)))
+    assertSimplified(x * y - y * x * SymbolicStr(0.5), SymbolicStr("*", ArraySeq(SymbolicStr(0.5), x, y)))
     assertSimplified(SymbolicStr(1.0) + SymbolicStr(2.0) + x + y + x - y, SymbolicStr(3.0) + SymbolicStr(2.0) * x)
   }
 

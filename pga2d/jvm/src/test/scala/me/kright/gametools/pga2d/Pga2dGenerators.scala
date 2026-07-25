@@ -3,6 +3,7 @@ package me.kright.gametools.pga2d
 import me.kright.gametools.flatarray.FlatDoubleSerializer
 import me.kright.gametools.matrix.Matrix
 import org.scalacheck.Gen
+import scala.collection.immutable.ArraySeq
 
 object Pga2dGenerators:
   private def makeGenT[T](elemsCount: Int, factory: (Array[Double], Int) => T): Gen[T] =
@@ -14,7 +15,7 @@ object Pga2dGenerators:
   val rotors: Gen[Pga2dRotor] =
     Gen.oneOf(
       Gen.oneOf(
-        Seq(
+        ArraySeq(
           Pga2dRotor.id,
           -Pga2dRotor.id,
           Pga2dRotor(),

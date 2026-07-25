@@ -1,5 +1,7 @@
 package me.kright.gametools.pga.codegen.scalagen.common
 
+import scala.collection.immutable.ArraySeq
+
 /**
  * Generates the ${prefix}Matrix object: conversions between linear operators on the given
  * grade-2 class (Pga3dBivector / Pga2dProjectivePoint) and square matrices, derived from
@@ -22,6 +24,7 @@ class ScalaMatrixCodeGen(cls: ScalaMultivectorSubClass)(using algebra: ScalaPgaA
   override def generateImports(): String =
     s"""import me.kright.gametools.matrix.Matrix
        |import me.kright.gametools.flatarray.FlatDoubleSerializer
+       |import scala.collection.immutable.ArraySeq
        |""".stripMargin
 
   override def generateClassDoc(): String =
@@ -46,7 +49,7 @@ class ScalaMatrixCodeGen(cls: ScalaMultivectorSubClass)(using algebra: ScalaPgaA
       .mkString("\n      ")
 
     s"""object ${name}:
-       |  private val basis = Seq[${cls.name}](
+       |  private val basis = ArraySeq[${cls.name}](
        |    $basisElements
        |  )
        |

@@ -4,13 +4,14 @@ import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
 import me.kright.gametools.symbolic.Sym
 import scala.math.Numeric.Implicits.infixNumericOps
+import scala.collection.immutable.ArraySeq
 
 class NormOpGenerator extends CppCodeGenerator {
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = CppCodeBuilder()
 
     code.myHeader(
-      Seq(
+      ArraySeq(
         "#include <cmath>",
         s"#include \"${codeGen.Headers.types}\"",
         s"#include \"opsArithmetic.h\"",
@@ -63,7 +64,7 @@ class NormOpGenerator extends CppCodeGenerator {
       }
     }
 
-    Seq(FileContent(codeGen.directory.resolve("opsNorm.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve("opsNorm.h"), code.toString))
   }
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
@@ -87,7 +88,7 @@ class NormOpGenerator extends CppCodeGenerator {
     ) else None
 
     // norm is always declared (as before)
-    val parts = Seq(
+    val parts = ArraySeq(
       "[[nodiscard]] constexpr double normSquare() const noexcept;",
       "[[nodiscard]] inline double norm() const noexcept;",
       normalizedByNormDecl,

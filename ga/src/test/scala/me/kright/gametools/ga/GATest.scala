@@ -5,10 +5,11 @@ import me.kright.gametools.symbolic.Sym
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class GATest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("dual is inverse of dual") {
-    for (ga <- Seq(
+    for (ga <- ArraySeq(
       PGA2(GARepresentationConfig.e0123(Signature.pga2)),
       PGA3(GARepresentationConfig.e0123(Signature.pga3)),
       GA.pga2,

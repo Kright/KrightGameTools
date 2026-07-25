@@ -6,13 +6,14 @@ import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, 
 import me.kright.gametools.symbolic.Sym
 
 import scala.collection.immutable.ListSet
+import scala.collection.immutable.ArraySeq
 
 class ArithmeticsGenerator extends CppCodeGenerator:
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = CppCodeBuilder()
 
     code.myHeader(
-      Seq(
+      ArraySeq(
         "#include <cmath>",
         s"#include \"${codeGen.Headers.types}\""
       ),
@@ -33,7 +34,7 @@ class ArithmeticsGenerator extends CppCodeGenerator:
       equality(code)
     }
 
-    Seq(FileContent(codeGen.directory.resolve("opsArithmetic.h"), code.toString))
+    ArraySeq(FileContent(codeGen.directory.resolve("opsArithmetic.h"), code.toString))
   }
 
   private def multiplyOrDivideByScalar(code: CppCodeBuilder): Unit = {
@@ -171,5 +172,5 @@ class ArithmeticsGenerator extends CppCodeGenerator:
         if (resultPV == CppSubclasses.point) s"[[nodiscard]] inline ${cls.name} madd(const ${CppSubclasses.vector.name}& other, double mult) const noexcept;" else ""
       } else ""
 
-    structBodyPart(Seq(sameTypeDecl, pointVectorDecl).filter(_.nonEmpty).mkString("\n"))
+    structBodyPart(ArraySeq(sameTypeDecl, pointVectorDecl).filter(_.nonEmpty).mkString("\n"))
   }

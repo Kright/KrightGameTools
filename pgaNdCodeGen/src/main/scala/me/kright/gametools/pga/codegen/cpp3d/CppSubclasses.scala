@@ -4,6 +4,7 @@ import me.kright.gametools.ga.{BasisBladeWithSign, MultiVector}
 import me.kright.gametools.pga.codegen.common.MultivectorField
 import me.kright.gametools.symbolic.Sym
 import me.kright.gametools.mathutil.Sign
+import scala.collection.immutable.ArraySeq
 
 object CppSubclasses:
   import Pga3dProvider.pga3
@@ -20,7 +21,7 @@ object CppSubclasses:
 
   val multivector = CppSubclass("Multivector", orderedFields)
 
-  val motor = CppSubclass("Motor", orderedFields.filter(b => Seq(0, 2, 4).contains(b.basisBlade.grade)))
+  val motor = CppSubclass("Motor", orderedFields.filter(b => ArraySeq(0, 2, 4).contains(b.basisBlade.grade)))
 
   val scalar = CppSubclass("double", orderedFields.take(1), shouldBeGenerated = false)
   val plane = CppSubclass("Plane", orderedFields.filter(_.basisBlade.grade == 1).tail :+ orderedFields.filter(_.basisBlade.grade == 1).head)
@@ -30,7 +31,7 @@ object CppSubclasses:
 
   val rotor = CppSubclass("Rotor", motor.variableFields.filter(f => !f.basisBlade.contains(genW)))
   //  val rotorDual = CppSubclass("RotorDual", motor.variableFields.filter(f => f.basisBlade.contains(genW)))
-  val translator = CppSubclass("Translator", motor.variableFields.filter(f => f.basisBlade.grade == 2 && f.basisBlade.contains(genW)), Seq(scalar.variableFields.head -> 1.0))
+  val translator = CppSubclass("Translator", motor.variableFields.filter(f => f.basisBlade.grade == 2 && f.basisBlade.contains(genW)), ArraySeq(scalar.variableFields.head -> 1.0))
   val projectiveTranslator = CppSubclass("ProjectiveTranslator", motor.variableFields.filter(f => f.basisBlade.grade == 0 || f.basisBlade.grade == 2 && f.basisBlade.contains(genW)))
 
   val vector = CppSubclass("Vector", projectivePoint.variableFields.filter(f => f.basisBlade.contains(genW)))
@@ -43,10 +44,10 @@ object CppSubclasses:
   val bivectorWeight = CppSubclass("BivectorWeight", bivector.variableFields.filter(f => f.basisBlade.contains(genW)))
   val bivectorBulk = CppSubclass("BivectorBulk", bivector.variableFields.filter(f => !f.basisBlade.contains(genW)))
 
-  val pointCenter = CppSubclass("PointCenter", Seq(), projectivePoint.variableFields.map(f => (f, (if (f.basisBlade.contains(genW)) 0.0 else 1.0))))
-  val zeroCls = CppSubclass("Zero", Seq(), shouldBeGenerated = false)
+  val pointCenter = CppSubclass("PointCenter", ArraySeq(), projectivePoint.variableFields.map(f => (f, (if (f.basisBlade.contains(genW)) 0.0 else 1.0))))
+  val zeroCls = CppSubclass("Zero", ArraySeq(), shouldBeGenerated = false)
 
-  val all = Seq[CppSubclass](
+  val all = ArraySeq[CppSubclass](
     multivector, // all
     motor, // blade 0 + 2 + 4
 
