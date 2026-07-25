@@ -103,6 +103,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
       yz = v * yz,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga3dBivector =
     this * (1.0 / v)
@@ -257,6 +258,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
       i = sinDivLen * (wx * yz + wz * xy - wy * xz),
     )
 
+  /** for components below ~1e-154 the pairwise field products of this t-factored form may underflow; (b * t).exp() does not */
   def exp(t: Double): Pga3dMotor =
     val len = bulkNorm * Math.abs(t)
     val cos = Math.cos(len)

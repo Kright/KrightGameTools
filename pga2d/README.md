@@ -130,6 +130,7 @@ val approxHalfway = rotor.nlerp(rotor2, 0.5)
 
 * [**Pga2dMultivector**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dMultivector.scala): class with all 8 fields for a general case
 * [**Pga2dPseudoScalar**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dPseudoScalar.scala): class with one field `i` (the wxy blade). Library has no scalar class and uses just Double instead.
+* [**Pga2dMatrix**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dMatrix.scala): conversions between linear operators on Pga2dProjectivePoint and 3x3 matrices.
 
 ```scala
 // Converting specialized classes to multivector

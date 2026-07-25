@@ -3,6 +3,8 @@ package me.kright.gametools.matrix
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
+import scala.collection.immutable.ArraySeq
+
 class SymmetricMatrixDiagonalizationTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   private def dist(a: Matrix, b: Matrix): Double =
@@ -33,7 +35,7 @@ class SymmetricMatrixDiagonalizationTest extends AnyFunSuiteLike with ScalaCheck
     def rotateDiag(diag: Matrix, rot: Matrix): Matrix =
       rot * diag * rot.transposedCopy()
 
-    val diags = Seq(
+    val diags = ArraySeq(
       makeDiagMatrics(1.0, 1.0),
       makeDiagMatrics(1.0, 2.0),
       makeDiagMatrics(1.0, 1.0 + 1e-6),

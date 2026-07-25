@@ -5,16 +5,14 @@ import me.kright.gametools.pga.codegen.common.{FileContent, GeneratedFileSystem}
 import java.nio.file.{Files, Path}
 import scala.collection.mutable
 import scala.jdk.CollectionConverters.*
+import scala.util.Using
 
 
 private class CustomAmalgamate(val files: Map[String, FileContent]) {
   val result = new StringBuilder()
   val includedFiles = new mutable.HashSet[String]()
 
-  val ignoredLines = Set[String](
-    "// Copyright (c) 2025 Igor Slobodskov",
-    "// SPDX-License-Identifier: MIT",
-  )
+  val ignoredLines: Set[String] = CppCodeBuilder.licenseLines.toSet
 
   def getStdIncludes(code: Seq[String]): Seq[String] = {
     code
@@ -80,7 +78,7 @@ private class CustomAmalgamate(val files: Map[String, FileContent]) {
         } else if (line.startsWith("#pragma once")) {
           require(line == "#pragma once") // skip
         } else {
-          require(false, "unknown directive: " + line)
+          throw new IllegalStateException("unknown directive: " + line)
         }
       } else {
         if (i >= lastIncludeLine + 1 && !printedName) {
@@ -133,14 +131,17 @@ object CustomAmalgamate:
   }
 
   private def getFiles(dirs: Seq[Path]): Map[String, FileContent] = {
-    val files = dirs.flatMap(dir => Files.list(dir).iterator().asScala).filterNot(_.getFileName.toString.endsWith(".md"))
+    val files = dirs
+      .flatMap(dir => Using.resource(Files.list(dir))(_.iterator().asScala.toSeq))
+      .filterNot(_.getFileName.toString.endsWith(".md"))
 
     require(files.map(_.getFileName.toString).toSet.size == files.size)
 
     val loadedFiles = files.map(FileContent.load)
 
     {
-      val invalidFiles = loadedFiles.filterNot(_.content.startsWith("// Copyright (c) 2025 Igor Slobodskov\n// SPDX-License-Identifier: MIT"))
+      val licenseHeader = CppCodeBuilder.licenseLines.mkString("", "\n", "\n")
+      val invalidFiles = loadedFiles.filterNot(_.content.startsWith(licenseHeader))
       invalidFiles.foreach(f => println("WARNING: " + f.path.getFileName + " has no license!"))
     }
 

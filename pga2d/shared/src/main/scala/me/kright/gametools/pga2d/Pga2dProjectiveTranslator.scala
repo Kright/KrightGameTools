@@ -97,6 +97,7 @@ final case class Pga2dProjectiveTranslator(s: Double = 0.0,
       wy = v * wy,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga2dProjectiveTranslator =
     this * (1.0 / v)
@@ -189,6 +190,7 @@ final case class Pga2dProjectiveTranslator(s: Double = 0.0,
       y = wx,
     )
 
+  /** divides by the scalar part; s == 0 yields infinite or NaN components */
   def toTranslator: Pga2dTranslator =
     val mult = (1.0 / s)
     Pga2dTranslator(

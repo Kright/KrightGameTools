@@ -24,7 +24,7 @@ def runCppCodeGen(fs: GeneratedFileSystem): Unit = {
 
 class Pga3dCodeGenCpp(val directory: Path,
                       val namespace: String) {
-  assert(Files.exists(directory))
+  require(Files.exists(directory), s"run from the repository root; not found: $directory")
 
   object Headers {
     val typesForward = "typesForward.h"

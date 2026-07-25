@@ -175,19 +175,19 @@ private class BinaryMethodCodeGen(val methodName: String,
 
                 makeCustomBody match {
                   case Some(makeBody) => {
-                    code(s"[[nodiscard]] constexpr ${target.name} ${methodName}(const ${left.name}&a, const ${right.name}& b) noexcept {")
+                    code(s"[[nodiscard]] constexpr ${target.name} ${methodName}(const ${left.name}& a, const ${right.name}& b) noexcept {")
                     code.block {
                       code(makeBody(left, leftS, right, rightS, target, resultS))
                     }
                     code("}")
                   }
                   case None => {
-                    code(s"[[nodiscard]] constexpr ${target.name} ${methodName}(const ${left.name}& a,const ${right.name}& b) noexcept { return ${target.makeBracesInit(resultS, multiline = true)}; }")
+                    code(s"[[nodiscard]] constexpr ${target.name} ${methodName}(const ${left.name}& a, const ${right.name}& b) noexcept { return ${target.makeBracesInit(resultS, multiline = true)}; }")
                   }
                 }
 
                 alternativeNames.foreach { altName =>
-                  code(s"[[nodiscard]] constexpr ${target.name} ${altName}(const ${left.name}& a,const ${right.name}& b) noexcept { return ${methodName}(a, b); }")
+                  code(s"[[nodiscard]] constexpr ${target.name} ${altName}(const ${left.name}& a, const ${right.name}& b) noexcept { return ${methodName}(a, b); }")
                 }
 
                 (Seq(methodName) ++ alternativeNames).foreach { altName =>

@@ -79,6 +79,7 @@ final case class Pga2dRotor(s: Double = 0.0,
       xy = v * xy,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga2dRotor =
     this * (1.0 / v)

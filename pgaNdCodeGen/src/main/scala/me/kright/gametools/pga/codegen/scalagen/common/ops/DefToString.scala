@@ -20,6 +20,6 @@ object DefToString:
                |  "${cls.name}"""".stripMargin)
         }
       } else {
-        assert(false, s"unknown class ${cls}")
+        throw new IllegalStateException(s"unknown class ${cls}")
       }
     }

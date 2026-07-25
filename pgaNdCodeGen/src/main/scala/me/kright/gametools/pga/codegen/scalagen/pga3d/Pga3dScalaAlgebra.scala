@@ -40,7 +40,6 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
 
   override val generatorMainFqcn: String = "me.kright.gametools.pga.codegen.scalagen.pga3d.runScalaCodeGen"
 
-  override val generatedComment: String = "me.kright.gametools.pga.codegen.scalagen.pga3d.ScalaMultivectorSubClass"
 
   override val hyperplaneElementName: String = "plane"
 

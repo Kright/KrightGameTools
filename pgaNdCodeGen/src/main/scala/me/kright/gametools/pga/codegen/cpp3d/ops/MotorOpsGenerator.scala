@@ -6,13 +6,8 @@ import TranslatorWithRotorGenerator.rotorWithTranslator
 import TranslatorWithRotorGenerator.translatorWithRotor
 
 class MotorOpsGenerator extends CppCodeGenerator {
-  // No declarations yet. Ready to add methods in the future.
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
     if (cls != CppSubclasses.motor) return Seq()
-
-    val includes =
-      if (cls == CppSubclasses.bivector) Seq("<utility>")
-      else Seq()
 
     val code = new CppCodeBuilder()
     code(s"[[nodiscard]] static constexpr ${CppSubclasses.motor.name} id() noexcept { return { .s = 1.0 }; };")
@@ -29,7 +24,7 @@ class MotorOpsGenerator extends CppCodeGenerator {
     code("")
     RotorAndMotorAxes.makeDeclaration(code, cls)
 
-    structBodyPart(code.toString, includes)
+    structBodyPart(code.toString, Seq())
   }
 
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {

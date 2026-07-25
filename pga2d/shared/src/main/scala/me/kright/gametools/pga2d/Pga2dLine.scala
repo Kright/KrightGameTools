@@ -89,6 +89,7 @@ final case class Pga2dLine(x: Double = 0.0,
       w = v * w,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga2dLine =
     this * (1.0 / v)

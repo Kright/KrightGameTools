@@ -30,7 +30,6 @@ class ScalaMultivectorSubClass(name: String,
 
   override def typeNamePrefix: String = algebra.typeNamePrefix
 
-  override def generatedComment: String = algebra.generatedComment
 
   override def targetPackage: String = algebra.targetPackage
 

@@ -4,6 +4,8 @@ import me.kright.gametools.matrix.Matrix
 import me.kright.gametools.flatarray.FlatDoubleSerializer
 import org.scalacheck.Gen
 
+import scala.collection.immutable.ArraySeq
+
 object Pga3dGenerators:
   private def makeGenT[T](elemsCount: Int, factory: (Array[Double], Int) => T): Gen[T] =
     Gen.containerOfN[Array, Double](elemsCount, double1)
@@ -29,7 +31,7 @@ object Pga3dGenerators:
   val bivectorBulks: Gen[Pga3dBivectorBulk] =
     Gen.oneOf(
       Gen.oneOf(
-        Seq(
+        ArraySeq(
           Pga3dBivectorBulk.zero,
           Pga3dBivectorBulk(1, 0, 0),
           Pga3dBivectorBulk(0, 1, 0),
@@ -42,7 +44,7 @@ object Pga3dGenerators:
   val bivectorWeight: Gen[Pga3dBivectorWeight] =
     Gen.oneOf(
       Gen.oneOf(
-        Seq(
+        ArraySeq(
           Pga3dBivectorWeight.zero,
           Pga3dBivectorWeight(1, 0, 0),
           Pga3dBivectorWeight(0, 1, 0),
@@ -55,7 +57,7 @@ object Pga3dGenerators:
   val rotors: Gen[Pga3dRotor] =
     Gen.oneOf(
       Gen.oneOf(
-        Seq(
+        ArraySeq(
           Pga3dRotor.id,
           -Pga3dRotor.id,
           Pga3dRotor()

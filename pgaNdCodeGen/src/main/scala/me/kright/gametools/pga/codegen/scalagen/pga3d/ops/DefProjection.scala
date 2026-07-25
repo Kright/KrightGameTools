@@ -20,15 +20,15 @@ object DefProjection:
         GeneratedCode { code =>
           val line = cls.self
 
-          for (planeClass <- Seq(Pga3dScalaAlgebra.plane, Pga3dScalaAlgebra.planeIdeal)) {
-            val plane = planeClass.makeSymbolic("plane")
+          for (hyperplaneClass <- Seq(Pga3dScalaAlgebra.plane, Pga3dScalaAlgebra.planeIdeal)) {
+            val plane = hyperplaneClass.makeSymbolic("plane")
             val result = -plane.dot(line).geometric(plane)
             val resultCls = Pga3dScalaAlgebra.findMatchingClass(result)
 
             code(
               s"""
                  |/** fused plane.dot(line).geometric(plane) */
-                 |def projectOntoPlane(plane: ${planeClass.typeName}): ${resultCls.typeName} =""".stripMargin)
+                 |def projectOntoPlane(plane: ${hyperplaneClass.typeName}): ${resultCls.typeName} =""".stripMargin)
             code.block {
               code(resultCls.makeConstructorOptimized(result, resultCls))
             }

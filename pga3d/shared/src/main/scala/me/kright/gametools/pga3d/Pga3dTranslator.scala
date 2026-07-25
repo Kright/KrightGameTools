@@ -68,14 +68,11 @@ final case class Pga3dTranslator(wx: Double = 0.0,
       wz = -wz,
     )
 
-  def bulkNormSquare: Double =
-    1.0
+  def bulkNormSquare: Double = 1.0
 
-  def bulkNorm: Double =
-    Math.sqrt(bulkNormSquare)
+  def bulkNorm: Double = 1.0
 
-  def normalizedByBulk =
-    this / bulkNorm
+  def normalizedByBulk: Pga3dTranslator = this
 
   def weightNormSquare: Double =
     (wx * wx + wy * wy + wz * wz)
@@ -104,6 +101,7 @@ final case class Pga3dTranslator(wx: Double = 0.0,
       wz = v * wz,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga3dProjectiveTranslator =
     this * (1.0 / v)

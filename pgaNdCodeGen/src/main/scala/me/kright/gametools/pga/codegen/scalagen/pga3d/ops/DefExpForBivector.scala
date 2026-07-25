@@ -55,7 +55,8 @@ object DefExpForBivector:
           val aIBettaDiv2 = selfMulT.geometric(IBdiv2)
           val result = MultiVector.scalar(Sym("cos")) + (selfMulT + IBdiv2) * Sym("sinDivLen") + aIBettaDiv2 * Sym("sinMinusCosDivLen2")
 
-          code(s"\ndef exp(t: Double): ${motor.name} =")
+          code(s"\n/** for components below ~1e-154 the pairwise field products of this t-factored form may underflow; (b * t).exp() does not */")
+          code(s"def exp(t: Double): ${motor.name} =")
           code.block {
             code(
               sinDivLenCode("bulkNorm * Math.abs(t)") + "\n\n" +

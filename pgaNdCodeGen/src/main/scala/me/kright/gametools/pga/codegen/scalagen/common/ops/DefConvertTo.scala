@@ -30,7 +30,8 @@ object DefConvertTo:
           // the sole bulk field of projectivePoint (the one not containing the ideal generator), e.g. xyz / xy
           val bulkField = target.constantFields.head._1
 
-          code(s"\ndef to${target.typeNameWithoutPrefix}: ${target.typeName} =")
+          code(s"\n/** divides by the weight; an ideal point (weight == 0) yields infinite or NaN coordinates */")
+          code(s"def to${target.typeNameWithoutPrefix}: ${target.typeName} =")
           code.block {
             val bulk = cls.self(bulkField.basisBladeWithSign)
             val r = cls.self.filter((b, _) => b != bulkField.basisBlade).map((_, s) => s * Sym("mult"))
@@ -42,7 +43,8 @@ object DefConvertTo:
         if (cls == algebra.projectiveTranslator) {
           val target = algebra.translator
 
-          code(s"\ndef to${target.typeNameWithoutPrefix}: ${target.typeName} =")
+          code(s"\n/** divides by the scalar part; s == 0 yields infinite or NaN components */")
+          code(s"def to${target.typeNameWithoutPrefix}: ${target.typeName} =")
           code.block {
             val result = cls.self.filter((b, _) => b.grade == 2).map((_, s) => s * Sym("mult"))
             code(s"val mult = ${Sym(1.0) / cls.self("s")}")

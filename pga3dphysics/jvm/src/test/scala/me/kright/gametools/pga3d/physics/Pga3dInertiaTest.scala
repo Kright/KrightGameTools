@@ -10,6 +10,8 @@ import org.scalactic.anyvals.PosInt
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
+import scala.collection.immutable.ArraySeq
+
 class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   extension (p: Pga3dInertiaSummable)
     def str: String =
@@ -226,7 +228,7 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("inertia .toInertia() acts the same way") {
-    val probes = Seq(
+    val probes = ArraySeq(
       Pga3dBivector(1, 0, 0, 0, 0, 0),
       Pga3dBivector(0, 1, 0, 0, 0, 0),
       Pga3dBivector(0, 0, 1, 0, 0, 0),

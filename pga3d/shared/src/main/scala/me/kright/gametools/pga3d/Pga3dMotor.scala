@@ -168,6 +168,7 @@ final case class Pga3dMotor(s: Double = 0.0,
       i = i * v,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga3dMotor =
     this * (1.0 / v)

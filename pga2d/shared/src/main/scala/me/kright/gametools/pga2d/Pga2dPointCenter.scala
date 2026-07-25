@@ -55,23 +55,17 @@ object Pga2dPointCenter:
   def antiReverse: Pga2dPointCenter.type =
     this
 
-  def bulkNormSquare: Double =
-    1.0
+  def bulkNormSquare: Double = 1.0
 
-  def bulkNorm: Double =
-    Math.sqrt(bulkNormSquare)
+  def bulkNorm: Double = 1.0
 
-  def normalizedByBulk =
-    this / bulkNorm
+  def normalizedByBulk: Pga2dPointCenter.type = this
 
-  def normSquare: Double =
-    1.0
+  def normSquare: Double = 1.0
 
-  def norm: Double =
-    Math.sqrt(normSquare)
+  def norm: Double = 1.0
 
-  def normalizedByNorm =
-    this / norm
+  def normalizedByNorm: Pga2dPointCenter.type = this
 
   @targetName("times")
   def *(v: Double): Pga2dRotor =
@@ -80,6 +74,7 @@ object Pga2dPointCenter:
       xy = v,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga2dRotor =
     this * (1.0 / v)

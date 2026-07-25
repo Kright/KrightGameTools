@@ -70,6 +70,7 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       yz = v * yz,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga3dBivectorBulk =
     this * (1.0 / v)

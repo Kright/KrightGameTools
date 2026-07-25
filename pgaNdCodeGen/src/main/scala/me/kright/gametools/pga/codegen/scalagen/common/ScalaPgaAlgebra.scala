@@ -23,7 +23,6 @@ trait ScalaPgaAlgebra:
   def generatorMainFqcn: String
 
   /** FQCN embedded in the default (non-overridden) generateClassDoc() comment */
-  def generatedComment: String
 
   /** lowercase name of the grade-1 (hyperplane) element, used only in operations.md prose: "plane" for 3d, "line" for 2d */
   def hyperplaneElementName: String

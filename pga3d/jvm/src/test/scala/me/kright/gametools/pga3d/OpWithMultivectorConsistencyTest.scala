@@ -3,13 +3,15 @@ package me.kright.gametools.pga3d
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalacheck.Gen
+
+import scala.collection.immutable.ArraySeq
 import scala.language.unsafeNulls
 
 class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   private val eps = 1e-15
 
-  private val classes = Seq(
+  private val classes = ArraySeq(
     classOf[java.lang.Double],
     classOf[Pga3dBivector],
     classOf[Pga3dBivectorBulk],

@@ -148,7 +148,7 @@ lazy val pga2d = crossProject(JSPlatform, JVMPlatform)
   .settings(sonatypeSettings, name := "gametools-pga2d")
   .dependsOn(
     mathutil,
-    matrix % "test",
+    matrix,
     flatarray,
   )
 

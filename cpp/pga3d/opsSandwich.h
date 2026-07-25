@@ -20,7 +20,7 @@
  * @endcode
  */
 namespace pga3d {
-    [[nodiscard]] constexpr Multivector sandwich(const Multivector&a, const Multivector& b) noexcept {
+    [[nodiscard]] constexpr Multivector sandwich(const Multivector& a, const Multivector& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMw = a.s * a.w;
         const double sMx = a.s * a.x;
@@ -143,7 +143,7 @@ namespace pga3d {
     constexpr Multivector Multivector::sandwich(const Multivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor sandwich(const Motor&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Motor& a, const Motor& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMwx = a.s * a.wx;
         const double sMwy = a.s * a.wy;
@@ -183,7 +183,7 @@ namespace pga3d {
     }
     constexpr Motor Motor::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Motor&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Motor& a, const Plane& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -203,7 +203,7 @@ namespace pga3d {
     }
     constexpr Plane Motor::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Motor&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Motor& a, const Bivector& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMwx = a.s * a.wx;
         const double sMwy = a.s * a.wy;
@@ -241,7 +241,7 @@ namespace pga3d {
     }
     constexpr Bivector Motor::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Motor&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Motor& a, const ProjectivePoint& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -261,7 +261,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint Motor::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const Motor&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Motor& a, const Rotor& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMwx = a.s * a.wx;
         const double sMwy = a.s * a.wy;
@@ -301,7 +301,7 @@ namespace pga3d {
     }
     constexpr Motor Motor::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const Motor&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Motor& a, const ProjectiveTranslator& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -325,7 +325,7 @@ namespace pga3d {
     }
     constexpr Motor Motor::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const Motor&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Motor& a, const Translator& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -349,7 +349,7 @@ namespace pga3d {
     }
     constexpr Motor Motor::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const Motor&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const Motor& a, const Vector& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -368,7 +368,7 @@ namespace pga3d {
     }
     constexpr Vector Motor::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Motor&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Motor& a, const Point& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -388,7 +388,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint Motor::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Motor&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Motor& a, const PlaneIdeal& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -408,7 +408,7 @@ namespace pga3d {
     }
     constexpr Plane Motor::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Motor&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Motor& a, const BivectorBulk& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMwx = a.s * a.wx;
         const double sMwy = a.s * a.wy;
@@ -446,7 +446,7 @@ namespace pga3d {
     }
     constexpr Bivector Motor::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const Motor&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const Motor& a, const BivectorWeight& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -465,14 +465,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight Motor::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const Motor&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const Motor& a, const PseudoScalar& b) noexcept {
         return {
             .i = b.i * (a.s * a.s + a.xy * a.xy + a.xz * a.xz + a.yz * a.yz)
         };
     }
     constexpr PseudoScalar Motor::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Motor&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Motor& a, const PointCenter& b) noexcept {
         return {
             .x = 2.0 * (-a.i * a.yz - a.s * a.wx - a.wy * a.xy - a.wz * a.xz),
             .y = 2.0 * (a.i * a.xz + a.wx * a.xy - a.s * a.wy - a.wz * a.yz),
@@ -483,7 +483,7 @@ namespace pga3d {
     constexpr ProjectivePoint Motor::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor sandwich(const Plane&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Plane& a, const Motor& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -506,7 +506,7 @@ namespace pga3d {
     }
     constexpr Motor Plane::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Plane&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Plane& a, const Plane& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -522,7 +522,7 @@ namespace pga3d {
     }
     constexpr Plane Plane::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Plane&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Plane& a, const Bivector& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -543,7 +543,7 @@ namespace pga3d {
     }
     constexpr Bivector Plane::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Plane&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Plane& a, const ProjectivePoint& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -559,7 +559,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint Plane::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const Plane&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Plane& a, const Rotor& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -582,7 +582,7 @@ namespace pga3d {
     }
     constexpr Motor Plane::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Plane&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Plane& a, const ProjectiveTranslator& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -598,7 +598,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator Plane::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Plane&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Plane& a, const Translator& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -614,7 +614,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator Plane::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const Plane&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const Plane& a, const Vector& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -629,7 +629,7 @@ namespace pga3d {
     }
     constexpr Vector Plane::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Plane&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Plane& a, const Point& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -645,7 +645,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint Plane::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Plane&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Plane& a, const PlaneIdeal& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -661,7 +661,7 @@ namespace pga3d {
     }
     constexpr Plane Plane::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Plane&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Plane& a, const BivectorBulk& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -682,7 +682,7 @@ namespace pga3d {
     }
     constexpr Bivector Plane::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const Plane&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const Plane& a, const BivectorWeight& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -697,14 +697,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight Plane::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const Plane&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const Plane& a, const PseudoScalar& b) noexcept {
         return {
             .i = b.i * (-a.x * a.x - a.y * a.y - a.z * a.z)
         };
     }
     constexpr PseudoScalar Plane::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Plane&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Plane& a, const PointCenter& b) noexcept {
         return {
             .x = -2.0 * a.w * a.x,
             .y = -2.0 * a.w * a.y,
@@ -715,7 +715,7 @@ namespace pga3d {
     constexpr ProjectivePoint Plane::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor sandwich(const Bivector&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Bivector& a, const Motor& b) noexcept {
         const double wxMxy = a.wx * a.xy;
         const double wxMxz = a.wx * a.xz;
         const double wxMyz = a.wx * a.yz;
@@ -744,7 +744,7 @@ namespace pga3d {
     }
     constexpr Motor Bivector::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Bivector&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Bivector& a, const Plane& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -760,7 +760,7 @@ namespace pga3d {
     }
     constexpr Plane Bivector::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Bivector&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Bivector& a, const Bivector& b) noexcept {
         const double wxMxy = a.wx * a.xy;
         const double wxMxz = a.wx * a.xz;
         const double wxMyz = a.wx * a.yz;
@@ -787,7 +787,7 @@ namespace pga3d {
     }
     constexpr Bivector Bivector::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Bivector&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Bivector& a, const ProjectivePoint& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -803,7 +803,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint Bivector::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const Bivector&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Bivector& a, const Rotor& b) noexcept {
         const double wxMxy = a.wx * a.xy;
         const double wxMxz = a.wx * a.xz;
         const double wxMyz = a.wx * a.yz;
@@ -832,7 +832,7 @@ namespace pga3d {
     }
     constexpr Motor Bivector::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const Bivector&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Bivector& a, const ProjectiveTranslator& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -852,7 +852,7 @@ namespace pga3d {
     }
     constexpr Motor Bivector::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const Bivector&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Bivector& a, const Translator& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -872,7 +872,7 @@ namespace pga3d {
     }
     constexpr Motor Bivector::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const Bivector&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const Bivector& a, const Vector& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -887,7 +887,7 @@ namespace pga3d {
     }
     constexpr Vector Bivector::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Bivector&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Bivector& a, const Point& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -903,7 +903,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint Bivector::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Bivector&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Bivector& a, const PlaneIdeal& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -919,7 +919,7 @@ namespace pga3d {
     }
     constexpr Plane Bivector::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Bivector&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Bivector& a, const BivectorBulk& b) noexcept {
         const double wxMxy = a.wx * a.xy;
         const double wxMxz = a.wx * a.xz;
         const double wxMyz = a.wx * a.yz;
@@ -946,7 +946,7 @@ namespace pga3d {
     }
     constexpr Bivector Bivector::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const Bivector&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const Bivector& a, const BivectorWeight& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -961,14 +961,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight Bivector::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const Bivector&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const Bivector& a, const PseudoScalar& b) noexcept {
         return {
             .i = b.i * (a.xy * a.xy + a.xz * a.xz + a.yz * a.yz)
         };
     }
     constexpr PseudoScalar Bivector::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Bivector&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Bivector& a, const PointCenter& b) noexcept {
         return {
             .x = 2.0 * (-a.wy * a.xy - a.wz * a.xz),
             .y = 2.0 * (a.wx * a.xy - a.wz * a.yz),
@@ -979,7 +979,7 @@ namespace pga3d {
     constexpr ProjectivePoint Bivector::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor sandwich(const ProjectivePoint&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const ProjectivePoint& a, const Motor& b) noexcept {
         const double xMw = a.w * a.x;
         const double yMw = a.w * a.y;
         const double zMw = a.w * a.z;
@@ -997,7 +997,7 @@ namespace pga3d {
     }
     constexpr Motor ProjectivePoint::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const ProjectivePoint&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const ProjectivePoint& a, const Plane& b) noexcept {
         const double wMw = a.w * a.w;
         return {
             .x = b.x * wMw,
@@ -1008,7 +1008,7 @@ namespace pga3d {
     }
     constexpr Plane ProjectivePoint::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const ProjectivePoint&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const ProjectivePoint& a, const Bivector& b) noexcept {
         const double xMw = a.w * a.x;
         const double yMw = a.w * a.y;
         const double zMw = a.w * a.z;
@@ -1024,7 +1024,7 @@ namespace pga3d {
     }
     constexpr Bivector ProjectivePoint::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectivePoint&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectivePoint& a, const ProjectivePoint& b) noexcept {
         const double wMw = a.w * a.w;
         return {
             .x = (-b.x * wMw + 2.0 * a.w * a.x * b.w),
@@ -1035,7 +1035,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint ProjectivePoint::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const ProjectivePoint&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const ProjectivePoint& a, const Rotor& b) noexcept {
         const double xMw = a.w * a.x;
         const double yMw = a.w * a.y;
         const double zMw = a.w * a.z;
@@ -1053,7 +1053,7 @@ namespace pga3d {
     }
     constexpr Motor ProjectivePoint::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const ProjectivePoint&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const ProjectivePoint& a, const ProjectiveTranslator& b) noexcept {
         const double wMw = a.w * a.w;
         return {
             .s = b.s * wMw,
@@ -1064,7 +1064,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator ProjectivePoint::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const ProjectivePoint&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const ProjectivePoint& a, const Translator& b) noexcept {
         const double wMw = a.w * a.w;
         return {
             .s = wMw,
@@ -1075,7 +1075,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator ProjectivePoint::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const ProjectivePoint&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const ProjectivePoint& a, const Vector& b) noexcept {
         const double wMw = a.w * a.w;
         return {
             .x = -b.x * wMw,
@@ -1085,7 +1085,7 @@ namespace pga3d {
     }
     constexpr Vector ProjectivePoint::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectivePoint&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectivePoint& a, const Point& b) noexcept {
         const double wMw = a.w * a.w;
         return {
             .x = (-b.x * wMw + 2.0 * a.w * a.x),
@@ -1096,7 +1096,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint ProjectivePoint::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const ProjectivePoint&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const ProjectivePoint& a, const PlaneIdeal& b) noexcept {
         const double wMw = a.w * a.w;
         return {
             .x = b.x * wMw,
@@ -1107,7 +1107,7 @@ namespace pga3d {
     }
     constexpr Plane ProjectivePoint::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const ProjectivePoint&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const ProjectivePoint& a, const BivectorBulk& b) noexcept {
         const double xMw = a.w * a.x;
         const double yMw = a.w * a.y;
         const double zMw = a.w * a.z;
@@ -1123,7 +1123,7 @@ namespace pga3d {
     }
     constexpr Bivector ProjectivePoint::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const ProjectivePoint&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const ProjectivePoint& a, const BivectorWeight& b) noexcept {
         const double wMw = a.w * a.w;
         return {
             .wx = -b.wx * wMw,
@@ -1133,14 +1133,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight ProjectivePoint::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const ProjectivePoint&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const ProjectivePoint& a, const PseudoScalar& b) noexcept {
         return {
             .i = -a.w * a.w * b.i
         };
     }
     constexpr PseudoScalar ProjectivePoint::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectivePoint&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectivePoint& a, const PointCenter& b) noexcept {
         return {
             .x = 2.0 * a.w * a.x,
             .y = 2.0 * a.w * a.y,
@@ -1151,7 +1151,7 @@ namespace pga3d {
     constexpr ProjectivePoint ProjectivePoint::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor sandwich(const Rotor&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Rotor& a, const Motor& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1175,7 +1175,7 @@ namespace pga3d {
     }
     constexpr Motor Rotor::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Rotor&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Rotor& a, const Plane& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1195,7 +1195,7 @@ namespace pga3d {
     }
     constexpr Plane Rotor::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Rotor&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Rotor& a, const Bivector& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1217,7 +1217,7 @@ namespace pga3d {
     }
     constexpr Bivector Rotor::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Rotor&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Rotor& a, const ProjectivePoint& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1237,7 +1237,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint Rotor::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Rotor sandwich(const Rotor&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Rotor sandwich(const Rotor& a, const Rotor& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1257,7 +1257,7 @@ namespace pga3d {
     }
     constexpr Rotor Rotor::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Rotor&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Rotor& a, const ProjectiveTranslator& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1277,7 +1277,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator Rotor::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Rotor&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Rotor& a, const Translator& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1297,7 +1297,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator Rotor::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const Rotor&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const Rotor& a, const Vector& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1316,7 +1316,7 @@ namespace pga3d {
     }
     constexpr Vector Rotor::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Rotor&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Rotor& a, const Point& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1336,7 +1336,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint Rotor::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal sandwich(const Rotor&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr PlaneIdeal sandwich(const Rotor& a, const PlaneIdeal& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1355,7 +1355,7 @@ namespace pga3d {
     }
     constexpr PlaneIdeal Rotor::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk sandwich(const Rotor&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr BivectorBulk sandwich(const Rotor& a, const BivectorBulk& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1374,7 +1374,7 @@ namespace pga3d {
     }
     constexpr BivectorBulk Rotor::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const Rotor&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const Rotor& a, const BivectorWeight& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMxy = a.s * a.xy;
         const double sMxz = a.s * a.xz;
@@ -1393,14 +1393,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight Rotor::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const Rotor&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const Rotor& a, const PseudoScalar& b) noexcept {
         return {
             .i = b.i * (a.s * a.s + a.xy * a.xy + a.xz * a.xz + a.yz * a.yz)
         };
     }
     constexpr PseudoScalar Rotor::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Rotor&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Rotor& a, const PointCenter& b) noexcept {
         return {
             .x = 0.0,
             .y = 0.0,
@@ -1411,7 +1411,7 @@ namespace pga3d {
     constexpr ProjectivePoint Rotor::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor sandwich(const ProjectiveTranslator&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const ProjectiveTranslator& a, const Motor& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMwx = a.s * a.wx;
         const double sMwy = a.s * a.wy;
@@ -1429,7 +1429,7 @@ namespace pga3d {
     }
     constexpr Motor ProjectiveTranslator::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const ProjectiveTranslator&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const ProjectiveTranslator& a, const Plane& b) noexcept {
         const double sMs = a.s * a.s;
         return {
             .x = b.x * sMs,
@@ -1440,7 +1440,7 @@ namespace pga3d {
     }
     constexpr Plane ProjectiveTranslator::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const ProjectiveTranslator&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const ProjectiveTranslator& a, const Bivector& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMwx = a.s * a.wx;
         const double sMwy = a.s * a.wy;
@@ -1456,7 +1456,7 @@ namespace pga3d {
     }
     constexpr Bivector ProjectiveTranslator::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectiveTranslator&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectiveTranslator& a, const ProjectivePoint& b) noexcept {
         const double sMs = a.s * a.s;
         return {
             .x = (b.x * sMs - 2.0 * a.s * a.wx * b.w),
@@ -1467,7 +1467,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint ProjectiveTranslator::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const ProjectiveTranslator&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const ProjectiveTranslator& a, const Rotor& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMwx = a.s * a.wx;
         const double sMwy = a.s * a.wy;
@@ -1485,7 +1485,7 @@ namespace pga3d {
     }
     constexpr Motor ProjectiveTranslator::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const ProjectiveTranslator&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const ProjectiveTranslator& a, const ProjectiveTranslator& b) noexcept {
         const double sMs = a.s * a.s;
         return {
             .s = b.s * sMs,
@@ -1496,7 +1496,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator ProjectiveTranslator::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const ProjectiveTranslator&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const ProjectiveTranslator& a, const Translator& b) noexcept {
         const double sMs = a.s * a.s;
         return {
             .s = sMs,
@@ -1507,7 +1507,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator ProjectiveTranslator::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const ProjectiveTranslator&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const ProjectiveTranslator& a, const Vector& b) noexcept {
         const double sMs = a.s * a.s;
         return {
             .x = b.x * sMs,
@@ -1517,7 +1517,7 @@ namespace pga3d {
     }
     constexpr Vector ProjectiveTranslator::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectiveTranslator&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectiveTranslator& a, const Point& b) noexcept {
         const double sMs = a.s * a.s;
         return {
             .x = (b.x * sMs - 2.0 * a.s * a.wx),
@@ -1528,7 +1528,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint ProjectiveTranslator::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const ProjectiveTranslator&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const ProjectiveTranslator& a, const PlaneIdeal& b) noexcept {
         const double sMs = a.s * a.s;
         return {
             .x = b.x * sMs,
@@ -1539,7 +1539,7 @@ namespace pga3d {
     }
     constexpr Plane ProjectiveTranslator::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const ProjectiveTranslator&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const ProjectiveTranslator& a, const BivectorBulk& b) noexcept {
         const double sMs = a.s * a.s;
         const double sMwx = a.s * a.wx;
         const double sMwy = a.s * a.wy;
@@ -1555,7 +1555,7 @@ namespace pga3d {
     }
     constexpr Bivector ProjectiveTranslator::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const ProjectiveTranslator&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const ProjectiveTranslator& a, const BivectorWeight& b) noexcept {
         const double sMs = a.s * a.s;
         return {
             .wx = b.wx * sMs,
@@ -1565,14 +1565,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight ProjectiveTranslator::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const ProjectiveTranslator&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const ProjectiveTranslator& a, const PseudoScalar& b) noexcept {
         return {
             .i = a.s * a.s * b.i
         };
     }
     constexpr PseudoScalar ProjectiveTranslator::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectiveTranslator&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectiveTranslator& a, const PointCenter& b) noexcept {
         return {
             .x = -2.0 * a.s * a.wx,
             .y = -2.0 * a.s * a.wy,
@@ -1583,7 +1583,7 @@ namespace pga3d {
     constexpr ProjectivePoint ProjectiveTranslator::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor sandwich(const Translator&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Translator& a, const Motor& b) noexcept {
         return {
             .s = b.s,
             .wx = (b.wx - 2.0 * a.wy * b.xy - 2.0 * a.wz * b.xz),
@@ -1597,7 +1597,7 @@ namespace pga3d {
     }
     constexpr Motor Translator::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Translator&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Translator& a, const Plane& b) noexcept {
         return {
             .x = b.x,
             .y = b.y,
@@ -1607,7 +1607,7 @@ namespace pga3d {
     }
     constexpr Plane Translator::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Translator&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Translator& a, const Bivector& b) noexcept {
         return {
             .wx = (b.wx - 2.0 * a.wy * b.xy - 2.0 * a.wz * b.xz),
             .wy = (b.wy - 2.0 * a.wz * b.yz + 2.0 * a.wx * b.xy),
@@ -1619,7 +1619,7 @@ namespace pga3d {
     }
     constexpr Bivector Translator::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Translator&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Translator& a, const ProjectivePoint& b) noexcept {
         return {
             .x = (b.x - 2.0 * a.wx * b.w),
             .y = (b.y - 2.0 * a.wy * b.w),
@@ -1629,7 +1629,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint Translator::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const Translator&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Translator& a, const Rotor& b) noexcept {
         return {
             .s = b.s,
             .wx = 2.0 * (-a.wy * b.xy - a.wz * b.xz),
@@ -1643,7 +1643,7 @@ namespace pga3d {
     }
     constexpr Motor Translator::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Translator&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Translator& a, const ProjectiveTranslator& b) noexcept {
         return {
             .s = b.s,
             .wx = b.wx,
@@ -1653,7 +1653,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator Translator::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Translator sandwich(const Translator&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr Translator sandwich(const Translator& a, const Translator& b) noexcept {
         return {
             .wx = b.wx,
             .wy = b.wy,
@@ -1662,7 +1662,7 @@ namespace pga3d {
     }
     constexpr Translator Translator::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const Translator&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const Translator& a, const Vector& b) noexcept {
         return {
             .x = b.x,
             .y = b.y,
@@ -1671,7 +1671,7 @@ namespace pga3d {
     }
     constexpr Vector Translator::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Point sandwich(const Translator&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr Point sandwich(const Translator& a, const Point& b) noexcept {
         return {
             .x = (b.x - 2.0 * a.wx),
             .y = (b.y - 2.0 * a.wy),
@@ -1680,7 +1680,7 @@ namespace pga3d {
     }
     constexpr Point Translator::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Translator&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Translator& a, const PlaneIdeal& b) noexcept {
         return {
             .x = b.x,
             .y = b.y,
@@ -1690,7 +1690,7 @@ namespace pga3d {
     }
     constexpr Plane Translator::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Translator&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Translator& a, const BivectorBulk& b) noexcept {
         return {
             .wx = 2.0 * (-a.wy * b.xy - a.wz * b.xz),
             .wy = 2.0 * (a.wx * b.xy - a.wz * b.yz),
@@ -1702,7 +1702,7 @@ namespace pga3d {
     }
     constexpr Bivector Translator::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const Translator&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const Translator& a, const BivectorWeight& b) noexcept {
         return {
             .wx = b.wx,
             .wy = b.wy,
@@ -1711,14 +1711,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight Translator::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const Translator&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const Translator& a, const PseudoScalar& b) noexcept {
         return {
             .i = b.i
         };
     }
     constexpr PseudoScalar Translator::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Point sandwich(const Translator&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr Point sandwich(const Translator& a, const PointCenter& b) noexcept {
         return {
             .x = -2.0 * a.wx,
             .y = -2.0 * a.wy,
@@ -1729,7 +1729,7 @@ namespace pga3d {
 
 
 
-    [[nodiscard]] constexpr Motor sandwich(const Point&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Point& a, const Motor& b) noexcept {
         return {
             .s = b.s,
             .wx = (-b.wx + 2.0 * (a.y * b.xy + a.z * b.xz)),
@@ -1743,7 +1743,7 @@ namespace pga3d {
     }
     constexpr Motor Point::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Point&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Point& a, const Plane& b) noexcept {
         return {
             .x = b.x,
             .y = b.y,
@@ -1753,7 +1753,7 @@ namespace pga3d {
     }
     constexpr Plane Point::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Point&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Point& a, const Bivector& b) noexcept {
         return {
             .wx = (-b.wx + 2.0 * (a.y * b.xy + a.z * b.xz)),
             .wy = (-b.wy + 2.0 * (a.z * b.yz - a.x * b.xy)),
@@ -1765,7 +1765,7 @@ namespace pga3d {
     }
     constexpr Bivector Point::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const Point&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const Point& a, const ProjectivePoint& b) noexcept {
         return {
             .x = (-b.x + 2.0 * a.x * b.w),
             .y = (-b.y + 2.0 * a.y * b.w),
@@ -1775,7 +1775,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint Point::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Motor sandwich(const Point&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const Point& a, const Rotor& b) noexcept {
         return {
             .s = b.s,
             .wx = 2.0 * (a.y * b.xy + a.z * b.xz),
@@ -1789,7 +1789,7 @@ namespace pga3d {
     }
     constexpr Motor Point::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Point&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const Point& a, const ProjectiveTranslator& b) noexcept {
         return {
             .s = b.s,
             .wx = -b.wx,
@@ -1799,7 +1799,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator Point::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Translator sandwich(const Point&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr Translator sandwich(const Point& a, const Translator& b) noexcept {
         return {
             .wx = -b.wx,
             .wy = -b.wy,
@@ -1808,7 +1808,7 @@ namespace pga3d {
     }
     constexpr Translator Point::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const Point&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const Point& a, const Vector& b) noexcept {
         return {
             .x = -b.x,
             .y = -b.y,
@@ -1817,7 +1817,7 @@ namespace pga3d {
     }
     constexpr Vector Point::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Point sandwich(const Point&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr Point sandwich(const Point& a, const Point& b) noexcept {
         return {
             .x = (-b.x + 2.0 * a.x),
             .y = (-b.y + 2.0 * a.y),
@@ -1826,7 +1826,7 @@ namespace pga3d {
     }
     constexpr Point Point::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const Point&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const Point& a, const PlaneIdeal& b) noexcept {
         return {
             .x = b.x,
             .y = b.y,
@@ -1836,7 +1836,7 @@ namespace pga3d {
     }
     constexpr Plane Point::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const Point&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const Point& a, const BivectorBulk& b) noexcept {
         return {
             .wx = 2.0 * (a.y * b.xy + a.z * b.xz),
             .wy = 2.0 * (a.z * b.yz - a.x * b.xy),
@@ -1848,7 +1848,7 @@ namespace pga3d {
     }
     constexpr Bivector Point::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const Point&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const Point& a, const BivectorWeight& b) noexcept {
         return {
             .wx = -b.wx,
             .wy = -b.wy,
@@ -1857,14 +1857,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight Point::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const Point&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const Point& a, const PseudoScalar& b) noexcept {
         return {
             .i = -b.i
         };
     }
     constexpr PseudoScalar Point::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Point sandwich(const Point&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr Point sandwich(const Point& a, const PointCenter& b) noexcept {
         return {
             .x = 2.0 * a.x,
             .y = 2.0 * a.y,
@@ -1874,7 +1874,7 @@ namespace pga3d {
     constexpr Point Point::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor sandwich(const PlaneIdeal&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const PlaneIdeal& a, const Motor& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -1894,7 +1894,7 @@ namespace pga3d {
     }
     constexpr Motor PlaneIdeal::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const PlaneIdeal&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const PlaneIdeal& a, const Plane& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -1910,7 +1910,7 @@ namespace pga3d {
     }
     constexpr Plane PlaneIdeal::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const PlaneIdeal&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const PlaneIdeal& a, const Bivector& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -1928,7 +1928,7 @@ namespace pga3d {
     }
     constexpr Bivector PlaneIdeal::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const PlaneIdeal&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const PlaneIdeal& a, const ProjectivePoint& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -1944,7 +1944,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint PlaneIdeal::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Rotor sandwich(const PlaneIdeal&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Rotor sandwich(const PlaneIdeal& a, const Rotor& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -1960,7 +1960,7 @@ namespace pga3d {
     }
     constexpr Rotor PlaneIdeal::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const PlaneIdeal&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const PlaneIdeal& a, const ProjectiveTranslator& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -1976,7 +1976,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator PlaneIdeal::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const PlaneIdeal&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const PlaneIdeal& a, const Translator& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -1992,7 +1992,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator PlaneIdeal::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const PlaneIdeal&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const PlaneIdeal& a, const Vector& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -2007,7 +2007,7 @@ namespace pga3d {
     }
     constexpr Vector PlaneIdeal::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const PlaneIdeal&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const PlaneIdeal& a, const Point& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -2023,7 +2023,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint PlaneIdeal::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal sandwich(const PlaneIdeal&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr PlaneIdeal sandwich(const PlaneIdeal& a, const PlaneIdeal& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -2038,7 +2038,7 @@ namespace pga3d {
     }
     constexpr PlaneIdeal PlaneIdeal::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk sandwich(const PlaneIdeal&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr BivectorBulk sandwich(const PlaneIdeal& a, const BivectorBulk& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -2053,7 +2053,7 @@ namespace pga3d {
     }
     constexpr BivectorBulk PlaneIdeal::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const PlaneIdeal&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const PlaneIdeal& a, const BivectorWeight& b) noexcept {
         const double xMx = a.x * a.x;
         const double xMy = a.x * a.y;
         const double xMz = a.x * a.z;
@@ -2068,14 +2068,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight PlaneIdeal::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const PlaneIdeal&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const PlaneIdeal& a, const PseudoScalar& b) noexcept {
         return {
             .i = b.i * (-a.x * a.x - a.y * a.y - a.z * a.z)
         };
     }
     constexpr PseudoScalar PlaneIdeal::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const PlaneIdeal&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const PlaneIdeal& a, const PointCenter& b) noexcept {
         return {
             .x = 0.0,
             .y = 0.0,
@@ -2086,7 +2086,7 @@ namespace pga3d {
     constexpr ProjectivePoint PlaneIdeal::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor sandwich(const BivectorBulk&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const BivectorBulk& a, const Motor& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2106,7 +2106,7 @@ namespace pga3d {
     }
     constexpr Motor BivectorBulk::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const BivectorBulk&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const BivectorBulk& a, const Plane& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2122,7 +2122,7 @@ namespace pga3d {
     }
     constexpr Plane BivectorBulk::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const BivectorBulk&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const BivectorBulk& a, const Bivector& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2140,7 +2140,7 @@ namespace pga3d {
     }
     constexpr Bivector BivectorBulk::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const BivectorBulk&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const BivectorBulk& a, const ProjectivePoint& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2156,7 +2156,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint BivectorBulk::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Rotor sandwich(const BivectorBulk&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Rotor sandwich(const BivectorBulk& a, const Rotor& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2172,7 +2172,7 @@ namespace pga3d {
     }
     constexpr Rotor BivectorBulk::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const BivectorBulk&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const BivectorBulk& a, const ProjectiveTranslator& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2188,7 +2188,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator BivectorBulk::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const BivectorBulk&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const BivectorBulk& a, const Translator& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2204,7 +2204,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator BivectorBulk::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const BivectorBulk&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const BivectorBulk& a, const Vector& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2219,7 +2219,7 @@ namespace pga3d {
     }
     constexpr Vector BivectorBulk::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const BivectorBulk&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const BivectorBulk& a, const Point& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2235,7 +2235,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint BivectorBulk::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal sandwich(const BivectorBulk&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr PlaneIdeal sandwich(const BivectorBulk& a, const PlaneIdeal& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2250,7 +2250,7 @@ namespace pga3d {
     }
     constexpr PlaneIdeal BivectorBulk::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk sandwich(const BivectorBulk&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr BivectorBulk sandwich(const BivectorBulk& a, const BivectorBulk& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2265,7 +2265,7 @@ namespace pga3d {
     }
     constexpr BivectorBulk BivectorBulk::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const BivectorBulk&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const BivectorBulk& a, const BivectorWeight& b) noexcept {
         const double xyMxy = a.xy * a.xy;
         const double xyMxz = a.xy * a.xz;
         const double xyMyz = a.xy * a.yz;
@@ -2280,14 +2280,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight BivectorBulk::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const BivectorBulk&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const BivectorBulk& a, const PseudoScalar& b) noexcept {
         return {
             .i = b.i * (a.xy * a.xy + a.xz * a.xz + a.yz * a.yz)
         };
     }
     constexpr PseudoScalar BivectorBulk::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const BivectorBulk&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const BivectorBulk& a, const PointCenter& b) noexcept {
         return {
             .x = 0.0,
             .y = 0.0,
@@ -2300,7 +2300,7 @@ namespace pga3d {
 
 
 
-    [[nodiscard]] constexpr Motor sandwich(const PointCenter&a, const Motor& b) noexcept {
+    [[nodiscard]] constexpr Motor sandwich(const PointCenter& a, const Motor& b) noexcept {
         return {
             .s = b.s,
             .wx = -b.wx,
@@ -2314,7 +2314,7 @@ namespace pga3d {
     }
     constexpr Motor PointCenter::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Plane sandwich(const PointCenter&a, const Plane& b) noexcept {
+    [[nodiscard]] constexpr Plane sandwich(const PointCenter& a, const Plane& b) noexcept {
         return {
             .x = b.x,
             .y = b.y,
@@ -2324,7 +2324,7 @@ namespace pga3d {
     }
     constexpr Plane PointCenter::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Bivector sandwich(const PointCenter&a, const Bivector& b) noexcept {
+    [[nodiscard]] constexpr Bivector sandwich(const PointCenter& a, const Bivector& b) noexcept {
         return {
             .wx = -b.wx,
             .wy = -b.wy,
@@ -2336,7 +2336,7 @@ namespace pga3d {
     }
     constexpr Bivector PointCenter::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint sandwich(const PointCenter&a, const ProjectivePoint& b) noexcept {
+    [[nodiscard]] constexpr ProjectivePoint sandwich(const PointCenter& a, const ProjectivePoint& b) noexcept {
         return {
             .x = -b.x,
             .y = -b.y,
@@ -2346,7 +2346,7 @@ namespace pga3d {
     }
     constexpr ProjectivePoint PointCenter::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Rotor sandwich(const PointCenter&a, const Rotor& b) noexcept {
+    [[nodiscard]] constexpr Rotor sandwich(const PointCenter& a, const Rotor& b) noexcept {
         return {
             .s = b.s,
             .xy = b.xy,
@@ -2356,7 +2356,7 @@ namespace pga3d {
     }
     constexpr Rotor PointCenter::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const PointCenter&a, const ProjectiveTranslator& b) noexcept {
+    [[nodiscard]] constexpr ProjectiveTranslator sandwich(const PointCenter& a, const ProjectiveTranslator& b) noexcept {
         return {
             .s = b.s,
             .wx = -b.wx,
@@ -2366,7 +2366,7 @@ namespace pga3d {
     }
     constexpr ProjectiveTranslator PointCenter::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Translator sandwich(const PointCenter&a, const Translator& b) noexcept {
+    [[nodiscard]] constexpr Translator sandwich(const PointCenter& a, const Translator& b) noexcept {
         return {
             .wx = -b.wx,
             .wy = -b.wy,
@@ -2375,7 +2375,7 @@ namespace pga3d {
     }
     constexpr Translator PointCenter::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Vector sandwich(const PointCenter&a, const Vector& b) noexcept {
+    [[nodiscard]] constexpr Vector sandwich(const PointCenter& a, const Vector& b) noexcept {
         return {
             .x = -b.x,
             .y = -b.y,
@@ -2384,7 +2384,7 @@ namespace pga3d {
     }
     constexpr Vector PointCenter::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr Point sandwich(const PointCenter&a, const Point& b) noexcept {
+    [[nodiscard]] constexpr Point sandwich(const PointCenter& a, const Point& b) noexcept {
         return {
             .x = -b.x,
             .y = -b.y,
@@ -2393,7 +2393,7 @@ namespace pga3d {
     }
     constexpr Point PointCenter::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal sandwich(const PointCenter&a, const PlaneIdeal& b) noexcept {
+    [[nodiscard]] constexpr PlaneIdeal sandwich(const PointCenter& a, const PlaneIdeal& b) noexcept {
         return {
             .x = b.x,
             .y = b.y,
@@ -2402,7 +2402,7 @@ namespace pga3d {
     }
     constexpr PlaneIdeal PointCenter::sandwich(const PlaneIdeal& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk sandwich(const PointCenter&a, const BivectorBulk& b) noexcept {
+    [[nodiscard]] constexpr BivectorBulk sandwich(const PointCenter& a, const BivectorBulk& b) noexcept {
         return {
             .xy = b.xy,
             .xz = b.xz,
@@ -2411,7 +2411,7 @@ namespace pga3d {
     }
     constexpr BivectorBulk PointCenter::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight sandwich(const PointCenter&a, const BivectorWeight& b) noexcept {
+    [[nodiscard]] constexpr BivectorWeight sandwich(const PointCenter& a, const BivectorWeight& b) noexcept {
         return {
             .wx = -b.wx,
             .wy = -b.wy,
@@ -2420,14 +2420,14 @@ namespace pga3d {
     }
     constexpr BivectorWeight PointCenter::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar sandwich(const PointCenter&a, const PseudoScalar& b) noexcept {
+    [[nodiscard]] constexpr PseudoScalar sandwich(const PointCenter& a, const PseudoScalar& b) noexcept {
         return {
             .i = -b.i
         };
     }
     constexpr PseudoScalar PointCenter::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
-    [[nodiscard]] constexpr PointCenter sandwich(const PointCenter&a, const PointCenter& b) noexcept {
+    [[nodiscard]] constexpr PointCenter sandwich(const PointCenter& a, const PointCenter& b) noexcept {
         return {};
     }
     constexpr PointCenter PointCenter::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }

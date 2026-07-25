@@ -77,6 +77,7 @@ final case class Pga3dVector(x: Double = 0.0,
       z = v * z,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga3dVector =
     this * (1.0 / v)

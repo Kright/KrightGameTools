@@ -104,6 +104,7 @@ final case class Pga3dProjectivePoint(x: Double = 0.0,
       w = v * w,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga3dProjectivePoint =
     this * (1.0 / v)
@@ -236,6 +237,7 @@ final case class Pga3dProjectivePoint(x: Double = 0.0,
       z = z,
     )
 
+  /** divides by the weight; an ideal point (weight == 0) yields infinite or NaN coordinates */
   def toPoint: Pga3dPoint =
     val mult = (1.0 / w)
     Pga3dPoint(

@@ -53,10 +53,10 @@ class ProjectionOpsGenerator extends CppCodeGenerator:
 
       for (pointClass <- pointClasses) {
         for (planeClass <- Seq(CppSubclasses.plane, CppSubclasses.planeIdeal)) {
-          code(s"[[nodiscard]] constexpr ${CppSubclasses.projectivePoint.name} ${pointClass.name}::projectOntoPlane(const ${planeClass.name}& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); };")
+          code(s"[[nodiscard]] constexpr ${CppSubclasses.projectivePoint.name} ${pointClass.name}::projectOntoPlane(const ${planeClass.name}& plane) const noexcept { return plane.dot(*this).geometric(plane).toProjectivePointUnsafe(); }")
         }
 
-        code(s"[[nodiscard]] constexpr ${CppSubclasses.projectivePoint.name} ${pointClass.name}::projectOntoLine(const ${CppSubclasses.bivector.name}& line) const noexcept { return -line.dot(*this).geometric(line).toProjectivePointUnsafe(); };")
+        code(s"[[nodiscard]] constexpr ${CppSubclasses.projectivePoint.name} ${pointClass.name}::projectOntoLine(const ${CppSubclasses.bivector.name}& line) const noexcept { return -line.dot(*this).geometric(line).toProjectivePointUnsafe(); }")
       }
     }
 

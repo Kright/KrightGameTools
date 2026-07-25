@@ -12,9 +12,6 @@ trait ScalaCodeGenClass:
   /** the class-name prefix stripped by typeNameWithoutPrefix, e.g. "Pga3d" or "Pga2d" */
   def typeNamePrefix: String
 
-  /** FQCN embedded in the default generateClassDoc() comment */
-  def generatedComment: String
-
   /** package of the generated Scala file */
   def targetPackage: String
 
@@ -28,8 +25,7 @@ trait ScalaCodeGenClass:
 
   def generateImports(): String = ""
 
-  def generateClassDoc(): String =
-    s"/** this code is generated, see $generatedComment */"
+  def generateClassDoc(): String
 
   def generateCode(): String
 

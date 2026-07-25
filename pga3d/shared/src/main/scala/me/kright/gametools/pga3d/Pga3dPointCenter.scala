@@ -63,23 +63,17 @@ object Pga3dPointCenter:
   def antiReverse: Pga3dPointCenter.type =
     this
 
-  def bulkNormSquare: Double =
-    1.0
+  def bulkNormSquare: Double = 1.0
 
-  def bulkNorm: Double =
-    Math.sqrt(bulkNormSquare)
+  def bulkNorm: Double = 1.0
 
-  def normalizedByBulk =
-    this / bulkNorm
+  def normalizedByBulk: Pga3dPointCenter.type = this
 
-  def normSquare: Double =
-    1.0
+  def normSquare: Double = 1.0
 
-  def norm: Double =
-    Math.sqrt(normSquare)
+  def norm: Double = 1.0
 
-  def normalizedByNorm =
-    this / norm
+  def normalizedByNorm: Pga3dPointCenter.type = this
 
   @targetName("times")
   def *(v: Double): Pga3dProjectivePoint =
@@ -90,6 +84,7 @@ object Pga3dPointCenter:
       w = v,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga3dProjectivePoint =
     this * (1.0 / v)

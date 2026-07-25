@@ -95,6 +95,7 @@ final case class Pga3dPlane(x: Double = 0.0,
       w = v * w,
     )
 
+  /** multiplies by the reciprocal: one division instead of one per component, at the cost of one extra rounding (~0.5 ulp) */
   @targetName("div")
   def /(v: Double): Pga3dPlane =
     this * (1.0 / v)

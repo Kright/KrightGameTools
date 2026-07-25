@@ -2,7 +2,7 @@ package me.kright.gametools.pga.codegen.scalagen.pga3d
 
 import Pga3dScalaAlgebra.pgaClasses
 import me.kright.gametools.pga.codegen.common.{FileContent, GeneratedFileSystem, RealFileSystem}
-import me.kright.gametools.pga.codegen.scalagen.common.OperationsReference
+import me.kright.gametools.pga.codegen.scalagen.common.{OperationsReference, ScalaMatrixCodeGen}
 
 import java.nio.file.{Files, Path}
 
@@ -14,13 +14,13 @@ def runScalaCodeGen(): Unit = {
 
 def runScala3dCodeGen(fs: GeneratedFileSystem): Unit = {
   val packageDir = Path.of("pga3d/shared/src/main/scala/me/kright/gametools/pga3d")
-  assert(Files.exists(packageDir))
+  require(Files.exists(packageDir), s"run from the repository root; not found: $packageDir")
 
   for (cls <- pgaClasses if cls.shouldBeGenerated) {
     cls.writeToFile(packageDir, fs)
   }
 
-  ScalaMatrixCodeGen().writeToFile(packageDir, fs)
+  ScalaMatrixCodeGen(Pga3dScalaAlgebra.bivector)(using Pga3dScalaAlgebra).writeToFile(packageDir, fs)
 
   OperationsReference.writeToFile(Path.of("pga3d/operations.md"), fs)(using Pga3dScalaAlgebra)
 }
