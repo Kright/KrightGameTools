@@ -3,7 +3,7 @@ package me.kright.gametools.pga3d
 import me.kright.gametools.matrix.Matrix
 import me.kright.gametools.flatarray.FlatDoubleSerializer
 
-/** this code is generated, see me.kright.gametools.pga.codegen.scala.pga3d.ScalaMatrixCodeGen */
+/** this code is generated, see me.kright.gametools.pga.codegen.scalagen.pga3d.ScalaMatrixCodeGen */
 object Pga3dMatrix:
   private val bivectors = Seq[Pga3dBivector](
     Pga3dBivector(1, 0, 0, 0, 0, 0),

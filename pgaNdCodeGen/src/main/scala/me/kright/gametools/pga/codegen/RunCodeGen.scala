@@ -1,8 +1,8 @@
 package me.kright.gametools.pga.codegen
 
 import me.kright.gametools.pga.codegen.common.{CheckFileSystem, RealFileSystem}
-import me.kright.gametools.pga.codegen.scala.pga3d.runScala3dCodeGen
-import me.kright.gametools.pga.codegen.scala.pga2d.runScala2dCodeGen
+import me.kright.gametools.pga.codegen.scalagen.pga3d.runScala3dCodeGen
+import me.kright.gametools.pga.codegen.scalagen.pga2d.runScala2dCodeGen
 import me.kright.gametools.pga.codegen.cpp3d.runCppCodeGen
 
 @main
