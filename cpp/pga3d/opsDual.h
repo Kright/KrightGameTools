@@ -66,7 +66,7 @@ namespace pga3d {
     }; }
     constexpr Plane ProjectivePoint::dual() const noexcept { return pga3d::dual(*this); }
 
-    constexpr Motor dual(const Quaternion& a) noexcept { return {
+    constexpr Motor dual(const Rotor& a) noexcept { return {
         .s = 0.0,
         .wx = a.yz,
         .wy = -a.xz,
@@ -76,7 +76,7 @@ namespace pga3d {
         .yz = 0.0,
         .i = a.s
     }; }
-    constexpr Motor Quaternion::dual() const noexcept { return pga3d::dual(*this); }
+    constexpr Motor Rotor::dual() const noexcept { return pga3d::dual(*this); }
 
     constexpr Motor dual(const ProjectiveTranslator& a) noexcept { return {
         .s = 0.0,

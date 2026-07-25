@@ -25,7 +25,7 @@ add_executable(cpp
         pga3d/PointCenter.h
         pga3d/ProjectivePoint.h
         pga3d/PseudoScalar.h
-        pga3d/Quaternion.h
+        pga3d/Rotor.h
         pga3d/Translator.h
         pga3d/types.h
         pga3d/typesForward.h

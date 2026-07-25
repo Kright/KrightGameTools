@@ -4,7 +4,7 @@ I use C++ 20 because of Unreal Engine 5 requirements.
 Library is header-only, no external dependencies.
 License is MIT.
 
-* [**pga3d:**](pga3d) same as pga3d for Scala for geometric algebra. It contains generated code for multivector and its subclasses (planes, lines, points, quaternions, etc.).
+* [**pga3d:**](pga3d) same as pga3d for Scala for geometric algebra. It contains generated code for multivector and its subclasses (planes, lines, points, rotors, etc.).
 * [**pga3dphysics:**](pga3dphysics) the code on top of pga3d for physics (inertia, force, acceleration, friction, etc.)
 * **fused** all the code, fused into one header (pga3d for math only and pga3dphysics with both physics and math)
 * [**test:**](test) tests with doctest

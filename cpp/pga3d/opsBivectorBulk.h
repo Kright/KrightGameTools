@@ -11,7 +11,7 @@
 
 namespace pga3d {
 
-    [[nodiscard]] inline Quaternion BivectorBulk::exp() const noexcept {
+    [[nodiscard]] inline Rotor BivectorBulk::exp() const noexcept {
         const double len = bulkNorm();
         const double cos = std::cos(len);
 
@@ -19,7 +19,7 @@ namespace pga3d {
             ? (std::sin(len) / len)
             : (1.0 - (len * len) / 6.0);
 
-        return Quaternion{
+        return Rotor{
             .s = cos,
             .xy = sinDivLen * xy,
             .xz = sinDivLen * xz,

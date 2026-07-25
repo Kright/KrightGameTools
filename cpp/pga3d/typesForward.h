@@ -11,7 +11,7 @@ namespace pga3d {
     struct Plane;
     struct Bivector;
     struct ProjectivePoint;
-    struct Quaternion;
+    struct Rotor;
     struct ProjectiveTranslator;
     struct Translator;
     struct Vector;
@@ -21,6 +21,6 @@ namespace pga3d {
     struct BivectorWeight;
     struct PseudoScalar;
     struct PointCenter;
-    struct QuaternionWithTranslator;
-    struct TranslatorWithQuaternion;
+    struct RotorWithTranslator;
+    struct TranslatorWithRotor;
 }

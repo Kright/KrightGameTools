@@ -6,7 +6,7 @@ import me.kright.gametools.pga.codegen.scalagen.pga3d.Pga3dScalaAlgebra
 import me.kright.gametools.pga.codegen.scalagen.pga3d.Pga3dScalaAlgebra.{motor, rotor, vector}
 import me.kright.gametools.symbolic.Sym
 
-object DefMotorAndRotorAxices:
+object DefMotorAndRotorAxes:
   def apply()(using pga3: PGA3): MultivectorUnaryOp = MultivectorUnaryOp { (cls, s) =>
     GeneratedCode { code =>
 
@@ -15,13 +15,13 @@ object DefMotorAndRotorAxices:
         val vec = vector.self
         val axes = vec.values.keys.toSeq.sortBy(_.bits).reverse.map(blade => vec.filter((b, _) => b == blade))
 
-        for (axe <- axes) {
-          val axeOne = axe.mapValues(_ => Sym(1.0))
+        for (axis <- axes) {
+          val axisOne = axis.mapValues(_ => Sym(1.0))
 
-          val isMinus = axe.values.values.head.toString.contains("-")
-          val methodName = s"axis${axe.values.values.head.toString.replace("-", "").toUpperCase}"
+          val isMinus = axis.values.values.head.toString.contains("-")
+          val methodName = s"axis${axis.values.values.head.toString.replace("-", "").toUpperCase}"
 
-          val result = if (isMinus) self.sandwich(axeOne) * Sym(-1.0) else self.sandwich(axeOne)
+          val result = if (isMinus) self.sandwich(axisOne) * Sym(-1.0) else self.sandwich(axisOne)
           val resultCls = Pga3dScalaAlgebra.findMatchingClass(result)
 
           code(

@@ -91,7 +91,7 @@ namespace pga3d {
     constexpr ProjectivePoint Motor::wedge(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr ProjectivePoint Motor::meet(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Motor wedge(const Motor& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor wedge(const Motor& a,const Rotor& b) noexcept { return {
         .s = a.s * b.s,
         .wx = a.wx * b.s,
         .wy = a.wy * b.s,
@@ -101,9 +101,9 @@ namespace pga3d {
         .yz = (a.s * b.yz + a.yz * b.s),
         .i = (a.i * b.s + a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
     }; }
-    [[nodiscard]] constexpr Motor meet(const Motor& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr Motor Motor::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Motor Motor::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Motor meet(const Motor& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr Motor Motor::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Motor Motor::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr Motor wedge(const Motor& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.s * b.s,
@@ -271,7 +271,7 @@ namespace pga3d {
     constexpr PseudoScalar Plane::wedge(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr PseudoScalar Plane::meet(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Multivector wedge(const Plane& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector wedge(const Plane& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = a.w * b.s,
         .x = a.x * b.s,
@@ -289,9 +289,9 @@ namespace pga3d {
         .xyz = (a.x * b.yz + a.z * b.xy - a.y * b.xz),
         .i = 0.0
     }; }
-    [[nodiscard]] constexpr Multivector meet(const Plane& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr Multivector Plane::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Multivector Plane::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Multivector meet(const Plane& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr Multivector Plane::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Multivector Plane::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr Multivector wedge(const Plane& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -421,7 +421,7 @@ namespace pga3d {
     constexpr PseudoScalar Bivector::wedge(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr PseudoScalar Bivector::meet(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Motor wedge(const Bivector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor wedge(const Bivector& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .wx = a.wx * b.s,
         .wy = a.wy * b.s,
@@ -431,9 +431,9 @@ namespace pga3d {
         .yz = a.yz * b.s,
         .i = (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
     }; }
-    [[nodiscard]] constexpr Motor meet(const Bivector& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr Motor Bivector::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Motor Bivector::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Motor meet(const Bivector& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr Motor Bivector::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Motor Bivector::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr Motor wedge(const Bivector& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -505,15 +505,15 @@ namespace pga3d {
     constexpr PseudoScalar ProjectivePoint::wedge(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr PseudoScalar ProjectivePoint::meet(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint wedge(const ProjectivePoint& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr ProjectivePoint wedge(const ProjectivePoint& a,const Rotor& b) noexcept { return {
         .x = a.x * b.s,
         .y = a.y * b.s,
         .z = a.z * b.s,
         .w = a.w * b.s
     }; }
-    [[nodiscard]] constexpr ProjectivePoint meet(const ProjectivePoint& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr ProjectivePoint ProjectivePoint::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr ProjectivePoint ProjectivePoint::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr ProjectivePoint meet(const ProjectivePoint& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr ProjectivePoint ProjectivePoint::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr ProjectivePoint ProjectivePoint::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint wedge(const ProjectivePoint& a,const ProjectiveTranslator& b) noexcept { return {
         .x = a.x * b.s,
@@ -543,7 +543,7 @@ namespace pga3d {
     constexpr PseudoScalar ProjectivePoint::meet(const PlaneIdeal& b) const noexcept { return pga3d::wedge(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor wedge(const Quaternion& a,const Motor& b) noexcept { return {
+    [[nodiscard]] constexpr Motor wedge(const Rotor& a,const Motor& b) noexcept { return {
         .s = a.s * b.s,
         .wx = a.s * b.wx,
         .wy = a.s * b.wy,
@@ -553,11 +553,11 @@ namespace pga3d {
         .yz = (a.s * b.yz + a.yz * b.s),
         .i = (a.s * b.i + a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
     }; }
-    [[nodiscard]] constexpr Motor meet(const Quaternion& a,const Motor& b) noexcept { return wedge(a, b); }
-    constexpr Motor Quaternion::wedge(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Motor Quaternion::meet(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Motor meet(const Rotor& a,const Motor& b) noexcept { return wedge(a, b); }
+    constexpr Motor Rotor::wedge(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Motor Rotor::meet(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Multivector wedge(const Quaternion& a,const Plane& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector wedge(const Rotor& a,const Plane& b) noexcept { return {
         .s = 0.0,
         .w = a.s * b.w,
         .x = a.s * b.x,
@@ -575,11 +575,11 @@ namespace pga3d {
         .xyz = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .i = 0.0
     }; }
-    [[nodiscard]] constexpr Multivector meet(const Quaternion& a,const Plane& b) noexcept { return wedge(a, b); }
-    constexpr Multivector Quaternion::wedge(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Multivector Quaternion::meet(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Multivector meet(const Rotor& a,const Plane& b) noexcept { return wedge(a, b); }
+    constexpr Multivector Rotor::wedge(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Multivector Rotor::meet(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Motor wedge(const Quaternion& a,const Bivector& b) noexcept { return {
+    [[nodiscard]] constexpr Motor wedge(const Rotor& a,const Bivector& b) noexcept { return {
         .s = 0.0,
         .wx = a.s * b.wx,
         .wy = a.s * b.wy,
@@ -589,31 +589,31 @@ namespace pga3d {
         .yz = a.s * b.yz,
         .i = (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
     }; }
-    [[nodiscard]] constexpr Motor meet(const Quaternion& a,const Bivector& b) noexcept { return wedge(a, b); }
-    constexpr Motor Quaternion::wedge(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Motor Quaternion::meet(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Motor meet(const Rotor& a,const Bivector& b) noexcept { return wedge(a, b); }
+    constexpr Motor Rotor::wedge(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Motor Rotor::meet(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint wedge(const Quaternion& a,const ProjectivePoint& b) noexcept { return {
+    [[nodiscard]] constexpr ProjectivePoint wedge(const Rotor& a,const ProjectivePoint& b) noexcept { return {
         .x = a.s * b.x,
         .y = a.s * b.y,
         .z = a.s * b.z,
         .w = a.s * b.w
     }; }
-    [[nodiscard]] constexpr ProjectivePoint meet(const Quaternion& a,const ProjectivePoint& b) noexcept { return wedge(a, b); }
-    constexpr ProjectivePoint Quaternion::wedge(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr ProjectivePoint Quaternion::meet(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr ProjectivePoint meet(const Rotor& a,const ProjectivePoint& b) noexcept { return wedge(a, b); }
+    constexpr ProjectivePoint Rotor::wedge(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr ProjectivePoint Rotor::meet(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion wedge(const Quaternion& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor wedge(const Rotor& a,const Rotor& b) noexcept { return {
         .s = a.s * b.s,
         .xy = (a.s * b.xy + a.xy * b.s),
         .xz = (a.s * b.xz + a.xz * b.s),
         .yz = (a.s * b.yz + a.yz * b.s)
     }; }
-    [[nodiscard]] constexpr Quaternion meet(const Quaternion& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr Quaternion Quaternion::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Quaternion Quaternion::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Rotor meet(const Rotor& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr Rotor Rotor::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Rotor Rotor::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Motor wedge(const Quaternion& a,const ProjectiveTranslator& b) noexcept { return {
+    [[nodiscard]] constexpr Motor wedge(const Rotor& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.s * b.s,
         .wx = a.s * b.wx,
         .wy = a.s * b.wy,
@@ -623,11 +623,11 @@ namespace pga3d {
         .yz = a.yz * b.s,
         .i = (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
     }; }
-    [[nodiscard]] constexpr Motor meet(const Quaternion& a,const ProjectiveTranslator& b) noexcept { return wedge(a, b); }
-    constexpr Motor Quaternion::wedge(const ProjectiveTranslator& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Motor Quaternion::meet(const ProjectiveTranslator& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Motor meet(const Rotor& a,const ProjectiveTranslator& b) noexcept { return wedge(a, b); }
+    constexpr Motor Rotor::wedge(const ProjectiveTranslator& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Motor Rotor::meet(const ProjectiveTranslator& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Motor wedge(const Quaternion& a,const Translator& b) noexcept { return {
+    [[nodiscard]] constexpr Motor wedge(const Rotor& a,const Translator& b) noexcept { return {
         .s = a.s,
         .wx = a.s * b.wx,
         .wy = a.s * b.wy,
@@ -637,30 +637,30 @@ namespace pga3d {
         .yz = a.yz,
         .i = (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
     }; }
-    [[nodiscard]] constexpr Motor meet(const Quaternion& a,const Translator& b) noexcept { return wedge(a, b); }
-    constexpr Motor Quaternion::wedge(const Translator& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Motor Quaternion::meet(const Translator& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Motor meet(const Rotor& a,const Translator& b) noexcept { return wedge(a, b); }
+    constexpr Motor Rotor::wedge(const Translator& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Motor Rotor::meet(const Translator& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Vector wedge(const Quaternion& a,const Vector& b) noexcept { return {
+    [[nodiscard]] constexpr Vector wedge(const Rotor& a,const Vector& b) noexcept { return {
         .x = a.s * b.x,
         .y = a.s * b.y,
         .z = a.s * b.z
     }; }
-    [[nodiscard]] constexpr Vector meet(const Quaternion& a,const Vector& b) noexcept { return wedge(a, b); }
-    constexpr Vector Quaternion::wedge(const Vector& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Vector Quaternion::meet(const Vector& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Vector meet(const Rotor& a,const Vector& b) noexcept { return wedge(a, b); }
+    constexpr Vector Rotor::wedge(const Vector& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Vector Rotor::meet(const Vector& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint wedge(const Quaternion& a,const Point& b) noexcept { return {
+    [[nodiscard]] constexpr ProjectivePoint wedge(const Rotor& a,const Point& b) noexcept { return {
         .x = a.s * b.x,
         .y = a.s * b.y,
         .z = a.s * b.z,
         .w = a.s
     }; }
-    [[nodiscard]] constexpr ProjectivePoint meet(const Quaternion& a,const Point& b) noexcept { return wedge(a, b); }
-    constexpr ProjectivePoint Quaternion::wedge(const Point& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr ProjectivePoint Quaternion::meet(const Point& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr ProjectivePoint meet(const Rotor& a,const Point& b) noexcept { return wedge(a, b); }
+    constexpr ProjectivePoint Rotor::wedge(const Point& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr ProjectivePoint Rotor::meet(const Point& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Multivector wedge(const Quaternion& a,const PlaneIdeal& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector wedge(const Rotor& a,const PlaneIdeal& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = a.s * b.x,
@@ -678,20 +678,20 @@ namespace pga3d {
         .xyz = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .i = 0.0
     }; }
-    [[nodiscard]] constexpr Multivector meet(const Quaternion& a,const PlaneIdeal& b) noexcept { return wedge(a, b); }
-    constexpr Multivector Quaternion::wedge(const PlaneIdeal& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Multivector Quaternion::meet(const PlaneIdeal& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Multivector meet(const Rotor& a,const PlaneIdeal& b) noexcept { return wedge(a, b); }
+    constexpr Multivector Rotor::wedge(const PlaneIdeal& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Multivector Rotor::meet(const PlaneIdeal& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk wedge(const Quaternion& a,const BivectorBulk& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk wedge(const Rotor& a,const BivectorBulk& b) noexcept { return {
         .xy = a.s * b.xy,
         .xz = a.s * b.xz,
         .yz = a.s * b.yz
     }; }
-    [[nodiscard]] constexpr BivectorBulk meet(const Quaternion& a,const BivectorBulk& b) noexcept { return wedge(a, b); }
-    constexpr BivectorBulk Quaternion::wedge(const BivectorBulk& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr BivectorBulk Quaternion::meet(const BivectorBulk& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr BivectorBulk meet(const Rotor& a,const BivectorBulk& b) noexcept { return wedge(a, b); }
+    constexpr BivectorBulk Rotor::wedge(const BivectorBulk& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr BivectorBulk Rotor::meet(const BivectorBulk& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Motor wedge(const Quaternion& a,const BivectorWeight& b) noexcept { return {
+    [[nodiscard]] constexpr Motor wedge(const Rotor& a,const BivectorWeight& b) noexcept { return {
         .s = 0.0,
         .wx = a.s * b.wx,
         .wy = a.s * b.wy,
@@ -701,26 +701,26 @@ namespace pga3d {
         .yz = 0.0,
         .i = (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
     }; }
-    [[nodiscard]] constexpr Motor meet(const Quaternion& a,const BivectorWeight& b) noexcept { return wedge(a, b); }
-    constexpr Motor Quaternion::wedge(const BivectorWeight& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Motor Quaternion::meet(const BivectorWeight& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Motor meet(const Rotor& a,const BivectorWeight& b) noexcept { return wedge(a, b); }
+    constexpr Motor Rotor::wedge(const BivectorWeight& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Motor Rotor::meet(const BivectorWeight& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar wedge(const Quaternion& a,const PseudoScalar& b) noexcept { return {
+    [[nodiscard]] constexpr PseudoScalar wedge(const Rotor& a,const PseudoScalar& b) noexcept { return {
         .i = a.s * b.i
     }; }
-    [[nodiscard]] constexpr PseudoScalar meet(const Quaternion& a,const PseudoScalar& b) noexcept { return wedge(a, b); }
-    constexpr PseudoScalar Quaternion::wedge(const PseudoScalar& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr PseudoScalar Quaternion::meet(const PseudoScalar& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr PseudoScalar meet(const Rotor& a,const PseudoScalar& b) noexcept { return wedge(a, b); }
+    constexpr PseudoScalar Rotor::wedge(const PseudoScalar& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr PseudoScalar Rotor::meet(const PseudoScalar& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint wedge(const Quaternion& a,const PointCenter& b) noexcept { return {
+    [[nodiscard]] constexpr ProjectivePoint wedge(const Rotor& a,const PointCenter& b) noexcept { return {
         .x = 0.0,
         .y = 0.0,
         .z = 0.0,
         .w = a.s
     }; }
-    [[nodiscard]] constexpr ProjectivePoint meet(const Quaternion& a,const PointCenter& b) noexcept { return wedge(a, b); }
-    constexpr ProjectivePoint Quaternion::wedge(const PointCenter& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr ProjectivePoint Quaternion::meet(const PointCenter& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr ProjectivePoint meet(const Rotor& a,const PointCenter& b) noexcept { return wedge(a, b); }
+    constexpr ProjectivePoint Rotor::wedge(const PointCenter& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr ProjectivePoint Rotor::meet(const PointCenter& b) const noexcept { return pga3d::wedge(*this, b); }
 
 
     [[nodiscard]] constexpr Motor wedge(const ProjectiveTranslator& a,const Motor& b) noexcept { return {
@@ -783,7 +783,7 @@ namespace pga3d {
     constexpr ProjectivePoint ProjectiveTranslator::wedge(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr ProjectivePoint ProjectiveTranslator::meet(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Motor wedge(const ProjectiveTranslator& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor wedge(const ProjectiveTranslator& a,const Rotor& b) noexcept { return {
         .s = a.s * b.s,
         .wx = a.wx * b.s,
         .wy = a.wy * b.s,
@@ -793,9 +793,9 @@ namespace pga3d {
         .yz = a.s * b.yz,
         .i = (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
     }; }
-    [[nodiscard]] constexpr Motor meet(const ProjectiveTranslator& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr Motor ProjectiveTranslator::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Motor ProjectiveTranslator::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Motor meet(const ProjectiveTranslator& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr Motor ProjectiveTranslator::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Motor ProjectiveTranslator::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr ProjectiveTranslator wedge(const ProjectiveTranslator& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.s * b.s,
@@ -959,7 +959,7 @@ namespace pga3d {
     constexpr ProjectivePoint Translator::wedge(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr ProjectivePoint Translator::meet(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Motor wedge(const Translator& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor wedge(const Translator& a,const Rotor& b) noexcept { return {
         .s = b.s,
         .wx = a.wx * b.s,
         .wy = a.wy * b.s,
@@ -969,9 +969,9 @@ namespace pga3d {
         .yz = b.yz,
         .i = (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
     }; }
-    [[nodiscard]] constexpr Motor meet(const Translator& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr Motor Translator::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Motor Translator::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Motor meet(const Translator& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr Motor Translator::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Motor Translator::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr ProjectiveTranslator wedge(const Translator& a,const ProjectiveTranslator& b) noexcept { return {
         .s = b.s,
@@ -1084,14 +1084,14 @@ namespace pga3d {
     constexpr PseudoScalar Vector::wedge(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr PseudoScalar Vector::meet(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Vector wedge(const Vector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Vector wedge(const Vector& a,const Rotor& b) noexcept { return {
         .x = a.x * b.s,
         .y = a.y * b.s,
         .z = a.z * b.s
     }; }
-    [[nodiscard]] constexpr Vector meet(const Vector& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr Vector Vector::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Vector Vector::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Vector meet(const Vector& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr Vector Vector::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Vector Vector::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr Vector wedge(const Vector& a,const ProjectiveTranslator& b) noexcept { return {
         .x = a.x * b.s,
@@ -1136,15 +1136,15 @@ namespace pga3d {
     constexpr PseudoScalar Point::wedge(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr PseudoScalar Point::meet(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint wedge(const Point& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr ProjectivePoint wedge(const Point& a,const Rotor& b) noexcept { return {
         .x = a.x * b.s,
         .y = a.y * b.s,
         .z = a.z * b.s,
         .w = b.s
     }; }
-    [[nodiscard]] constexpr ProjectivePoint meet(const Point& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr ProjectivePoint Point::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr ProjectivePoint Point::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr ProjectivePoint meet(const Point& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr ProjectivePoint Point::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr ProjectivePoint Point::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint wedge(const Point& a,const ProjectiveTranslator& b) noexcept { return {
         .x = a.x * b.s,
@@ -1224,7 +1224,7 @@ namespace pga3d {
     constexpr PseudoScalar PlaneIdeal::wedge(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr PseudoScalar PlaneIdeal::meet(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Multivector wedge(const PlaneIdeal& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector wedge(const PlaneIdeal& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = a.x * b.s,
@@ -1242,9 +1242,9 @@ namespace pga3d {
         .xyz = (a.x * b.yz + a.z * b.xy - a.y * b.xz),
         .i = 0.0
     }; }
-    [[nodiscard]] constexpr Multivector meet(const PlaneIdeal& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr Multivector PlaneIdeal::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Multivector PlaneIdeal::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Multivector meet(const PlaneIdeal& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr Multivector PlaneIdeal::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Multivector PlaneIdeal::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr Multivector wedge(const PlaneIdeal& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -1364,14 +1364,14 @@ namespace pga3d {
     constexpr PseudoScalar BivectorBulk::wedge(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr PseudoScalar BivectorBulk::meet(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk wedge(const BivectorBulk& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk wedge(const BivectorBulk& a,const Rotor& b) noexcept { return {
         .xy = a.xy * b.s,
         .xz = a.xz * b.s,
         .yz = a.yz * b.s
     }; }
-    [[nodiscard]] constexpr BivectorBulk meet(const BivectorBulk& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr BivectorBulk BivectorBulk::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr BivectorBulk BivectorBulk::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr BivectorBulk meet(const BivectorBulk& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr BivectorBulk BivectorBulk::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr BivectorBulk BivectorBulk::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr Motor wedge(const BivectorBulk& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -1449,7 +1449,7 @@ namespace pga3d {
     constexpr PseudoScalar BivectorWeight::wedge(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr PseudoScalar BivectorWeight::meet(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr Motor wedge(const BivectorWeight& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor wedge(const BivectorWeight& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .wx = a.wx * b.s,
         .wy = a.wy * b.s,
@@ -1459,9 +1459,9 @@ namespace pga3d {
         .yz = 0.0,
         .i = (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
     }; }
-    [[nodiscard]] constexpr Motor meet(const BivectorWeight& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr Motor BivectorWeight::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr Motor BivectorWeight::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr Motor meet(const BivectorWeight& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr Motor BivectorWeight::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr Motor BivectorWeight::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr BivectorWeight wedge(const BivectorWeight& a,const ProjectiveTranslator& b) noexcept { return {
         .wx = a.wx * b.s,
@@ -1505,12 +1505,12 @@ namespace pga3d {
     constexpr PseudoScalar PseudoScalar::wedge(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr PseudoScalar PseudoScalar::meet(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr PseudoScalar wedge(const PseudoScalar& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr PseudoScalar wedge(const PseudoScalar& a,const Rotor& b) noexcept { return {
         .i = a.i * b.s
     }; }
-    [[nodiscard]] constexpr PseudoScalar meet(const PseudoScalar& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr PseudoScalar PseudoScalar::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr PseudoScalar PseudoScalar::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr PseudoScalar meet(const PseudoScalar& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr PseudoScalar PseudoScalar::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr PseudoScalar PseudoScalar::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr PseudoScalar wedge(const PseudoScalar& a,const ProjectiveTranslator& b) noexcept { return {
         .i = a.i * b.s
@@ -1544,15 +1544,15 @@ namespace pga3d {
     constexpr PseudoScalar PointCenter::wedge(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
     constexpr PseudoScalar PointCenter::meet(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint wedge(const PointCenter& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr ProjectivePoint wedge(const PointCenter& a,const Rotor& b) noexcept { return {
         .x = 0.0,
         .y = 0.0,
         .z = 0.0,
         .w = b.s
     }; }
-    [[nodiscard]] constexpr ProjectivePoint meet(const PointCenter& a,const Quaternion& b) noexcept { return wedge(a, b); }
-    constexpr ProjectivePoint PointCenter::wedge(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
-    constexpr ProjectivePoint PointCenter::meet(const Quaternion& b) const noexcept { return pga3d::wedge(*this, b); }
+    [[nodiscard]] constexpr ProjectivePoint meet(const PointCenter& a,const Rotor& b) noexcept { return wedge(a, b); }
+    constexpr ProjectivePoint PointCenter::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
+    constexpr ProjectivePoint PointCenter::meet(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint wedge(const PointCenter& a,const ProjectiveTranslator& b) noexcept { return {
         .x = 0.0,

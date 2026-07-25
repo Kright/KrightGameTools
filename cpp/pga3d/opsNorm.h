@@ -70,13 +70,13 @@ namespace pga3d {
     inline double ProjectivePoint::weightNorm() const noexcept { return std::sqrt(weightNormSquare()); }
     inline ProjectivePoint ProjectivePoint::normalizedByWeight() const noexcept { return *this / weightNorm(); }
 
-    constexpr double Quaternion::normSquare() const noexcept { return (s * s + xy * xy + xz * xz + yz * yz); }
-    inline double Quaternion::norm() const noexcept { return std::sqrt(normSquare()); }
-    inline Quaternion Quaternion::normalizedByNorm() const noexcept { return *this / norm(); }
+    constexpr double Rotor::normSquare() const noexcept { return (s * s + xy * xy + xz * xz + yz * yz); }
+    inline double Rotor::norm() const noexcept { return std::sqrt(normSquare()); }
+    inline Rotor Rotor::normalizedByNorm() const noexcept { return *this / norm(); }
 
-    constexpr double Quaternion::bulkNormSquare() const noexcept { return (s * s + xy * xy + xz * xz + yz * yz); }
-    inline double Quaternion::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }
-    inline Quaternion Quaternion::normalizedByBulk() const noexcept { return *this / bulkNorm(); }
+    constexpr double Rotor::bulkNormSquare() const noexcept { return (s * s + xy * xy + xz * xz + yz * yz); }
+    inline double Rotor::bulkNorm() const noexcept { return std::sqrt(bulkNormSquare()); }
+    inline Rotor Rotor::normalizedByBulk() const noexcept { return *this / bulkNorm(); }
 
     constexpr double ProjectiveTranslator::normSquare() const noexcept { return (s * s + wx * wx + wy * wy + wz * wz); }
     inline double ProjectiveTranslator::norm() const noexcept { return std::sqrt(normSquare()); }

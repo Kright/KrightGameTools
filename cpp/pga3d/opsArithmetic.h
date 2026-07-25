@@ -184,20 +184,20 @@ namespace pga3d {
     }; }
     constexpr ProjectivePoint& operator-=(ProjectivePoint& a, const Vector& b) noexcept { a = a - b; return a; }
 
-    [[nodiscard]] constexpr Quaternion operator+(const Quaternion& a, const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor operator+(const Rotor& a, const Rotor& b) noexcept { return {
         .s = (a.s + b.s),
         .xy = (a.xy + b.xy),
         .xz = (a.xz + b.xz),
         .yz = (a.yz + b.yz)
     }; }
-    constexpr Quaternion& operator+=(Quaternion& a, const Quaternion& b) noexcept { a = a + b; return a; }
-    [[nodiscard]] constexpr Quaternion operator-(const Quaternion& a, const Quaternion& b) noexcept { return {
+    constexpr Rotor& operator+=(Rotor& a, const Rotor& b) noexcept { a = a + b; return a; }
+    [[nodiscard]] constexpr Rotor operator-(const Rotor& a, const Rotor& b) noexcept { return {
         .s = (a.s - b.s),
         .xy = (a.xy - b.xy),
         .xz = (a.xz - b.xz),
         .yz = (a.yz - b.yz)
     }; }
-    constexpr Quaternion& operator-=(Quaternion& a, const Quaternion& b) noexcept { a = a - b; return a; }
+    constexpr Rotor& operator-=(Rotor& a, const Rotor& b) noexcept { a = a - b; return a; }
 
     [[nodiscard]] constexpr ProjectiveTranslator operator+(const ProjectiveTranslator& a, const ProjectiveTranslator& b) noexcept { return {
         .s = (a.s + b.s),
@@ -423,7 +423,7 @@ namespace pga3d {
     [[nodiscard]] constexpr Plane operator-(const Plane& a) noexcept { return {.x = -a.x, .y = -a.y, .z = -a.z, .w = -a.w}; }
     [[nodiscard]] constexpr Bivector operator-(const Bivector& a) noexcept { return {.wx = -a.wx, .wy = -a.wy, .wz = -a.wz, .xy = -a.xy, .xz = -a.xz, .yz = -a.yz}; }
     [[nodiscard]] constexpr ProjectivePoint operator-(const ProjectivePoint& a) noexcept { return {.x = -a.x, .y = -a.y, .z = -a.z, .w = -a.w}; }
-    [[nodiscard]] constexpr Quaternion operator-(const Quaternion& a) noexcept { return {.s = -a.s, .xy = -a.xy, .xz = -a.xz, .yz = -a.yz}; }
+    [[nodiscard]] constexpr Rotor operator-(const Rotor& a) noexcept { return {.s = -a.s, .xy = -a.xy, .xz = -a.xz, .yz = -a.yz}; }
     [[nodiscard]] constexpr ProjectiveTranslator operator-(const ProjectiveTranslator& a) noexcept { return {.s = -a.s, .wx = -a.wx, .wy = -a.wy, .wz = -a.wz}; }
     [[nodiscard]] constexpr ProjectiveTranslator operator-(const Translator& a) noexcept { return {.s = -1.0, .wx = -a.wx, .wy = -a.wy, .wz = -a.wz}; }
     [[nodiscard]] constexpr Vector operator-(const Vector& a) noexcept { return {.x = -a.x, .y = -a.y, .z = -a.z}; }
@@ -508,16 +508,16 @@ namespace pga3d {
     constexpr ProjectivePoint& operator*=(ProjectivePoint& a, double d) noexcept { a = a * d; return a; }
     constexpr ProjectivePoint& operator/=(ProjectivePoint& a, double d) noexcept { a = a / d; return a; }
 
-    [[nodiscard]] constexpr Quaternion operator*(const Quaternion& a, double d) noexcept { return {
+    [[nodiscard]] constexpr Rotor operator*(const Rotor& a, double d) noexcept { return {
         .s = a.s * d,
         .xy = a.xy * d,
         .xz = a.xz * d,
         .yz = a.yz * d
     }; }
-    [[nodiscard]] constexpr Quaternion operator*(double d, const Quaternion& a) noexcept { return a * d; }
-    [[nodiscard]] constexpr Quaternion operator/(const Quaternion& a, double d) noexcept { return a * (1.0 / d); }
-    constexpr Quaternion& operator*=(Quaternion& a, double d) noexcept { a = a * d; return a; }
-    constexpr Quaternion& operator/=(Quaternion& a, double d) noexcept { a = a / d; return a; }
+    [[nodiscard]] constexpr Rotor operator*(double d, const Rotor& a) noexcept { return a * d; }
+    [[nodiscard]] constexpr Rotor operator/(const Rotor& a, double d) noexcept { return a * (1.0 / d); }
+    constexpr Rotor& operator*=(Rotor& a, double d) noexcept { a = a * d; return a; }
+    constexpr Rotor& operator/=(Rotor& a, double d) noexcept { a = a / d; return a; }
 
     [[nodiscard]] constexpr ProjectiveTranslator operator*(const ProjectiveTranslator& a, double d) noexcept { return {
         .s = a.s * d,
@@ -654,7 +654,7 @@ namespace pga3d {
         .z = std::fma(other.z, mult, z),
         .w = std::fma(other.w, mult, w)
     }; }
-    inline Quaternion Quaternion::madd(const Quaternion& other, double mult) const noexcept { return {
+    inline Rotor Rotor::madd(const Rotor& other, double mult) const noexcept { return {
         .s = std::fma(other.s, mult, s),
         .xy = std::fma(other.xy, mult, xy),
         .xz = std::fma(other.xz, mult, xz),
@@ -701,7 +701,7 @@ namespace pga3d {
     [[nodiscard]] constexpr bool operator==(const Plane& a, const Plane& b) noexcept { return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w; }
     [[nodiscard]] constexpr bool operator==(const Bivector& a, const Bivector& b) noexcept { return a.wx == b.wx && a.wy == b.wy && a.wz == b.wz && a.xy == b.xy && a.xz == b.xz && a.yz == b.yz; }
     [[nodiscard]] constexpr bool operator==(const ProjectivePoint& a, const ProjectivePoint& b) noexcept { return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w; }
-    [[nodiscard]] constexpr bool operator==(const Quaternion& a, const Quaternion& b) noexcept { return a.s == b.s && a.xy == b.xy && a.xz == b.xz && a.yz == b.yz; }
+    [[nodiscard]] constexpr bool operator==(const Rotor& a, const Rotor& b) noexcept { return a.s == b.s && a.xy == b.xy && a.xz == b.xz && a.yz == b.yz; }
     [[nodiscard]] constexpr bool operator==(const ProjectiveTranslator& a, const ProjectiveTranslator& b) noexcept { return a.s == b.s && a.wx == b.wx && a.wy == b.wy && a.wz == b.wz; }
     [[nodiscard]] constexpr bool operator==(const Translator& a, const Translator& b) noexcept { return a.wx == b.wx && a.wy == b.wy && a.wz == b.wz; }
     [[nodiscard]] constexpr bool operator==(const Vector& a, const Vector& b) noexcept { return a.x == b.x && a.y == b.y && a.z == b.z; }

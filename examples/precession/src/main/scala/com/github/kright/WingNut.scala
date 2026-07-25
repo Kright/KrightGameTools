@@ -15,8 +15,8 @@ class WingNut:
   val system = Pga3dPhysicsSystem(Array(state), Pga3dPhysicsSolverRK4)
   var t: Double = 0.0
 
-  def rotation: Pga3dQuaternion =
-    system.state(0).motor.toQuaternionUnsafe
+  def rotation: Pga3dRotor =
+    system.state(0).motor.toRotorUnsafe
 
   def setToMatrix(m: Matrix4): Unit =
     val array = Pga3dMatrixForPoints(rotation.toMotor).asArray

@@ -62,7 +62,7 @@ namespace pga3d {
         [[nodiscard]] constexpr Vector geometric(const Plane& b) const noexcept;
         [[nodiscard]] constexpr BivectorWeight geometric(const Bivector& b) const noexcept;
         [[nodiscard]] constexpr Plane geometric(const ProjectivePoint& b) const noexcept;
-        [[nodiscard]] constexpr Motor geometric(const Quaternion& b) const noexcept;
+        [[nodiscard]] constexpr Motor geometric(const Rotor& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar geometric(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar geometric(const Translator& b) const noexcept;
         [[nodiscard]] constexpr Plane geometric(const Point& b) const noexcept;
@@ -76,7 +76,7 @@ namespace pga3d {
         [[nodiscard]] constexpr Plane antiGeometric(const Plane& b) const noexcept;
         [[nodiscard]] constexpr Bivector antiGeometric(const Bivector& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint antiGeometric(const ProjectivePoint& b) const noexcept;
-        [[nodiscard]] constexpr Quaternion antiGeometric(const Quaternion& b) const noexcept;
+        [[nodiscard]] constexpr Rotor antiGeometric(const Rotor& b) const noexcept;
         [[nodiscard]] constexpr ProjectiveTranslator antiGeometric(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr ProjectiveTranslator antiGeometric(const Translator& b) const noexcept;
         [[nodiscard]] constexpr Vector antiGeometric(const Vector& b) const noexcept;
@@ -93,7 +93,7 @@ namespace pga3d {
         [[nodiscard]] constexpr Vector dot(const Plane& b) const noexcept;
         [[nodiscard]] constexpr BivectorWeight dot(const Bivector& b) const noexcept;
         [[nodiscard]] constexpr Plane dot(const ProjectivePoint& b) const noexcept;
-        [[nodiscard]] constexpr Motor dot(const Quaternion& b) const noexcept;
+        [[nodiscard]] constexpr Motor dot(const Rotor& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar dot(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar dot(const Translator& b) const noexcept;
         [[nodiscard]] constexpr Plane dot(const Point& b) const noexcept;
@@ -107,7 +107,7 @@ namespace pga3d {
         [[nodiscard]] constexpr Plane antiDot(const Plane& b) const noexcept;
         [[nodiscard]] constexpr Bivector antiDot(const Bivector& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint antiDot(const ProjectivePoint& b) const noexcept;
-        [[nodiscard]] constexpr Quaternion antiDot(const Quaternion& b) const noexcept;
+        [[nodiscard]] constexpr Rotor antiDot(const Rotor& b) const noexcept;
         [[nodiscard]] constexpr ProjectiveTranslator antiDot(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr ProjectiveTranslator antiDot(const Translator& b) const noexcept;
         [[nodiscard]] constexpr Vector antiDot(const Vector& b) const noexcept;
@@ -122,8 +122,8 @@ namespace pga3d {
 
         [[nodiscard]] constexpr PseudoScalar wedge(const Motor& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar meet(const Motor& b) const noexcept;
-        [[nodiscard]] constexpr PseudoScalar wedge(const Quaternion& b) const noexcept;
-        [[nodiscard]] constexpr PseudoScalar meet(const Quaternion& b) const noexcept;
+        [[nodiscard]] constexpr PseudoScalar wedge(const Rotor& b) const noexcept;
+        [[nodiscard]] constexpr PseudoScalar meet(const Rotor& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar wedge(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar meet(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar wedge(const Translator& b) const noexcept;
@@ -139,8 +139,8 @@ namespace pga3d {
         [[nodiscard]] constexpr Bivector join(const Bivector& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint antiWedge(const ProjectivePoint& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint join(const ProjectivePoint& b) const noexcept;
-        [[nodiscard]] constexpr Quaternion antiWedge(const Quaternion& b) const noexcept;
-        [[nodiscard]] constexpr Quaternion join(const Quaternion& b) const noexcept;
+        [[nodiscard]] constexpr Rotor antiWedge(const Rotor& b) const noexcept;
+        [[nodiscard]] constexpr Rotor join(const Rotor& b) const noexcept;
         [[nodiscard]] constexpr ProjectiveTranslator antiWedge(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr ProjectiveTranslator join(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr ProjectiveTranslator antiWedge(const Translator& b) const noexcept;

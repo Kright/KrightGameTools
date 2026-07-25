@@ -18,7 +18,7 @@ using TestTypes = std::tuple<
     pg::Plane,
     pg::Bivector,
     pg::ProjectivePoint,
-    pg::Quaternion,
+    pg::Rotor,
     pg::ProjectiveTranslator,
     pg::Translator,
     pg::Vector,

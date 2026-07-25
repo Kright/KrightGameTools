@@ -12,7 +12,7 @@ namespace pga3d {
     constexpr Plane Multivector::toPlaneUnsafe() const noexcept { return {.x = x, .y = y, .z = z, .w = w}; }
     constexpr Bivector Multivector::toBivectorUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz, .xy = xy, .xz = xz, .yz = yz}; }
     constexpr ProjectivePoint Multivector::toProjectivePointUnsafe() const noexcept { return {.x = -wyz, .y = wxz, .z = -wxy, .w = xyz}; }
-    constexpr Quaternion Multivector::toQuaternionUnsafe() const noexcept { return {.s = s, .xy = xy, .xz = xz, .yz = yz}; }
+    constexpr Rotor Multivector::toRotorUnsafe() const noexcept { return {.s = s, .xy = xy, .xz = xz, .yz = yz}; }
     constexpr ProjectiveTranslator Multivector::toProjectiveTranslatorUnsafe() const noexcept { return {.s = s, .wx = wx, .wy = wy, .wz = wz}; }
     constexpr Translator Multivector::toTranslatorUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz}; }
     constexpr Vector Multivector::toVectorUnsafe() const noexcept { return {.x = -wyz, .y = wxz, .z = -wxy}; }
@@ -23,7 +23,7 @@ namespace pga3d {
 
     constexpr Multivector Motor::toMultivector() const noexcept { return {.s = s, .w = 0.0, .x = 0.0, .y = 0.0, .z = 0.0, .wx = wx, .wy = wy, .wz = wz, .xy = xy, .xz = xz, .yz = yz, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = i}; }
     constexpr Bivector Motor::toBivectorUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz, .xy = xy, .xz = xz, .yz = yz}; }
-    constexpr Quaternion Motor::toQuaternionUnsafe() const noexcept { return {.s = s, .xy = xy, .xz = xz, .yz = yz}; }
+    constexpr Rotor Motor::toRotorUnsafe() const noexcept { return {.s = s, .xy = xy, .xz = xz, .yz = yz}; }
     constexpr ProjectiveTranslator Motor::toProjectiveTranslatorUnsafe() const noexcept { return {.s = s, .wx = wx, .wy = wy, .wz = wz}; }
     constexpr Translator Motor::toTranslatorUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz}; }
     constexpr BivectorBulk Motor::toBivectorBulkUnsafe() const noexcept { return {.xy = xy, .xz = xz, .yz = yz}; }
@@ -34,7 +34,7 @@ namespace pga3d {
 
     constexpr Multivector Bivector::toMultivector() const noexcept { return {.s = 0.0, .w = 0.0, .x = 0.0, .y = 0.0, .z = 0.0, .wx = wx, .wy = wy, .wz = wz, .xy = xy, .xz = xz, .yz = yz, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
     constexpr Motor Bivector::toMotor() const noexcept { return {.s = 0.0, .wx = wx, .wy = wy, .wz = wz, .xy = xy, .xz = xz, .yz = yz, .i = 0.0}; }
-    constexpr Quaternion Bivector::toQuaternionUnsafe() const noexcept { return {.s = 0.0, .xy = xy, .xz = xz, .yz = yz}; }
+    constexpr Rotor Bivector::toRotorUnsafe() const noexcept { return {.s = 0.0, .xy = xy, .xz = xz, .yz = yz}; }
     constexpr ProjectiveTranslator Bivector::toProjectiveTranslatorUnsafe() const noexcept { return {.s = 0.0, .wx = wx, .wy = wy, .wz = wz}; }
     constexpr Translator Bivector::toTranslatorUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz}; }
     constexpr BivectorBulk Bivector::toBivectorBulkUnsafe() const noexcept { return {.xy = xy, .xz = xz, .yz = yz}; }
@@ -45,16 +45,16 @@ namespace pga3d {
     constexpr Point ProjectivePoint::toPointUnsafe() const noexcept { return {.x = x, .y = y, .z = z}; }
 
     constexpr Point ProjectivePoint::toPoint() const noexcept { const double inv = 1.0 / w; return { .x = x * inv, .y = y * inv, .z = z * inv }; }
-    constexpr Multivector Quaternion::toMultivector() const noexcept { return {.s = s, .w = 0.0, .x = 0.0, .y = 0.0, .z = 0.0, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
-    constexpr Motor Quaternion::toMotor() const noexcept { return {.s = s, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz, .i = 0.0}; }
-    constexpr Bivector Quaternion::toBivectorUnsafe() const noexcept { return {.wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz}; }
-    constexpr ProjectiveTranslator Quaternion::toProjectiveTranslatorUnsafe() const noexcept { return {.s = s, .wx = 0.0, .wy = 0.0, .wz = 0.0}; }
-    constexpr BivectorBulk Quaternion::toBivectorBulkUnsafe() const noexcept { return {.xy = xy, .xz = xz, .yz = yz}; }
+    constexpr Multivector Rotor::toMultivector() const noexcept { return {.s = s, .w = 0.0, .x = 0.0, .y = 0.0, .z = 0.0, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
+    constexpr Motor Rotor::toMotor() const noexcept { return {.s = s, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz, .i = 0.0}; }
+    constexpr Bivector Rotor::toBivectorUnsafe() const noexcept { return {.wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz}; }
+    constexpr ProjectiveTranslator Rotor::toProjectiveTranslatorUnsafe() const noexcept { return {.s = s, .wx = 0.0, .wy = 0.0, .wz = 0.0}; }
+    constexpr BivectorBulk Rotor::toBivectorBulkUnsafe() const noexcept { return {.xy = xy, .xz = xz, .yz = yz}; }
 
     constexpr Multivector ProjectiveTranslator::toMultivector() const noexcept { return {.s = s, .w = 0.0, .x = 0.0, .y = 0.0, .z = 0.0, .wx = wx, .wy = wy, .wz = wz, .xy = 0.0, .xz = 0.0, .yz = 0.0, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
     constexpr Motor ProjectiveTranslator::toMotor() const noexcept { return {.s = s, .wx = wx, .wy = wy, .wz = wz, .xy = 0.0, .xz = 0.0, .yz = 0.0, .i = 0.0}; }
     constexpr Bivector ProjectiveTranslator::toBivectorUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz, .xy = 0.0, .xz = 0.0, .yz = 0.0}; }
-    constexpr Quaternion ProjectiveTranslator::toQuaternionUnsafe() const noexcept { return {.s = s, .xy = 0.0, .xz = 0.0, .yz = 0.0}; }
+    constexpr Rotor ProjectiveTranslator::toRotorUnsafe() const noexcept { return {.s = s, .xy = 0.0, .xz = 0.0, .yz = 0.0}; }
     constexpr Translator ProjectiveTranslator::toTranslatorUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz}; }
     constexpr BivectorWeight ProjectiveTranslator::toBivectorWeightUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz}; }
 
@@ -62,7 +62,7 @@ namespace pga3d {
     constexpr Multivector Translator::toMultivector() const noexcept { return {.s = 1.0, .w = 0.0, .x = 0.0, .y = 0.0, .z = 0.0, .wx = wx, .wy = wy, .wz = wz, .xy = 0.0, .xz = 0.0, .yz = 0.0, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
     constexpr Motor Translator::toMotor() const noexcept { return {.s = 1.0, .wx = wx, .wy = wy, .wz = wz, .xy = 0.0, .xz = 0.0, .yz = 0.0, .i = 0.0}; }
     constexpr Bivector Translator::toBivectorUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz, .xy = 0.0, .xz = 0.0, .yz = 0.0}; }
-    constexpr Quaternion Translator::toQuaternionUnsafe() const noexcept { return {.s = 1.0, .xy = 0.0, .xz = 0.0, .yz = 0.0}; }
+    constexpr Rotor Translator::toRotorUnsafe() const noexcept { return {.s = 1.0, .xy = 0.0, .xz = 0.0, .yz = 0.0}; }
     constexpr ProjectiveTranslator Translator::toProjectiveTranslator() const noexcept { return {.s = 1.0, .wx = wx, .wy = wy, .wz = wz}; }
     constexpr BivectorWeight Translator::toBivectorWeightUnsafe() const noexcept { return {.wx = wx, .wy = wy, .wz = wz}; }
 
@@ -80,7 +80,7 @@ namespace pga3d {
     constexpr Multivector BivectorBulk::toMultivector() const noexcept { return {.s = 0.0, .w = 0.0, .x = 0.0, .y = 0.0, .z = 0.0, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
     constexpr Motor BivectorBulk::toMotor() const noexcept { return {.s = 0.0, .wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz, .i = 0.0}; }
     constexpr Bivector BivectorBulk::toBivector() const noexcept { return {.wx = 0.0, .wy = 0.0, .wz = 0.0, .xy = xy, .xz = xz, .yz = yz}; }
-    constexpr Quaternion BivectorBulk::toQuaternion() const noexcept { return {.s = 0.0, .xy = xy, .xz = xz, .yz = yz}; }
+    constexpr Rotor BivectorBulk::toRotor() const noexcept { return {.s = 0.0, .xy = xy, .xz = xz, .yz = yz}; }
 
     constexpr Multivector BivectorWeight::toMultivector() const noexcept { return {.s = 0.0, .w = 0.0, .x = 0.0, .y = 0.0, .z = 0.0, .wx = wx, .wy = wy, .wz = wz, .xy = 0.0, .xz = 0.0, .yz = 0.0, .wxy = 0.0, .wxz = 0.0, .wyz = 0.0, .xyz = 0.0, .i = 0.0}; }
     constexpr Motor BivectorWeight::toMotor() const noexcept { return {.s = 0.0, .wx = wx, .wy = wy, .wz = wz, .xy = 0.0, .xz = 0.0, .yz = 0.0, .i = 0.0}; }

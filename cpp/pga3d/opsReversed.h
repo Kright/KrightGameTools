@@ -66,13 +66,13 @@ namespace pga3d {
     }; }
     constexpr ProjectivePoint ProjectivePoint::reversed() const noexcept { return pga3d::reversed(*this); }
 
-    constexpr Quaternion reversed(const Quaternion& a) noexcept { return {
+    constexpr Rotor reversed(const Rotor& a) noexcept { return {
         .s = a.s,
         .xy = -a.xy,
         .xz = -a.xz,
         .yz = -a.yz
     }; }
-    constexpr Quaternion Quaternion::reversed() const noexcept { return pga3d::reversed(*this); }
+    constexpr Rotor Rotor::reversed() const noexcept { return pga3d::reversed(*this); }
 
     constexpr ProjectiveTranslator reversed(const ProjectiveTranslator& a) noexcept { return {
         .s = a.s,

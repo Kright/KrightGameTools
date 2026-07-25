@@ -36,9 +36,9 @@ class Pga3dCodeGenCpp(val directory: Path,
     new StructFieldsGenerator,
     new StructStaticConstructorGenerator,
 
-    new TranslatorWithQuaternionGenerator,
+    new TranslatorWithRotorGenerator,
 
-    new QuaternionOpsGenerator,
+    new RotorOpsGenerator,
     new TranslatorOpsGenerator,
     new MotorOpsGenerator,
     new BivectorOpsGenerator,
@@ -84,8 +84,8 @@ class Pga3dCodeGenCpp(val directory: Path,
       for (cls <- CppSubclasses.all if cls.shouldBeGenerated) {
         codeGen(s"struct ${cls.name};")
       }
-      codeGen(s"struct ${TranslatorWithQuaternionGenerator.quaternionWithTranslator};")
-      codeGen(s"struct ${TranslatorWithQuaternionGenerator.translatorWithQuaternion};")
+      codeGen(s"struct ${TranslatorWithRotorGenerator.rotorWithTranslator};")
+      codeGen(s"struct ${TranslatorWithRotorGenerator.translatorWithRotor};")
     }
 
     FileContent(directory.resolve(Headers.typesForward), codeGen.toString)
@@ -107,7 +107,7 @@ class Pga3dCodeGenCpp(val directory: Path,
       for (cls <- CppSubclasses.all if cls.shouldBeGenerated)
         yield s"#include \"${cls.name}.h\""
 
-    val additionalIncludes = s"#include \"${TranslatorWithQuaternionGenerator.translatorWithQuaternion}.h\""
+    val additionalIncludes = s"#include \"${TranslatorWithRotorGenerator.translatorWithRotor}.h\""
 
     codeGen.myHeader(includes :+ additionalIncludes, codeGen.generatorName(this))
 

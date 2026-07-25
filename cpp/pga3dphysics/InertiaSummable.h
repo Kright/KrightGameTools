@@ -5,7 +5,7 @@
 
 #include "pga3d/Point.h"
 #include "pga3d/ProjectivePoint.h"
-#include "pga3d/Quaternion.h"
+#include "pga3d/Rotor.h"
 #include "pga3d/Translator.h"
 #include "pga3d/Motor.h"
 
@@ -90,7 +90,7 @@ namespace pga3d {
             return movedByImpl([&](const ProjectivePoint& p) { return m.sandwich(p); });
         }
 
-        [[nodiscard]] constexpr InertiaSummable movedBy(const Quaternion& m) const noexcept {
+        [[nodiscard]] constexpr InertiaSummable movedBy(const Rotor& m) const noexcept {
             return movedByImpl([&](const ProjectivePoint& p) { return m.sandwich(p); });
         }
 

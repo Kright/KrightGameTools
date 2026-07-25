@@ -1,17 +1,17 @@
 package me.kright.gametools.pga.codegen.cpp3d.ops
 
 import me.kright.gametools.pga.codegen.common.FileContent
-import me.kright.gametools.pga.codegen.cpp3d.ops.TranslatorWithQuaternionGenerator.{quaternionWithTranslator, translatorWithQuaternion}
+import me.kright.gametools.pga.codegen.cpp3d.ops.TranslatorWithRotorGenerator.{rotorWithTranslator, translatorWithRotor}
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
 
-class TranslatorWithQuaternionGenerator extends CppCodeGenerator {
+class TranslatorWithRotorGenerator extends CppCodeGenerator {
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = CppCodeBuilder()
 
     code.myHeader(
       Seq(
         s"#include \"${CppSubclasses.motor.name}.h\"",
-        s"#include \"${CppSubclasses.quaternion.name}.h\"",
+        s"#include \"${CppSubclasses.rotor.name}.h\"",
         s"#include \"${CppSubclasses.translator.name}.h\"",
       ),
       code.generatorName(this))
@@ -21,30 +21,30 @@ class TranslatorWithQuaternionGenerator extends CppCodeGenerator {
 
     code.namespace(codeGen.namespace) {
       for (translatorFirst <- Seq(true, false)) {
-        val structName = if (translatorFirst) translatorWithQuaternion else quaternionWithTranslator
-        val otherName = if (translatorFirst) quaternionWithTranslator else translatorWithQuaternion
+        val structName = if (translatorFirst) translatorWithRotor else rotorWithTranslator
+        val otherName = if (translatorFirst) rotorWithTranslator else translatorWithRotor
 
         code("")
         code.struct(structName) {
           val fieldClasses =
-            if (translatorFirst) Seq(CppSubclasses.translator, CppSubclasses.quaternion)
-            else Seq(CppSubclasses.quaternion, CppSubclasses.translator)
+            if (translatorFirst) Seq(CppSubclasses.translator, CppSubclasses.rotor)
+            else Seq(CppSubclasses.rotor, CppSubclasses.translator)
 
           for (field <- fieldClasses) {
             code(s"${field.name} ${field.name.toLowerCase}{};")
           }
 
           code("")
-          code(s"static size_t constexpr componentsCount = ${CppSubclasses.quaternion.name}::componentsCount + ${CppSubclasses.translator.name}::componentsCount;")
+          code(s"static size_t constexpr componentsCount = ${CppSubclasses.rotor.name}::componentsCount + ${CppSubclasses.translator.name}::componentsCount;")
 
           code("")
           code(s"[[nodiscard]] constexpr std::array<double, componentsCount> toArray() const noexcept {")
           code.block {
             code("// a compiler will optimize this")
             if (translatorFirst) {
-              code(s"return { translator.toArray()[0], translator.toArray()[1], translator.toArray()[2], quaternion.toArray()[0], quaternion.toArray()[1], quaternion.toArray()[2], quaternion.toArray()[3] };")
+              code(s"return { translator.toArray()[0], translator.toArray()[1], translator.toArray()[2], rotor.toArray()[0], rotor.toArray()[1], rotor.toArray()[2], rotor.toArray()[3] };")
             } else {
-              code(s"return { quaternion.toArray()[0], quaternion.toArray()[1], quaternion.toArray()[2], quaternion.toArray()[3], translator.toArray()[0], translator.toArray()[1], translator.toArray()[2] };")
+              code(s"return { rotor.toArray()[0], rotor.toArray()[1], rotor.toArray()[2], rotor.toArray()[3], translator.toArray()[0], translator.toArray()[1], translator.toArray()[2] };")
             }
           }
           code("}")
@@ -57,11 +57,11 @@ class TranslatorWithQuaternionGenerator extends CppCodeGenerator {
               if (translatorFirst) {
                 code(
                   """.translator = Translator::from(values.first<Translator::componentsCount>()),
-                    |.quaternion = Quaternion::from(values.last<Quaternion::componentsCount>())""".stripMargin
+                    |.rotor = Rotor::from(values.last<Rotor::componentsCount>())""".stripMargin
                 )
               } else {
                 code(
-                  """.quaternion = Quaternion::from(values.first<Quaternion::componentsCount>()),
+                  """.rotor = Rotor::from(values.first<Rotor::componentsCount>()),
                     |.translator = Translator::from(values.last<Translator::componentsCount>())""".stripMargin
                 )
               }
@@ -74,7 +74,7 @@ class TranslatorWithQuaternionGenerator extends CppCodeGenerator {
           code(s"[[nodiscard]] constexpr ${CppSubclasses.motor.name} to${CppSubclasses.motor.name}() const noexcept { return ${fieldClasses.head.name.toLowerCase}.geometric(${fieldClasses.last.name.toLowerCase}); }")
 
           code("")
-          code(s"[[nodiscard]] constexpr ${if (translatorFirst) quaternionWithTranslator else translatorWithQuaternion} reversed() const noexcept;")
+          code(s"[[nodiscard]] constexpr ${if (translatorFirst) rotorWithTranslator else translatorWithRotor} reversed() const noexcept;")
           impl(s"[[nodiscard]] constexpr ${otherName} ${structName}::reversed() const noexcept { return { ${
             fieldClasses.reverse.map(f => s".${f.name.toLowerCase()} = ${f.name.toLowerCase()}.reversed()").mkString(", ")
           } }; }")
@@ -82,8 +82,8 @@ class TranslatorWithQuaternionGenerator extends CppCodeGenerator {
           code("")
           code(s"[[nodiscard]] constexpr $otherName to${otherName}() const noexcept;")
           impl(s"[[nodiscard]] constexpr ${otherName} ${structName}::to${otherName}() const noexcept { return ${
-            if (translatorFirst) s"{ .quaternion = quaternion, .translator = quaternion.reversed().sandwich(translator).toTranslator() }"
-            else s"{ .translator = quaternion.sandwich(translator).toTranslator(), .quaternion = quaternion }"
+            if (translatorFirst) s"{ .rotor = rotor, .translator = rotor.reversed().sandwich(translator).toTranslator() }"
+            else s"{ .translator = rotor.sandwich(translator).toTranslator(), .rotor = rotor }"
           }; };")
 
 
@@ -99,7 +99,7 @@ class TranslatorWithQuaternionGenerator extends CppCodeGenerator {
       code(impl.toString)
     }
 
-    Seq(FileContent(codeGen.directory.resolve(translatorWithQuaternion + ".h"), code.toString))
+    Seq(FileContent(codeGen.directory.resolve(translatorWithRotor + ".h"), code.toString))
   }
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
@@ -112,6 +112,6 @@ class TranslatorWithQuaternionGenerator extends CppCodeGenerator {
   }
 }
 
-object TranslatorWithQuaternionGenerator:
-  val translatorWithQuaternion = s"${CppSubclasses.translator.name}With${CppSubclasses.quaternion.name}"
-  val quaternionWithTranslator = s"${CppSubclasses.quaternion.name}With${CppSubclasses.translator.name}"
+object TranslatorWithRotorGenerator:
+  val translatorWithRotor = s"${CppSubclasses.translator.name}With${CppSubclasses.rotor.name}"
+  val rotorWithTranslator = s"${CppSubclasses.rotor.name}With${CppSubclasses.translator.name}"

@@ -101,6 +101,45 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     }
   }
 
+  test("log returns the half-angle and exp is its inverse") {
+    for (h <- Seq(0.0, 1e-300, 1e-20, 1e-15, 1e-8, 0.1, 1.0, Math.PI / 2 - 1e-9, -0.3, -1.5)) {
+      val r = Pga2dRotor.exp(h)
+      assert(Math.abs(r.log() - h) <= 1e-15 * Math.abs(h), s"h = $h, log = ${r.log()}")
+    }
+
+    forAll(Pga2dGenerators.normalizedRotors, MinSuccessful(1000)) { r =>
+      val restored = Pga2dRotor.exp(r.log())
+      assert(Math.min((restored - r).normSquare, (restored + r).normSquare) < 1e-28, s"r = $r")
+    }
+  }
+
+  test("log takes the principal branch for negative s") {
+    val r = Pga2dRotor.exp(2.0) // s = cos(2) < 0, the principal generator is (2 - pi)
+    assert(Math.abs(r.log() - (2.0 - Math.PI)) <= 1e-15, s"log = ${r.log()}")
+  }
+
+  test("axisX and axisY match the sandwiched basis vectors") {
+    forAll(Pga2dGenerators.normalizedRotors, MinSuccessful(1000)) { r =>
+      assert((r.axisX - r.sandwich(Pga2dVector(1, 0))).norm < 1e-15, s"axisX of $r")
+      assert((r.axisY - r.sandwich(Pga2dVector(0, 1))).norm < 1e-15, s"axisY of $r")
+    }
+  }
+
+  test("restore is the inverse of axisX/axisY") {
+    forAll(Pga2dGenerators.normalizedRotors, MinSuccessful(1000)) { r =>
+      val restored = Pga2dRotor.restore(r.axisX, r.axisY)
+      assert(Math.min((restored - r).normSquare, (restored + r).normSquare) < restoreEps, s"r = $r")
+    }
+  }
+
+  test("motor axes come from its rotor part") {
+    forAll(Pga2dGenerators.normalizedRotors, Pga2dGenerators.vectors) { (r, v) =>
+      val motor = Pga2dTranslator.addVector(v).geometric(r)
+      assert((motor.axisX - r.axisX).norm < 1e-15, s"axisX of $motor")
+      assert((motor.axisY - r.axisY).norm < 1e-15, s"axisY of $motor")
+    }
+  }
+
   test("normalizedByNorm gives norm 1") {
     forAll(Pga2dGenerators.rotors.filter(_.norm > 1e-9), MinSuccessful(1000)) { r =>
       assert(Math.abs(r.normalizedByNorm.norm - 1.0) < 1e-12)

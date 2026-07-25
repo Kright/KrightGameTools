@@ -57,7 +57,7 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
     description = "The pseudoscalar, the grade-3 element of 2d PGA with the single component i = wxy.")
 
   override val rotor = ScalaMultivectorSubClass("Pga2dRotor", motor.variableFields.filter(f => !f.basisBlade.contains(genW)),
-    description = "A rotor: rotation around the center of coordinates, applied with rotor.sandwich(obj).\nThe fields s and xy hold the cosine and sine of the half-angle. The 2d analog of Pga3dQuaternion;\na rotor is the exponent of a grade-2 element concentrated at the origin (the xy blade).")
+    description = "A rotor: rotation around the center of coordinates, applied with rotor.sandwich(obj).\nThe fields s and xy hold the cosine and sine of the half-angle. The 2d analog of Pga3dRotor;\na rotor is the exponent of a grade-2 element concentrated at the origin (the xy blade).")
   override val translator = ScalaMultivectorSubClass("Pga2dTranslator", motor.variableFields.filter(f => f.basisBlade.grade == 2 && f.basisBlade.contains(genW)), Seq(scalar.variableFields.head -> 1.0),
     description = "A translator: translation of the 2d plane, applied with translator.sandwich(obj). Moves points but not vectors.\nA translator is the exponent of a Pga2dVector (vector.exp()), and translator.log() returns that vector back.")
   override val projectiveTranslator = ScalaMultivectorSubClass("Pga2dProjectiveTranslator", motor.variableFields.filter(f => f.basisBlade.grade == 0 || f.basisBlade.grade == 2 && f.basisBlade.contains(genW)),
@@ -114,6 +114,7 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
     DefInterpolation(),
     DefConvertTo(),
     DefProjection(),
+    DefMotorAndRotorAxes(),
   )
 
   override val binaryOperations = Seq(

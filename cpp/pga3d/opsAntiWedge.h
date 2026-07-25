@@ -91,15 +91,15 @@ namespace pga3d {
     constexpr Multivector Motor::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
     constexpr Multivector Motor::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion antiWedge(const Motor& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor antiWedge(const Motor& a,const Rotor& b) noexcept { return {
         .s = (a.i * b.s + a.wx * b.yz + a.wz * b.xy - a.wy * b.xz),
         .xy = a.i * b.xy,
         .xz = a.i * b.xz,
         .yz = a.i * b.yz
     }; }
-    [[nodiscard]] constexpr Quaternion join(const Motor& a,const Quaternion& b) noexcept { return antiWedge(a, b); }
-    constexpr Quaternion Motor::antiWedge(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr Quaternion Motor::join(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr Rotor join(const Motor& a,const Rotor& b) noexcept { return antiWedge(a, b); }
+    constexpr Rotor Motor::antiWedge(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr Rotor Motor::join(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr ProjectiveTranslator antiWedge(const Motor& a,const ProjectiveTranslator& b) noexcept { return {
         .s = (a.i * b.s + a.xy * b.wz + a.yz * b.wx - a.xz * b.wy),
@@ -174,15 +174,15 @@ namespace pga3d {
     constexpr PlaneIdeal Motor::antiWedge(const PlaneIdeal& b) const noexcept { return pga3d::antiWedge(*this, b); }
     constexpr PlaneIdeal Motor::join(const PlaneIdeal& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion antiWedge(const Motor& a,const BivectorBulk& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor antiWedge(const Motor& a,const BivectorBulk& b) noexcept { return {
         .s = (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz),
         .xy = a.i * b.xy,
         .xz = a.i * b.xz,
         .yz = a.i * b.yz
     }; }
-    [[nodiscard]] constexpr Quaternion join(const Motor& a,const BivectorBulk& b) noexcept { return antiWedge(a, b); }
-    constexpr Quaternion Motor::antiWedge(const BivectorBulk& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr Quaternion Motor::join(const BivectorBulk& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr Rotor join(const Motor& a,const BivectorBulk& b) noexcept { return antiWedge(a, b); }
+    constexpr Rotor Motor::antiWedge(const BivectorBulk& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr Rotor Motor::join(const BivectorBulk& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr ProjectiveTranslator antiWedge(const Motor& a,const BivectorWeight& b) noexcept { return {
         .s = (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy),
@@ -301,10 +301,10 @@ namespace pga3d {
     constexpr Plane Bivector::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
     constexpr Plane Bivector::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr double antiWedge(const Bivector& a,const Quaternion& b) noexcept { return (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz); }
-    [[nodiscard]] constexpr double join(const Bivector& a,const Quaternion& b) noexcept { return antiWedge(a, b); }
-    constexpr double Bivector::antiWedge(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr double Bivector::join(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr double antiWedge(const Bivector& a,const Rotor& b) noexcept { return (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz); }
+    [[nodiscard]] constexpr double join(const Bivector& a,const Rotor& b) noexcept { return antiWedge(a, b); }
+    constexpr double Bivector::antiWedge(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr double Bivector::join(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr double antiWedge(const Bivector& a,const ProjectiveTranslator& b) noexcept { return (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy); }
     [[nodiscard]] constexpr double join(const Bivector& a,const ProjectiveTranslator& b) noexcept { return antiWedge(a, b); }
@@ -417,14 +417,14 @@ namespace pga3d {
     constexpr Bivector ProjectivePoint::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
     constexpr Bivector ProjectivePoint::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal antiWedge(const ProjectivePoint& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal antiWedge(const ProjectivePoint& a,const Rotor& b) noexcept { return {
         .x = (a.y * b.xy + a.z * b.xz),
         .y = (a.z * b.yz - a.x * b.xy),
         .z = (-a.x * b.xz - a.y * b.yz)
     }; }
-    [[nodiscard]] constexpr PlaneIdeal join(const ProjectivePoint& a,const Quaternion& b) noexcept { return antiWedge(a, b); }
-    constexpr PlaneIdeal ProjectivePoint::antiWedge(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr PlaneIdeal ProjectivePoint::join(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr PlaneIdeal join(const ProjectivePoint& a,const Rotor& b) noexcept { return antiWedge(a, b); }
+    constexpr PlaneIdeal ProjectivePoint::antiWedge(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr PlaneIdeal ProjectivePoint::join(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr Plane antiWedge(const ProjectivePoint& a,const ProjectiveTranslator& b) noexcept { return {
         .x = -a.w * b.wx,
@@ -514,72 +514,72 @@ namespace pga3d {
     constexpr BivectorBulk ProjectivePoint::join(const PointCenter& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
 
-    [[nodiscard]] constexpr Quaternion antiWedge(const Quaternion& a,const Motor& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor antiWedge(const Rotor& a,const Motor& b) noexcept { return {
         .s = (a.s * b.i + a.xy * b.wz + a.yz * b.wx - a.xz * b.wy),
         .xy = a.xy * b.i,
         .xz = a.xz * b.i,
         .yz = a.yz * b.i
     }; }
-    [[nodiscard]] constexpr Quaternion join(const Quaternion& a,const Motor& b) noexcept { return antiWedge(a, b); }
-    constexpr Quaternion Quaternion::antiWedge(const Motor& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr Quaternion Quaternion::join(const Motor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr Rotor join(const Rotor& a,const Motor& b) noexcept { return antiWedge(a, b); }
+    constexpr Rotor Rotor::antiWedge(const Motor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr Rotor Rotor::join(const Motor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr double antiWedge(const Quaternion& a,const Bivector& b) noexcept { return (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy); }
-    [[nodiscard]] constexpr double join(const Quaternion& a,const Bivector& b) noexcept { return antiWedge(a, b); }
-    constexpr double Quaternion::antiWedge(const Bivector& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr double Quaternion::join(const Bivector& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr double antiWedge(const Rotor& a,const Bivector& b) noexcept { return (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy); }
+    [[nodiscard]] constexpr double join(const Rotor& a,const Bivector& b) noexcept { return antiWedge(a, b); }
+    constexpr double Rotor::antiWedge(const Bivector& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr double Rotor::join(const Bivector& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal antiWedge(const Quaternion& a,const ProjectivePoint& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal antiWedge(const Rotor& a,const ProjectivePoint& b) noexcept { return {
         .x = (a.xy * b.y + a.xz * b.z),
         .y = (a.yz * b.z - a.xy * b.x),
         .z = (-a.xz * b.x - a.yz * b.y)
     }; }
-    [[nodiscard]] constexpr PlaneIdeal join(const Quaternion& a,const ProjectivePoint& b) noexcept { return antiWedge(a, b); }
-    constexpr PlaneIdeal Quaternion::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr PlaneIdeal Quaternion::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr PlaneIdeal join(const Rotor& a,const ProjectivePoint& b) noexcept { return antiWedge(a, b); }
+    constexpr PlaneIdeal Rotor::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr PlaneIdeal Rotor::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr double antiWedge(const Quaternion& a,const ProjectiveTranslator& b) noexcept { return (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy); }
-    [[nodiscard]] constexpr double join(const Quaternion& a,const ProjectiveTranslator& b) noexcept { return antiWedge(a, b); }
-    constexpr double Quaternion::antiWedge(const ProjectiveTranslator& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr double Quaternion::join(const ProjectiveTranslator& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr double antiWedge(const Rotor& a,const ProjectiveTranslator& b) noexcept { return (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy); }
+    [[nodiscard]] constexpr double join(const Rotor& a,const ProjectiveTranslator& b) noexcept { return antiWedge(a, b); }
+    constexpr double Rotor::antiWedge(const ProjectiveTranslator& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr double Rotor::join(const ProjectiveTranslator& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr double antiWedge(const Quaternion& a,const Translator& b) noexcept { return (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy); }
-    [[nodiscard]] constexpr double join(const Quaternion& a,const Translator& b) noexcept { return antiWedge(a, b); }
-    constexpr double Quaternion::antiWedge(const Translator& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr double Quaternion::join(const Translator& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr double antiWedge(const Rotor& a,const Translator& b) noexcept { return (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy); }
+    [[nodiscard]] constexpr double join(const Rotor& a,const Translator& b) noexcept { return antiWedge(a, b); }
+    constexpr double Rotor::antiWedge(const Translator& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr double Rotor::join(const Translator& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal antiWedge(const Quaternion& a,const Vector& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal antiWedge(const Rotor& a,const Vector& b) noexcept { return {
         .x = (a.xy * b.y + a.xz * b.z),
         .y = (a.yz * b.z - a.xy * b.x),
         .z = (-a.xz * b.x - a.yz * b.y)
     }; }
-    [[nodiscard]] constexpr PlaneIdeal join(const Quaternion& a,const Vector& b) noexcept { return antiWedge(a, b); }
-    constexpr PlaneIdeal Quaternion::antiWedge(const Vector& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr PlaneIdeal Quaternion::join(const Vector& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr PlaneIdeal join(const Rotor& a,const Vector& b) noexcept { return antiWedge(a, b); }
+    constexpr PlaneIdeal Rotor::antiWedge(const Vector& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr PlaneIdeal Rotor::join(const Vector& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal antiWedge(const Quaternion& a,const Point& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal antiWedge(const Rotor& a,const Point& b) noexcept { return {
         .x = (a.xy * b.y + a.xz * b.z),
         .y = (a.yz * b.z - a.xy * b.x),
         .z = (-a.xz * b.x - a.yz * b.y)
     }; }
-    [[nodiscard]] constexpr PlaneIdeal join(const Quaternion& a,const Point& b) noexcept { return antiWedge(a, b); }
-    constexpr PlaneIdeal Quaternion::antiWedge(const Point& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr PlaneIdeal Quaternion::join(const Point& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr PlaneIdeal join(const Rotor& a,const Point& b) noexcept { return antiWedge(a, b); }
+    constexpr PlaneIdeal Rotor::antiWedge(const Point& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr PlaneIdeal Rotor::join(const Point& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr double antiWedge(const Quaternion& a,const BivectorWeight& b) noexcept { return (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy); }
-    [[nodiscard]] constexpr double join(const Quaternion& a,const BivectorWeight& b) noexcept { return antiWedge(a, b); }
-    constexpr double Quaternion::antiWedge(const BivectorWeight& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr double Quaternion::join(const BivectorWeight& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr double antiWedge(const Rotor& a,const BivectorWeight& b) noexcept { return (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy); }
+    [[nodiscard]] constexpr double join(const Rotor& a,const BivectorWeight& b) noexcept { return antiWedge(a, b); }
+    constexpr double Rotor::antiWedge(const BivectorWeight& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr double Rotor::join(const BivectorWeight& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion antiWedge(const Quaternion& a,const PseudoScalar& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor antiWedge(const Rotor& a,const PseudoScalar& b) noexcept { return {
         .s = a.s * b.i,
         .xy = a.xy * b.i,
         .xz = a.xz * b.i,
         .yz = a.yz * b.i
     }; }
-    [[nodiscard]] constexpr Quaternion join(const Quaternion& a,const PseudoScalar& b) noexcept { return antiWedge(a, b); }
-    constexpr Quaternion Quaternion::antiWedge(const PseudoScalar& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr Quaternion Quaternion::join(const PseudoScalar& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr Rotor join(const Rotor& a,const PseudoScalar& b) noexcept { return antiWedge(a, b); }
+    constexpr Rotor Rotor::antiWedge(const PseudoScalar& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr Rotor Rotor::join(const PseudoScalar& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
 
     [[nodiscard]] constexpr ProjectiveTranslator antiWedge(const ProjectiveTranslator& a,const Motor& b) noexcept { return {
@@ -607,10 +607,10 @@ namespace pga3d {
     constexpr Plane ProjectiveTranslator::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
     constexpr Plane ProjectiveTranslator::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr double antiWedge(const ProjectiveTranslator& a,const Quaternion& b) noexcept { return (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz); }
-    [[nodiscard]] constexpr double join(const ProjectiveTranslator& a,const Quaternion& b) noexcept { return antiWedge(a, b); }
-    constexpr double ProjectiveTranslator::antiWedge(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr double ProjectiveTranslator::join(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr double antiWedge(const ProjectiveTranslator& a,const Rotor& b) noexcept { return (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz); }
+    [[nodiscard]] constexpr double join(const ProjectiveTranslator& a,const Rotor& b) noexcept { return antiWedge(a, b); }
+    constexpr double ProjectiveTranslator::antiWedge(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr double ProjectiveTranslator::join(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr Plane antiWedge(const ProjectiveTranslator& a,const Vector& b) noexcept { return {
         .x = 0.0,
@@ -682,10 +682,10 @@ namespace pga3d {
     constexpr Plane Translator::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
     constexpr Plane Translator::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr double antiWedge(const Translator& a,const Quaternion& b) noexcept { return (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz); }
-    [[nodiscard]] constexpr double join(const Translator& a,const Quaternion& b) noexcept { return antiWedge(a, b); }
-    constexpr double Translator::antiWedge(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr double Translator::join(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr double antiWedge(const Translator& a,const Rotor& b) noexcept { return (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz); }
+    [[nodiscard]] constexpr double join(const Translator& a,const Rotor& b) noexcept { return antiWedge(a, b); }
+    constexpr double Translator::antiWedge(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr double Translator::join(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr Plane antiWedge(const Translator& a,const Vector& b) noexcept { return {
         .x = 0.0,
@@ -781,14 +781,14 @@ namespace pga3d {
     constexpr Bivector Vector::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
     constexpr Bivector Vector::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal antiWedge(const Vector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal antiWedge(const Vector& a,const Rotor& b) noexcept { return {
         .x = (a.y * b.xy + a.z * b.xz),
         .y = (a.z * b.yz - a.x * b.xy),
         .z = (-a.x * b.xz - a.y * b.yz)
     }; }
-    [[nodiscard]] constexpr PlaneIdeal join(const Vector& a,const Quaternion& b) noexcept { return antiWedge(a, b); }
-    constexpr PlaneIdeal Vector::antiWedge(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr PlaneIdeal Vector::join(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr PlaneIdeal join(const Vector& a,const Rotor& b) noexcept { return antiWedge(a, b); }
+    constexpr PlaneIdeal Vector::antiWedge(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr PlaneIdeal Vector::join(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr Plane antiWedge(const Vector& a,const ProjectiveTranslator& b) noexcept { return {
         .x = 0.0,
@@ -923,14 +923,14 @@ namespace pga3d {
     constexpr Bivector Point::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
     constexpr Bivector Point::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal antiWedge(const Point& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal antiWedge(const Point& a,const Rotor& b) noexcept { return {
         .x = (a.y * b.xy + a.z * b.xz),
         .y = (a.z * b.yz - a.x * b.xy),
         .z = (-a.x * b.xz - a.y * b.yz)
     }; }
-    [[nodiscard]] constexpr PlaneIdeal join(const Point& a,const Quaternion& b) noexcept { return antiWedge(a, b); }
-    constexpr PlaneIdeal Point::antiWedge(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr PlaneIdeal Point::join(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr PlaneIdeal join(const Point& a,const Rotor& b) noexcept { return antiWedge(a, b); }
+    constexpr PlaneIdeal Point::antiWedge(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr PlaneIdeal Point::join(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr Plane antiWedge(const Point& a,const ProjectiveTranslator& b) noexcept { return {
         .x = -b.wx,
@@ -1054,15 +1054,15 @@ namespace pga3d {
     constexpr PlaneIdeal PlaneIdeal::join(const PseudoScalar& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
 
-    [[nodiscard]] constexpr Quaternion antiWedge(const BivectorBulk& a,const Motor& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor antiWedge(const BivectorBulk& a,const Motor& b) noexcept { return {
         .s = (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy),
         .xy = a.xy * b.i,
         .xz = a.xz * b.i,
         .yz = a.yz * b.i
     }; }
-    [[nodiscard]] constexpr Quaternion join(const BivectorBulk& a,const Motor& b) noexcept { return antiWedge(a, b); }
-    constexpr Quaternion BivectorBulk::antiWedge(const Motor& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr Quaternion BivectorBulk::join(const Motor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr Rotor join(const BivectorBulk& a,const Motor& b) noexcept { return antiWedge(a, b); }
+    constexpr Rotor BivectorBulk::antiWedge(const Motor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr Rotor BivectorBulk::join(const Motor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr double antiWedge(const BivectorBulk& a,const Bivector& b) noexcept { return (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy); }
     [[nodiscard]] constexpr double join(const BivectorBulk& a,const Bivector& b) noexcept { return antiWedge(a, b); }
@@ -1146,10 +1146,10 @@ namespace pga3d {
     constexpr Plane BivectorWeight::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
     constexpr Plane BivectorWeight::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr double antiWedge(const BivectorWeight& a,const Quaternion& b) noexcept { return (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz); }
-    [[nodiscard]] constexpr double join(const BivectorWeight& a,const Quaternion& b) noexcept { return antiWedge(a, b); }
-    constexpr double BivectorWeight::antiWedge(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr double BivectorWeight::join(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr double antiWedge(const BivectorWeight& a,const Rotor& b) noexcept { return (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz); }
+    [[nodiscard]] constexpr double join(const BivectorWeight& a,const Rotor& b) noexcept { return antiWedge(a, b); }
+    constexpr double BivectorWeight::antiWedge(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr double BivectorWeight::join(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr Plane antiWedge(const BivectorWeight& a,const Vector& b) noexcept { return {
         .x = 0.0,
@@ -1241,15 +1241,15 @@ namespace pga3d {
     constexpr ProjectivePoint PseudoScalar::antiWedge(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
     constexpr ProjectivePoint PseudoScalar::join(const ProjectivePoint& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion antiWedge(const PseudoScalar& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor antiWedge(const PseudoScalar& a,const Rotor& b) noexcept { return {
         .s = a.i * b.s,
         .xy = a.i * b.xy,
         .xz = a.i * b.xz,
         .yz = a.i * b.yz
     }; }
-    [[nodiscard]] constexpr Quaternion join(const PseudoScalar& a,const Quaternion& b) noexcept { return antiWedge(a, b); }
-    constexpr Quaternion PseudoScalar::antiWedge(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
-    constexpr Quaternion PseudoScalar::join(const Quaternion& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    [[nodiscard]] constexpr Rotor join(const PseudoScalar& a,const Rotor& b) noexcept { return antiWedge(a, b); }
+    constexpr Rotor PseudoScalar::antiWedge(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
+    constexpr Rotor PseudoScalar::join(const Rotor& b) const noexcept { return pga3d::antiWedge(*this, b); }
 
     [[nodiscard]] constexpr ProjectiveTranslator antiWedge(const PseudoScalar& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.i * b.s,

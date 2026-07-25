@@ -3,15 +3,15 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppSubclass, CppSubclasses}
 import me.kright.gametools.symbolic.Sym
 
-object QuaternionAndMotorAxes {
+object RotorAndMotorAxes {
   def makeDeclaration(code: CppCodeBuilder, cls: CppSubclass): Unit = {
     for (methodName <- Seq("axisX", "axisY", "axisZ")) {
       code(s"[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${methodName}() const noexcept;")
     }
   }
 
-  def makeForQuaternion(code: CppCodeBuilder): Unit = {
-    val self = CppSubclasses.quaternion.self
+  def makeForRotor(code: CppCodeBuilder): Unit = {
+    val self = CppSubclasses.rotor.self
     val vec = CppSubclasses.vector.self
     val axes = vec.values.keys.toSeq.sortBy(_.bits).reverse.map(blade => vec.filter((b, _) => b == blade))
 
@@ -26,19 +26,19 @@ object QuaternionAndMotorAxes {
 
       require(resultCls == CppSubclasses.vector)
 
-      code(s"[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.quaternion.name}::${methodName}() const noexcept { return ${resultCls.makeBracesInit(result)}; }")
+      code(s"[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.rotor.name}::${methodName}() const noexcept { return ${resultCls.makeBracesInit(result)}; }")
     }
   }
 
   def makeForMotor(code: CppCodeBuilder): Unit = {
-    val self = CppSubclasses.quaternion.self
+    val self = CppSubclasses.rotor.self
     val vec = CppSubclasses.vector.self
     val axes = vec.values.keys.toSeq.sortBy(_.bits).reverse.map(blade => vec.filter((b, _) => b == blade))
 
     code(
-      s"""[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.motor.name}::axisX() const noexcept { return toQuaternionUnsafe().axisX(); }
-         |[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.motor.name}::axisY() const noexcept { return toQuaternionUnsafe().axisY(); }
-         |[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.motor.name}::axisZ() const noexcept { return toQuaternionUnsafe().axisZ(); }
+      s"""[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.motor.name}::axisX() const noexcept { return toRotorUnsafe().axisX(); }
+         |[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.motor.name}::axisY() const noexcept { return toRotorUnsafe().axisY(); }
+         |[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.motor.name}::axisZ() const noexcept { return toRotorUnsafe().axisZ(); }
          |""".stripMargin
     )
   }

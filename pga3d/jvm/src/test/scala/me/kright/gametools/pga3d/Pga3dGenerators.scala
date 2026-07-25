@@ -93,5 +93,24 @@ object Pga3dGenerators:
   val anyMotors: Gen[Pga3dMotor] =
     makeGenT(8, FlatDoubleSerializer.read[Pga3dMotor])
 
+  val planes: Gen[Pga3dPlane] =
+    makeGenT(4, FlatDoubleSerializer.read[Pga3dPlane])
+
+  val planeIdeals: Gen[Pga3dPlaneIdeal] =
+    Gen.oneOf(
+      Gen.oneOf(
+        Pga3dPlaneIdeal(1, 0, 0),
+        Pga3dPlaneIdeal(0, 1, 0),
+        Pga3dPlaneIdeal(0, 0, 1),
+      ),
+      makeGenT(3, FlatDoubleSerializer.read[Pga3dPlaneIdeal])
+    )
+
+  val projectivePoints: Gen[Pga3dProjectivePoint] =
+    makeGenT(4, FlatDoubleSerializer.read[Pga3dProjectivePoint])
+
+  val multivectors: Gen[Pga3dMultivector] =
+    makeGenT(16, FlatDoubleSerializer.read[Pga3dMultivector])
+
   def matrices(h: Int, w: Int): Gen[Matrix] =
     Gen.containerOfN[Array, Double](h * w, double1).map(arr => Matrix.fromValues(h, w)(arr *))

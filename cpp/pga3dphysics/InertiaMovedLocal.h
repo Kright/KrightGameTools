@@ -66,7 +66,7 @@ namespace pga3d {
             };
         }
 
-        [[nodiscard]] constexpr InertiaMovedLocal movedBy(const Quaternion& m) const noexcept {
+        [[nodiscard]] constexpr InertiaMovedLocal movedBy(const Rotor& m) const noexcept {
             return {
                 .localToGlobal = m.geometric(localToGlobal),
                 .localInertia = localInertia,

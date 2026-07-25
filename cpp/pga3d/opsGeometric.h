@@ -93,7 +93,7 @@ namespace pga3d {
     }; }
     constexpr Multivector Motor::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const Motor& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const Motor& a,const Rotor& b) noexcept { return {
         .s = (a.s * b.s - a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .wx = (a.wx * b.s - a.i * b.yz - a.wy * b.xy - a.wz * b.xz),
         .wy = (a.i * b.xz + a.wx * b.xy + a.wy * b.s - a.wz * b.yz),
@@ -103,7 +103,7 @@ namespace pga3d {
         .yz = (a.s * b.yz + a.xz * b.xy + a.yz * b.s - a.xy * b.xz),
         .i = (a.i * b.s + a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
     }; }
-    constexpr Motor Motor::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor Motor::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr Motor geometric(const Motor& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.s * b.s,
@@ -310,7 +310,7 @@ namespace pga3d {
     }; }
     constexpr Motor Plane::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const Plane& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const Plane& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = a.w * b.s,
         .x = (a.x * b.s - a.y * b.xy - a.z * b.xz),
@@ -328,7 +328,7 @@ namespace pga3d {
         .xyz = (a.x * b.yz + a.z * b.xy - a.y * b.xz),
         .i = 0.0
     }; }
-    constexpr Multivector Plane::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector Plane::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr Multivector geometric(const Plane& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -530,7 +530,7 @@ namespace pga3d {
     }; }
     constexpr Multivector Bivector::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const Bivector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const Bivector& a,const Rotor& b) noexcept { return {
         .s = (-a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .wx = (a.wx * b.s - a.wy * b.xy - a.wz * b.xz),
         .wy = (a.wx * b.xy + a.wy * b.s - a.wz * b.yz),
@@ -540,7 +540,7 @@ namespace pga3d {
         .yz = (a.xz * b.xy + a.yz * b.s - a.xy * b.xz),
         .i = (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
     }; }
-    constexpr Motor Bivector::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor Bivector::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr Motor geometric(const Bivector& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -738,7 +738,7 @@ namespace pga3d {
     }; }
     constexpr ProjectiveTranslator ProjectivePoint::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const ProjectivePoint& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const ProjectivePoint& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = (a.x * b.yz + a.z * b.xy - a.y * b.xz),
         .x = -a.w * b.yz,
@@ -756,7 +756,7 @@ namespace pga3d {
         .xyz = a.w * b.s,
         .i = 0.0
     }; }
-    constexpr Multivector ProjectivePoint::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector ProjectivePoint::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint geometric(const ProjectivePoint& a,const ProjectiveTranslator& b) noexcept { return {
         .x = (a.w * b.wx + a.x * b.s),
@@ -845,7 +845,7 @@ namespace pga3d {
     constexpr ProjectiveTranslator ProjectivePoint::geometric(const PointCenter& b) const noexcept { return pga3d::geometric(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor geometric(const Quaternion& a,const Motor& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const Rotor& a,const Motor& b) noexcept { return {
         .s = (a.s * b.s - a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .wx = (a.s * b.wx + a.xy * b.wy + a.xz * b.wz - a.yz * b.i),
         .wy = (a.s * b.wy + a.xz * b.i + a.yz * b.wz - a.xy * b.wx),
@@ -855,9 +855,9 @@ namespace pga3d {
         .yz = (a.s * b.yz + a.xz * b.xy + a.yz * b.s - a.xy * b.xz),
         .i = (a.s * b.i + a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
     }; }
-    constexpr Motor Quaternion::geometric(const Motor& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor Rotor::geometric(const Motor& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const Quaternion& a,const Plane& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const Rotor& a,const Plane& b) noexcept { return {
         .s = 0.0,
         .w = a.s * b.w,
         .x = (a.s * b.x + a.xy * b.y + a.xz * b.z),
@@ -875,9 +875,9 @@ namespace pga3d {
         .xyz = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::geometric(const Plane& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector Rotor::geometric(const Plane& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const Quaternion& a,const Bivector& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const Rotor& a,const Bivector& b) noexcept { return {
         .s = (-a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .wx = (a.s * b.wx + a.xy * b.wy + a.xz * b.wz),
         .wy = (a.s * b.wy + a.yz * b.wz - a.xy * b.wx),
@@ -887,9 +887,9 @@ namespace pga3d {
         .yz = (a.s * b.yz + a.xz * b.xy - a.xy * b.xz),
         .i = (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
     }; }
-    constexpr Motor Quaternion::geometric(const Bivector& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor Rotor::geometric(const Bivector& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const Quaternion& a,const ProjectivePoint& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const Rotor& a,const ProjectivePoint& b) noexcept { return {
         .s = 0.0,
         .w = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .x = -a.yz * b.w,
@@ -907,17 +907,17 @@ namespace pga3d {
         .xyz = a.s * b.w,
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector Rotor::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion geometric(const Quaternion& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor geometric(const Rotor& a,const Rotor& b) noexcept { return {
         .s = (a.s * b.s - a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .xy = (a.s * b.xy + a.xy * b.s + a.yz * b.xz - a.xz * b.yz),
         .xz = (a.s * b.xz + a.xy * b.yz + a.xz * b.s - a.yz * b.xy),
         .yz = (a.s * b.yz + a.xz * b.xy + a.yz * b.s - a.xy * b.xz)
     }; }
-    constexpr Quaternion Quaternion::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Rotor Rotor::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const Quaternion& a,const ProjectiveTranslator& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const Rotor& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.s * b.s,
         .wx = (a.s * b.wx + a.xy * b.wy + a.xz * b.wz),
         .wy = (a.s * b.wy + a.yz * b.wz - a.xy * b.wx),
@@ -927,9 +927,9 @@ namespace pga3d {
         .yz = a.yz * b.s,
         .i = (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
     }; }
-    constexpr Motor Quaternion::geometric(const ProjectiveTranslator& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor Rotor::geometric(const ProjectiveTranslator& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const Quaternion& a,const Translator& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const Rotor& a,const Translator& b) noexcept { return {
         .s = a.s,
         .wx = (a.s * b.wx + a.xy * b.wy + a.xz * b.wz),
         .wy = (a.s * b.wy + a.yz * b.wz - a.xy * b.wx),
@@ -939,9 +939,9 @@ namespace pga3d {
         .yz = a.yz,
         .i = (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
     }; }
-    constexpr Motor Quaternion::geometric(const Translator& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor Rotor::geometric(const Translator& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const Quaternion& a,const Vector& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const Rotor& a,const Vector& b) noexcept { return {
         .s = 0.0,
         .w = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .x = 0.0,
@@ -959,9 +959,9 @@ namespace pga3d {
         .xyz = 0.0,
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::geometric(const Vector& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector Rotor::geometric(const Vector& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const Quaternion& a,const Point& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const Rotor& a,const Point& b) noexcept { return {
         .s = 0.0,
         .w = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .x = -a.yz,
@@ -979,9 +979,9 @@ namespace pga3d {
         .xyz = a.s,
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::geometric(const Point& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector Rotor::geometric(const Point& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const Quaternion& a,const PlaneIdeal& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const Rotor& a,const PlaneIdeal& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = (a.s * b.x + a.xy * b.y + a.xz * b.z),
@@ -999,17 +999,17 @@ namespace pga3d {
         .xyz = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::geometric(const PlaneIdeal& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector Rotor::geometric(const PlaneIdeal& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion geometric(const Quaternion& a,const BivectorBulk& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor geometric(const Rotor& a,const BivectorBulk& b) noexcept { return {
         .s = (-a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .xy = (a.s * b.xy + a.yz * b.xz - a.xz * b.yz),
         .xz = (a.s * b.xz + a.xy * b.yz - a.yz * b.xy),
         .yz = (a.s * b.yz + a.xz * b.xy - a.xy * b.xz)
     }; }
-    constexpr Quaternion Quaternion::geometric(const BivectorBulk& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Rotor Rotor::geometric(const BivectorBulk& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const Quaternion& a,const BivectorWeight& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const Rotor& a,const BivectorWeight& b) noexcept { return {
         .s = 0.0,
         .wx = (a.s * b.wx + a.xy * b.wy + a.xz * b.wz),
         .wy = (a.s * b.wy + a.yz * b.wz - a.xy * b.wx),
@@ -1019,9 +1019,9 @@ namespace pga3d {
         .yz = 0.0,
         .i = (a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
     }; }
-    constexpr Motor Quaternion::geometric(const BivectorWeight& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor Rotor::geometric(const BivectorWeight& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const Quaternion& a,const PseudoScalar& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const Rotor& a,const PseudoScalar& b) noexcept { return {
         .s = 0.0,
         .wx = -a.yz * b.i,
         .wy = a.xz * b.i,
@@ -1031,9 +1031,9 @@ namespace pga3d {
         .yz = 0.0,
         .i = a.s * b.i
     }; }
-    constexpr Motor Quaternion::geometric(const PseudoScalar& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor Rotor::geometric(const PseudoScalar& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const Quaternion& a,const PointCenter& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const Rotor& a,const PointCenter& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = -a.yz,
@@ -1051,7 +1051,7 @@ namespace pga3d {
         .xyz = a.s,
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::geometric(const PointCenter& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector Rotor::geometric(const PointCenter& b) const noexcept { return pga3d::geometric(*this, b); }
 
 
     [[nodiscard]] constexpr Motor geometric(const ProjectiveTranslator& a,const Motor& b) noexcept { return {
@@ -1106,7 +1106,7 @@ namespace pga3d {
     }; }
     constexpr ProjectivePoint ProjectiveTranslator::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const ProjectiveTranslator& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const ProjectiveTranslator& a,const Rotor& b) noexcept { return {
         .s = a.s * b.s,
         .wx = (a.wx * b.s - a.wy * b.xy - a.wz * b.xz),
         .wy = (a.wx * b.xy + a.wy * b.s - a.wz * b.yz),
@@ -1116,7 +1116,7 @@ namespace pga3d {
         .yz = a.s * b.yz,
         .i = (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
     }; }
-    constexpr Motor ProjectiveTranslator::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor ProjectiveTranslator::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr ProjectiveTranslator geometric(const ProjectiveTranslator& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.s * b.s,
@@ -1254,7 +1254,7 @@ namespace pga3d {
     }; }
     constexpr ProjectivePoint Translator::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const Translator& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const Translator& a,const Rotor& b) noexcept { return {
         .s = b.s,
         .wx = (a.wx * b.s - a.wy * b.xy - a.wz * b.xz),
         .wy = (a.wx * b.xy + a.wy * b.s - a.wz * b.yz),
@@ -1264,7 +1264,7 @@ namespace pga3d {
         .yz = b.yz,
         .i = (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
     }; }
-    constexpr Motor Translator::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor Translator::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr ProjectiveTranslator geometric(const Translator& a,const ProjectiveTranslator& b) noexcept { return {
         .s = b.s,
@@ -1406,7 +1406,7 @@ namespace pga3d {
     }; }
     constexpr BivectorWeight Vector::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const Vector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const Vector& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = (a.x * b.yz + a.z * b.xy - a.y * b.xz),
         .x = 0.0,
@@ -1424,7 +1424,7 @@ namespace pga3d {
         .xyz = 0.0,
         .i = 0.0
     }; }
-    constexpr Multivector Vector::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector Vector::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr Vector geometric(const Vector& a,const ProjectiveTranslator& b) noexcept { return {
         .x = a.x * b.s,
@@ -1547,7 +1547,7 @@ namespace pga3d {
     }; }
     constexpr ProjectiveTranslator Point::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const Point& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const Point& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = (a.x * b.yz + a.z * b.xy - a.y * b.xz),
         .x = -b.yz,
@@ -1565,7 +1565,7 @@ namespace pga3d {
         .xyz = b.s,
         .i = 0.0
     }; }
-    constexpr Multivector Point::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector Point::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint geometric(const Point& a,const ProjectiveTranslator& b) noexcept { return {
         .x = (b.wx + a.x * b.s),
@@ -1717,7 +1717,7 @@ namespace pga3d {
     }; }
     constexpr Motor PlaneIdeal::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const PlaneIdeal& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const PlaneIdeal& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = (a.x * b.s - a.y * b.xy - a.z * b.xz),
@@ -1735,7 +1735,7 @@ namespace pga3d {
         .xyz = (a.x * b.yz + a.z * b.xy - a.y * b.xz),
         .i = 0.0
     }; }
-    constexpr Multivector PlaneIdeal::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector PlaneIdeal::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr Multivector geometric(const PlaneIdeal& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -1801,13 +1801,13 @@ namespace pga3d {
     }; }
     constexpr Motor PlaneIdeal::geometric(const Point& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion geometric(const PlaneIdeal& a,const PlaneIdeal& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor geometric(const PlaneIdeal& a,const PlaneIdeal& b) noexcept { return {
         .s = (a.x * b.x + a.y * b.y + a.z * b.z),
         .xy = (a.x * b.y - a.y * b.x),
         .xz = (a.x * b.z - a.z * b.x),
         .yz = (a.y * b.z - a.z * b.y)
     }; }
-    constexpr Quaternion PlaneIdeal::geometric(const PlaneIdeal& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Rotor PlaneIdeal::geometric(const PlaneIdeal& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr Multivector geometric(const PlaneIdeal& a,const BivectorBulk& b) noexcept { return {
         .s = 0.0,
@@ -1928,13 +1928,13 @@ namespace pga3d {
     }; }
     constexpr Multivector BivectorBulk::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion geometric(const BivectorBulk& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor geometric(const BivectorBulk& a,const Rotor& b) noexcept { return {
         .s = (-a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .xy = (a.xy * b.s + a.yz * b.xz - a.xz * b.yz),
         .xz = (a.xy * b.yz + a.xz * b.s - a.yz * b.xy),
         .yz = (a.xz * b.xy + a.yz * b.s - a.xy * b.xz)
     }; }
-    constexpr Quaternion BivectorBulk::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Rotor BivectorBulk::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr Motor geometric(const BivectorBulk& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -2020,13 +2020,13 @@ namespace pga3d {
     }; }
     constexpr Multivector BivectorBulk::geometric(const PlaneIdeal& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion geometric(const BivectorBulk& a,const BivectorBulk& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor geometric(const BivectorBulk& a,const BivectorBulk& b) noexcept { return {
         .s = (-a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .xy = (a.yz * b.xz - a.xz * b.yz),
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
     }; }
-    constexpr Quaternion BivectorBulk::geometric(const BivectorBulk& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Rotor BivectorBulk::geometric(const BivectorBulk& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr Motor geometric(const BivectorBulk& a,const BivectorWeight& b) noexcept { return {
         .s = 0.0,
@@ -2106,7 +2106,7 @@ namespace pga3d {
     }; }
     constexpr Vector BivectorWeight::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const BivectorWeight& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const BivectorWeight& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .wx = (a.wx * b.s - a.wy * b.xy - a.wz * b.xz),
         .wy = (a.wx * b.xy + a.wy * b.s - a.wz * b.yz),
@@ -2116,7 +2116,7 @@ namespace pga3d {
         .yz = 0.0,
         .i = (a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
     }; }
-    constexpr Motor BivectorWeight::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor BivectorWeight::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr BivectorWeight geometric(const BivectorWeight& a,const ProjectiveTranslator& b) noexcept { return {
         .wx = a.wx * b.s,
@@ -2213,7 +2213,7 @@ namespace pga3d {
     }; }
     constexpr Plane PseudoScalar::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Motor geometric(const PseudoScalar& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor geometric(const PseudoScalar& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .wx = -a.i * b.yz,
         .wy = a.i * b.xz,
@@ -2223,7 +2223,7 @@ namespace pga3d {
         .yz = 0.0,
         .i = a.i * b.s
     }; }
-    constexpr Motor PseudoScalar::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Motor PseudoScalar::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr PseudoScalar geometric(const PseudoScalar& a,const ProjectiveTranslator& b) noexcept { return {
         .i = a.i * b.s
@@ -2326,7 +2326,7 @@ namespace pga3d {
     }; }
     constexpr ProjectiveTranslator PointCenter::geometric(const ProjectivePoint& b) const noexcept { return pga3d::geometric(*this, b); }
 
-    [[nodiscard]] constexpr Multivector geometric(const PointCenter& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector geometric(const PointCenter& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = -b.yz,
@@ -2344,7 +2344,7 @@ namespace pga3d {
         .xyz = b.s,
         .i = 0.0
     }; }
-    constexpr Multivector PointCenter::geometric(const Quaternion& b) const noexcept { return pga3d::geometric(*this, b); }
+    constexpr Multivector PointCenter::geometric(const Rotor& b) const noexcept { return pga3d::geometric(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint geometric(const PointCenter& a,const ProjectiveTranslator& b) noexcept { return {
         .x = b.wx,

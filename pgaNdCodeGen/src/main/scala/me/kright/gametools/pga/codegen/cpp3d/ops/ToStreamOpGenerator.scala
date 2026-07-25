@@ -23,9 +23,9 @@ class ToStreamOpGenerator extends CppCodeGenerator {
         code.apply("}")
       }
 
-      import TranslatorWithQuaternionGenerator.quaternionWithTranslator as qt
-      import TranslatorWithQuaternionGenerator.translatorWithQuaternion as tq
-      val q = CppSubclasses.quaternion.name.toLowerCase
+      import TranslatorWithRotorGenerator.rotorWithTranslator as qt
+      import TranslatorWithRotorGenerator.translatorWithRotor as tq
+      val q = CppSubclasses.rotor.name.toLowerCase
       val t = CppSubclasses.translator.name.toLowerCase
 
       code(

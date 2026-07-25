@@ -2,7 +2,7 @@ package me.kright.gametools.pga.codegen.scalagen.pga2d.ops
 
 import me.kright.gametools.ga.PGA2
 import me.kright.gametools.pga.codegen.scalagen.common.{GeneratedCode, MultivectorUnaryOp}
-import me.kright.gametools.pga.codegen.scalagen.pga2d.Pga2dScalaAlgebra.{motor, projectivePoint, translator, vector}
+import me.kright.gametools.pga.codegen.scalagen.pga2d.Pga2dScalaAlgebra.{motor, projectivePoint, rotor, translator, vector}
 import me.kright.gametools.symbolic.Sym
 
 object DefLogForMotor:
@@ -46,6 +46,21 @@ object DefLogForMotor:
         code(s"\ndef log(): ${vector.typeName} =")
         code.block {
           code(vector.makeConstructor(self.weight))
+        }
+      }
+      if (cls == rotor) {
+        code(
+          s"""
+             |/**
+             | * The xy coefficient of the rotation generator, i.e. the half-angle of the rotation.
+             | * There is no single-blade grade-2 class in 2d, so the coefficient is returned as a
+             | * plain Double; ${rotor.typeName}.exp is the inverse. Scale-invariant via atan2.
+             | */
+             |def log(): Double =""".stripMargin)
+        code.block {
+          code(
+            s"""if (s < 0.0) Math.atan2(-xy, -s)
+               |else Math.atan2(xy, s)""".stripMargin)
         }
       }
     }

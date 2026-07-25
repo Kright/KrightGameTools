@@ -4,7 +4,7 @@ import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
 
 /**
- * Generates simple operations for Translator similar to QuaternionOpsGenerator but only log().
+ * Generates simple operations for Translator similar to RotorOpsGenerator but only log().
  */
 class TranslatorOpsGenerator extends CppCodeGenerator {
 

@@ -5,7 +5,7 @@
 KrightGameTools consists of several independent modules in Scala and C++ for 2d and 3d applications: math and physics
 simulation. Most Scala modules support both JVM and Scala.js.
 
-It contains some basic classes like vectors, quaternion, matrices, and rigid body physics built on top of them.
+It contains some basic classes like vectors, rotors, matrices, and rigid body physics built on top of them.
 All of this is implemented from scratch and doesn't depend on other libraries.
 So I hope the library could be used within GraalVM or from Kotlin or Java.
 
@@ -90,7 +90,7 @@ the narrowest-result-type rule) are described in [pga-concepts.md](pga-concepts.
   for loop iterations, precision-related helpers.
 * [**flatarray**](flatarray/README.md): home of the `FlatDoubleSerializer` typeclass for reading and writing
   all-Double case classes as flat runs of `Double`s in an `Array[Double]`. Planned to grow into flat storage of small
-  all-Double structs (PGA points, vectors, quaternions, etc.) with a compile-time-inlined hot path
+  all-Double structs (PGA points, vectors, rotors, etc.) with a compile-time-inlined hot path
   (`FlatView`/`FlatArray`/`FlatBuffer`) so the JVM can scalar-replace temporary struct objects — not implemented yet.
 * [**symbolic**](symbolic/README.md): simple implementation for AST like `(1.0 + ("y" * "x"))` with simplification
   rules. Used by the code generators to derive formulas symbolically.
@@ -104,7 +104,7 @@ the narrowest-result-type rule) are described in [pga-concepts.md](pga-concepts.
   transformation matrices for 3d graphics and physics.
 * [**pga2d**](pga2d/README.md): efficient library for 2d PGA with generated code and some common cases—Pga2dLine,
   Pga2dPoint, Pga2dRotor, Pga2dMotor, etc. The 2d counterpart of pga3d with the same style and terminology, except
-  that a grade-1 element is called a line instead of a plane, and the analog of a quaternion is Pga2dRotor with just
+  that a grade-1 element is called a line instead of a plane, and the analog of Pga3dRotor is Pga2dRotor with just
   2 fields (cos and sin of the half-angle).
 * [**pga3d**](pga3d/README.md): efficient library for 3d PGA with generated code and some common cases—Pga3dPlane,
   Pga3dPoint,
@@ -136,7 +136,7 @@ sbt test
 ```
 
 I use scalaCheck and property-based approach. It goes well with checking math properties such as addition or
-multiplication associativity, zero and id elements, morphisms between quaternions and corresponding matrices.
+multiplication associativity, zero and id elements, morphisms between rotors and corresponding matrices.
 For physics, it's ok to check that total energy and impulse are constant in body systems without friction.
 
 ## How to change this library and try changes locally in another project

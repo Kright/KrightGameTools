@@ -115,6 +115,10 @@ val logarithm = motor.log()
 // Computing the exponential of a grade-2 element (results back in a motor)
 val motor2 = logarithm.exp()
 
+// For a rotor the generator is a single number (the half-angle), so log/exp use plain Double
+val halfAngle = rotor.log()
+val rotor3 = Pga2dRotor.exp(halfAngle)
+
 // Interpolating between two rotors/motors: slerp() follows the exact geodesic (constant
 // angular velocity), nlerp() is a cheaper renormalized-lerp approximation of it.
 // (motor.renormalized is a uniform scale in 2d, unlike the 3d motor case.)

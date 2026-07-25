@@ -3,7 +3,7 @@ package me.kright.gametools.pga3d
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class BivectorExponentTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
+class ExponentTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("exp for bivector") {
     forAll(Pga3dGenerators.bivectors) { bivector =>
       assert((bivector.exp() - bivector.exp(1.0)).norm < 1e-15)

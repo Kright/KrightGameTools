@@ -228,7 +228,7 @@ private class BinaryMethodCodeGen(val methodName: String,
 class SandwichAsMatrix extends CppCodeGenerator {
 
   private def motorClasses: Seq[CppSubclass] =
-    Seq(CppSubclasses.motor, CppSubclasses.quaternion)
+    Seq(CppSubclasses.motor, CppSubclasses.rotor)
 
   private def elemClasses: Seq[CppSubclass] =
     Seq(CppSubclasses.projectivePoint, CppSubclasses.vector, CppSubclasses.bivector, CppSubclasses.plane)
@@ -275,7 +275,7 @@ class SandwichAsMatrix extends CppCodeGenerator {
   }
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
-    if (!Set(CppSubclasses.motor, CppSubclasses.quaternion).contains(cls)) return Seq()
+    if (!Set(CppSubclasses.motor, CppSubclasses.rotor).contains(cls)) return Seq()
 
     val code = CppCodeBuilder()
 
@@ -292,7 +292,7 @@ class SandwichAsMatrix extends CppCodeGenerator {
     code.myHeader(
       Seq(
         s"\"${CppSubclasses.motor.name}.h\"",
-        s"\"${CppSubclasses.quaternion.name}.h\"",
+        s"\"${CppSubclasses.rotor.name}.h\"",
       ),
       code.generatorName(this)
     )

@@ -67,12 +67,12 @@ namespace pga3d {
        return (log() * p).exp();
     }
 
-    [[nodiscard]] constexpr QuaternionWithTranslator Motor::toQuaternionWithTranslator() const noexcept {
-        return toTranslatorWithQuaternion().toQuaternionWithTranslator();
+    [[nodiscard]] constexpr RotorWithTranslator Motor::toRotorWithTranslator() const noexcept {
+        return toTranslatorWithRotor().toRotorWithTranslator();
     }
 
-    [[nodiscard]] constexpr TranslatorWithQuaternion Motor::toTranslatorWithQuaternion() const noexcept {
-        const Quaternion q = toQuaternionUnsafe();
+    [[nodiscard]] constexpr TranslatorWithRotor Motor::toTranslatorWithRotor() const noexcept {
+        const Rotor q = toRotorUnsafe();
         const Vector shift = sandwich(PointCenter{}).toPoint().toVectorUnsafe();
         const Translator t = Translator::addVector(shift);
         return { t, q };
@@ -98,7 +98,7 @@ namespace pga3d {
         };
     }
 
-    [[nodiscard]] constexpr Vector Motor::axisX() const noexcept { return toQuaternionUnsafe().axisX(); }
-    [[nodiscard]] constexpr Vector Motor::axisY() const noexcept { return toQuaternionUnsafe().axisY(); }
-    [[nodiscard]] constexpr Vector Motor::axisZ() const noexcept { return toQuaternionUnsafe().axisZ(); }
+    [[nodiscard]] constexpr Vector Motor::axisX() const noexcept { return toRotorUnsafe().axisX(); }
+    [[nodiscard]] constexpr Vector Motor::axisY() const noexcept { return toRotorUnsafe().axisY(); }
+    [[nodiscard]] constexpr Vector Motor::axisZ() const noexcept { return toRotorUnsafe().axisZ(); }
 }

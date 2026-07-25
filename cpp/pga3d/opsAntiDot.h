@@ -93,13 +93,13 @@ namespace pga3d {
     }; }
     constexpr Multivector Motor::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion antiDot(const Motor& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor antiDot(const Motor& a,const Rotor& b) noexcept { return {
         .s = a.i * b.s,
         .xy = (a.i * b.xy - a.wz * b.s),
         .xz = (a.i * b.xz + a.wy * b.s),
         .yz = (a.i * b.yz - a.wx * b.s)
     }; }
-    constexpr Quaternion Motor::antiDot(const Quaternion& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr Rotor Motor::antiDot(const Rotor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
     [[nodiscard]] constexpr Motor antiDot(const Motor& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.i * b.s,
@@ -268,13 +268,13 @@ namespace pga3d {
     }; }
     constexpr Bivector Plane::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint antiDot(const Plane& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr ProjectivePoint antiDot(const Plane& a,const Rotor& b) noexcept { return {
         .x = 0.0,
         .y = 0.0,
         .z = 0.0,
         .w = a.w * b.s
     }; }
-    constexpr ProjectivePoint Plane::antiDot(const Quaternion& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr ProjectivePoint Plane::antiDot(const Rotor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint antiDot(const Plane& a,const ProjectiveTranslator& b) noexcept { return {
         .x = -a.w * b.wx,
@@ -362,12 +362,12 @@ namespace pga3d {
     }; }
     constexpr ProjectivePoint Bivector::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk antiDot(const Bivector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk antiDot(const Bivector& a,const Rotor& b) noexcept { return {
         .xy = -a.wz * b.s,
         .xz = a.wy * b.s,
         .yz = -a.wx * b.s
     }; }
-    constexpr BivectorBulk Bivector::antiDot(const Quaternion& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr BivectorBulk Bivector::antiDot(const Rotor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
     [[nodiscard]] constexpr Motor antiDot(const Bivector& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -476,7 +476,7 @@ namespace pga3d {
     }; }
     constexpr PseudoScalar ProjectivePoint::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector antiDot(const ProjectivePoint& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector antiDot(const ProjectivePoint& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = a.x * b.s,
@@ -494,7 +494,7 @@ namespace pga3d {
         .xyz = (a.y * b.xz - a.x * b.yz - a.z * b.xy),
         .i = 0.0
     }; }
-    constexpr Multivector ProjectivePoint::antiDot(const Quaternion& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr Multivector ProjectivePoint::antiDot(const Rotor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
     [[nodiscard]] constexpr Multivector antiDot(const ProjectivePoint& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -577,30 +577,30 @@ namespace pga3d {
     constexpr ProjectivePoint ProjectivePoint::antiDot(const PseudoScalar& b) const noexcept { return pga3d::antiDot(*this, b); }
 
 
-    [[nodiscard]] constexpr Quaternion antiDot(const Quaternion& a,const Motor& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor antiDot(const Rotor& a,const Motor& b) noexcept { return {
         .s = a.s * b.i,
         .xy = (a.xy * b.i - a.s * b.wz),
         .xz = (a.s * b.wy + a.xz * b.i),
         .yz = (a.yz * b.i - a.s * b.wx)
     }; }
-    constexpr Quaternion Quaternion::antiDot(const Motor& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr Rotor Rotor::antiDot(const Motor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr ProjectivePoint antiDot(const Quaternion& a,const Plane& b) noexcept { return {
+    [[nodiscard]] constexpr ProjectivePoint antiDot(const Rotor& a,const Plane& b) noexcept { return {
         .x = 0.0,
         .y = 0.0,
         .z = 0.0,
         .w = -a.s * b.w
     }; }
-    constexpr ProjectivePoint Quaternion::antiDot(const Plane& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr ProjectivePoint Rotor::antiDot(const Plane& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk antiDot(const Quaternion& a,const Bivector& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk antiDot(const Rotor& a,const Bivector& b) noexcept { return {
         .xy = -a.s * b.wz,
         .xz = a.s * b.wy,
         .yz = -a.s * b.wx
     }; }
-    constexpr BivectorBulk Quaternion::antiDot(const Bivector& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr BivectorBulk Rotor::antiDot(const Bivector& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector antiDot(const Quaternion& a,const ProjectivePoint& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector antiDot(const Rotor& a,const ProjectivePoint& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = -a.s * b.x,
@@ -618,23 +618,23 @@ namespace pga3d {
         .xyz = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr Multivector Rotor::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk antiDot(const Quaternion& a,const ProjectiveTranslator& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk antiDot(const Rotor& a,const ProjectiveTranslator& b) noexcept { return {
         .xy = -a.s * b.wz,
         .xz = a.s * b.wy,
         .yz = -a.s * b.wx
     }; }
-    constexpr BivectorBulk Quaternion::antiDot(const ProjectiveTranslator& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr BivectorBulk Rotor::antiDot(const ProjectiveTranslator& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk antiDot(const Quaternion& a,const Translator& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk antiDot(const Rotor& a,const Translator& b) noexcept { return {
         .xy = -a.s * b.wz,
         .xz = a.s * b.wy,
         .yz = -a.s * b.wx
     }; }
-    constexpr BivectorBulk Quaternion::antiDot(const Translator& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr BivectorBulk Rotor::antiDot(const Translator& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector antiDot(const Quaternion& a,const Vector& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector antiDot(const Rotor& a,const Vector& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = -a.s * b.x,
@@ -652,9 +652,9 @@ namespace pga3d {
         .xyz = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::antiDot(const Vector& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr Multivector Rotor::antiDot(const Vector& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector antiDot(const Quaternion& a,const Point& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector antiDot(const Rotor& a,const Point& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = -a.s * b.x,
@@ -672,22 +672,22 @@ namespace pga3d {
         .xyz = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::antiDot(const Point& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr Multivector Rotor::antiDot(const Point& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk antiDot(const Quaternion& a,const BivectorWeight& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk antiDot(const Rotor& a,const BivectorWeight& b) noexcept { return {
         .xy = -a.s * b.wz,
         .xz = a.s * b.wy,
         .yz = -a.s * b.wx
     }; }
-    constexpr BivectorBulk Quaternion::antiDot(const BivectorWeight& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr BivectorBulk Rotor::antiDot(const BivectorWeight& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion antiDot(const Quaternion& a,const PseudoScalar& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor antiDot(const Rotor& a,const PseudoScalar& b) noexcept { return {
         .s = a.s * b.i,
         .xy = a.xy * b.i,
         .xz = a.xz * b.i,
         .yz = a.yz * b.i
     }; }
-    constexpr Quaternion Quaternion::antiDot(const PseudoScalar& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr Rotor Rotor::antiDot(const PseudoScalar& b) const noexcept { return pga3d::antiDot(*this, b); }
 
 
     [[nodiscard]] constexpr Motor antiDot(const ProjectiveTranslator& a,const Motor& b) noexcept { return {
@@ -742,12 +742,12 @@ namespace pga3d {
     }; }
     constexpr Multivector ProjectiveTranslator::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk antiDot(const ProjectiveTranslator& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk antiDot(const ProjectiveTranslator& a,const Rotor& b) noexcept { return {
         .xy = -a.wz * b.s,
         .xz = a.wy * b.s,
         .yz = -a.wx * b.s
     }; }
-    constexpr BivectorBulk ProjectiveTranslator::antiDot(const Quaternion& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr BivectorBulk ProjectiveTranslator::antiDot(const Rotor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
     [[nodiscard]] constexpr Motor antiDot(const ProjectiveTranslator& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -894,12 +894,12 @@ namespace pga3d {
     }; }
     constexpr Multivector Translator::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk antiDot(const Translator& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk antiDot(const Translator& a,const Rotor& b) noexcept { return {
         .xy = -a.wz * b.s,
         .xz = a.wy * b.s,
         .yz = -a.wx * b.s
     }; }
-    constexpr BivectorBulk Translator::antiDot(const Quaternion& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr BivectorBulk Translator::antiDot(const Rotor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
     [[nodiscard]] constexpr Motor antiDot(const Translator& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -1037,7 +1037,7 @@ namespace pga3d {
     }; }
     constexpr PseudoScalar Vector::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector antiDot(const Vector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector antiDot(const Vector& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = a.x * b.s,
@@ -1055,7 +1055,7 @@ namespace pga3d {
         .xyz = (a.y * b.xz - a.x * b.yz - a.z * b.xy),
         .i = 0.0
     }; }
-    constexpr Multivector Vector::antiDot(const Quaternion& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr Multivector Vector::antiDot(const Rotor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
     [[nodiscard]] constexpr Multivector antiDot(const Vector& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -1180,7 +1180,7 @@ namespace pga3d {
     }; }
     constexpr PseudoScalar Point::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector antiDot(const Point& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector antiDot(const Point& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = a.x * b.s,
@@ -1198,7 +1198,7 @@ namespace pga3d {
         .xyz = (a.y * b.xz - a.x * b.yz - a.z * b.xy),
         .i = 0.0
     }; }
-    constexpr Multivector Point::antiDot(const Quaternion& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr Multivector Point::antiDot(const Rotor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
     [[nodiscard]] constexpr Multivector antiDot(const Point& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -1433,12 +1433,12 @@ namespace pga3d {
     }; }
     constexpr Vector BivectorWeight::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk antiDot(const BivectorWeight& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk antiDot(const BivectorWeight& a,const Rotor& b) noexcept { return {
         .xy = -a.wz * b.s,
         .xz = a.wy * b.s,
         .yz = -a.wx * b.s
     }; }
-    constexpr BivectorBulk BivectorWeight::antiDot(const Quaternion& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr BivectorBulk BivectorWeight::antiDot(const Rotor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
     [[nodiscard]] constexpr Motor antiDot(const BivectorWeight& a,const ProjectiveTranslator& b) noexcept { return {
         .s = 0.0,
@@ -1537,13 +1537,13 @@ namespace pga3d {
     }; }
     constexpr ProjectivePoint PseudoScalar::antiDot(const ProjectivePoint& b) const noexcept { return pga3d::antiDot(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion antiDot(const PseudoScalar& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor antiDot(const PseudoScalar& a,const Rotor& b) noexcept { return {
         .s = a.i * b.s,
         .xy = a.i * b.xy,
         .xz = a.i * b.xz,
         .yz = a.i * b.yz
     }; }
-    constexpr Quaternion PseudoScalar::antiDot(const Quaternion& b) const noexcept { return pga3d::antiDot(*this, b); }
+    constexpr Rotor PseudoScalar::antiDot(const Rotor& b) const noexcept { return pga3d::antiDot(*this, b); }
 
     [[nodiscard]] constexpr ProjectiveTranslator antiDot(const PseudoScalar& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.i * b.s,

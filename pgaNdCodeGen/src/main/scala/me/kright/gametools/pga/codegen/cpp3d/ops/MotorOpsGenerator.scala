@@ -2,8 +2,8 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 
 import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
-import TranslatorWithQuaternionGenerator.quaternionWithTranslator
-import TranslatorWithQuaternionGenerator.translatorWithQuaternion
+import TranslatorWithRotorGenerator.rotorWithTranslator
+import TranslatorWithRotorGenerator.translatorWithRotor
 
 class MotorOpsGenerator extends CppCodeGenerator {
   // No declarations yet. Ready to add methods in the future.
@@ -22,12 +22,12 @@ class MotorOpsGenerator extends CppCodeGenerator {
     code(s"[[nodiscard]] inline ${CppSubclasses.bivector.name} log() const noexcept;")
     code(s"[[nodiscard]] inline ${CppSubclasses.motor.name} pow(double p) const noexcept;")
     code("")
-    code(s"[[nodiscard]] constexpr ${quaternionWithTranslator} to${quaternionWithTranslator}() const noexcept;")
-    code(s"[[nodiscard]] constexpr ${translatorWithQuaternion} to${translatorWithQuaternion}() const noexcept;")
+    code(s"[[nodiscard]] constexpr ${rotorWithTranslator} to${rotorWithTranslator}() const noexcept;")
+    code(s"[[nodiscard]] constexpr ${translatorWithRotor} to${translatorWithRotor}() const noexcept;")
     code("")
     code(s"[[nodiscard]] inline ${CppSubclasses.motor.name} renormalized() const noexcept;")
     code("")
-    QuaternionAndMotorAxes.makeDeclaration(code, cls)
+    RotorAndMotorAxes.makeDeclaration(code, cls)
 
     structBodyPart(code.toString, includes)
   }
@@ -111,15 +111,15 @@ class MotorOpsGenerator extends CppCodeGenerator {
 
       code(
         s"""
-           |[[nodiscard]] constexpr ${quaternionWithTranslator} ${CppSubclasses.motor.name}::to${quaternionWithTranslator}() const noexcept {
-           |    return to${translatorWithQuaternion}().to${quaternionWithTranslator}();
+           |[[nodiscard]] constexpr ${rotorWithTranslator} ${CppSubclasses.motor.name}::to${rotorWithTranslator}() const noexcept {
+           |    return to${translatorWithRotor}().to${rotorWithTranslator}();
            |}
            |""".stripMargin)
 
       code(
         s"""
-           |[[nodiscard]] constexpr ${translatorWithQuaternion} ${CppSubclasses.motor.name}::to${translatorWithQuaternion}() const noexcept {
-           |    const Quaternion q = toQuaternionUnsafe();
+           |[[nodiscard]] constexpr ${translatorWithRotor} ${CppSubclasses.motor.name}::to${translatorWithRotor}() const noexcept {
+           |    const Rotor q = toRotorUnsafe();
            |    const Vector shift = sandwich(PointCenter{}).toPoint().toVectorUnsafe();
            |    const Translator t = Translator::addVector(shift);
            |    return { t, q };
@@ -150,7 +150,7 @@ class MotorOpsGenerator extends CppCodeGenerator {
            |""".stripMargin)
 
       code("")
-      QuaternionAndMotorAxes.makeForMotor(code)
+      RotorAndMotorAxes.makeForMotor(code)
     }
 
     Seq(FileContent(codeGen.directory.resolve("opsMotor.h"), code.toString))

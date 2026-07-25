@@ -23,8 +23,8 @@ namespace pga3d {
     inline std::ostream &operator<<(std::ostream &os, const ProjectivePoint &v) {
         return os << "ProjectivePoint{" << ".x = " << v.x << ", "".y = " << v.y << ", "".z = " << v.z << ", "".w = " << v.w << "}";
     }
-    inline std::ostream &operator<<(std::ostream &os, const Quaternion &v) {
-        return os << "Quaternion{" << ".s = " << v.s << ", "".xy = " << v.xy << ", "".xz = " << v.xz << ", "".yz = " << v.yz << "}";
+    inline std::ostream &operator<<(std::ostream &os, const Rotor &v) {
+        return os << "Rotor{" << ".s = " << v.s << ", "".xy = " << v.xy << ", "".xz = " << v.xz << ", "".yz = " << v.yz << "}";
     }
     inline std::ostream &operator<<(std::ostream &os, const ProjectiveTranslator &v) {
         return os << "ProjectiveTranslator{" << ".s = " << v.s << ", "".wx = " << v.wx << ", "".wy = " << v.wy << ", "".wz = " << v.wz << "}";
@@ -53,11 +53,11 @@ namespace pga3d {
     inline std::ostream &operator<<(std::ostream &os, const PointCenter &v) {
         return os << "PointCenter{}";
     }
-    inline std::ostream &operator<<(std::ostream &os, const QuaternionWithTranslator &v) {
-       return os << "QuaternionWithTranslator{" << v.quaternion << ", " << v.translator << "}";
+    inline std::ostream &operator<<(std::ostream &os, const RotorWithTranslator &v) {
+       return os << "RotorWithTranslator{" << v.rotor << ", " << v.translator << "}";
     }
-    inline std::ostream &operator<<(std::ostream &os, const TranslatorWithQuaternion &v) {
-        return os << "TranslatorWithQuaternion{" << v.translator << ", " << v.quaternion << "}";
+    inline std::ostream &operator<<(std::ostream &os, const TranslatorWithRotor &v) {
+        return os << "TranslatorWithRotor{" << v.translator << ", " << v.rotor << "}";
     }
 
 }

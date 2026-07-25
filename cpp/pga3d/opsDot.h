@@ -93,7 +93,7 @@ namespace pga3d {
     }; }
     constexpr Multivector Motor::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Motor dot(const Motor& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor dot(const Motor& a,const Rotor& b) noexcept { return {
         .s = (a.s * b.s - a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .wx = (a.wx * b.s - a.i * b.yz),
         .wy = (a.i * b.xz + a.wy * b.s),
@@ -103,7 +103,7 @@ namespace pga3d {
         .yz = (a.s * b.yz + a.yz * b.s),
         .i = a.i * b.s
     }; }
-    constexpr Motor Motor::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Motor Motor::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr Motor dot(const Motor& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.s * b.s,
@@ -282,13 +282,13 @@ namespace pga3d {
     }; }
     constexpr Bivector Plane::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Plane dot(const Plane& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Plane dot(const Plane& a,const Rotor& b) noexcept { return {
         .x = (a.x * b.s - a.y * b.xy - a.z * b.xz),
         .y = (a.x * b.xy + a.y * b.s - a.z * b.yz),
         .z = (a.x * b.xz + a.y * b.yz + a.z * b.s),
         .w = a.w * b.s
     }; }
-    constexpr Plane Plane::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Plane Plane::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr Plane dot(const Plane& a,const ProjectiveTranslator& b) noexcept { return {
         .x = a.x * b.s,
@@ -387,7 +387,7 @@ namespace pga3d {
     }; }
     constexpr Plane Bivector::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Motor dot(const Bivector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor dot(const Bivector& a,const Rotor& b) noexcept { return {
         .s = (-a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .wx = a.wx * b.s,
         .wy = a.wy * b.s,
@@ -397,7 +397,7 @@ namespace pga3d {
         .yz = a.yz * b.s,
         .i = 0.0
     }; }
-    constexpr Motor Bivector::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Motor Bivector::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr Bivector dot(const Bivector& a,const ProjectiveTranslator& b) noexcept { return {
         .wx = a.wx * b.s,
@@ -502,7 +502,7 @@ namespace pga3d {
     [[nodiscard]] constexpr double dot(const ProjectivePoint& a,const ProjectivePoint& b) noexcept { return -a.w * b.w; }
     constexpr double ProjectivePoint::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector dot(const ProjectivePoint& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector dot(const ProjectivePoint& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = (a.x * b.yz + a.z * b.xy - a.y * b.xz),
         .x = -a.w * b.yz,
@@ -520,7 +520,7 @@ namespace pga3d {
         .xyz = a.w * b.s,
         .i = 0.0
     }; }
-    constexpr Multivector ProjectivePoint::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Multivector ProjectivePoint::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint dot(const ProjectivePoint& a,const ProjectiveTranslator& b) noexcept { return {
         .x = a.x * b.s,
@@ -571,7 +571,7 @@ namespace pga3d {
     constexpr double ProjectivePoint::dot(const PointCenter& b) const noexcept { return pga3d::dot(*this, b); }
 
 
-    [[nodiscard]] constexpr Motor dot(const Quaternion& a,const Motor& b) noexcept { return {
+    [[nodiscard]] constexpr Motor dot(const Rotor& a,const Motor& b) noexcept { return {
         .s = (a.s * b.s - a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .wx = (a.s * b.wx - a.yz * b.i),
         .wy = (a.s * b.wy + a.xz * b.i),
@@ -581,17 +581,17 @@ namespace pga3d {
         .yz = (a.s * b.yz + a.yz * b.s),
         .i = a.s * b.i
     }; }
-    constexpr Motor Quaternion::dot(const Motor& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Motor Rotor::dot(const Motor& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Plane dot(const Quaternion& a,const Plane& b) noexcept { return {
+    [[nodiscard]] constexpr Plane dot(const Rotor& a,const Plane& b) noexcept { return {
         .x = (a.s * b.x + a.xy * b.y + a.xz * b.z),
         .y = (a.s * b.y + a.yz * b.z - a.xy * b.x),
         .z = (a.s * b.z - a.xz * b.x - a.yz * b.y),
         .w = a.s * b.w
     }; }
-    constexpr Plane Quaternion::dot(const Plane& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Plane Rotor::dot(const Plane& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Motor dot(const Quaternion& a,const Bivector& b) noexcept { return {
+    [[nodiscard]] constexpr Motor dot(const Rotor& a,const Bivector& b) noexcept { return {
         .s = (-a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .wx = a.s * b.wx,
         .wy = a.s * b.wy,
@@ -601,9 +601,9 @@ namespace pga3d {
         .yz = a.s * b.yz,
         .i = 0.0
     }; }
-    constexpr Motor Quaternion::dot(const Bivector& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Motor Rotor::dot(const Bivector& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector dot(const Quaternion& a,const ProjectivePoint& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector dot(const Rotor& a,const ProjectivePoint& b) noexcept { return {
         .s = 0.0,
         .w = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .x = -a.yz * b.w,
@@ -621,17 +621,17 @@ namespace pga3d {
         .xyz = a.s * b.w,
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Multivector Rotor::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion dot(const Quaternion& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor dot(const Rotor& a,const Rotor& b) noexcept { return {
         .s = (a.s * b.s - a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .xy = (a.s * b.xy + a.xy * b.s),
         .xz = (a.s * b.xz + a.xz * b.s),
         .yz = (a.s * b.yz + a.yz * b.s)
     }; }
-    constexpr Quaternion Quaternion::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Rotor Rotor::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Motor dot(const Quaternion& a,const ProjectiveTranslator& b) noexcept { return {
+    [[nodiscard]] constexpr Motor dot(const Rotor& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.s * b.s,
         .wx = a.s * b.wx,
         .wy = a.s * b.wy,
@@ -641,9 +641,9 @@ namespace pga3d {
         .yz = a.yz * b.s,
         .i = 0.0
     }; }
-    constexpr Motor Quaternion::dot(const ProjectiveTranslator& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Motor Rotor::dot(const ProjectiveTranslator& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Motor dot(const Quaternion& a,const Translator& b) noexcept { return {
+    [[nodiscard]] constexpr Motor dot(const Rotor& a,const Translator& b) noexcept { return {
         .s = a.s,
         .wx = a.s * b.wx,
         .wy = a.s * b.wy,
@@ -653,9 +653,9 @@ namespace pga3d {
         .yz = a.yz,
         .i = 0.0
     }; }
-    constexpr Motor Quaternion::dot(const Translator& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Motor Rotor::dot(const Translator& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector dot(const Quaternion& a,const Vector& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector dot(const Rotor& a,const Vector& b) noexcept { return {
         .s = 0.0,
         .w = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .x = 0.0,
@@ -673,9 +673,9 @@ namespace pga3d {
         .xyz = 0.0,
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::dot(const Vector& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Multivector Rotor::dot(const Vector& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector dot(const Quaternion& a,const Point& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector dot(const Rotor& a,const Point& b) noexcept { return {
         .s = 0.0,
         .w = (a.xy * b.z + a.yz * b.x - a.xz * b.y),
         .x = -a.yz,
@@ -693,31 +693,31 @@ namespace pga3d {
         .xyz = a.s,
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::dot(const Point& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Multivector Rotor::dot(const Point& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal dot(const Quaternion& a,const PlaneIdeal& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal dot(const Rotor& a,const PlaneIdeal& b) noexcept { return {
         .x = (a.s * b.x + a.xy * b.y + a.xz * b.z),
         .y = (a.s * b.y + a.yz * b.z - a.xy * b.x),
         .z = (a.s * b.z - a.xz * b.x - a.yz * b.y)
     }; }
-    constexpr PlaneIdeal Quaternion::dot(const PlaneIdeal& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr PlaneIdeal Rotor::dot(const PlaneIdeal& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion dot(const Quaternion& a,const BivectorBulk& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor dot(const Rotor& a,const BivectorBulk& b) noexcept { return {
         .s = (-a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .xy = a.s * b.xy,
         .xz = a.s * b.xz,
         .yz = a.s * b.yz
     }; }
-    constexpr Quaternion Quaternion::dot(const BivectorBulk& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Rotor Rotor::dot(const BivectorBulk& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight dot(const Quaternion& a,const BivectorWeight& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorWeight dot(const Rotor& a,const BivectorWeight& b) noexcept { return {
         .wx = a.s * b.wx,
         .wy = a.s * b.wy,
         .wz = a.s * b.wz
     }; }
-    constexpr BivectorWeight Quaternion::dot(const BivectorWeight& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr BivectorWeight Rotor::dot(const BivectorWeight& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Motor dot(const Quaternion& a,const PseudoScalar& b) noexcept { return {
+    [[nodiscard]] constexpr Motor dot(const Rotor& a,const PseudoScalar& b) noexcept { return {
         .s = 0.0,
         .wx = -a.yz * b.i,
         .wy = a.xz * b.i,
@@ -727,9 +727,9 @@ namespace pga3d {
         .yz = 0.0,
         .i = a.s * b.i
     }; }
-    constexpr Motor Quaternion::dot(const PseudoScalar& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Motor Rotor::dot(const PseudoScalar& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector dot(const Quaternion& a,const PointCenter& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector dot(const Rotor& a,const PointCenter& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = -a.yz,
@@ -747,7 +747,7 @@ namespace pga3d {
         .xyz = a.s,
         .i = 0.0
     }; }
-    constexpr Multivector Quaternion::dot(const PointCenter& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Multivector Rotor::dot(const PointCenter& b) const noexcept { return pga3d::dot(*this, b); }
 
 
     [[nodiscard]] constexpr Motor dot(const ProjectiveTranslator& a,const Motor& b) noexcept { return {
@@ -788,7 +788,7 @@ namespace pga3d {
     }; }
     constexpr ProjectivePoint ProjectiveTranslator::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Motor dot(const ProjectiveTranslator& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor dot(const ProjectiveTranslator& a,const Rotor& b) noexcept { return {
         .s = a.s * b.s,
         .wx = a.wx * b.s,
         .wy = a.wy * b.s,
@@ -798,7 +798,7 @@ namespace pga3d {
         .yz = a.s * b.yz,
         .i = 0.0
     }; }
-    constexpr Motor ProjectiveTranslator::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Motor ProjectiveTranslator::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr ProjectiveTranslator dot(const ProjectiveTranslator& a,const ProjectiveTranslator& b) noexcept { return {
         .s = a.s * b.s,
@@ -905,7 +905,7 @@ namespace pga3d {
     }; }
     constexpr ProjectivePoint Translator::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Motor dot(const Translator& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor dot(const Translator& a,const Rotor& b) noexcept { return {
         .s = b.s,
         .wx = a.wx * b.s,
         .wy = a.wy * b.s,
@@ -915,7 +915,7 @@ namespace pga3d {
         .yz = b.yz,
         .i = 0.0
     }; }
-    constexpr Motor Translator::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Motor Translator::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr ProjectiveTranslator dot(const Translator& a,const ProjectiveTranslator& b) noexcept { return {
         .s = b.s,
@@ -1012,7 +1012,7 @@ namespace pga3d {
     }; }
     constexpr Plane Vector::dot(const Bivector& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector dot(const Vector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector dot(const Vector& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = (a.x * b.yz + a.z * b.xy - a.y * b.xz),
         .x = 0.0,
@@ -1030,7 +1030,7 @@ namespace pga3d {
         .xyz = 0.0,
         .i = 0.0
     }; }
-    constexpr Multivector Vector::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Multivector Vector::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr Vector dot(const Vector& a,const ProjectiveTranslator& b) noexcept { return {
         .x = a.x * b.s,
@@ -1103,7 +1103,7 @@ namespace pga3d {
     [[nodiscard]] constexpr double dot(const Point& a,const ProjectivePoint& b) noexcept { return -b.w; }
     constexpr double Point::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector dot(const Point& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector dot(const Point& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = (a.x * b.yz + a.z * b.xy - a.y * b.xz),
         .x = -b.yz,
@@ -1121,7 +1121,7 @@ namespace pga3d {
         .xyz = b.s,
         .i = 0.0
     }; }
-    constexpr Multivector Point::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Multivector Point::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint dot(const Point& a,const ProjectiveTranslator& b) noexcept { return {
         .x = a.x * b.s,
@@ -1212,12 +1212,12 @@ namespace pga3d {
     }; }
     constexpr Bivector PlaneIdeal::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal dot(const PlaneIdeal& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal dot(const PlaneIdeal& a,const Rotor& b) noexcept { return {
         .x = (a.x * b.s - a.y * b.xy - a.z * b.xz),
         .y = (a.x * b.xy + a.y * b.s - a.z * b.yz),
         .z = (a.x * b.xz + a.y * b.yz + a.z * b.s)
     }; }
-    constexpr PlaneIdeal PlaneIdeal::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr PlaneIdeal PlaneIdeal::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr Plane dot(const PlaneIdeal& a,const ProjectiveTranslator& b) noexcept { return {
         .x = a.x * b.s,
@@ -1315,13 +1315,13 @@ namespace pga3d {
     }; }
     constexpr Plane BivectorBulk::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Quaternion dot(const BivectorBulk& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Rotor dot(const BivectorBulk& a,const Rotor& b) noexcept { return {
         .s = (-a.xy * b.xy - a.xz * b.xz - a.yz * b.yz),
         .xy = a.xy * b.s,
         .xz = a.xz * b.s,
         .yz = a.yz * b.s
     }; }
-    constexpr Quaternion BivectorBulk::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Rotor BivectorBulk::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr BivectorBulk dot(const BivectorBulk& a,const ProjectiveTranslator& b) noexcept { return {
         .xy = a.xy * b.s,
@@ -1393,12 +1393,12 @@ namespace pga3d {
     }; }
     constexpr Plane BivectorWeight::dot(const Plane& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight dot(const BivectorWeight& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorWeight dot(const BivectorWeight& a,const Rotor& b) noexcept { return {
         .wx = a.wx * b.s,
         .wy = a.wy * b.s,
         .wz = a.wz * b.s
     }; }
-    constexpr BivectorWeight BivectorWeight::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr BivectorWeight BivectorWeight::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr BivectorWeight dot(const BivectorWeight& a,const ProjectiveTranslator& b) noexcept { return {
         .wx = a.wx * b.s,
@@ -1457,7 +1457,7 @@ namespace pga3d {
     }; }
     constexpr Plane PseudoScalar::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Motor dot(const PseudoScalar& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Motor dot(const PseudoScalar& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .wx = -a.i * b.yz,
         .wy = a.i * b.xz,
@@ -1467,7 +1467,7 @@ namespace pga3d {
         .yz = 0.0,
         .i = a.i * b.s
     }; }
-    constexpr Motor PseudoScalar::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Motor PseudoScalar::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr PseudoScalar dot(const PseudoScalar& a,const ProjectiveTranslator& b) noexcept { return {
         .i = a.i * b.s
@@ -1547,7 +1547,7 @@ namespace pga3d {
     [[nodiscard]] constexpr double dot(const PointCenter& a,const ProjectivePoint& b) noexcept { return -b.w; }
     constexpr double PointCenter::dot(const ProjectivePoint& b) const noexcept { return pga3d::dot(*this, b); }
 
-    [[nodiscard]] constexpr Multivector dot(const PointCenter& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Multivector dot(const PointCenter& a,const Rotor& b) noexcept { return {
         .s = 0.0,
         .w = 0.0,
         .x = -b.yz,
@@ -1565,7 +1565,7 @@ namespace pga3d {
         .xyz = b.s,
         .i = 0.0
     }; }
-    constexpr Multivector PointCenter::dot(const Quaternion& b) const noexcept { return pga3d::dot(*this, b); }
+    constexpr Multivector PointCenter::dot(const Rotor& b) const noexcept { return pga3d::dot(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint dot(const PointCenter& a,const ProjectiveTranslator& b) noexcept { return {
         .x = 0.0,

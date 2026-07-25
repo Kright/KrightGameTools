@@ -6,7 +6,7 @@ import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class FlatDoubleSerializerPga3DPhysicsTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
+class FlatDoubleSerializerPga3dPhysicsTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("check sizes") {
     assert(FlatDoubleSerializer.getSize[Pga3dInertiaLocal] == Pga3dInertiaLocal.componentsCount)
@@ -32,6 +32,6 @@ class FlatDoubleSerializerPga3DPhysicsTest extends AnyFunSuiteLike with ScalaChe
     myCheck(Pga3dInertiaGenerators.inertiaMovedLocal.map(_.toSummable))
   }
 
-object FlatDoubleSerializerPga3DPhysicsTest:
+object FlatDoubleSerializerPga3dPhysicsTest:
   inline def myCheck[T](gen: Gen[T])(using CanEqual[T, T]): Unit =
-    FlatDoubleSerializerPga3DTest.myCheck(gen)
+    FlatDoubleSerializerPga3dTest.myCheck(gen)

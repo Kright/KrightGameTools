@@ -84,7 +84,6 @@ val (line, shift) = bivector.split()
 ### Movement
 
 * [**Pga3dRotor**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dRotor.scala): represents rotation, 4 fields (scalar, xy, xz, yz). It is the exponent of Pga3dBivectorBulk.
-  `Pga3dQuaternion` remains available as a backward-compatible alias for `Pga3dRotor`.
 * [**Pga3dTranslator**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dTranslator.scala): represents linear movement, 3 fields (wx, wy, wz). It is the exponent of Pga3dBivectorWeight
 * [**Pga3dMotor**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dMotor.scala): combination of rotation and linear movement. Has 8 fields (scalar, all bivector fields and pseudoscalar),
   exponent of Pga3dBivector

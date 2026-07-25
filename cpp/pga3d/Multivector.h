@@ -63,7 +63,7 @@ namespace pga3d {
         [[nodiscard]] constexpr Plane toPlaneUnsafe() const noexcept;
         [[nodiscard]] constexpr Bivector toBivectorUnsafe() const noexcept;
         [[nodiscard]] constexpr ProjectivePoint toProjectivePointUnsafe() const noexcept;
-        [[nodiscard]] constexpr Quaternion toQuaternionUnsafe() const noexcept;
+        [[nodiscard]] constexpr Rotor toRotorUnsafe() const noexcept;
         [[nodiscard]] constexpr ProjectiveTranslator toProjectiveTranslatorUnsafe() const noexcept;
         [[nodiscard]] constexpr Translator toTranslatorUnsafe() const noexcept;
         [[nodiscard]] constexpr Vector toVectorUnsafe() const noexcept;

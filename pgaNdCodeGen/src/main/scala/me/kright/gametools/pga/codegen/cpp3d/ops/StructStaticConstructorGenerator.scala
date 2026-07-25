@@ -8,7 +8,7 @@ class StructStaticConstructorGenerator extends CppCodeGenerator {
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] =
     val code = new CppCodeBuilder()
 
-    if (Set(CppSubclasses.quaternion).contains(cls)) {
+    if (Set(CppSubclasses.rotor).contains(cls)) {
       code(s"[[nodiscard]] static constexpr ${cls.name} id() noexcept { return {.s = 1.0}; }")
     }
 

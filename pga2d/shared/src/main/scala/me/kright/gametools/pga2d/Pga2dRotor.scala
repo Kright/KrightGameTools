@@ -6,7 +6,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 
 /**
  * A rotor: rotation around the center of coordinates, applied with rotor.sandwich(obj).
- * The fields s and xy hold the cosine and sine of the half-angle. The 2d analog of Pga3dQuaternion;
+ * The fields s and xy hold the cosine and sine of the half-angle. The 2d analog of Pga3dRotor;
  * a rotor is the exponent of a grade-2 element concentrated at the origin (the xy blade).
  *
  * Variable fields: s, xy.
@@ -116,6 +116,15 @@ final case class Pga2dRotor(s: Double = 0.0,
     )
 
   /**
+   * The xy coefficient of the rotation generator, i.e. the half-angle of the rotation.
+   * There is no single-blade grade-2 class in 2d, so the coefficient is returned as a
+   * plain Double; Pga2dRotor.exp is the inverse. Scale-invariant via atan2.
+   */
+  def log(): Double =
+    if (s < 0.0) Math.atan2(-xy, -s)
+    else Math.atan2(xy, s)
+
+  /**
    * Spherical linear interpolation along the geodesic from this (t = 0) to b (t = 1),
    * with constant angular velocity. Computes this * (this.reverse.geometric(b))^t via log/exp.
    * Assumes both this and b are normalized; the result is normalized.
@@ -123,7 +132,7 @@ final case class Pga2dRotor(s: Double = 0.0,
    * there and the interpolation direction becomes numerically unstable.
    */
   def slerp(b: Pga2dRotor, t: Double): Pga2dRotor =
-    this.geometric(this.reverse.geometric(b).toMotor.log().exp(t).toRotorUnsafe)
+    this.geometric(Pga2dRotor.exp(this.reverse.geometric(b).log() * t))
 
   /**
    * Normalized linear interpolation: the componentwise lerp this * (1 - t) + b * t, renormalized.
@@ -166,6 +175,18 @@ final case class Pga2dRotor(s: Double = 0.0,
       s = s,
       wx = 0.0,
       wy = 0.0,
+    )
+
+  def axisX: Pga2dVector =
+    Pga2dVector(
+      x = (s * s - xy * xy),
+      y = -2.0 * s * xy,
+    )
+
+  def axisY: Pga2dVector =
+    Pga2dVector(
+      x = 2.0 * s * xy,
+      y = (s * s - xy * xy),
     )
 
   infix def geometric(v: Pga2dMotor): Pga2dMotor =
@@ -886,6 +907,10 @@ object Pga2dRotor:
 
   val id: Pga2dRotor = Pga2dRotor(1.0, 0.0)
 
+  /** exp of the rotation generator xy (the half-angle of the rotation): the inverse of rotor.log() */
+  def exp(xy: Double): Pga2dRotor =
+    Pga2dRotor(Math.cos(xy), Math.sin(xy))
+
   def rotation(from: Pga2dLineIdeal, to: Pga2dLineIdeal): Pga2dRotor = {
     // not Math.sqrt(from.normSquare * to.normSquare): the product overflows/underflows
     // for extreme magnitudes (~1e100 or ~1e-100) where each norm alone is still fine
@@ -921,7 +946,7 @@ object Pga2dRotor:
   /** restore rotor from a rotated orthonormal basis (columns of a 2x2 rotation matrix),
    *  so that restored.sandwich(Pga2dVector(1, 0)) == axisX and restored.sandwich(Pga2dVector(0, 1)) == axisY.
    *  axisY is redundant in 2d (SO(2) has one degree of freedom), it is used only to symmetrize rounding errors,
-   *  in the same way as Pga3dQuaternion.restore uses (m01 - m10) */
+   *  in the same way as Pga3dRotor.restore uses (m01 - m10) */
   def restore(axisX: Pga2dVector, axisY: Pga2dVector): Pga2dRotor = {
     val cosT = 0.5 * (axisX.x + axisY.y)
     val sinT = 0.5 * (axisY.x - axisX.y)

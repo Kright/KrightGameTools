@@ -143,7 +143,7 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
     DefBivectorSplit(),
     DefConvertTo(),
     DefProjection(),
-    DefMotorAndRotorAxices(),
+    DefMotorAndRotorAxes(),
     DefRotorProjectToRotationInPlane(),
     DefInterpolation(),
   )

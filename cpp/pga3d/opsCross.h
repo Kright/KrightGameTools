@@ -89,7 +89,7 @@ namespace pga3d {
     }; }
     constexpr Multivector Motor::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr Bivector cross(const Motor& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Bivector cross(const Motor& a,const Rotor& b) noexcept { return {
         .wx = (-a.wy * b.xy - a.wz * b.xz),
         .wy = (a.wx * b.xy - a.wz * b.yz),
         .wz = (a.wx * b.xz + a.wy * b.yz),
@@ -97,7 +97,7 @@ namespace pga3d {
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
     }; }
-    constexpr Bivector Motor::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr Bivector Motor::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr BivectorWeight cross(const Motor& a,const ProjectiveTranslator& b) noexcept { return {
         .wx = (a.xy * b.wy + a.xz * b.wz),
@@ -241,12 +241,12 @@ namespace pga3d {
     }; }
     constexpr PseudoScalar Plane::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal cross(const Plane& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal cross(const Plane& a,const Rotor& b) noexcept { return {
         .x = (-a.y * b.xy - a.z * b.xz),
         .y = (a.x * b.xy - a.z * b.yz),
         .z = (a.x * b.xz + a.y * b.yz)
     }; }
-    constexpr PlaneIdeal Plane::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr PlaneIdeal Plane::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Plane cross(const Plane& a,const ProjectiveTranslator& b) noexcept { return {
         .x = 0.0,
@@ -347,7 +347,7 @@ namespace pga3d {
     }; }
     constexpr Vector Bivector::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr Bivector cross(const Bivector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Bivector cross(const Bivector& a,const Rotor& b) noexcept { return {
         .wx = (-a.wy * b.xy - a.wz * b.xz),
         .wy = (a.wx * b.xy - a.wz * b.yz),
         .wz = (a.wx * b.xz + a.wy * b.yz),
@@ -355,7 +355,7 @@ namespace pga3d {
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
     }; }
-    constexpr Bivector Bivector::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr Bivector Bivector::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr BivectorWeight cross(const Bivector& a,const ProjectiveTranslator& b) noexcept { return {
         .wx = (a.xy * b.wy + a.xz * b.wz),
@@ -457,12 +457,12 @@ namespace pga3d {
     }; }
     constexpr BivectorWeight ProjectivePoint::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr Vector cross(const ProjectivePoint& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Vector cross(const ProjectivePoint& a,const Rotor& b) noexcept { return {
         .x = (-a.y * b.xy - a.z * b.xz),
         .y = (a.x * b.xy - a.z * b.yz),
         .z = (a.x * b.xz + a.y * b.yz)
     }; }
-    constexpr Vector ProjectivePoint::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr Vector ProjectivePoint::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Vector cross(const ProjectivePoint& a,const ProjectiveTranslator& b) noexcept { return {
         .x = a.w * b.wx,
@@ -527,7 +527,7 @@ namespace pga3d {
     constexpr BivectorWeight ProjectivePoint::cross(const PointCenter& b) const noexcept { return pga3d::cross(*this, b); }
 
 
-    [[nodiscard]] constexpr Bivector cross(const Quaternion& a,const Motor& b) noexcept { return {
+    [[nodiscard]] constexpr Bivector cross(const Rotor& a,const Motor& b) noexcept { return {
         .wx = (a.xy * b.wy + a.xz * b.wz),
         .wy = (a.yz * b.wz - a.xy * b.wx),
         .wz = (-a.xz * b.wx - a.yz * b.wy),
@@ -535,16 +535,16 @@ namespace pga3d {
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
     }; }
-    constexpr Bivector Quaternion::cross(const Motor& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr Bivector Rotor::cross(const Motor& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal cross(const Quaternion& a,const Plane& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal cross(const Rotor& a,const Plane& b) noexcept { return {
         .x = (a.xy * b.y + a.xz * b.z),
         .y = (a.yz * b.z - a.xy * b.x),
         .z = (-a.xz * b.x - a.yz * b.y)
     }; }
-    constexpr PlaneIdeal Quaternion::cross(const Plane& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr PlaneIdeal Rotor::cross(const Plane& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr Bivector cross(const Quaternion& a,const Bivector& b) noexcept { return {
+    [[nodiscard]] constexpr Bivector cross(const Rotor& a,const Bivector& b) noexcept { return {
         .wx = (a.xy * b.wy + a.xz * b.wz),
         .wy = (a.yz * b.wz - a.xy * b.wx),
         .wz = (-a.xz * b.wx - a.yz * b.wy),
@@ -552,70 +552,70 @@ namespace pga3d {
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
     }; }
-    constexpr Bivector Quaternion::cross(const Bivector& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr Bivector Rotor::cross(const Bivector& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr Vector cross(const Quaternion& a,const ProjectivePoint& b) noexcept { return {
+    [[nodiscard]] constexpr Vector cross(const Rotor& a,const ProjectivePoint& b) noexcept { return {
         .x = (a.xy * b.y + a.xz * b.z),
         .y = (a.yz * b.z - a.xy * b.x),
         .z = (-a.xz * b.x - a.yz * b.y)
     }; }
-    constexpr Vector Quaternion::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr Vector Rotor::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk cross(const Quaternion& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk cross(const Rotor& a,const Rotor& b) noexcept { return {
         .xy = (a.yz * b.xz - a.xz * b.yz),
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
     }; }
-    constexpr BivectorBulk Quaternion::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr BivectorBulk Rotor::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight cross(const Quaternion& a,const ProjectiveTranslator& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorWeight cross(const Rotor& a,const ProjectiveTranslator& b) noexcept { return {
         .wx = (a.xy * b.wy + a.xz * b.wz),
         .wy = (a.yz * b.wz - a.xy * b.wx),
         .wz = (-a.xz * b.wx - a.yz * b.wy)
     }; }
-    constexpr BivectorWeight Quaternion::cross(const ProjectiveTranslator& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr BivectorWeight Rotor::cross(const ProjectiveTranslator& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight cross(const Quaternion& a,const Translator& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorWeight cross(const Rotor& a,const Translator& b) noexcept { return {
         .wx = (a.xy * b.wy + a.xz * b.wz),
         .wy = (a.yz * b.wz - a.xy * b.wx),
         .wz = (-a.xz * b.wx - a.yz * b.wy)
     }; }
-    constexpr BivectorWeight Quaternion::cross(const Translator& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr BivectorWeight Rotor::cross(const Translator& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr Vector cross(const Quaternion& a,const Vector& b) noexcept { return {
+    [[nodiscard]] constexpr Vector cross(const Rotor& a,const Vector& b) noexcept { return {
         .x = (a.xy * b.y + a.xz * b.z),
         .y = (a.yz * b.z - a.xy * b.x),
         .z = (-a.xz * b.x - a.yz * b.y)
     }; }
-    constexpr Vector Quaternion::cross(const Vector& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr Vector Rotor::cross(const Vector& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr Vector cross(const Quaternion& a,const Point& b) noexcept { return {
+    [[nodiscard]] constexpr Vector cross(const Rotor& a,const Point& b) noexcept { return {
         .x = (a.xy * b.y + a.xz * b.z),
         .y = (a.yz * b.z - a.xy * b.x),
         .z = (-a.xz * b.x - a.yz * b.y)
     }; }
-    constexpr Vector Quaternion::cross(const Point& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr Vector Rotor::cross(const Point& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal cross(const Quaternion& a,const PlaneIdeal& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal cross(const Rotor& a,const PlaneIdeal& b) noexcept { return {
         .x = (a.xy * b.y + a.xz * b.z),
         .y = (a.yz * b.z - a.xy * b.x),
         .z = (-a.xz * b.x - a.yz * b.y)
     }; }
-    constexpr PlaneIdeal Quaternion::cross(const PlaneIdeal& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr PlaneIdeal Rotor::cross(const PlaneIdeal& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk cross(const Quaternion& a,const BivectorBulk& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk cross(const Rotor& a,const BivectorBulk& b) noexcept { return {
         .xy = (a.yz * b.xz - a.xz * b.yz),
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
     }; }
-    constexpr BivectorBulk Quaternion::cross(const BivectorBulk& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr BivectorBulk Rotor::cross(const BivectorBulk& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight cross(const Quaternion& a,const BivectorWeight& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorWeight cross(const Rotor& a,const BivectorWeight& b) noexcept { return {
         .wx = (a.xy * b.wy + a.xz * b.wz),
         .wy = (a.yz * b.wz - a.xy * b.wx),
         .wz = (-a.xz * b.wx - a.yz * b.wy)
     }; }
-    constexpr BivectorWeight Quaternion::cross(const BivectorWeight& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr BivectorWeight Rotor::cross(const BivectorWeight& b) const noexcept { return pga3d::cross(*this, b); }
 
 
     [[nodiscard]] constexpr BivectorWeight cross(const ProjectiveTranslator& a,const Motor& b) noexcept { return {
@@ -647,12 +647,12 @@ namespace pga3d {
     }; }
     constexpr Vector ProjectiveTranslator::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight cross(const ProjectiveTranslator& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorWeight cross(const ProjectiveTranslator& a,const Rotor& b) noexcept { return {
         .wx = (-a.wy * b.xy - a.wz * b.xz),
         .wy = (a.wx * b.xy - a.wz * b.yz),
         .wz = (a.wx * b.xz + a.wy * b.yz)
     }; }
-    constexpr BivectorWeight ProjectiveTranslator::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr BivectorWeight ProjectiveTranslator::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Vector cross(const ProjectiveTranslator& a,const Point& b) noexcept { return {
         .x = -a.wx,
@@ -713,12 +713,12 @@ namespace pga3d {
     }; }
     constexpr Vector Translator::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight cross(const Translator& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorWeight cross(const Translator& a,const Rotor& b) noexcept { return {
         .wx = (-a.wy * b.xy - a.wz * b.xz),
         .wy = (a.wx * b.xy - a.wz * b.yz),
         .wz = (a.wx * b.xz + a.wy * b.yz)
     }; }
-    constexpr BivectorWeight Translator::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr BivectorWeight Translator::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Vector cross(const Translator& a,const Point& b) noexcept { return {
         .x = -a.wx,
@@ -776,12 +776,12 @@ namespace pga3d {
     }; }
     constexpr BivectorWeight Vector::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr Vector cross(const Vector& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Vector cross(const Vector& a,const Rotor& b) noexcept { return {
         .x = (-a.y * b.xy - a.z * b.xz),
         .y = (a.x * b.xy - a.z * b.yz),
         .z = (a.x * b.xz + a.y * b.yz)
     }; }
-    constexpr Vector Vector::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr Vector Vector::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr BivectorWeight cross(const Vector& a,const Point& b) noexcept { return {
         .wx = a.x,
@@ -849,12 +849,12 @@ namespace pga3d {
     }; }
     constexpr BivectorWeight Point::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr Vector cross(const Point& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr Vector cross(const Point& a,const Rotor& b) noexcept { return {
         .x = (-a.y * b.xy - a.z * b.xz),
         .y = (a.x * b.xy - a.z * b.yz),
         .z = (a.x * b.xz + a.y * b.yz)
     }; }
-    constexpr Vector Point::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr Vector Point::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Vector cross(const Point& a,const ProjectiveTranslator& b) noexcept { return {
         .x = b.wx,
@@ -962,12 +962,12 @@ namespace pga3d {
     }; }
     constexpr PseudoScalar PlaneIdeal::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr PlaneIdeal cross(const PlaneIdeal& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr PlaneIdeal cross(const PlaneIdeal& a,const Rotor& b) noexcept { return {
         .x = (-a.y * b.xy - a.z * b.xz),
         .y = (a.x * b.xy - a.z * b.yz),
         .z = (a.x * b.xz + a.y * b.yz)
     }; }
-    constexpr PlaneIdeal PlaneIdeal::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr PlaneIdeal PlaneIdeal::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Plane cross(const PlaneIdeal& a,const ProjectiveTranslator& b) noexcept { return {
         .x = 0.0,
@@ -1059,12 +1059,12 @@ namespace pga3d {
     }; }
     constexpr Vector BivectorBulk::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr BivectorBulk cross(const BivectorBulk& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorBulk cross(const BivectorBulk& a,const Rotor& b) noexcept { return {
         .xy = (a.yz * b.xz - a.xz * b.yz),
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
     }; }
-    constexpr BivectorBulk BivectorBulk::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr BivectorBulk BivectorBulk::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr BivectorWeight cross(const BivectorBulk& a,const ProjectiveTranslator& b) noexcept { return {
         .wx = (a.xy * b.wy + a.xz * b.wz),
@@ -1145,12 +1145,12 @@ namespace pga3d {
     }; }
     constexpr Vector BivectorWeight::cross(const ProjectivePoint& b) const noexcept { return pga3d::cross(*this, b); }
 
-    [[nodiscard]] constexpr BivectorWeight cross(const BivectorWeight& a,const Quaternion& b) noexcept { return {
+    [[nodiscard]] constexpr BivectorWeight cross(const BivectorWeight& a,const Rotor& b) noexcept { return {
         .wx = (-a.wy * b.xy - a.wz * b.xz),
         .wy = (a.wx * b.xy - a.wz * b.yz),
         .wz = (a.wx * b.xz + a.wy * b.yz)
     }; }
-    constexpr BivectorWeight BivectorWeight::cross(const Quaternion& b) const noexcept { return pga3d::cross(*this, b); }
+    constexpr BivectorWeight BivectorWeight::cross(const Rotor& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Vector cross(const BivectorWeight& a,const Point& b) noexcept { return {
         .x = -a.wx,

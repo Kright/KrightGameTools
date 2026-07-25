@@ -3,7 +3,7 @@
 Flat array-of-structs (AoS) storage for homogeneous, all-`Double` elements, packed into a single
 `Array[Double]`.
 
-1. **Goal.** Pack many small all-`Double` structs (points, vectors, quaternions, matrix rows, ...)
+1. **Goal.** Pack many small all-`Double` structs (points, vectors, rotors, matrix rows, ...)
    contiguously into one `Array[Double]`, one element after another, with no gaps between them.
    This module deliberately does **not** do struct-of-arrays (SoA) layout, sub-ranges/offsets/
    strides, or padding - just plain flat AoS with a fixed per-element stride.

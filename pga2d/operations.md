@@ -284,6 +284,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `toTranslatorUnsafe: Pga2dTranslator`
 - `toVectorUnsafe: Pga2dVector`
 - `toPointUnsafe: Pga2dPoint`
+- `axisX: Pga2dVector`
+- `axisY: Pga2dVector`
 
 ### Pga2dLine
 
@@ -374,12 +376,15 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `madd(v: Pga2dRotor, mult: Double): Pga2dRotor`
 - `scale(v: Pga2dRotor): Pga2dRotor`
 - `reciprocal: Pga2dRotor`
+- `log(): Double`
 - `slerp(b: Pga2dRotor, t: Double): Pga2dRotor`
 - `nlerp(b: Pga2dRotor, t: Double): Pga2dRotor`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
 - `toProjectivePointUnsafe: Pga2dProjectivePoint`
 - `toProjectiveTranslatorUnsafe: Pga2dProjectiveTranslator`
+- `axisX: Pga2dVector`
+- `axisY: Pga2dVector`
 
 ### Pga2dProjectiveTranslator
 

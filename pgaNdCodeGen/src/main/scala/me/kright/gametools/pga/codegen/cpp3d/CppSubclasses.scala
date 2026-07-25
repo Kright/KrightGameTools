@@ -28,8 +28,8 @@ object CppSubclasses:
   val projectivePoint = CppSubclass("ProjectivePoint", orderedDualFields.filter(_.basisBlade.grade == 3).take(3).reverse ++ orderedDualFields.filter(_.basisBlade.grade == 3).drop(3))
   val pseudoScalar = CppSubclass("PseudoScalar", orderedFields.takeRight(1))
 
-  val quaternion = CppSubclass("Quaternion", motor.variableFields.filter(f => !f.basisBlade.contains(genW)))
-  //  val quaternionDual = CppSubclass("QuaternionDual", motor.variableFields.filter(f => f.basisBlade.contains(genW)))
+  val rotor = CppSubclass("Rotor", motor.variableFields.filter(f => !f.basisBlade.contains(genW)))
+  //  val rotorDual = CppSubclass("RotorDual", motor.variableFields.filter(f => f.basisBlade.contains(genW)))
   val translator = CppSubclass("Translator", motor.variableFields.filter(f => f.basisBlade.grade == 2 && f.basisBlade.contains(genW)), Seq(scalar.variableFields.head -> 1.0))
   val projectiveTranslator = CppSubclass("ProjectiveTranslator", motor.variableFields.filter(f => f.basisBlade.grade == 0 || f.basisBlade.grade == 2 && f.basisBlade.contains(genW)))
 
@@ -54,8 +54,8 @@ object CppSubclasses:
     bivector, // blade 2
     projectivePoint, // blade 3
 
-    quaternion,
-    //    quaternionDual,
+    rotor,
+    //    rotorDual,
     projectiveTranslator,
     translator,
 

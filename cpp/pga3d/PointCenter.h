@@ -76,7 +76,7 @@ namespace pga3d {
         [[nodiscard]] constexpr Motor geometric(const Plane& b) const noexcept;
         [[nodiscard]] constexpr Multivector geometric(const Bivector& b) const noexcept;
         [[nodiscard]] constexpr ProjectiveTranslator geometric(const ProjectivePoint& b) const noexcept;
-        [[nodiscard]] constexpr Multivector geometric(const Quaternion& b) const noexcept;
+        [[nodiscard]] constexpr Multivector geometric(const Rotor& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint geometric(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr Point geometric(const Translator& b) const noexcept;
         [[nodiscard]] constexpr BivectorWeight geometric(const Vector& b) const noexcept;
@@ -106,7 +106,7 @@ namespace pga3d {
         [[nodiscard]] constexpr BivectorBulk dot(const Plane& b) const noexcept;
         [[nodiscard]] constexpr PlaneIdeal dot(const Bivector& b) const noexcept;
         [[nodiscard]] constexpr double dot(const ProjectivePoint& b) const noexcept;
-        [[nodiscard]] constexpr Multivector dot(const Quaternion& b) const noexcept;
+        [[nodiscard]] constexpr Multivector dot(const Rotor& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint dot(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr PointCenter dot(const Translator& b) const noexcept;
         [[nodiscard]] constexpr double dot(const Point& b) const noexcept;
@@ -126,8 +126,8 @@ namespace pga3d {
         [[nodiscard]] constexpr ProjectivePoint meet(const Motor& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar wedge(const Plane& b) const noexcept;
         [[nodiscard]] constexpr PseudoScalar meet(const Plane& b) const noexcept;
-        [[nodiscard]] constexpr ProjectivePoint wedge(const Quaternion& b) const noexcept;
-        [[nodiscard]] constexpr ProjectivePoint meet(const Quaternion& b) const noexcept;
+        [[nodiscard]] constexpr ProjectivePoint wedge(const Rotor& b) const noexcept;
+        [[nodiscard]] constexpr ProjectivePoint meet(const Rotor& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint wedge(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint meet(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr PointCenter wedge(const Translator& b) const noexcept;
@@ -162,7 +162,7 @@ namespace pga3d {
         [[nodiscard]] constexpr Plane sandwich(const Plane& b) const noexcept;
         [[nodiscard]] constexpr Bivector sandwich(const Bivector& b) const noexcept;
         [[nodiscard]] constexpr ProjectivePoint sandwich(const ProjectivePoint& b) const noexcept;
-        [[nodiscard]] constexpr Quaternion sandwich(const Quaternion& b) const noexcept;
+        [[nodiscard]] constexpr Rotor sandwich(const Rotor& b) const noexcept;
         [[nodiscard]] constexpr ProjectiveTranslator sandwich(const ProjectiveTranslator& b) const noexcept;
         [[nodiscard]] constexpr Translator sandwich(const Translator& b) const noexcept;
         [[nodiscard]] constexpr Vector sandwich(const Vector& b) const noexcept;

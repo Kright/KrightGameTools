@@ -28,13 +28,13 @@ namespace pga3d {
     }; }
     constexpr Multivector Multivector::bulk() const noexcept { return pga3d::bulk(*this); }
 
-    constexpr Quaternion bulk(const Motor& a) noexcept { return {
+    constexpr Rotor bulk(const Motor& a) noexcept { return {
         .s = a.s,
         .xy = a.xy,
         .xz = a.xz,
         .yz = a.yz
     }; }
-    constexpr Quaternion Motor::bulk() const noexcept { return pga3d::bulk(*this); }
+    constexpr Rotor Motor::bulk() const noexcept { return pga3d::bulk(*this); }
 
     constexpr PlaneIdeal bulk(const Plane& a) noexcept { return {
         .x = a.x,
@@ -58,13 +58,13 @@ namespace pga3d {
     }; }
     constexpr ProjectivePoint ProjectivePoint::bulk() const noexcept { return pga3d::bulk(*this); }
 
-    constexpr Quaternion bulk(const Quaternion& a) noexcept { return {
+    constexpr Rotor bulk(const Rotor& a) noexcept { return {
         .s = a.s,
         .xy = a.xy,
         .xz = a.xz,
         .yz = a.yz
     }; }
-    constexpr Quaternion Quaternion::bulk() const noexcept { return pga3d::bulk(*this); }
+    constexpr Rotor Rotor::bulk() const noexcept { return pga3d::bulk(*this); }
 
     constexpr double bulk(const ProjectiveTranslator& a) noexcept { return a.s; }
     constexpr double ProjectiveTranslator::bulk() const noexcept { return pga3d::bulk(*this); }

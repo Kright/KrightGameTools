@@ -29,7 +29,7 @@ Each type is a constexpr struct with fields of type `double`.
 
 **Transformations:**
 
-* [**Quaternion**](Quaternion.h): describing rotation.
+* [**Rotor**](Rotor.h): describing rotation.
 * [**Translator**](Translator.h): describing translation.
 * [**ProjectiveTranslator**](ProjectiveTranslator.h): non-normalized Translator.
 * [**Motor**](Motor.h): represents both rotation and translation.
@@ -37,7 +37,7 @@ Each type is a constexpr struct with fields of type `double`.
 **Other types:**
 
 * [**PseudoScalar**](PseudoScalar.h): represents something like an `i` - dual to scalar.
-* [**TranslatorWithQuaternion, QuaternionWithTranslator**](TranslatorWithQuaternion.h): decomposition of Motor to translation and rotation.
+* [**TranslatorWithRotor, RotorWithTranslator**](TranslatorWithRotor.h): decomposition of Motor to translation and rotation.
 
 ## Operations
 
@@ -46,7 +46,7 @@ All headers with name starting with "ops"
 Geometric algebra operations are applicable to all types.
 If operation definition does not exist, it means that the result is zero.
 
-TranslatorWithQuaternion and QuaternionWithTranslator are the only exceptions and miss some operations.
+TranslatorWithRotor and RotorWithTranslator are the only exceptions and miss some operations.
 
 * `T::from(array)`, `T::from(span)` and `t.toArray()` for storing/retrieving values. 
 * `t.toSomeName()`: safe conversion to another type.

@@ -1,13 +1,13 @@
 package me.kright.gametools.pga3d
 
-import me.kright.gametools.pga3d.FlatDoubleSerializerPga3DTest.myCheck
+import me.kright.gametools.pga3d.FlatDoubleSerializerPga3dTest.myCheck
 import me.kright.gametools.flatarray.FlatDoubleSerializer
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 
-class FlatDoubleSerializerPga3DTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
+class FlatDoubleSerializerPga3dTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("check sizes") {
     assert(FlatDoubleSerializer.getSize[Pga3dBivector] == Pga3dBivector.componentsCount)
@@ -20,6 +20,10 @@ class FlatDoubleSerializerPga3DTest extends AnyFunSuiteLike with ScalaCheckPrope
     assert(FlatDoubleSerializer.getSize[Pga3dBivectorWeight] == Pga3dBivectorWeight.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dBivectorBulk] == Pga3dBivectorBulk.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dPoint] == Pga3dPoint.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dMotor] == Pga3dMotor.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dMultivector] == Pga3dMultivector.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dProjectiveTranslator] == Pga3dProjectiveTranslator.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dPseudoScalar] == Pga3dPseudoScalar.componentsCount)
   }
 
   test("check serialization and deserialization") {
@@ -28,9 +32,15 @@ class FlatDoubleSerializerPga3DTest extends AnyFunSuiteLike with ScalaCheckPrope
     myCheck(Pga3dGenerators.vectors)
     myCheck(Pga3dGenerators.rotors)
     myCheck(Pga3dGenerators.normalizedRotors)
+    myCheck(Pga3dGenerators.anyMotors)
+    myCheck(Pga3dGenerators.multivectors)
+    myCheck(Pga3dGenerators.planes)
+    myCheck(Pga3dGenerators.planeIdeals)
+    myCheck(Pga3dGenerators.projectivePoints)
+    myCheck(Pga3dGenerators.translators)
   }
 
-object FlatDoubleSerializerPga3DTest:
+object FlatDoubleSerializerPga3dTest:
   inline def myCheck[T](gen: Gen[T])(using CanEqual[T, T]): Unit = {
     forAll(gen, gen) { (a, b) =>
       val size = FlatDoubleSerializer.getSize[T]

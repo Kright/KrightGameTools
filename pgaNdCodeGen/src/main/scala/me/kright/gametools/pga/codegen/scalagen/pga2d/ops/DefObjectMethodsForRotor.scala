@@ -13,6 +13,10 @@ object DefObjectMethodsForRotor:
             s"""
                |val id: ${cls.typeName} = ${cls.typeName}(1.0, 0.0)
                |
+               |/** exp of the rotation generator xy (the half-angle of the rotation): the inverse of rotor.log() */
+               |def exp(xy: Double): ${cls.name} =
+               |  ${cls.name}(Math.cos(xy), Math.sin(xy))
+               |
                |def rotation(from: ${lineIdeal.name}, to: ${lineIdeal.name}): ${cls.name} = {
                |  // not Math.sqrt(from.normSquare * to.normSquare): the product overflows/underflows
                |  // for extreme magnitudes (~1e100 or ~1e-100) where each norm alone is still fine
@@ -48,7 +52,7 @@ object DefObjectMethodsForRotor:
                |/** restore rotor from a rotated orthonormal basis (columns of a 2x2 rotation matrix),
                | *  so that restored.sandwich(${vector.name}(1, 0)) == axisX and restored.sandwich(${vector.name}(0, 1)) == axisY.
                | *  axisY is redundant in 2d (SO(2) has one degree of freedom), it is used only to symmetrize rounding errors,
-               | *  in the same way as Pga3dQuaternion.restore uses (m01 - m10) */
+               | *  in the same way as Pga3dRotor.restore uses (m01 - m10) */
                |def restore(axisX: ${vector.name}, axisY: ${vector.name}): ${cls.name} = {
                |  val cosT = 0.5 * (axisX.x + axisY.y)
                |  val sinT = 0.5 * (axisY.x - axisX.y)

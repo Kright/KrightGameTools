@@ -11,7 +11,7 @@ For the theory behind PGA see [https://bivector.net](https://bivector.net).
 ## Specialized classes and the narrowest result type
 
 A general multivector has one coefficient per basis blade (8 in 2d, 16 in 3d), but useful geometric
-objects use only a few of them: a 3d point has 3 variable fields, a quaternion 4. The code
+objects use only a few of them: a 3d point has 3 variable fields, a rotor 4. The code
 generators evaluate every operation symbolically for every pair of classes and emit a dedicated
 method whose result is the *narrowest* generated class that can represent all possibly non-zero
 components of the result.
@@ -37,7 +37,7 @@ mutation makes coding and debugging much easier.
 
 * **geometric** — the fundamental product of the algebra. It composes transformations: the
   geometric product of two planes (lines in 2d) is a rotation around their intersection by twice
-  the angle between them, the product of a translator and a quaternion/rotor is a motor.
+  the angle between them, the product of a translator and a rotor is a motor.
 * **dot** — the inner product. It contracts grades and measures the metric relation between
   elements; the dot product of an element with itself gives its norm squared.
 * **wedge** (aliases `^`, `meet`) — the outer product. Geometrically it intersects elements and
@@ -46,7 +46,7 @@ mutation makes coding and debugging much easier.
   degrees of freedom: two points join into a line, a point and a vector join into a line,
   three points join into a plane.
 * **sandwich** / **reverseSandwich** — how transformations are applied: `a.sandwich(b)`
-  transforms `b` by `a` (conjugation `a * b * a.reverse`). Quaternions/rotors rotate, translators
+  transforms `b` by `a` (conjugation `a * b * a.reverse`). Rotors rotate, translators
   translate, motors move rigidly, and a plane or line reflects. `a.reverseSandwich(b)` applies the
   inverse transformation.
 * **antiGeometric**, **antiDot** — the duals of the geometric and dot products (the same
@@ -107,8 +107,8 @@ run a `Math.sqrt` after every operation (expensive, and paid even when the calle
 normalization at all. I chose the latter: the library never forces a `sqrt` on you.
 
 It also would not fit the design. The number of generated binary operations grows as N² in the number of classes,
-and the flat list of classes is the whole point — adding `Normalized*` variants (or, say, a `NormalizedQuaternion`
-inheriting `Quaternion`) would multiply that list and destroy the simplicity.
+and the flat list of classes is the whole point — adding `Normalized*` variants (or, say, a `NormalizedRotor`
+inheriting `Rotor`) would multiply that list and destroy the simplicity.
 
 Because the algebra works in homogeneous coordinates, this costs nothing in correctness. `rotor.sandwich(point)` is
 exactly correct on homogeneous coordinates and yields a homogeneous (projective) point. You then choose how to read
@@ -125,8 +125,7 @@ reasoning behind there being no `inverse` method: `reverse` plus an explicit ren
 * The scalar blade is named `s` and the pseudoscalar `i`. There is no scalar class — plain
   `Double` is used instead.
 * A grade-1 element is a hyperplane: `Pga3dPlane` in 3d, `Pga2dLine` in 2d — otherwise the two
-  modules use the same names (`Pga2dRotor` is the 2d sibling of `Pga3dRotor`). `Pga3dQuaternion`
-  remains as a backward-compatible alias for `Pga3dRotor` (the older name for the same class).
+  modules use the same names (`Pga2dRotor` is the 2d sibling of `Pga3dRotor`).
 * `toXxx` conversions are lossless widenings; `toXxxUnsafe` drop components that may be non-zero.
 * The generated classes are never edited by hand: change the generator
   (pgaNdCodeGen) and re-run it.

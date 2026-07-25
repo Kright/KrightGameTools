@@ -7,7 +7,7 @@ class BivectorBulkOpsGenerator extends CppCodeGenerator {
 
   override def generateStructBody(cls: CppSubclass): Seq[StructBodyPart] = {
     if (cls == CppSubclasses.bivectorBulk) {
-      structBodyPart(s"""[[nodiscard]] inline ${CppSubclasses.quaternion.name} exp() const noexcept;""")
+      structBodyPart(s"""[[nodiscard]] inline ${CppSubclasses.rotor.name} exp() const noexcept;""")
     } else Seq()
   }
 
@@ -25,7 +25,7 @@ class BivectorBulkOpsGenerator extends CppCodeGenerator {
     code.namespace(codeGen.namespace) {
       code(
         s"""
-           |[[nodiscard]] inline ${CppSubclasses.quaternion.name} ${CppSubclasses.bivectorBulk.name}::exp() const noexcept {
+           |[[nodiscard]] inline ${CppSubclasses.rotor.name} ${CppSubclasses.bivectorBulk.name}::exp() const noexcept {
            |    const double len = bulkNorm();
            |    const double cos = std::cos(len);
            |
@@ -33,7 +33,7 @@ class BivectorBulkOpsGenerator extends CppCodeGenerator {
            |        ? (std::sin(len) / len)
            |        : (1.0 - (len * len) / 6.0);
            |
-           |    return ${CppSubclasses.quaternion.name}{
+           |    return ${CppSubclasses.rotor.name}{
            |        .s = cos,
            |        .xy = sinDivLen * xy,
            |        .xz = sinDivLen * xz,

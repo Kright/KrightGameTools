@@ -276,6 +276,12 @@ final case class Pga2dMotor(s: Double = 0.0,
       y = wx,
     )
 
+  def axisX: Pga2dVector =
+    toRotorUnsafe.axisX
+
+  def axisY: Pga2dVector =
+    toRotorUnsafe.axisY
+
   infix def geometric(v: Pga2dMotor): Pga2dMotor =
     Pga2dMotor(
       s = (s * v.s - v.xy * xy),
