@@ -85,11 +85,16 @@ class QuaternionOpsGenerator extends CppCodeGenerator {
            |    const double lenXYZ = std::sqrt(xy * xy + xz * xz + yz * yz);
            |    const double angle = std::atan2(lenXYZ, scalar);
            |
-           |     // 1 / sin^2
-           |    const double a = 1.0 / (1.0 - scalar * scalar);
-           |
-           |    // angle / sin(angle)
-           |    const double b = (std::abs(angle) > 1e-5) ? angle * std::sqrt(a) : (1.0 + angle * angle / 6.0);
+           |    // for a normalized quaternion sin(angle) = lenXYZ, so this is angle / sin(angle);
+           |    // dividing by lenXYZ directly avoids the catastrophic cancellation that the
+           |    // equivalent sqrt(1.0 - scalar * scalar) form has for small angles. The series branch:
+           |    // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
+           |    // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
+           |    //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
+           |    //            = 1 + x^2/6 + 7*x^4/360 + ...
+           |    // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
+           |    // so the second-order form is exact in double
+           |    const double b = (std::abs(angle) > 1e-5) ? (angle / lenXYZ) : (1.0 + angle * angle / 6.0);
            |
            |    return ${CppSubclasses.bivectorBulk.name} {
            |        .xy = b * xy,

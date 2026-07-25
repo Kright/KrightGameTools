@@ -153,7 +153,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val from = Pga2dVector(1, 0)
 
     // below the threshold: the first-order fallback s = 0.5 * sin2a is exact in double
-    // (the dropped eps^2/8 term is below 2^-53)
+    // (the dropped eps^2/8 term ~1.2e-17 is below the 1.1e-16 rounding step of double)
     for (eps <- Seq(0.99e-8, 0.5e-8, 1e-10)) {
       val r = Pga2dRotor.rotation(from, Pga2dVector(-Math.cos(eps), Math.sin(eps)))
       assertRel(r.s, Math.sin(eps / 2), 5e-16, s"fallback s at eps = $eps")

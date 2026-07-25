@@ -59,6 +59,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
   }
 
   private def testBinop(methodName: String): Unit = {
+    var testedMethods = 0
     for (cls <- classes) {
       for (method <- cls.getMethods.filter(_.getName == methodName)) {
         val parameterTypes = method.getParameterTypes
@@ -66,6 +67,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
         val otherType = parameterTypes.head
 
         if (classes.contains(otherType) || (otherType eq classOf[Double])) {
+          testedMethods += 1
           val pairs = for (a <- genInstance(cls); b <- genInstance(otherType)) yield (a, b)
           forAll(pairs, MinSuccessful(10)) { case (first, second) =>
             val result = toMultivector(method.invoke(first, second))
@@ -78,13 +80,18 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
         }
       }
     }
+    // guards against the test silently checking nothing when the reflected name drifts
+    // from the generated one (e.g. "$plus" vs the @targetName-mandated "plus")
+    assert(testedMethods > 0, s"no method '$methodName' found on any class, the name is out of sync with the generated code")
   }
 
   private def testUnOp(methodName: String): Unit = {
+    var testedMethods = 0
     for (cls <- classes) {
       for (method <- cls.getMethods.filter(_.getName == methodName)) {
         val returnType = method.getReturnType
 
+        testedMethods += 1
         forAll(genInstance(cls), MinSuccessful(10)) { instance =>
           val result = toMultivector(method.invoke(instance))
           val result2 = toMultivector(call(toMultivector(instance), methodName))
@@ -94,6 +101,9 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
         }
       }
     }
+    // guards against the test silently checking nothing when the reflected name drifts
+    // from the generated one (e.g. "unary_-" vs the @targetName-mandated "unaryMinus")
+    assert(testedMethods > 0, s"no method '$methodName' found on any class, the name is out of sync with the generated code")
   }
 
   test("binaryOperations") {

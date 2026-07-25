@@ -910,7 +910,7 @@ object Pga2dRotor:
     // nearly a rotation by pi: the full angle is pi - eps with sin(eps) = sin2a <= 1e-8.
     // first-order half-angle rotor: s = sin(eps/2) = 0.5 * sin2a * (1 + eps^2/8 + O(eps^4)) and
     // xy = +-cos(eps/2) = +-(1 - eps^2/8); at eps <= 1e-8 the dropped eps^2/8 <= 1.25e-17 terms
-    // are below 2^-53, so both components are exact in double. xy carries the sign of r2a.xy,
+    // are below the 1.1e-16 rounding step of double, so both components are exact in double. xy carries the sign of r2a.xy,
     // matching the atan2 branch above, so the result is continuous across the sin2a threshold;
     // sin2a == 0 (exactly antipodal inputs) gives the exact pi rotor (0, 1)
     Pga2dRotor(0.5 * sin2a, if (r2a.xy < 0.0) -1.0 else 1.0)

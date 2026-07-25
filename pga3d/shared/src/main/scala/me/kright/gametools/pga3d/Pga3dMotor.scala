@@ -238,25 +238,44 @@ final case class Pga3dMotor(s: Double = 0.0,
     val scalar = s
     if (s < 0.0) return (-this).log()
 
-    val lenXYZ = Math.sqrt(xy * xy + xz * xz + yz * yz)
+    val lenXYZ2 = xy * xy + xz * xz + yz * yz
+    val lenXYZ = Math.sqrt(lenXYZ2)
     val angle = Math.atan2(lenXYZ, scalar)
 
     // 1 / sin^2 for a normalized motor; (1.0 - scalar * scalar) is the same value,
     // but cancels catastrophically for small angles (relative error ~eps / angle^2)
-    val a = 1.0 / (lenXYZ * lenXYZ)
+    val a = 1.0 / lenXYZ2
 
-    val b = if (Math.abs(angle) > 1e-5) { // angle / sin(angle)
-      angle * Math.sqrt(a)
+    // for a normalized motor sin(angle) = lenXYZ, so this is angle / sin(angle)
+    val b = if (Math.abs(angle) > 1e-5) {
+      angle / lenXYZ
     } else {
-      // x/sin(x) = 1 + x^2/6 + 7x^4/360 + ...; at x <= 1e-5 the dropped 7x^4/360 <= 2e-22
-      // relative term is far below 2^-53, so the second-order form is exact in double
+      // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
+      // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
+      //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
+      //            = 1 + x^2/6 + 7*x^4/360 + ...
+      // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
+      // so the second-order form is exact in double
       1.0 + angle * angle / 6.0
     }
 
+    // c = a * i * (1 - scalar * b); for a normalized motor scalar = cos(x), lenXYZ = sin(x),
+    // a = 1/sin(x)^2 and b = x/sin(x), so c = i * (1 - cos(x)*b) / sin(x)^2. Step by step:
+    //   cos(x)*b = (1 - x^2/2 + x^4/24 - ...) * (1 + x^2/6 + 7*x^4/360 + ...)
+    //            = 1 + (1/6 - 1/2)*x^2 + (7/360 - 1/12 + 1/24)*x^4 + ...
+    //            = 1 - x^2/3 - x^4/45 - ...
+    //   1 - cos(x)*b = x^2/3 + x^4/45 + ...
+    //   sin(x)^2 = (x - x^3/6 + ...)^2 = x^2 - x^4/3 + ... = x^2 * (1 - x^2/3 + ...)
+    //   1/sin(x)^2 = (1 + x^2/3 + ...) / x^2   (again via 1/(1 - v) = 1 + v + ...)
+    //   c/i = (x^2/3 + x^4/45 + ...) * (1 + x^2/3 + ...) / x^2
+    //       = 1/3 + (1/9 + 1/45)*x^2 + ... = 1/3 + 2*x^2/15 + ...
+    // carrying the x^4 terms through the same steps gives the dropped term 2*x^4/63;
+    // at x <= 1e-5 it is <= 3.2e-22, relatively far below 1e-17, so the second-order
+    // form is exact in double
     val c = if (Math.abs(angle) > 1e-5) {
       a * i * (1.0 - scalar * b)
     } else {
-      (1.0 + angle * angle / 2.0) * i / 3.0
+      (1.0 / 3.0 + angle * angle * (2.0 / 15.0)) * i
     }
 
     Pga3dBivector(

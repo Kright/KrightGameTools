@@ -141,15 +141,18 @@ final case class Pga3dRotor(s: Double = 0.0,
     val lenXYZ = Math.sqrt(xy * xy + xz * xz + yz * yz)
     val angle = Math.atan2(lenXYZ, scalar)
 
-    // 1 / sin^2 for a normalized rotor; (1.0 - scalar * scalar) is the same value,
-    // but cancels catastrophically for small angles (relative error ~eps / angle^2)
-    val a = 1.0 / (lenXYZ * lenXYZ)
-
-    val b = if (Math.abs(angle) > 1e-5) { // angle / sin(angle)
-      angle * Math.sqrt(a)
+    // for a normalized rotor sin(angle) = lenXYZ, so this is angle / sin(angle);
+    // dividing by lenXYZ directly avoids the catastrophic cancellation that the
+    // equivalent sqrt(1.0 - scalar * scalar) form has for small angles
+    val b = if (Math.abs(angle) > 1e-5) {
+      angle / lenXYZ
     } else {
-      // x/sin(x) = 1 + x^2/6 + 7x^4/360 + ...; at x <= 1e-5 the dropped 7x^4/360 <= 2e-22
-      // relative term is far below 2^-53, so the second-order form is exact in double
+      // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
+      // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
+      //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
+      //            = 1 + x^2/6 + 7*x^4/360 + ...
+      // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
+      // so the second-order form is exact in double
       1.0 + angle * angle / 6.0
     }
 

@@ -6459,11 +6459,16 @@ namespace pga3d {
         const double lenXYZ = std::sqrt(xy * xy + xz * xz + yz * yz);
         const double angle = std::atan2(lenXYZ, scalar);
 
-         // 1 / sin^2
-        const double a = 1.0 / (1.0 - scalar * scalar);
-
-        // angle / sin(angle)
-        const double b = (std::abs(angle) > 1e-5) ? angle * std::sqrt(a) : (1.0 + angle * angle / 6.0);
+        // for a normalized quaternion sin(angle) = lenXYZ, so this is angle / sin(angle);
+        // dividing by lenXYZ directly avoids the catastrophic cancellation that the
+        // equivalent sqrt(1.0 - scalar * scalar) form has for small angles. The series branch:
+        // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
+        // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
+        //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
+        //            = 1 + x^2/6 + 7*x^4/360 + ...
+        // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
+        // so the second-order form is exact in double
+        const double b = (std::abs(angle) > 1e-5) ? (angle / lenXYZ) : (1.0 + angle * angle / 6.0);
 
         return BivectorBulk {
             .xy = b * xy,
@@ -6533,20 +6538,41 @@ namespace pga3d {
         const double scalar = s;
         if (s < 0.0) return (-(*this)).log();
 
-        const double lenXYZ = std::sqrt(xy * xy + xz * xz + yz * yz);
+        const double lenXYZ2 = xy * xy + xz * xz + yz * yz;
+        const double lenXYZ = std::sqrt(lenXYZ2);
         const double angle = std::atan2(lenXYZ, scalar);
 
-        // 1 / sin^2
-        const double a = 1.0 / (1.0 - scalar * scalar);
+        // 1 / sin^2 for a normalized motor; (1.0 - scalar * scalar) is the same value,
+        // but cancels catastrophically for small angles (relative error ~eps / angle^2)
+        const double a = 1.0 / lenXYZ2;
 
-        // angle / sin(angle)
+        // for a normalized motor sin(angle) = lenXYZ, so this is angle / sin(angle); the series branch:
+        // x/sin(x) = 1 / (sin(x)/x) = 1 / (1 - x^2/6 + x^4/120 - ...);
+        // substitute v = x^2/6 - x^4/120 + ... into 1/(1 - v) = 1 + v + v^2 + ...:
+        //   x/sin(x) = 1 + x^2/6 + (1/36 - 1/120)*x^4 + ...
+        //            = 1 + x^2/6 + 7*x^4/360 + ...
+        // at x <= 1e-5 the dropped 7*x^4/360 <= 2e-22 relative term is far below 1e-17,
+        // so the second-order form is exact in double
         const double b = (std::abs(angle) > 1e-5)
-            ? (angle * std::sqrt(a))
+            ? (angle / lenXYZ)
             : (1.0 + angle * angle / 6.0);
 
+        // c = a * i * (1 - scalar * b); for a normalized motor scalar = cos(x), lenXYZ = sin(x),
+        // a = 1/sin(x)^2 and b = x/sin(x), so c = i * (1 - cos(x)*b) / sin(x)^2. Step by step:
+        //   cos(x)*b = (1 - x^2/2 + x^4/24 - ...) * (1 + x^2/6 + 7*x^4/360 + ...)
+        //            = 1 + (1/6 - 1/2)*x^2 + (7/360 - 1/12 + 1/24)*x^4 + ...
+        //            = 1 - x^2/3 - x^4/45 - ...
+        //   1 - cos(x)*b = x^2/3 + x^4/45 + ...
+        //   sin(x)^2 = (x - x^3/6 + ...)^2 = x^2 - x^4/3 + ... = x^2 * (1 - x^2/3 + ...)
+        //   1/sin(x)^2 = (1 + x^2/3 + ...) / x^2   (again via 1/(1 - v) = 1 + v + ...)
+        //   c/i = (x^2/3 + x^4/45 + ...) * (1 + x^2/3 + ...) / x^2
+        //       = 1/3 + (1/9 + 1/45)*x^2 + ... = 1/3 + 2*x^2/15 + ...
+        // carrying the x^4 terms through the same steps gives the dropped term 2*x^4/63;
+        // at x <= 1e-5 it is <= 3.2e-22, relatively far below 1e-17, so the second-order
+        // form is exact in double
         const double c = (std::abs(angle) > 1e-5)
             ? (a * i * (1.0 - scalar * b))
-            : ((1.0 + angle * angle / 2.0) * i / 3.0);
+            : ((1.0 / 3.0 + angle * angle * (2.0 / 15.0)) * i);
 
         return Bivector {
             .wx = (b * wx + c * yz),
@@ -6628,13 +6654,24 @@ namespace pga3d {
         const double len = bulkNorm();
         const double cos = std::cos(len);
 
+        // sin(x)/x = 1 - x^2/6 + x^4/120 - ...; at x <= 1e-5 the dropped x^4/120 <= 8.4e-23
+        // relative term is far below 1e-17, so the second-order form is exact in double
         const double sinDivLen = (len > 1e-5) ?
             (std::sin(len) / len) :
             (1.0 - (len * len) / 6.0);
 
+        // (sin(x)/x - cos(x)) / x^2, step by step:
+        //   sin(x)   = x - x^3/6 + x^5/120 - x^7/5040 + ...
+        //   sin(x)/x = 1 - x^2/6 + x^4/120 - x^6/5040 + ...
+        //   cos(x)   = 1 - x^2/2 + x^4/24  - x^6/720  + ...
+        //   sin(x)/x - cos(x) = (1/2 - 1/6)*x^2 + (1/120 - 1/24)*x^4 + (1/720 - 1/5040)*x^6 + ...
+        //                     = x^2/3 - x^4/30 + x^6/840 - ...
+        //   divide by x^2:      1/3   - x^2/30 + x^4/840 - ...
+        // at x <= 1e-5 the dropped x^4/840 <= 1.2e-23 is relatively far below 1e-17,
+        // so the second-order form is exact in double
         const double sinMinusCosDivLen2 = (len > 1e-5) ?
             (sinDivLen - cos) / (len * len) :
-            (1.0 / 3.0) * (1.0 + 0.8 * len * len);
+            (1.0 / 3.0 - (len * len) / 30.0);
 
         return Motor {
           .s = cos,
