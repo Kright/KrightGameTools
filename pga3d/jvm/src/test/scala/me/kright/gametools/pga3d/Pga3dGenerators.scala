@@ -60,7 +60,7 @@ object Pga3dGenerators:
         ArraySeq(
           Pga3dRotor.id,
           -Pga3dRotor.id,
-          Pga3dRotor()
+          Pga3dRotor.zero
         )
       ),
       makeGenT(4, FlatDoubleSerializer.read[Pga3dRotor])

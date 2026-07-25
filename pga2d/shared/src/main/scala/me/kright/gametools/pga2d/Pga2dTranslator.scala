@@ -6,7 +6,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 
 /**
  * A translator: translation of the 2d plane, applied with translator.sandwich(obj). Moves points but not vectors.
- * A translator is the exponent of a Pga2dVector (vector.exp()), and translator.log() returns that vector back.
+ * A translator is the exponent of a Pga2dVector (vector.exp), and translator.log returns that vector back.
  *
  * Variable fields: wx, wy.
  * Constant fields: s = 1.0.
@@ -137,7 +137,7 @@ final case class Pga2dTranslator(wx: Double = 0.0,
       wy = 1.0 / wy,
     )
 
-  def log(): Pga2dVector =
+  def log: Pga2dVector =
     Pga2dVector(
       x = -wy,
       y = wx,

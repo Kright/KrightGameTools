@@ -18,7 +18,7 @@ object Pga2dGenerators:
         ArraySeq(
           Pga2dRotor.id,
           -Pga2dRotor.id,
-          Pga2dRotor(),
+          Pga2dRotor.zero,
         )
       ),
       makeGenT(2, FlatDoubleSerializer.read[Pga2dRotor])

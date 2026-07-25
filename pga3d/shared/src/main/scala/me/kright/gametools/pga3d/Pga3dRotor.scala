@@ -6,7 +6,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 
 /**
  * A rotor: rotation around an axis passing through the origin, applied with rotor.sandwich(obj).
- * A rotor is the exponent of a Pga3dBivectorBulk (bivectorBulk.exp()), and rotor.log() returns that bivector back.
+ * A rotor is the exponent of a Pga3dBivectorBulk (bivectorBulk.exp), and rotor.log returns that bivector back.
  *
  * Variable fields: s, xy, xz, yz.
  *
@@ -137,9 +137,9 @@ final case class Pga3dRotor(s: Double = 0.0,
       yz = 1.0 / yz,
     )
 
-  def log(): Pga3dBivectorBulk =
+  def log: Pga3dBivectorBulk =
     val scalar = s
-    if (s < 0.0) return (-this).log()
+    if (s < 0.0) return (-this).log
 
     val lenXYZ = Math.sqrt(xy * xy + xz * xz + yz * yz)
     val angle = Math.atan2(lenXYZ, scalar)
@@ -250,7 +250,7 @@ final case class Pga3dRotor(s: Double = 0.0,
 
   def restoreRotationInPlane(plane: Pga3dPlaneCentral): Double =
     val q0 = this.projectToRotationInPlane(plane)
-    val logDual = q0.log().dual
+    val logDual = q0.log.dual
     val currentAngle = 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm
     currentAngle
 
@@ -271,7 +271,7 @@ final case class Pga3dRotor(s: Double = 0.0,
    * there and the interpolation direction becomes numerically unstable.
    */
   def slerp(b: Pga3dRotor, t: Double): Pga3dRotor =
-    this.geometric(this.reverse.geometric(b).log().exp(t))
+    this.geometric(this.reverse.geometric(b).log.exp(t))
 
   /**
    * Normalized linear interpolation: the componentwise lerp this * (1 - t) + b * t, renormalized.
@@ -1757,6 +1757,8 @@ object Pga3dRotor:
 
   inline val componentsCount = 4
 
+  val zero: Pga3dRotor = Pga3dRotor(0.0, 0.0, 0.0, 0.0)
+
   val id: Pga3dRotor = Pga3dRotor(1.0, 0.0, 0.0, 0.0)
 
   def rotation(from: Pga3dPlaneCentral, to: Pga3dPlaneCentral): Pga3dRotor = {
@@ -1805,7 +1807,7 @@ object Pga3dRotor:
   def rotation(from: Pga3dVector, to: Pga3dVector): Pga3dRotor =
     rotation(from.dual, to.dual)
 
-  def restore(axisX: Pga3dVector, axisY: Pga3dVector, axisZ: Pga3dVector): Pga3dRotor = {
+  def fromAxes(axisX: Pga3dVector, axisY: Pga3dVector, axisZ: Pga3dVector): Pga3dRotor = {
     val m00 = axisX.x
     val m10 = axisX.y
     val m20 = axisX.z

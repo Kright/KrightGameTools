@@ -15,7 +15,7 @@ object DefExpForBivector:
         {
           val result = MultiVector.scalar(Sym("cos")) + self * Sym("sinDivLen")
 
-          code(s"\ndef exp(): ${motor.name} =")
+          code(s"\ndef exp: ${motor.name} =")
           code.block {
             code(
               s"""val len = bulkNorm
@@ -56,7 +56,7 @@ object DefExpForBivector:
       if (cls == vector) {
         {
           val result = MultiVector.scalar(Sym(1.0)) + self
-          code(s"\ndef exp(): ${translator.typeName} =")
+          code(s"\ndef exp: ${translator.typeName} =")
           code.block {
             code(translator.makeConstructor(result))
           }

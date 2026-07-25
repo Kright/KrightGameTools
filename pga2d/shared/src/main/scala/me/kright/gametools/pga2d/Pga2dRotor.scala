@@ -123,7 +123,7 @@ final case class Pga2dRotor(s: Double = 0.0,
    * There is no single-blade grade-2 class in 2d, so the coefficient is returned as a
    * plain Double; Pga2dRotor.exp is the inverse. Scale-invariant via atan2.
    */
-  def log(): Double =
+  def log: Double =
     if (s < 0.0) Math.atan2(-xy, -s)
     else Math.atan2(xy, s)
 
@@ -135,7 +135,7 @@ final case class Pga2dRotor(s: Double = 0.0,
    * there and the interpolation direction becomes numerically unstable.
    */
   def slerp(b: Pga2dRotor, t: Double): Pga2dRotor =
-    this.geometric(Pga2dRotor.exp(this.reverse.geometric(b).log() * t))
+    this.geometric(Pga2dRotor.exp(this.reverse.geometric(b).log * t))
 
   /**
    * Normalized linear interpolation: the componentwise lerp this * (1 - t) + b * t, renormalized.
@@ -908,9 +908,11 @@ object Pga2dRotor:
 
   inline val componentsCount = 2
 
+  val zero: Pga2dRotor = Pga2dRotor(0.0, 0.0)
+
   val id: Pga2dRotor = Pga2dRotor(1.0, 0.0)
 
-  /** exp of the rotation generator xy (the half-angle of the rotation): the inverse of rotor.log() */
+  /** exp of the rotation generator xy (the half-angle of the rotation): the inverse of rotor.log */
   def exp(xy: Double): Pga2dRotor =
     Pga2dRotor(Math.cos(xy), Math.sin(xy))
 
@@ -949,8 +951,8 @@ object Pga2dRotor:
   /** restore rotor from a rotated orthonormal basis (columns of a 2x2 rotation matrix),
    *  so that restored.sandwich(Pga2dVector(1, 0)) == axisX and restored.sandwich(Pga2dVector(0, 1)) == axisY.
    *  axisY is redundant in 2d (SO(2) has one degree of freedom), it is used only to symmetrize rounding errors,
-   *  in the same way as Pga3dRotor.restore uses (m01 - m10) */
-  def restore(axisX: Pga2dVector, axisY: Pga2dVector): Pga2dRotor = {
+   *  in the same way as Pga3dRotor.fromAxes uses (m01 - m10) */
+  def fromAxes(axisX: Pga2dVector, axisY: Pga2dVector): Pga2dRotor = {
     val cosT = 0.5 * (axisX.x + axisY.y)
     val sinT = 0.5 * (axisY.x - axisX.y)
     // both branches give the same rotor; -0.9 is not a correctness boundary, it only picks

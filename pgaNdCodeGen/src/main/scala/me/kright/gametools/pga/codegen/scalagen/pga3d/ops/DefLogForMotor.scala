@@ -14,11 +14,11 @@ object DefLogForMotor:
         val vb = self.grade(2)
         val result = vb * Sym("b") + vb.bulk.dual * Sym("c")
 
-        code(s"\ndef log(): ${bivector.typeName} =")
+        code(s"\ndef log: ${bivector.typeName} =")
         code.block {
           code(
             s"""val scalar = s
-               |if (s < 0.0) return (-this).log()
+               |if (s < 0.0) return (-this).log
                |
                |val lenXYZ2 = xy * xy + xz * xz + yz * yz
                |val lenXYZ = Math.sqrt(lenXYZ2)
@@ -65,7 +65,7 @@ object DefLogForMotor:
         }
       }
       if (cls == translator) {
-        code(s"\ndef log(): ${bivectorWeight.typeName} =")
+        code(s"\ndef log: ${bivectorWeight.typeName} =")
         code.block {
           code(bivectorWeight.makeConstructor(self.weight))
         }
@@ -74,11 +74,11 @@ object DefLogForMotor:
         val vb = self.grade(2)
         val result = vb * Sym("b")
 
-        code(s"\ndef log(): ${bivectorBulk.typeName} =")
+        code(s"\ndef log: ${bivectorBulk.typeName} =")
         code.block {
           code(
             s"""val scalar = s
-               |if (s < 0.0) return (-this).log()
+               |if (s < 0.0) return (-this).log
                |
                |val lenXYZ = Math.sqrt(xy * xy + xz * xz + yz * yz)
                |val angle = Math.atan2(lenXYZ, scalar)

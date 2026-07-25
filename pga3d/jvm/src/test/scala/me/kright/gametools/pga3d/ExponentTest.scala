@@ -6,25 +6,25 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 class ExponentTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("exp for bivector") {
     forAll(Pga3dGenerators.bivectors) { bivector =>
-      assert((bivector.exp() - bivector.exp(1.0)).norm < 1e-15)
-      assert((bivector.bulk.exp() - bivector.bulk.exp(1.0)).norm < 1e-15)
-      assert((bivector.weight.exp() - bivector.weight.exp(1.0)).norm < 1e-15)
+      assert((bivector.exp - bivector.exp(1.0)).norm < 1e-15)
+      assert((bivector.bulk.exp - bivector.bulk.exp(1.0)).norm < 1e-15)
+      assert((bivector.weight.exp - bivector.weight.exp(1.0)).norm < 1e-15)
     }
   }
 
   test("exp for full with t") {
     forAll(Pga3dGenerators.bivectors, Pga3dGenerators.double1) { (bivector, t) =>
-      assert(((bivector * t).exp() - bivector.exp(t)).norm < 1e-15)
-      assert(((bivector.bulk * t).exp() - bivector.bulk.exp(t)).norm < 1e-15)
-      assert(((bivector.weight * t).exp() - bivector.weight.exp(t)).norm < 1e-15)
+      assert(((bivector * t).exp - bivector.exp(t)).norm < 1e-15)
+      assert(((bivector.bulk * t).exp - bivector.bulk.exp(t)).norm < 1e-15)
+      assert(((bivector.weight * t).exp - bivector.weight.exp(t)).norm < 1e-15)
     }
   }
 
   test("log is inverse of exp") {
     forAll(Pga3dGenerators.bivectors) { bivector =>
-      assert((bivector - bivector.exp().log()).norm < 1e-14)
-      assert((bivector.bulk - bivector.bulk.exp().log()).norm < 1e-14)
-      assert((bivector.weight - bivector.weight.exp().log()).norm < 1e-14)
+      assert((bivector - bivector.exp.log).norm < 1e-14)
+      assert((bivector.bulk - bivector.bulk.exp.log).norm < 1e-14)
+      assert((bivector.weight - bivector.weight.exp.log).norm < 1e-14)
     }
   }
 
@@ -36,24 +36,24 @@ class ExponentTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       0.9917926945307447, 0.936262951274583, 0.8114467770348108)
     assert(b.bulkNorm > Math.PI / 2)
 
-    val motor = b.exp()
-    val restoredMotor = motor.log().exp()
+    val motor = b.exp
+    val restoredMotor = motor.log.exp
     val motorDiff = Math.min((restoredMotor - motor).norm, (restoredMotor + motor).norm)
     assert(motorDiff <= 1e-14 * motor.norm, s"motor = $motor, restored = $restoredMotor")
-    assert(motor.log().bulkNorm <= Math.PI / 2)
+    assert(motor.log.bulkNorm <= Math.PI / 2)
 
-    val rotor = b.bulk.exp()
-    val restoredRotor = rotor.log().exp()
+    val rotor = b.bulk.exp
+    val restoredRotor = rotor.log.exp
     val rotorDiff = Math.min((restoredRotor - rotor).norm, (restoredRotor + rotor).norm)
     assert(rotorDiff <= 1e-14 * rotor.norm, s"rotor = $rotor, restored = $restoredRotor")
 
     // the weight part is unaffected by the branch cut
-    assert(b.weight.exp().log() == b.weight)
+    assert(b.weight.exp.log == b.weight)
   }
 
   test("bivector split") {
     forAll(Pga3dGenerators.bivectors.filter(_.bulkNorm > 1e-6)) { bivector =>
-      val (line, shift) = bivector.split()
+      val (line, shift) = bivector.split
 
       // the defining property: the parts sum back to the original bivector
       assert((line + shift - bivector).norm <= 1e-14 * bivector.norm, s"bivector = $bivector")
@@ -64,7 +64,7 @@ class ExponentTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("bivector split with negligible bulk returns the components unchanged") {
     // exercises the div < 1e-100 early return
     val b = Pga3dBivector(1.0, -2.0, 0.5, 1e-60, 0.0, -1e-60)
-    val (line, shift) = b.split()
+    val (line, shift) = b.split
     assert(line + shift == b)
     assert(shift == Pga3dBivectorWeight(1.0, -2.0, 0.5))
   }

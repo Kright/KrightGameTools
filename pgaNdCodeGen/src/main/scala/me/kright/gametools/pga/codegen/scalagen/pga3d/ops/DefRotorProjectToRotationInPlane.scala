@@ -17,7 +17,7 @@ object DefRotorProjectToRotationInPlane:
              |
              |def restoreRotationInPlane(plane: Pga3dPlaneCentral): Double =
              |  val q0 = this.projectToRotationInPlane(plane)
-             |  val logDual = q0.log().dual
+             |  val logDual = q0.log.dual
              |  val currentAngle = 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm
              |  currentAngle
              |

@@ -274,7 +274,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `madd(r: Pga2dMotor, mult: Double): Pga2dMotor`
 - `scale(r: Pga2dMotor): Pga2dMotor`
 - `reciprocal: Pga2dMotor`
-- `log(): Pga2dProjectivePoint`
+- `log: Pga2dProjectivePoint`
 - `slerp(b: Pga2dMotor, t: Double): Pga2dMotor`
 - `nlerp(b: Pga2dMotor, t: Double): Pga2dMotor`
 - `toMultivector: Pga2dMultivector`
@@ -344,7 +344,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `madd(r: Pga2dVector, mult: Double): Pga2dProjectivePoint`
 - `scale(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
 - `reciprocal: Pga2dProjectivePoint`
-- `exp(): Pga2dMotor`
+- `exp: Pga2dMotor`
 - `exp(t: Double): Pga2dMotor`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
@@ -377,7 +377,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `madd(r: Pga2dRotor, mult: Double): Pga2dRotor`
 - `scale(r: Pga2dRotor): Pga2dRotor`
 - `reciprocal: Pga2dRotor`
-- `log(): Double`
+- `log: Double`
 - `slerp(b: Pga2dRotor, t: Double): Pga2dRotor`
 - `nlerp(b: Pga2dRotor, t: Double): Pga2dRotor`
 - `toMultivector: Pga2dMultivector`
@@ -441,7 +441,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `madd(r: Pga2dTranslator, mult: Double): Pga2dProjectiveTranslator`
 - `scale(r: Pga2dTranslator): Pga2dTranslator`
 - `reciprocal: Pga2dTranslator`
-- `log(): Pga2dVector`
+- `log: Pga2dVector`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
 - `toProjectivePointUnsafe: Pga2dProjectivePoint`
@@ -476,7 +476,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `madd(r: Pga2dVector, mult: Double): Pga2dVector`
 - `scale(r: Pga2dVector): Pga2dVector`
 - `reciprocal: Pga2dVector`
-- `exp(): Pga2dTranslator`
+- `exp: Pga2dTranslator`
 - `exp(t: Double): Pga2dTranslator`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`

@@ -14,11 +14,11 @@ object DefLogForMotor:
         val vb = self.grade(2)
         val result = vb * Sym("b")
 
-        code(s"\ndef log(): ${projectivePoint.typeName} =")
+        code(s"\ndef log: ${projectivePoint.typeName} =")
         code.block {
           code(
             s"""val scalar = s
-               |if (s < 0.0) return (-this).log()
+               |if (s < 0.0) return (-this).log
                |
                |val lenXY = Math.abs(xy)
                |val angle = Math.atan2(lenXY, scalar)
@@ -43,7 +43,7 @@ object DefLogForMotor:
         }
       }
       if (cls == translator) {
-        code(s"\ndef log(): ${vector.typeName} =")
+        code(s"\ndef log: ${vector.typeName} =")
         code.block {
           code(vector.makeConstructor(self.weight))
         }
@@ -56,7 +56,7 @@ object DefLogForMotor:
              | * There is no single-blade grade-2 class in 2d, so the coefficient is returned as a
              | * plain Double; ${rotor.typeName}.exp is the inverse. Scale-invariant via atan2.
              | */
-             |def log(): Double =""".stripMargin)
+             |def log: Double =""".stripMargin)
         code.block {
           code(
             s"""if (s < 0.0) Math.atan2(-xy, -s)

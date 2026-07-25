@@ -51,7 +51,7 @@ class PrecisionTest extends AnyFunSuiteLike:
       val b = Pga3dBivector(
         wx = sx, wy = sy, wz = sz,
         xy = sign * h * dx, xz = sign * h * dy, yz = sign * h * dz)
-      val restored = b.exp().log()
+      val restored = b.exp.log
 
       // the bulk parts of exp and log are pure functions of the bulk, per-component relative
       assertRel(restored.xy, b.xy, 1e-14, s"xy of $b")
@@ -79,7 +79,7 @@ class PrecisionTest extends AnyFunSuiteLike:
 
     for (h <- halfAngles; sign <- ArraySeq(1.0, -1.0)) {
       val b = Pga3dBivectorBulk(xy = sign * h * dx, xz = sign * h * dy, yz = sign * h * dz)
-      val restored = b.exp().log()
+      val restored = b.exp.log
       assertRel(restored.xy, b.xy, 1e-14, s"xy of $b")
       assertRel(restored.xz, b.xz, 1e-14, s"xz of $b")
       assertRel(restored.yz, b.yz, 1e-14, s"yz of $b")
@@ -88,11 +88,11 @@ class PrecisionTest extends AnyFunSuiteLike:
 
   test("exp sin(len)/len is continuous and accurate across the 1e-5 branch threshold") {
     for (w <- ArraySeq(1e-300, 1e-20, 1e-7, 1e-6, 5e-6, 9.999999e-6, 1.0000001e-5, 2e-5, 1e-4, 1e-3)) {
-      val rotor = Pga3dBivectorBulk(xy = w).exp()
+      val rotor = Pga3dBivectorBulk(xy = w).exp
       assertRel(rotor.xy, Math.sin(w), 5e-16, s"rotor sin of half-angle $w")
       assertRel(rotor.s, Math.cos(w), 5e-16, s"rotor cos of half-angle $w")
 
-      val motor = Pga3dBivector(xy = w).exp()
+      val motor = Pga3dBivector(xy = w).exp
       assertRel(motor.xy, Math.sin(w), 5e-16, s"motor sin of half-angle $w")
       assertRel(motor.s, Math.cos(w), 5e-16, s"motor cos of half-angle $w")
     }
@@ -106,8 +106,8 @@ class PrecisionTest extends AnyFunSuiteLike:
     // term) on both sides of the 1e-5 branch threshold.
     for (h <- ArraySeq(1e-7, 1e-6, 9.9e-6, 9.999999e-6, 1.0000001e-5, 2e-5, 1e-4, 1e-3, 0.1);
          d <- ArraySeq(0.0, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20)) {
-      val direct = Pga3dBivector(wz = d, xy = h).exp()
-      val expected = Pga3dBivectorBulk(xy = h).exp().geometric(Pga3dBivectorWeight(wz = d).exp())
+      val direct = Pga3dBivector(wz = d, xy = h).exp
+      val expected = Pga3dBivectorBulk(xy = h).exp.geometric(Pga3dBivectorWeight(wz = d).exp)
 
       assertRel(direct.s, expected.s, 5e-15, s"s for h = $h, d = $d")
       assertRel(direct.wx, expected.wx, 5e-15, s"wx for h = $h, d = $d")
@@ -120,7 +120,7 @@ class PrecisionTest extends AnyFunSuiteLike:
     }
   }
 
-  test("exp(t) matches (b * t).exp()") {
+  test("exp(t) matches (b * t).exp") {
     val bivectors = ArraySeq(
       Pga3dBivector(0.2, 0.1, -0.3, 0.3, -0.4, 0.5),
       Pga3dBivector(1e-100, -2e-100, 1e-100, 2e-100, 1e-100, -1e-100),
@@ -130,7 +130,7 @@ class PrecisionTest extends AnyFunSuiteLike:
     // differ through the ~ulp difference of bulkNorm * t vs (b * t).bulkNorm before cos
     for (t <- ArraySeq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 0.5, 1.0, 2.0); b <- bivectors) {
       val viaT = b.exp(t)
-      val viaScale = (b * t).exp()
+      val viaScale = (b * t).exp
       assertRel(viaT.s, viaScale.s, 1e-14, s"s for b = $b, t = $t")
       assertRel(viaT.wx, viaScale.wx, 1e-14, s"wx for b = $b, t = $t")
       assertRel(viaT.wy, viaScale.wy, 1e-14, s"wy for b = $b, t = $t")
@@ -147,7 +147,7 @@ class PrecisionTest extends AnyFunSuiteLike:
     val tiny = Pga3dBivector(1e-150, -1e-150, 1e-150, 2e-150, 1e-150, -1e-150)
     for (t <- ArraySeq(1e10, 1e15, 1e20, 1e100)) {
       val viaT = tiny.exp(t)
-      val viaScale = (tiny * t).exp()
+      val viaScale = (tiny * t).exp
       assertRel(viaT.wx, viaScale.wx, 1e-14, s"wx for tiny bivector, t = $t")
       assertRel(viaT.xy, viaScale.xy, 1e-14, s"xy for tiny bivector, t = $t")
       assertRel(viaT.i, viaScale.i, 1e-14, s"i for tiny bivector, t = $t")
@@ -158,9 +158,9 @@ class PrecisionTest extends AnyFunSuiteLike:
     for (m <- ArraySeq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100, 1e300);
          (x, y, z) <- ArraySeq((m, 0.0, 0.0), (0.0, -m, m), (m, -m, 0.5 * m), (m, 1.0, -m))) {
       val v = Pga3dBivectorWeight(x, y, z)
-      assert(v.exp().log() == v, s"v = $v")
+      assert(v.exp.log == v, s"v = $v")
       val tr = Pga3dTranslator(x, y, z)
-      assert(tr.log().exp() == tr, s"tr = $tr")
+      assert(tr.log.exp == tr, s"tr = $tr")
     }
   }
 
@@ -168,7 +168,7 @@ class PrecisionTest extends AnyFunSuiteLike:
     for (m <- ArraySeq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100)) {
       val motor = Pga3dMotor(s = 1.0, wx = m, wy = -m, wz = 0.5 * m)
       val expected = Pga3dBivector(wx = m, wy = -m, wz = 0.5 * m)
-      assert(motor.log() == expected, s"motor = $motor")
+      assert(motor.log == expected, s"motor = $motor")
     }
   }
 
@@ -177,10 +177,10 @@ class PrecisionTest extends AnyFunSuiteLike:
     // b = angle/sin(angle) series/sqrt branch split
     for (w <- ArraySeq(9.99e-6, 9.999999e-6, 1.0000001e-5, 1.001e-5)) {
       val motor = Pga3dMotor(s = Math.cos(w), xy = Math.sin(w))
-      assertRel(motor.log().xy, w, 1e-15, s"motor recovered half-angle for w = $w")
+      assertRel(motor.log.xy, w, 1e-15, s"motor recovered half-angle for w = $w")
 
       val rotor = Pga3dRotor(s = Math.cos(w), xy = Math.sin(w))
-      assertRel(rotor.log().xy, w, 1e-15, s"rotor recovered half-angle for w = $w")
+      assertRel(rotor.log.xy, w, 1e-15, s"rotor recovered half-angle for w = $w")
     }
   }
 
@@ -261,9 +261,9 @@ class PrecisionTest extends AnyFunSuiteLike:
   test("motor log/exp round trip at corner half-angles and translations") {
     for (h <- ArraySeq(0.0, 1e-10, 1e-4, 0.5, Math.PI / 2 - 1e-8, Math.PI / 2 + 0.3, 3.0);
          v <- ArraySeq(Pga3dVector(0, 0, 0), Pga3dVector(1e-20, 1e-20, -1e-20), Pga3dVector(3, -4, 5))) {
-      val rotor = Pga3dBivectorBulk(xy = h).exp()
+      val rotor = Pga3dBivectorBulk(xy = h).exp
       val motor = Pga3dTranslator.addVector(v).geometric(rotor)
-      val restored = motor.log().exp()
+      val restored = motor.log.exp
       // log flips the sign of the motor when s < 0, so compare up to the global sign
       val diff = Math.min((restored - motor).norm, (restored + motor).norm)
       assert(diff <= 1e-14 * motor.norm, s"h = $h, v = $v, motor = $motor, restored = $restored")

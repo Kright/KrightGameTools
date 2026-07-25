@@ -79,7 +79,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     forAll(Pga2dGenerators.normalizedRotors, MinSuccessful(1000)) { r =>
       val axisX = r.sandwich(Pga2dVector(1, 0))
       val axisY = r.sandwich(Pga2dVector(0, 1))
-      val restored = Pga2dRotor.restore(axisX, axisY)
+      val restored = Pga2dRotor.fromAxes(axisX, axisY)
 
       val diff1 = (restored - r).normSquare
       val diff2 = (restored + r).normSquare
@@ -89,7 +89,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("restore small rotation") {
     val r = rotorForAngle(0.1)
-    val restored = Pga2dRotor.restore(r.sandwich(Pga2dVector(1, 0)), r.sandwich(Pga2dVector(0, 1)))
+    val restored = Pga2dRotor.fromAxes(r.sandwich(Pga2dVector(1, 0)), r.sandwich(Pga2dVector(0, 1)))
     assert((restored - r).norm < restoreEps || (restored + r).norm < restoreEps)
   }
 
@@ -97,7 +97,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     // Math.PI exercises the 180-degree case, +-(PI - 0.01) sit just inside the cosT <= -0.9 branch
     for (angle <- ArraySeq(0.0, 0.5, 1.0, 2.0, 2.5, Math.PI - 0.01, Math.PI, -1.0, -2.5, -Math.PI + 0.01)) {
       val r = rotorForAngle(angle)
-      val restored = Pga2dRotor.restore(r.sandwich(Pga2dVector(1, 0)), r.sandwich(Pga2dVector(0, 1)))
+      val restored = Pga2dRotor.fromAxes(r.sandwich(Pga2dVector(1, 0)), r.sandwich(Pga2dVector(0, 1)))
       assert((restored - r).norm < restoreEps || (restored + r).norm < restoreEps, s"angle = $angle, restored = $restored, r = $r")
     }
   }
@@ -105,18 +105,18 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("log returns the half-angle and exp is its inverse") {
     for (h <- ArraySeq(0.0, 1e-300, 1e-20, 1e-15, 1e-8, 0.1, 1.0, Math.PI / 2 - 1e-9, -0.3, -1.5)) {
       val r = Pga2dRotor.exp(h)
-      assert(Math.abs(r.log() - h) <= 1e-15 * Math.abs(h), s"h = $h, log = ${r.log()}")
+      assert(Math.abs(r.log - h) <= 1e-15 * Math.abs(h), s"h = $h, log = ${r.log}")
     }
 
     forAll(Pga2dGenerators.normalizedRotors, MinSuccessful(1000)) { r =>
-      val restored = Pga2dRotor.exp(r.log())
+      val restored = Pga2dRotor.exp(r.log)
       assert(Math.min((restored - r).normSquare, (restored + r).normSquare) < 1e-28, s"r = $r")
     }
   }
 
   test("log takes the principal branch for negative s") {
     val r = Pga2dRotor.exp(2.0) // s = cos(2) < 0, the principal generator is (2 - pi)
-    assert(Math.abs(r.log() - (2.0 - Math.PI)) <= 1e-15, s"log = ${r.log()}")
+    assert(Math.abs(r.log - (2.0 - Math.PI)) <= 1e-15, s"log = ${r.log}")
   }
 
   test("axisX and axisY match the sandwiched basis vectors") {
@@ -128,7 +128,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("restore is the inverse of axisX/axisY") {
     forAll(Pga2dGenerators.normalizedRotors, MinSuccessful(1000)) { r =>
-      val restored = Pga2dRotor.restore(r.axisX, r.axisY)
+      val restored = Pga2dRotor.fromAxes(r.axisX, r.axisY)
       assert(Math.min((restored - r).normSquare, (restored + r).normSquare) < restoreEps, s"r = $r")
     }
   }

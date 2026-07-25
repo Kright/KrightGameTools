@@ -79,7 +79,7 @@ val to = Pga2dVector(3, 4)
 val rotor = Pga2dRotor.rotation(from, to)
 
 // Restoring a rotor from a rotated orthonormal basis (columns of a 2x2 rotation matrix)
-val rotor2 = Pga2dRotor.restore(axisX, axisY)
+val rotor2 = Pga2dRotor.fromAxes(axisX, axisY)
 
 // Applying rotation to anything using the sandwich product (could rotate point, line, rotor, etc.)
 // For a point the result is a Pga2dProjectivePoint (homogeneous coordinates); read it out with
@@ -110,13 +110,13 @@ val motor = translator.geometric(rotor)
 val transformedPoint = motor.sandwich(point).toPointUnsafe
 
 // Computing the logarithm of a motor (a grade-2 element, i.e. a projective point)
-val logarithm = motor.log()
+val logarithm = motor.log
 
 // Computing the exponential of a grade-2 element (results back in a motor)
-val motor2 = logarithm.exp()
+val motor2 = logarithm.exp
 
 // For a rotor the generator is a single number (the half-angle), so log/exp use plain Double
-val halfAngle = rotor.log()
+val halfAngle = rotor.log
 val rotor3 = Pga2dRotor.exp(halfAngle)
 
 // Interpolating between two rotors/motors: slerp() follows the exact geodesic (constant

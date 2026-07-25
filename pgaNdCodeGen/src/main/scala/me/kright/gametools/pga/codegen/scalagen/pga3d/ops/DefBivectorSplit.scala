@@ -12,7 +12,7 @@ object DefBivectorSplit:
     if (cls == bivector) {
       GeneratedCode { code =>
         val self = cls.self
-        code(s"\ndef split(): (${bivector.name}, ${bivectorWeight.name}) =")
+        code(s"\ndef split: (${bivector.name}, ${bivectorWeight.name}) =")
         code.block {
           code(
             s"""val div = bulkNormSquare

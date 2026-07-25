@@ -39,7 +39,7 @@ object DefExpForBivector:
           val aIBettaDiv2 = self.geometric(IBdiv2)
           val result = MultiVector.scalar(Sym("cos")) + (self + IBdiv2) * Sym("sinDivLen") + aIBettaDiv2 * Sym("sinMinusCosDivLen2")
 
-          code(s"\ndef exp(): ${motor.name} =")
+          code(s"\ndef exp: ${motor.name} =")
           code.block {
             code(
               sinDivLenCode("bulkNorm") + "\n\n" +
@@ -55,7 +55,7 @@ object DefExpForBivector:
           val aIBettaDiv2 = selfMulT.geometric(IBdiv2)
           val result = MultiVector.scalar(Sym("cos")) + (selfMulT + IBdiv2) * Sym("sinDivLen") + aIBettaDiv2 * Sym("sinMinusCosDivLen2")
 
-          code(s"\n/** for components below ~1e-154 the pairwise field products of this t-factored form may underflow; (b * t).exp() does not */")
+          code(s"\n/** for components below ~1e-154 the pairwise field products of this t-factored form may underflow; (b * t).exp does not */")
           code(s"def exp(t: Double): ${motor.name} =")
           code.block {
             code(
@@ -72,7 +72,7 @@ object DefExpForBivector:
           val aIBettaDiv2 = self.geometric(IBdiv2)
           val result = MultiVector.scalar(Sym("cos")) + (self + IBdiv2) * Sym("sinDivLen") + aIBettaDiv2 * Sym("sinMinusCosDivLen2")
 
-          code(s"\ndef exp(): ${rotor.typeName} =")
+          code(s"\ndef exp: ${rotor.typeName} =")
           code.block {
             code(
               sinDivLenCode("bulkNorm") + "\n\n" +
@@ -99,7 +99,7 @@ object DefExpForBivector:
       if (cls == bivectorWeight) {
         {
           val result = MultiVector.scalar(Sym(1.0)) + self
-          code(s"\ndef exp(): ${translator.typeName} =")
+          code(s"\ndef exp: ${translator.typeName} =")
           code.block {
             code(translator.makeConstructor(result))
           }

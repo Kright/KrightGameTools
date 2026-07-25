@@ -27,15 +27,26 @@ class ExactArithTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       s"a * b != p + low for a = $a, b = $b, p = $p, low = $low")
   }
 
+  /** the same Kahan sequence as diffOfProducts, but through the portable fma emulation */
+  private def diffOfProductsPortable(a: Double, b: Double, c: Double, d: Double): Double = {
+    val cd = c * d
+    val err = ExactArith.fmaPortable(c, d, -cd)
+    val dop = ExactArith.fmaPortable(a, b, -cd)
+    dop - err
+  }
+
   private def assertPreciseDiffOfProducts(a: Double, b: Double, c: Double, d: Double): Unit = {
-    val result = ExactArith.diffOfProducts(a, b, c, d)
     val expected = exactDiffOfProducts(a, b, c, d)
-    if (expected.signum == 0) {
-      assert(result == 0.0, s"diffOfProducts($a, $b, $c, $d) = $result, expected exact zero")
-    } else {
-      val err = exact(result).subtract(expected).abs
-      assert(err.compareTo(expected.abs.multiply(exact(1e-15))) <= 0,
-        s"diffOfProducts($a, $b, $c, $d) = $result, expected $expected")
+    for ((result, tolerance) <- Seq(
+      (ExactArith.diffOfProducts(a, b, c, d), 1e-15),
+      (diffOfProductsPortable(a, b, c, d), 2e-15))) {
+      if (expected.signum == 0) {
+        assert(result == 0.0, s"diffOfProducts($a, $b, $c, $d) = $result, expected exact zero")
+      } else {
+        val err = exact(result).subtract(expected).abs
+        assert(err.compareTo(expected.abs.multiply(exact(tolerance))) <= 0,
+          s"diffOfProducts($a, $b, $c, $d) = $result, expected $expected")
+      }
     }
   }
 

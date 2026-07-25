@@ -78,7 +78,7 @@ val line2 = point join vector
 val line2_ = point v vector
 
 // Splitting a bivector into a line and shift
-val (line, shift) = bivector.split()
+val (line, shift) = bivector.split
 ```
 
 ### Movement
@@ -129,10 +129,10 @@ val motor = translator.geometric(rotor)
 val transformedPoint = motor.sandwich(point).toPointUnsafe
 
 // Computing the logarithm of a motor 
-val bivector = motor.log()
+val bivector = motor.log
 
 // Computing the exponential of a bivector (results back in a motor)
-val motor2 = bivector.exp()
+val motor2 = bivector.exp
 
 // Interpolating between two rotors/motors: slerp() follows the exact geodesic (constant
 // angular velocity), nlerp() is a cheaper renormalized-lerp approximation of it

@@ -29,7 +29,7 @@ object DefInterpolation:
           s"""
              |${slerpDoc}
              |def slerp(b: ${cls.typeName}, t: Double): ${cls.typeName} =
-             |  this.geometric(this.reverse.geometric(b).log().exp(t))
+             |  this.geometric(this.reverse.geometric(b).log.exp(t))
              |
              |${nlerpDoc}
              |def nlerp(b: ${cls.typeName}, t: Double): ${cls.typeName} =
@@ -40,7 +40,7 @@ object DefInterpolation:
           s"""
              |${slerpDoc}
              |def slerp(b: ${cls.typeName}, t: Double): ${cls.typeName} =
-             |  this.geometric(${cls.typeName}.exp(this.reverse.geometric(b).log() * t))
+             |  this.geometric(${cls.typeName}.exp(this.reverse.geometric(b).log * t))
              |
              |${nlerpDoc}
              |def nlerp(b: ${cls.typeName}, t: Double): ${cls.typeName} =

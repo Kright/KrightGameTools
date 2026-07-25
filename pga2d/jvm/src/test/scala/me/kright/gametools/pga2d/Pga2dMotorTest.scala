@@ -47,7 +47,7 @@ class Pga2dMotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("motor log exp round trip") {
     forAll(Pga2dGenerators.normalizedMotors, MinSuccessful(1000)) { motor =>
-      val restored = motor.log().exp()
+      val restored = motor.log.exp
       val diff1 = (restored - motor).norm
       val diff2 = (restored + motor).norm
       assert(Math.min(diff1, diff2) < 1e-14, s"motor = $motor, restored = $restored")

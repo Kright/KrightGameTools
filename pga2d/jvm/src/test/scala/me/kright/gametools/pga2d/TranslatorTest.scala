@@ -32,13 +32,13 @@ class TranslatorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("translator log exp round trip") {
     forAll(Pga2dGenerators.translators) { tr =>
-      assert((tr.log().exp() - tr).norm < 1e-15)
+      assert((tr.log.exp - tr).norm < 1e-15)
     }
   }
 
   test("vector exp log round trip") {
     forAll(Pga2dGenerators.vectors) { v =>
-      assert((v.exp().log() - v).norm < 1e-15)
+      assert((v.exp.log - v).norm < 1e-15)
     }
   }
 

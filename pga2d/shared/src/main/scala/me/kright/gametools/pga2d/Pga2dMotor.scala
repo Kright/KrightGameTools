@@ -7,7 +7,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 /**
  * A motor: a rigid transformation of the 2d plane (combined rotation and translation),
  * the even-graded (0, 2) element of 2d PGA. Applied with motor.sandwich(obj).
- * A motor is the exponent of a grade-2 element (projectivePoint.exp()), and motor.log() returns that element back.
+ * A motor is the exponent of a grade-2 element (projectivePoint.exp), and motor.log returns that element back.
  *
  * Variable fields: s, wx, wy, xy.
  *
@@ -182,9 +182,9 @@ final case class Pga2dMotor(s: Double = 0.0,
       xy = 1.0 / xy,
     )
 
-  def log(): Pga2dProjectivePoint =
+  def log: Pga2dProjectivePoint =
     val scalar = s
-    if (s < 0.0) return (-this).log()
+    if (s < 0.0) return (-this).log
 
     val lenXY = Math.abs(xy)
     val angle = Math.atan2(lenXY, scalar)
@@ -218,7 +218,7 @@ final case class Pga2dMotor(s: Double = 0.0,
    * there and the interpolation direction becomes numerically unstable.
    */
   def slerp(b: Pga2dMotor, t: Double): Pga2dMotor =
-    this.geometric(this.reverse.geometric(b).log().exp(t))
+    this.geometric(this.reverse.geometric(b).log.exp(t))
 
   /**
    * Normalized linear interpolation: the componentwise lerp this * (1 - t) + b * t, renormalized.

@@ -161,7 +161,7 @@ final case class Pga2dVector(x: Double = 0.0,
       y = 1.0 / y,
     )
 
-  def exp(): Pga2dTranslator =
+  def exp: Pga2dTranslator =
     Pga2dTranslator(
       wx = y,
       wy = -x,

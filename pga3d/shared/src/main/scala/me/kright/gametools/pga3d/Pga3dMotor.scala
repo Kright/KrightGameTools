@@ -7,7 +7,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 /**
  * A motor: a rigid transformation of 3d space (combined rotation and translation),
  * the even-graded (0, 2, 4) element of 3d PGA. Applied with motor.sandwich(obj).
- * A motor is the exponent of a Pga3dBivector (bivector.exp()), and motor.log() returns that bivector back.
+ * A motor is the exponent of a Pga3dBivector (bivector.exp), and motor.log returns that bivector back.
  *
  * Variable fields: s, wx, wy, wz, xy, xz, yz, i.
  *
@@ -237,9 +237,9 @@ final case class Pga3dMotor(s: Double = 0.0,
       i = 1.0 / i,
     )
 
-  def log(): Pga3dBivector =
+  def log: Pga3dBivector =
     val scalar = s
-    if (s < 0.0) return (-this).log()
+    if (s < 0.0) return (-this).log
 
     val lenXYZ2 = xy * xy + xz * xz + yz * yz
     val lenXYZ = Math.sqrt(lenXYZ2)
@@ -374,7 +374,7 @@ final case class Pga3dMotor(s: Double = 0.0,
    * there and the interpolation direction becomes numerically unstable.
    */
   def slerp(b: Pga3dMotor, t: Double): Pga3dMotor =
-    this.geometric(this.reverse.geometric(b).log().exp(t))
+    this.geometric(this.reverse.geometric(b).log.exp(t))
 
   /**
    * Normalized linear interpolation: the componentwise lerp this * (1 - t) + b * t, renormalized.

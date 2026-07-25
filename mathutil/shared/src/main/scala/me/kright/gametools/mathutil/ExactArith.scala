@@ -17,11 +17,16 @@ object ExactArith:
   inline def fma(a: Double, b: Double, c: Double): Double =
     ExactArithPlatform.fma(a, b, c)
 
-  /** a * b - c * d with a few ulp of relative error even when the products cancel almost exactly */
+  /**
+   * a * b - c * d with at most ~2 ulp of relative error even when the products cancel
+   * almost exactly: Kahan's determinant algorithm (the bound is proven asymptotically
+   * optimal by Jeannerod, Louvet and Muller for a correctly rounded fma).
+   */
   def diffOfProducts(a: Double, b: Double, c: Double, d: Double): Double =
-    val p1 = a * b
-    val p2 = c * d
-    (p1 - p2) + (fma(a, b, -p1) - fma(c, d, -p2))
+    val cd = c * d
+    val err = fma(c, d, -cd)
+    val dop = fma(a, b, -cd)
+    dop - err
 
   private inline val VeltkampSplit = 134217729.0 // 2^27 + 1
 

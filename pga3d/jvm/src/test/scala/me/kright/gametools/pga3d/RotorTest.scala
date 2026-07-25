@@ -77,7 +77,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("restore rotation with orthogonal err") {
-    val err = Pga3dRotor.rotation(Pga3dVector(1, 0, 0), Pga3dVector(0, 1, 0)).log().exp(0.1)
+    val err = Pga3dRotor.rotation(Pga3dVector(1, 0, 0), Pga3dVector(0, 1, 0)).log.exp(0.1)
     val q = Pga3dRotor.rotation(Pga3dVector(0, 0, 1), Pga3dVector(0, 1, 0))
 
     val expected = 1.5707963267948963
@@ -89,7 +89,7 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("restore rotor from axes") {
     val eps = 1e-12
     forAll(Pga3dGenerators.normalizedRotors, MinSuccessful(1000)) { q =>
-      val restored = Pga3dRotor.restore(q.axisX, q.axisY, q.axisZ)
+      val restored = Pga3dRotor.fromAxes(q.axisX, q.axisY, q.axisZ)
 
       val diff1 = (restored - q).normSquare
       val diff2 = (restored + q).normSquare
@@ -99,36 +99,36 @@ class RotorTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("restore small rotation around X") {
     val q = Pga3dRotor(Math.cos(0.05), 0, 0, Math.sin(0.05)) // yz component is rotation around X
-    val restored = Pga3dRotor.restore(q.axisX, q.axisY, q.axisZ)
+    val restored = Pga3dRotor.fromAxes(q.axisX, q.axisY, q.axisZ)
     assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
   }
 
   test("restore small rotation around Y") {
     val q = Pga3dRotor(Math.cos(0.05), 0, -Math.sin(0.05), 0) // xz component
-    val restored = Pga3dRotor.restore(q.axisX, q.axisY, q.axisZ)
+    val restored = Pga3dRotor.fromAxes(q.axisX, q.axisY, q.axisZ)
     assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
   }
 
   test("restore small rotation around Z") {
     val q = Pga3dRotor(Math.cos(0.05), Math.sin(0.05), 0, 0) // xy component
-    val restored = Pga3dRotor.restore(q.axisX, q.axisY, q.axisZ)
+    val restored = Pga3dRotor.fromAxes(q.axisX, q.axisY, q.axisZ)
     assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
   }
 
   test("restore 180 degree rotation around X") {
     val q = Pga3dRotor(0, 0, 0, 1) // yz = 1
-    val restored = Pga3dRotor.restore(q.axisX, q.axisY, q.axisZ)
+    val restored = Pga3dRotor.fromAxes(q.axisX, q.axisY, q.axisZ)
     assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
   }
 
   test("restore 180 degree rotation around Y") {
     val q = Pga3dRotor(0, 0, 1, 0) // xz = 1
-    val restored = Pga3dRotor.restore(q.axisX, q.axisY, q.axisZ)
+    val restored = Pga3dRotor.fromAxes(q.axisX, q.axisY, q.axisZ)
     assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
   }
 
   test("restore 180 degree rotation around Z") {
     val q = Pga3dRotor(0, 1, 0, 0) // xy = 1
-    val restored = Pga3dRotor.restore(q.axisX, q.axisY, q.axisZ)
+    val restored = Pga3dRotor.fromAxes(q.axisX, q.axisY, q.axisZ)
     assert((restored - q).norm < 1e-12 || (restored + q).norm < 1e-12)
   }

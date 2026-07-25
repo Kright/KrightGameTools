@@ -7,7 +7,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 /**
  * A point with three homogeneous coordinates: (x/w, y/w) when w != 0, or an ideal point (a direction) when w == 0.
  * The grade-2 element of 2d PGA, stored in dual representation.
- * projectivePoint.exp() is a Pga2dMotor (rotation around the point), and motor.log() is a Pga2dProjectivePoint.
+ * projectivePoint.exp is a Pga2dMotor (rotation around the point), and motor.log is a Pga2dProjectivePoint.
  *
  * Variable fields: x, y, w.
  * Basis blade coefficients: wy = -x, wx = y, xy = w.
@@ -186,7 +186,7 @@ final case class Pga2dProjectivePoint(x: Double = 0.0,
       w = 1.0 / w,
     )
 
-  def exp(): Pga2dMotor =
+  def exp: Pga2dMotor =
     val len = bulkNorm
     val cos = Math.cos(len)
 

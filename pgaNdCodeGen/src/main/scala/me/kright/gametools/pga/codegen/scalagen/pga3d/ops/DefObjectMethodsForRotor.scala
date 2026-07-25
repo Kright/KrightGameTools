@@ -59,7 +59,7 @@ object DefObjectMethodsForRotor:
                |def rotation(from: ${vector.name}, to: ${vector.name}): ${cls.name} =
                |  rotation(from.dual, to.dual)
                |
-               |def restore(axisX: ${vector.name}, axisY: ${vector.name}, axisZ: ${vector.name}): ${cls.name} = {
+               |def fromAxes(axisX: ${vector.name}, axisY: ${vector.name}, axisZ: ${vector.name}): ${cls.name} = {
                |  val m00 = axisX.x
                |  val m10 = axisX.y
                |  val m20 = axisX.z

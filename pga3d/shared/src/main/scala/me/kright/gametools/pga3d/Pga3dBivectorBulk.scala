@@ -6,7 +6,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 
 /**
  * The bulk part (xy, xz, yz) of a Pga3dBivector: a line passing through the center of coordinates,
- * or the angular part of a rate of motion. bivectorBulk.exp() is a Pga3dRotor.
+ * or the angular part of a rate of motion. bivectorBulk.exp is a Pga3dRotor.
  *
  * Variable fields: xy, xz, yz.
  *
@@ -178,7 +178,7 @@ final case class Pga3dBivectorBulk(xy: Double = 0.0,
       yz = 1.0 / yz,
     )
 
-  def exp(): Pga3dRotor =
+  def exp: Pga3dRotor =
     val len = bulkNorm
     val cos = Math.cos(len)
 

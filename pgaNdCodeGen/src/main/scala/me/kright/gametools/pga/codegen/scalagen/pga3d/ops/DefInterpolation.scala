@@ -20,7 +20,7 @@ object DefInterpolation:
              | * there and the interpolation direction becomes numerically unstable.
              | */
              |def slerp(b: ${cls.typeName}, t: Double): ${cls.typeName} =
-             |  this.geometric(this.reverse.geometric(b).log().exp(t))
+             |  this.geometric(this.reverse.geometric(b).log.exp(t))
              |
              |/**
              | * Normalized linear interpolation: the componentwise lerp this * (1 - t) + b * t, renormalized.

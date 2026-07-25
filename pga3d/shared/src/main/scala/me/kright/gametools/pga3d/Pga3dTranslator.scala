@@ -6,7 +6,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 
 /**
  * A translator: translation of 3d space, applied with translator.sandwich(obj). Moves points but not vectors.
- * A translator is the exponent of a Pga3dBivectorWeight (bivectorWeight.exp()), and translator.log() returns that bivector back.
+ * A translator is the exponent of a Pga3dBivectorWeight (bivectorWeight.exp), and translator.log returns that bivector back.
  *
  * Variable fields: wx, wy, wz.
  * Constant fields: s = 1.0.
@@ -147,7 +147,7 @@ final case class Pga3dTranslator(wx: Double = 0.0,
       wz = 1.0 / wz,
     )
 
-  def log(): Pga3dBivectorWeight =
+  def log: Pga3dBivectorWeight =
     Pga3dBivectorWeight(
       wx = wx,
       wy = wy,

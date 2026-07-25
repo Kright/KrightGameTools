@@ -39,7 +39,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
     for (w <- halfAngles; sign <- ArraySeq(1.0, -1.0); (sx, sy) <- shifts) {
       val p = Pga2dProjectivePoint(sx, sy, sign * w)
-      val restored = p.exp().log()
+      val restored = p.exp.log
       assertRel(restored.x, p.x, 1e-14, s"x of $p")
       assertRel(restored.y, p.y, 1e-14, s"y of $p")
       assertRel(restored.w, p.w, 1e-14, s"w of $p")
@@ -48,20 +48,20 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("exp sin(len)/len is continuous and accurate across the 1e-5 branch threshold") {
     for (w <- ArraySeq(1e-300, 1e-20, 1e-7, 1e-6, 5e-6, 9.999999e-6, 1.0000001e-5, 2e-5, 1e-4, 1e-3)) {
-      val motor = Pga2dProjectivePoint(0.0, 0.0, w).exp()
+      val motor = Pga2dProjectivePoint(0.0, 0.0, w).exp
       assertRel(motor.xy, Math.sin(w), 5e-16, s"sin of half-angle $w")
       assertRel(motor.s, Math.cos(w), 5e-16, s"cos of half-angle $w")
     }
   }
 
-  test("exp(t) matches (p * t).exp() at extreme t") {
+  test("exp(t) matches (p * t).exp at extreme t") {
     val points = ArraySeq(
       Pga2dProjectivePoint(0.3, -0.4, 0.5),
       Pga2dProjectivePoint(1e-100, 1e-100, 1e-100),
       Pga2dProjectivePoint(0.0, 0.0, 1.0))
     for (t <- ArraySeq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20); p <- points) {
       val viaT = p.exp(t)
-      val viaScale = (p * t).exp()
+      val viaScale = (p * t).exp
       assertRel(viaT.s, viaScale.s, 1e-14, s"s for p = $p, t = $t")
       assertRel(viaT.wx, viaScale.wx, 1e-14, s"wx for p = $p, t = $t")
       assertRel(viaT.wy, viaScale.wy, 1e-14, s"wy for p = $p, t = $t")
@@ -73,9 +73,9 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     for (m <- ArraySeq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100, 1e300);
          (x, y) <- ArraySeq((m, 0.0), (0.0, -m), (m, -m), (m, 1.0))) {
       val v = Pga2dVector(x, y)
-      assert((v.exp().log() - v).norm == 0.0, s"v = $v")
+      assert((v.exp.log - v).norm == 0.0, s"v = $v")
       val tr = Pga2dTranslator(x, y)
-      assert((tr.log().exp() - tr).norm == 0.0, s"tr = $tr")
+      assert((tr.log.exp - tr).norm == 0.0, s"tr = $tr")
     }
   }
 
@@ -83,7 +83,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     for (m <- ArraySeq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100)) {
       val motor = Pga2dMotor(s = 1.0, wx = m, wy = -m, xy = 0.0)
       val expected = Pga2dProjectivePoint(x = m, y = m, w = 0.0)
-      assert((motor.log() - expected).norm == 0.0, s"motor = $motor")
+      assert((motor.log - expected).norm == 0.0, s"motor = $motor")
     }
   }
 
@@ -92,7 +92,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
          v <- ArraySeq(Pga2dVector(0, 0), Pga2dVector(1e-20, 1e-20), Pga2dVector(3, -4))) {
       val rotor = Pga2dRotor(Math.cos(h), Math.sin(h))
       val motor = Pga2dTranslator.addVector(v).geometric(rotor)
-      val restored = motor.log().exp()
+      val restored = motor.log.exp
       // log flips the sign of the motor when s < 0, so compare up to the global sign
       val diff = Math.min((restored - motor).norm, (restored + motor).norm)
       assert(diff <= 1e-14 * motor.norm, s"h = $h, v = $v, motor = $motor, restored = $restored")
@@ -211,14 +211,14 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     // b = angle/sin(angle) series/sqrt branch split
     for (w <- ArraySeq(9.99e-6, 9.999999e-6, 1.0000001e-5, 1.001e-5)) {
       val motor = Pga2dMotor(s = Math.cos(w), wx = 0.0, wy = 0.0, xy = Math.sin(w))
-      assertRel(motor.log().w, w, 1e-15, s"recovered half-angle for w = $w")
+      assertRel(motor.log.w, w, 1e-15, s"recovered half-angle for w = $w")
     }
   }
 
   test("restore preserves tiny rotations to relative precision") {
     for (theta <- ArraySeq(0.0, 1e-300, 1e-100, 1e-20, 1e-10, 1e-5, 1e-3, 0.1)) {
       val r0 = Pga2dRotor(Math.cos(theta / 2), Math.sin(theta / 2))
-      val restored = Pga2dRotor.restore(r0.sandwich(Pga2dVector(1, 0)), r0.sandwich(Pga2dVector(0, 1)))
+      val restored = Pga2dRotor.fromAxes(r0.sandwich(Pga2dVector(1, 0)), r0.sandwich(Pga2dVector(0, 1)))
       val aligned = if (restored.s * r0.s + restored.xy * r0.xy < 0) -restored else restored
       assertRel(aligned.s, r0.s, 1e-14, s"s for theta = $theta")
       assertRel(aligned.xy, r0.xy, 1e-14, s"xy for theta = $theta")
@@ -230,7 +230,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     // constructed directly so that tiny delta is not lost in (pi - delta) rounding
     for (delta <- ArraySeq(0.0, 1e-300, 1e-100, 1e-16, 1e-10, 1e-5, 0.05)) {
       val r0 = Pga2dRotor(Math.sin(delta / 2), Math.cos(delta / 2))
-      val restored = Pga2dRotor.restore(r0.sandwich(Pga2dVector(1, 0)), r0.sandwich(Pga2dVector(0, 1)))
+      val restored = Pga2dRotor.fromAxes(r0.sandwich(Pga2dVector(1, 0)), r0.sandwich(Pga2dVector(0, 1)))
       val aligned = if (restored.s * r0.s + restored.xy * r0.xy < 0) -restored else restored
       assertRel(aligned.s, r0.s, 1e-13, s"s for delta = $delta")
       assertRel(aligned.xy, r0.xy, 1e-13, s"xy for delta = $delta")

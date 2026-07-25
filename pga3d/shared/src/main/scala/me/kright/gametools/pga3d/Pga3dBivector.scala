@@ -7,7 +7,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 /**
  * A bivector, the grade-2 element of 3d PGA: an unnormalized line in 3d, also used for rates of motion
  * (angular and linear velocity) in physics. The sum of a Pga3dBivectorBulk and a Pga3dBivectorWeight part.
- * bivector.exp() is a Pga3dMotor, and motor.log() is a Pga3dBivector.
+ * bivector.exp is a Pga3dMotor, and motor.log is a Pga3dBivector.
  *
  * Variable fields: wx, wy, wz, xy, xz, yz.
  *
@@ -226,7 +226,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
       yz = 1.0 / yz,
     )
 
-  def exp(): Pga3dMotor =
+  def exp: Pga3dMotor =
     val len = bulkNorm
     val cos = Math.cos(len)
 
@@ -260,7 +260,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
       i = sinDivLen * (wx * yz + wz * xy - wy * xz),
     )
 
-  /** for components below ~1e-154 the pairwise field products of this t-factored form may underflow; (b * t).exp() does not */
+  /** for components below ~1e-154 the pairwise field products of this t-factored form may underflow; (b * t).exp does not */
   def exp(t: Double): Pga3dMotor =
     val len = bulkNorm * Math.abs(t)
     val cos = Math.cos(len)
@@ -295,7 +295,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
       i = sinDivLen * t * t * (wx * yz + wz * xy - wy * xz),
     )
 
-  def split(): (Pga3dBivector, Pga3dBivectorWeight) =
+  def split: (Pga3dBivector, Pga3dBivectorWeight) =
     val div = bulkNormSquare
     if (div < 1e-100) {
       return (Pga3dBivector(0.0, 0.0, 0.0, xy, xz, yz), Pga3dBivectorWeight(wx, wy, wz))

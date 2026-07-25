@@ -78,7 +78,7 @@ of every generated class lists the exact basis blade behind every field.
 ## exp and log
 
 Grade-2 elements are the "generators" of rigid motion: the exponent of a grade-2 element is a
-finite motion, and `log()` recovers it back. Scaling the argument scales the motion, which makes
+finite motion, and `log` recovers it back. Scaling the argument scales the motion, which makes
 `exp`/`log` the tool for interpolation and for integrating velocities in physics
 (`exp(t: Double)` overloads are generated for this).
 

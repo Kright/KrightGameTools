@@ -92,7 +92,7 @@ class InterpolationTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       val a = rotorForAngle(angleA * Math.PI)
       val b = rotorForAngle(angleB * Math.PI)
       whenever(a.reverse.geometric(b).s > antipodalThreshold) {
-        // slerp always takes the shorter arc (Pga3dRotor.log() flips to the positive-scalar
+        // slerp always takes the shorter arc (Pga3dRotor.log flips to the positive-scalar
         // representative internally), so the reference formula must apply the same double-cover
         // correction: negate b when the dot product is negative.
         val dot0 = a.s * b.s + a.xy * b.xy

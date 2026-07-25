@@ -6,7 +6,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 
 /**
  * The weight part (wx, wy, wz) of a Pga3dBivector: an ideal line, or the linear part of a rate of motion.
- * bivectorWeight.exp() is a Pga3dTranslator.
+ * bivectorWeight.exp is a Pga3dTranslator.
  *
  * Variable fields: wx, wy, wz.
  *
@@ -178,7 +178,7 @@ final case class Pga3dBivectorWeight(wx: Double = 0.0,
       wz = 1.0 / wz,
     )
 
-  def exp(): Pga3dTranslator =
+  def exp: Pga3dTranslator =
     Pga3dTranslator(
       wx = wx,
       wy = wy,
