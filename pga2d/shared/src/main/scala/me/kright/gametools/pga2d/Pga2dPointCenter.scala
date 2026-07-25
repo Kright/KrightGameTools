@@ -150,12 +150,19 @@ object Pga2dPointCenter:
       y = 0.0,
     )
 
-  /** fused line.dot(point).geometric(line) */
+  /** fused -line.dot(point).geometric(line); w of the result is line.normSquare > 0, so w = 1 for a normalized line */
   def projectOntoLine(line: Pga2dLine): Pga2dProjectivePoint =
     Pga2dProjectivePoint(
-      x = line.w * line.x,
-      y = line.w * line.y,
-      w = (-line.x * line.x - line.y * line.y),
+      x = -line.w * line.x,
+      y = -line.w * line.y,
+      w = (line.x * line.x + line.y * line.y),
+    )
+
+  /** fused -line.dot(point).geometric(line); w of the result is line.normSquare > 0, so w = 1 for a normalized line */
+  def projectOntoLine(line: Pga2dLineIdeal): Pga2dRotor =
+    Pga2dRotor(
+      s = 0.0,
+      xy = (line.x * line.x + line.y * line.y),
     )
 
   infix def geometric(r: Pga2dMotor): Pga2dMotor =

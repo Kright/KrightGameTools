@@ -383,7 +383,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
       wz = wz,
     )
 
-  /** fused plane.dot(line).geometric(plane) */
+  /** fused -plane.dot(line).geometric(plane); the result is the line scaled by plane.normSquare > 0 */
   def projectOntoPlane(plane: Pga3dPlane): Pga3dBivector =
     Pga3dBivector(
       wx = (plane.w * (-plane.y * xy - plane.z * xz) + plane.x * (plane.x * wx + plane.y * wy + plane.z * wz)),
@@ -394,7 +394,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
       yz = (plane.x * (plane.y * xz - plane.z * xy) + yz * (plane.y * plane.y + plane.z * plane.z)),
     )
 
-  /** fused plane.dot(line).geometric(plane) */
+  /** fused -plane.dot(line).geometric(plane); the result is the line scaled by plane.normSquare > 0 */
   def projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dBivector =
     Pga3dBivector(
       wx = plane.x * (plane.x * wx + plane.y * wy + plane.z * wz),

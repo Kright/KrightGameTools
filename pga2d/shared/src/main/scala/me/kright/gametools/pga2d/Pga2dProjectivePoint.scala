@@ -279,12 +279,20 @@ final case class Pga2dProjectivePoint(x: Double = 0.0,
       y = mult * y,
     )
 
-  /** fused line.dot(point).geometric(line) */
+  /** fused -line.dot(point).geometric(line); w of the result is line.normSquare > 0, so w = 1 for a normalized line */
   def projectOntoLine(line: Pga2dLine): Pga2dProjectivePoint =
     Pga2dProjectivePoint(
-      x = (line.x * (line.w * w + line.y * y) - line.y * line.y * x),
-      y = (line.y * (line.w * w + line.x * x) - line.x * line.x * y),
-      w = w * (-line.x * line.x - line.y * line.y),
+      x = (line.y * (line.y * x - line.x * y) - line.w * line.x * w),
+      y = (line.x * (line.x * y - line.y * x) - line.w * line.y * w),
+      w = w * (line.x * line.x + line.y * line.y),
+    )
+
+  /** fused -line.dot(point).geometric(line); w of the result is line.normSquare > 0, so w = 1 for a normalized line */
+  def projectOntoLine(line: Pga2dLineIdeal): Pga2dProjectivePoint =
+    Pga2dProjectivePoint(
+      x = line.y * (line.y * x - line.x * y),
+      y = line.x * (line.x * y - line.y * x),
+      w = w * (line.x * line.x + line.y * line.y),
     )
 
   infix def geometric(r: Pga2dMotor): Pga2dMotor =

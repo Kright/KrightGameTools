@@ -148,12 +148,21 @@ object Pga3dPointCenter:
       z = 0.0,
     )
 
-  /** fused plane.dot(point).geometric(plane) */
+  /** fused plane.dot(point).geometric(plane); w of the result is plane.normSquare > 0, so w = 1 for a normalized plane */
   def projectOntoPlane(plane: Pga3dPlane): Pga3dProjectivePoint =
     Pga3dProjectivePoint(
       x = -plane.w * plane.x,
       y = -plane.w * plane.y,
       z = -plane.w * plane.z,
+      w = (plane.x * plane.x + plane.y * plane.y + plane.z * plane.z),
+    )
+
+  /** fused plane.dot(point).geometric(plane); w of the result is plane.normSquare > 0, so w = 1 for a normalized plane */
+  def projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dProjectivePoint =
+    Pga3dProjectivePoint(
+      x = 0.0,
+      y = 0.0,
+      z = 0.0,
       w = (plane.x * plane.x + plane.y * plane.y + plane.z * plane.z),
     )
 

@@ -3,6 +3,7 @@ package me.kright.gametools.pga.codegen.scalagen.pga2d.ops
 import me.kright.gametools.ga.PGA2
 import me.kright.gametools.pga.codegen.scalagen.common.{GeneratedCode, MultivectorUnaryOp}
 import me.kright.gametools.pga.codegen.scalagen.pga2d.Pga2dScalaAlgebra
+import scala.collection.immutable.ArraySeq
 
 object DefProjection:
   def apply()(using pga2: PGA2): MultivectorUnaryOp =
@@ -12,22 +13,23 @@ object DefProjection:
       Pga2dScalaAlgebra.pointCenter
     )
 
-    val lineClass = Pga2dScalaAlgebra.line
-
     MultivectorUnaryOp { (cls, v) =>
       if (pointClasses.contains(cls)) {
         GeneratedCode { code =>
           val point = cls.self
-          val line = lineClass.makeSymbolic("line")
-          val result = line.dot(point).geometric(line)
-          val resultCls = Pga2dScalaAlgebra.findMatchingClass(result)
 
-          code(
-            s"""
-               |/** fused line.dot(point).geometric(line) */
-               |def projectOntoLine(line: ${lineClass.typeName}): ${resultCls.typeName} =""".stripMargin)
-          code.block {
-            code(resultCls.makeConstructorOptimized(result, resultCls))
+          for (hyperplaneClass <- ArraySeq(Pga2dScalaAlgebra.line, Pga2dScalaAlgebra.lineIdeal)) {
+            val line = hyperplaneClass.makeSymbolic("line")
+            val result = -line.dot(point).geometric(line)
+            val resultCls = Pga2dScalaAlgebra.findMatchingClass(result)
+
+            code(
+              s"""
+                 |/** fused -line.dot(point).geometric(line); w of the result is line.normSquare > 0, so w = 1 for a normalized line */
+                 |def projectOntoLine(line: ${hyperplaneClass.typeName}): ${resultCls.typeName} =""".stripMargin)
+            code.block {
+              code(resultCls.makeConstructorOptimized(result, resultCls))
+            }
           }
         }
       } else None

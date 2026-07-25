@@ -355,6 +355,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `toPointUnsafe: Pga2dPoint`
 - `toPoint: Pga2dPoint`
 - `projectOntoLine(line: Pga2dLine): Pga2dProjectivePoint`
+- `projectOntoLine(line: Pga2dLineIdeal): Pga2dProjectivePoint`
 
 ### Pga2dRotor
 
@@ -520,6 +521,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `toTranslatorUnsafe: Pga2dTranslator`
 - `toVectorUnsafe: Pga2dVector`
 - `projectOntoLine(line: Pga2dLine): Pga2dProjectivePoint`
+- `projectOntoLine(line: Pga2dLineIdeal): Pga2dProjectivePoint`
 
 ### Pga2dLineIdeal
 
@@ -586,3 +588,4 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `toVectorUnsafe: Pga2dVector`
 - `toPoint: Pga2dPoint`
 - `projectOntoLine(line: Pga2dLine): Pga2dProjectivePoint`
+- `projectOntoLine(line: Pga2dLineIdeal): Pga2dRotor`

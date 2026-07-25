@@ -426,6 +426,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `toPointUnsafe: Pga3dPoint`
 - `toPoint: Pga3dPoint`
 - `projectOntoPlane(plane: Pga3dPlane): Pga3dProjectivePoint`
+- `projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dProjectivePoint`
 - `projectOntoLine(line: Pga3dBivector): Pga3dProjectivePoint`
 
 ### Pga3dRotor
@@ -588,6 +589,7 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `toProjectivePoint: Pga3dProjectivePoint`
 - `toVectorUnsafe: Pga3dVector`
 - `projectOntoPlane(plane: Pga3dPlane): Pga3dProjectivePoint`
+- `projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dProjectivePoint`
 - `projectOntoLine(line: Pga3dBivector): Pga3dProjectivePoint`
 
 ### Pga3dPlaneIdeal
@@ -719,4 +721,5 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `toVectorUnsafe: Pga3dVector`
 - `toPoint: Pga3dPoint`
 - `projectOntoPlane(plane: Pga3dPlane): Pga3dProjectivePoint`
+- `projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dProjectivePoint`
 - `projectOntoLine(line: Pga3dBivector): Pga3dProjectivePoint`

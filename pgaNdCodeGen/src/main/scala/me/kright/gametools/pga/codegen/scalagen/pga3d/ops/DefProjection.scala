@@ -14,7 +14,6 @@ object DefProjection:
     )
 
     val lineClass = Pga3dScalaAlgebra.bivector
-    val planeClass = Pga3dScalaAlgebra.plane
 
     MultivectorUnaryOp { (cls, v) =>
       if (cls == lineClass) {
@@ -28,7 +27,7 @@ object DefProjection:
 
             code(
               s"""
-                 |/** fused plane.dot(line).geometric(plane) */
+                 |/** fused -plane.dot(line).geometric(plane); the result is the line scaled by plane.normSquare > 0 */
                  |def projectOntoPlane(plane: ${hyperplaneClass.typeName}): ${resultCls.typeName} =""".stripMargin)
             code.block {
               code(resultCls.makeConstructorOptimized(result, resultCls))
@@ -39,15 +38,15 @@ object DefProjection:
         GeneratedCode { code =>
           val point = cls.self
 
-          {
-            val plane = planeClass.makeSymbolic("plane")
+          for (hyperplaneClass <- ArraySeq(Pga3dScalaAlgebra.plane, Pga3dScalaAlgebra.planeIdeal)) {
+            val plane = hyperplaneClass.makeSymbolic("plane")
             val result = plane.dot(point).geometric(plane)
             val resultCls = Pga3dScalaAlgebra.findMatchingClass(result)
 
             code(
               s"""
-                 |/** fused plane.dot(point).geometric(plane) */
-                 |def projectOntoPlane(plane: ${planeClass.typeName}): ${resultCls.typeName} =""".stripMargin)
+                 |/** fused plane.dot(point).geometric(plane); w of the result is plane.normSquare > 0, so w = 1 for a normalized plane */
+                 |def projectOntoPlane(plane: ${hyperplaneClass.typeName}): ${resultCls.typeName} =""".stripMargin)
             code.block {
               code(resultCls.makeConstructorOptimized(result, resultCls))
             }

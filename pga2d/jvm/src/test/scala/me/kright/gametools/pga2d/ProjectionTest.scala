@@ -20,6 +20,25 @@ class ProjectionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     assert((p.projectOntoLine(line).toPoint - Pga2dPoint(10, 4)).norm < 1e-15)
   }
 
+  test("projection onto a normalized line keeps w = 1") {
+    forAll(Pga2dGenerators.points, nonDegenerateLines, MinSuccessful(1000)) { (p, line) =>
+      val projected = p.projectOntoLine(line / line.bulkNorm)
+      assert(Math.abs(projected.w - 1.0) < 1e-14, s"w = ${projected.w}")
+    }
+  }
+
+  test("toPointUnsafe is correct after projecting onto a normalized line") {
+    val projected = Pga2dPoint(3, 4).projectOntoLine(Pga2dLine(0, 1, 0))
+    assert(projected.w == 1.0)
+    assert(projected.toPointUnsafe == Pga2dPoint(3, 0))
+  }
+
+  test("project point onto ideal line") {
+    val projected = Pga2dPoint(3, 4).projectOntoLine(Pga2dLineIdeal(0, 1)) // the line y = 0
+    assert(projected.w == 1.0)
+    assert(projected.toPointUnsafe == Pga2dPoint(3, 0))
+  }
+
   test("projected point lies on the line") {
     forAll(Pga2dGenerators.points, nonDegenerateLines, MinSuccessful(1000)) { (p, line) =>
       val projected = p.projectOntoLine(line).toPoint

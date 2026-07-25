@@ -248,12 +248,21 @@ final case class Pga3dProjectivePoint(x: Double = 0.0,
       z = mult * z,
     )
 
-  /** fused plane.dot(point).geometric(plane) */
+  /** fused plane.dot(point).geometric(plane); w of the result is plane.normSquare > 0, so w = 1 for a normalized plane */
   def projectOntoPlane(plane: Pga3dPlane): Pga3dProjectivePoint =
     Pga3dProjectivePoint(
       x = (plane.x * (-plane.w * w - plane.y * y - plane.z * z) + x * (plane.y * plane.y + plane.z * plane.z)),
       y = (plane.y * (-plane.w * w - plane.x * x - plane.z * z) + y * (plane.x * plane.x + plane.z * plane.z)),
       z = (plane.z * (-plane.w * w - plane.x * x - plane.y * y) + z * (plane.x * plane.x + plane.y * plane.y)),
+      w = w * (plane.x * plane.x + plane.y * plane.y + plane.z * plane.z),
+    )
+
+  /** fused plane.dot(point).geometric(plane); w of the result is plane.normSquare > 0, so w = 1 for a normalized plane */
+  def projectOntoPlane(plane: Pga3dPlaneIdeal): Pga3dProjectivePoint =
+    Pga3dProjectivePoint(
+      x = (plane.y * (plane.y * x - plane.x * y) + plane.z * (plane.z * x - plane.x * z)),
+      y = (plane.x * (plane.x * y - plane.y * x) + plane.z * (plane.z * y - plane.y * z)),
+      z = (plane.x * (plane.x * z - plane.z * x) + plane.y * (plane.y * z - plane.z * y)),
       w = w * (plane.x * plane.x + plane.y * plane.y + plane.z * plane.z),
     )
 
