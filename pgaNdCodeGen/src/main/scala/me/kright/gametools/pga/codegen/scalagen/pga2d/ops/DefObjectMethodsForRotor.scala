@@ -20,27 +20,26 @@ object DefObjectMethodsForRotor:
                |  val r2a = to.geometric(from) / norm
                |  val dot = r2a.s
                |
-               |  if (dot > -1.0 + 1e-6) {
+               |  // the -0.9 threshold keeps (1.0 + dot) >= 0.1, so the half-angle branch loses
+               |  // at most ~2e-15 relative to the dot rounding; angles closer to pi take the
+               |  // exact-wedge branch below, which stays ~1e-15 all the way to pi
+               |  if (dot > -0.9) {
                |    val newCos = Math.sqrt((1.0 + dot) / 2.0)
                |    val newSinDivSin2 = 0.5 / newCos
                |    return ${cls.name}(newCos, r2a.xy * newSinDivSin2)
                |  }
                |
-               |  val sin2a = Math.abs(r2a.xy)
-               |  if (sin2a > 1e-8) {
-               |    val angle2 = Math.atan2(sin2a, r2a.s)
-               |    val propAngle = angle2 * 0.5
-               |    val mult = Math.sin(propAngle) / sin2a
-               |    return ${cls.name}(Math.cos(propAngle), r2a.xy * mult).normalizedByNorm
-               |  }
-               |
-               |  // nearly a rotation by pi: the full angle is pi - eps with sin(eps) = sin2a <= 1e-8.
-               |  // first-order half-angle rotor: s = sin(eps/2) = 0.5 * sin2a * (1 + eps^2/8 + O(eps^4)) and
-               |  // xy = +-cos(eps/2) = +-(1 - eps^2/8); at eps <= 1e-8 the dropped eps^2/8 <= 1.25e-17 terms
-               |  // are below the 1.1e-16 rounding step of double, so both components are exact in double. xy carries the sign of r2a.xy,
-               |  // matching the atan2 branch above, so the result is continuous across the sin2a threshold;
-               |  // sin2a == 0 (exactly antipodal inputs) gives the exact pi rotor (0, 1)
-               |  ${cls.name}(0.5 * sin2a, if (r2a.xy < 0.0) -1.0 else 1.0)
+               |  // nearly a rotation by pi, the full angle is pi - eps. The wedge r2a.xy cancels
+               |  // catastrophically near pi (~1e-17 absolute noise), so it is recomputed with
+               |  // error-free products; the dot guard bounds |wedge| <= sin(acos(0.9)) ~ 0.44,
+               |  // where asin is well-conditioned - unlike atan2 near pi, whose ~ulp(pi)
+               |  // absolute error would be ~1e-16/eps relative in s.
+               |  // Exactly antipodal inputs (wedge == 0) give the exact pi rotor (0, 1)
+               |  import me.kright.gametools.mathutil.ExactArith.diffOfProducts
+               |  val wedge = diffOfProducts(from.y, to.x, from.x, to.y) / norm
+               |  val eps = Math.asin(Math.abs(wedge))
+               |  val xy = if (wedge < 0.0) -Math.cos(eps * 0.5) else Math.cos(eps * 0.5)
+               |  ${cls.name}(Math.sin(eps * 0.5), xy)
                |}
                |
                |def rotation(from: ${vector.name}, to: ${vector.name}): ${cls.name} =

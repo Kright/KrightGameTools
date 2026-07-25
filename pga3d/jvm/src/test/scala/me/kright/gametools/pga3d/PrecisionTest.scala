@@ -41,7 +41,10 @@ class PrecisionTest extends AnyFunSuiteLike:
     // exp/log mix the weight components through triple products of the same scale, so
     // same-scale shifts must be preserved with relative precision of that scale; the shift
     // (1, -2, 0.5) makes bulk*weight (and so the motor i and the log c term) non-zero
-    val shifts = Seq((0.0, 0.0, 0.0), (1.0, -2.0, 0.5), (1e-10, 2e-10, -0.5e-10), (1e10, -2e10, 0.5e10))
+    val shifts = Seq(
+      (0.0, 0.0, 0.0), (1.0, -2.0, 0.5), (1e-10, 2e-10, -0.5e-10),
+      (1e-15, 2e-15, -0.5e-15), (1e-20, 2e-20, -0.5e-20),
+      (1e10, -2e10, 0.5e10), (1e15, -2e15, 0.5e15), (1e20, -2e20, 0.5e20))
 
     for (h <- halfAngles; sign <- Seq(1.0, -1.0); (sx, sy, sz) <- shifts) {
       val b = Pga3dBivector(
@@ -101,7 +104,7 @@ class PrecisionTest extends AnyFunSuiteLike:
     // This checks the full bivector exp (including the i component and the second-order
     // term) on both sides of the 1e-5 branch threshold.
     for (h <- Seq(1e-7, 1e-6, 9.9e-6, 9.999999e-6, 1.0000001e-5, 2e-5, 1e-4, 1e-3, 0.1);
-         d <- Seq(0.0, 1e-10, 1.0, 1e10)) {
+         d <- Seq(0.0, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20)) {
       val direct = Pga3dBivector(wz = d, xy = h).exp()
       val expected = Pga3dBivectorBulk(xy = h).exp().geometric(Pga3dBivectorWeight(wz = d).exp())
 
@@ -124,7 +127,7 @@ class PrecisionTest extends AnyFunSuiteLike:
       Pga3dBivector(xy = 0.3, xz = -0.4, yz = 0.5))
     // t values keeping bulkNorm * t moderate: at huge angles the two sides legitimately
     // differ through the ~ulp difference of bulkNorm * t vs (b * t).bulkNorm before cos
-    for (t <- Seq(0.0, 1e-300, 1e-100, 1e-10, 0.5, 1.0, 2.0); b <- bivectors) {
+    for (t <- Seq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 0.5, 1.0, 2.0); b <- bivectors) {
       val viaT = b.exp(t)
       val viaScale = (b * t).exp()
       assertRel(viaT.s, viaScale.s, 1e-14, s"s for b = $b, t = $t")
@@ -141,7 +144,7 @@ class PrecisionTest extends AnyFunSuiteLike:
     // the pairwise products inside the i component (~1e-300) stay in the normal range —
     // at 1e-200 they underflow to zero in the t-factored form of exp(t)
     val tiny = Pga3dBivector(1e-150, -1e-150, 1e-150, 2e-150, 1e-150, -1e-150)
-    for (t <- Seq(1e10, 1e100)) {
+    for (t <- Seq(1e10, 1e15, 1e20, 1e100)) {
       val viaT = tiny.exp(t)
       val viaScale = (tiny * t).exp()
       assertRel(viaT.wx, viaScale.wx, 1e-14, s"wx for tiny bivector, t = $t")
@@ -151,7 +154,7 @@ class PrecisionTest extends AnyFunSuiteLike:
   }
 
   test("bivector weight exp and translator log round trips are exact at any magnitude") {
-    for (m <- Seq(0.0, 1e-300, 1e-100, 1e-10, 1.0, 1e10, 1e100, 1e300);
+    for (m <- Seq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100, 1e300);
          (x, y, z) <- Seq((m, 0.0, 0.0), (0.0, -m, m), (m, -m, 0.5 * m), (m, 1.0, -m))) {
       val v = Pga3dBivectorWeight(x, y, z)
       assert(v.exp().log() == v, s"v = $v")
@@ -161,7 +164,7 @@ class PrecisionTest extends AnyFunSuiteLike:
   }
 
   test("motor log is exact for pure translation motors") {
-    for (m <- Seq(0.0, 1e-300, 1e-100, 1e-10, 1.0, 1e10, 1e100)) {
+    for (m <- Seq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100)) {
       val motor = Pga3dMotor(s = 1.0, wx = m, wy = -m, wz = 0.5 * m)
       val expected = Pga3dBivector(wx = m, wy = -m, wz = 0.5 * m)
       assert(motor.log() == expected, s"motor = $motor")
@@ -177,6 +180,80 @@ class PrecisionTest extends AnyFunSuiteLike:
 
       val rotor = Pga3dRotor(s = Math.cos(w), xy = Math.sin(w))
       assertRel(rotor.log().xy, w, 1e-15, s"rotor recovered half-angle for w = $w")
+    }
+  }
+
+  test("rotation preserves tiny angles between vectors instead of stalling") {
+    val from = Pga3dVector(1, 0, 0)
+    for (angle <- Seq(1e-8, 1e-10, 1e-20, 1e-50, 1e-100, 1e-200, 1e-300)) {
+      val to = Pga3dVector(Math.cos(angle), 0.6 * Math.sin(angle), 0.8 * Math.sin(angle))
+      val r = Pga3dRotor.rotation(from, to)
+      assert(Math.abs(r.xy) + Math.abs(r.xz) + Math.abs(r.yz) != 0.0, s"rotation by $angle collapsed to identity")
+      assert((r.sandwich(from) - to).norm <= 1e-15, s"angle = $angle")
+    }
+  }
+
+  test("rotation works at extreme vector magnitudes") {
+    val expected = Math.sqrt(0.5)
+    for (scale <- Seq(1e-140, 1e-100, 1e-50, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e50, 1e100, 1e150)) {
+      val r = Pga3dRotor.rotation(Pga3dVector(scale, 0.0, 0.0), Pga3dVector(0.0, scale, 0.0))
+      assertRel(r.s, expected, 1e-15, s"s at scale $scale")
+      assertRel(Math.abs(r.xy), expected, 1e-15, s"|xy| at scale $scale")
+      val rotated = r.sandwich(Pga3dVector(scale, 0.0, 0.0))
+      assert((rotated - Pga3dVector(0.0, scale, 0.0)).norm <= 1e-15 * scale, s"rotated at scale $scale")
+    }
+  }
+
+  test("rotation for exactly antipodal vectors gives an exact pi rotor at any magnitude") {
+    for (m <- Seq(1e-140, 1e-100, 1e-20, 1e-15, 1.0, 1e15, 1e20, 1e100, 1e150)) {
+      val from = Pga3dVector(3 * m, 4 * m, 12 * m)
+      val r = Pga3dRotor.rotation(from, -from)
+      assert(r.s == 0.0, s"s at magnitude $m")
+      assert(Math.abs(r.norm - 1.0) <= 1e-14, s"norm at magnitude $m")
+      assert((r.sandwich(from) + from).norm <= 1e-15 * from.norm, s"rotated at magnitude $m")
+    }
+  }
+
+  test("rotation near antipodal preserves the deviation from pi at any eps") {
+    // the axis is recovered through ExactArith.diffOfProducts, so it does not suffer
+    // from the wedge cancellation noise and the mapping error stays flat down to eps = 0
+    val from = Pga3dVector(3.0 / 13, 4.0 / 13, 12.0 / 13)
+    val perp = Pga3dVector(from.y, -from.x, 0.0).normalizedByNorm
+    for (eps <- Seq(0.4, 0.1, 1e-2, 1.4e-3, 1e-4, 1e-5, 1e-6, 1e-7, 3e-8, 1.5e-8, 1.01e-8,
+      0.99e-8, 3e-9, 1e-10, 1e-12, 1e-14, 1e-16)) {
+      val to = -(from * Math.cos(eps) + perp * Math.sin(eps))
+      val r = Pga3dRotor.rotation(from, to)
+      assert(Math.abs(r.norm - 1.0) <= 1e-14, s"norm at pi - $eps")
+
+      val err = (r.sandwich(from) - to).norm
+      assert(err <= 3e-15, s"err = $err at pi - $eps")
+    }
+  }
+
+  test("rotation is accurate on both sides of the main-branch boundary") {
+    // the exact-wedge branch starts at dot <= -0.9, i.e. eps0 = acos(0.9) ~ 0.451 away
+    // from pi; the guard keeps (1 + dot) >= 0.1 in the main branch and the asin argument
+    // below sin(eps0) ~ 0.44 in the exact-wedge branch, so both sides stay at ~1e-15
+    val eps0 = Math.acos(0.9)
+    val from = Pga3dVector(3.0 / 13, 4.0 / 13, 12.0 / 13)
+    val perp = Pga3dVector(from.y, -from.x, 0.0).normalizedByNorm
+    for (eps <- Seq(eps0 * 0.98, eps0 * 0.999, eps0, eps0 * 1.001, eps0 * 1.02)) {
+      val to = -(from * Math.cos(eps) + perp * Math.sin(eps))
+      val r = Pga3dRotor.rotation(from, to)
+      assert(Math.abs(r.norm - 1.0) <= 1e-14, s"norm at pi - $eps")
+      val err = (r.sandwich(from) - to).norm
+      assert(err <= 5e-15, s"err = $err at pi - $eps")
+    }
+  }
+
+  test("rotation near antipodal recovers the half-angle rotor to relative precision") {
+    val from = Pga3dVector(1, 0, 0)
+    for (eps <- Seq(0.4, 1e-2, 1e-4, 1e-6, 1.01e-8, 0.99e-8, 1e-10, 1e-14)) {
+      val to = Pga3dVector(-Math.cos(eps), 0.6 * Math.sin(eps), 0.8 * Math.sin(eps))
+      val r = Pga3dRotor.rotation(from, to)
+      assertRel(r.s, Math.sin(eps / 2), 5e-16, s"s at eps = $eps")
+      val axisNorm = Math.sqrt(r.xy * r.xy + r.xz * r.xz + r.yz * r.yz)
+      assertRel(axisNorm, Math.cos(eps / 2), 1e-15, s"axis norm at eps = $eps")
     }
   }
 

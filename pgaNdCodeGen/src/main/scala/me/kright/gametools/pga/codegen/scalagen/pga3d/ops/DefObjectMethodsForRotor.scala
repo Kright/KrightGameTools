@@ -20,22 +20,35 @@ object DefObjectMethodsForRotor:
                |  val q2a = to.geometric(from) / norm
                |  val dot = q2a.s
                |
-               |  if (dot > -1.0 + 1e-6) {
+               |  // the -0.9 threshold keeps (1.0 + dot) >= 0.1, so the half-angle branch loses
+               |  // at most ~2e-15 relative to the dot rounding; angles closer to pi take the
+               |  // exact-wedge branch below, which stays ~1e-15 all the way to pi
+               |  if (dot > -0.9) {
                |    val newCos = Math.sqrt((1.0 + dot) / 2)
                |    val newSinDivSin2 = 0.5 / newCos
                |    return ${cls.name}(newCos, q2a.xy * newSinDivSin2, q2a.xz * newSinDivSin2, q2a.yz * newSinDivSin2)
                |  }
                |
-               |  val sin2a = Math.sqrt(q2a.xy * q2a.xy + q2a.xz * q2a.xz + q2a.yz * q2a.yz)
+               |  // near pi the wedge components of q2a cancel catastrophically (~1e-17 absolute
+               |  // noise, which would tilt the axis by ~1e-17/sin2a), so the axis is recomputed
+               |  // with error-free products
+               |  import me.kright.gametools.mathutil.ExactArith.diffOfProducts
+               |  val invNorm = 1.0 / norm
+               |  val bxy = diffOfProducts(from.y, to.x, from.x, to.y) * invNorm
+               |  val bxz = diffOfProducts(from.z, to.x, from.x, to.z) * invNorm
+               |  val byz = diffOfProducts(from.z, to.y, from.y, to.z) * invNorm
+               |  val sin2a = Math.sqrt(bxy * bxy + bxz * bxz + byz * byz)
                |
-               |  if (sin2a > 1e-8) {
-               |    val angle2 = Math.atan2(sin2a, q2a.s)
-               |    val propAngle = angle2 * 0.5
-               |    val mult = Math.sin(propAngle) / sin2a
-               |    return ${cls.name}(Math.cos(propAngle), q2a.xy * mult, q2a.xz * mult, q2a.yz * mult).normalizedByNorm
+               |  if (sin2a > 0.0) {
+               |    // rotation by (pi - eps): the dot guard bounds sin2a <= sin(acos(0.9)) ~ 0.44,
+               |    // where asin is well-conditioned - unlike atan2 near pi, whose ~ulp(pi)
+               |    // absolute error would be ~1e-16/eps relative in s
+               |    val eps = Math.asin(sin2a)
+               |    val axisMult = Math.cos(eps * 0.5) / sin2a
+               |    return ${cls.name}(Math.sin(eps * 0.5), bxy * axisMult, bxz * axisMult, byz * axisMult)
                |  }
                |
-               |  // choose any axis
+               |  // exactly antipodal inputs: the axis is any direction orthogonal to from
                |  val orthogonalPlane =
                |    if (Math.abs(from.x) > Math.abs(from.z)) ${planeIdeal.name}(-from.y, from.x, 0)
                |    else ${planeIdeal.name}(0, -from.z, from.y)

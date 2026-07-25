@@ -32,7 +32,9 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       9.9e-6, 1.01e-5, 2e-5, 1e-4, 1e-3, 1e-2, 0.1, 1.0, 1.5, Math.PI / 2 - 1e-6)
     // exp/log do not mix x and y, so even wildly mismatched translation components
     // must be preserved with per-component relative precision
-    val shifts = Seq((0.0, 0.0), (1.0, -2.0), (1e-10, 2e-10), (-1e-100, 1e-100), (1e10, -1e-10))
+    val shifts = Seq(
+      (0.0, 0.0), (1.0, -2.0), (1e-10, 2e-10), (1e-15, -2e-15), (1e-20, -1e-20), (-1e-100, 1e-100),
+      (1e10, -1e-10), (1e15, -2e15), (1e20, -1e20))
 
     for (w <- halfAngles; sign <- Seq(1.0, -1.0); (sx, sy) <- shifts) {
       val p = Pga2dProjectivePoint(sx, sy, sign * w)
@@ -56,7 +58,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       Pga2dProjectivePoint(0.3, -0.4, 0.5),
       Pga2dProjectivePoint(1e-100, 1e-100, 1e-100),
       Pga2dProjectivePoint(0.0, 0.0, 1.0))
-    for (t <- Seq(0.0, 1e-300, 1e-100, 1e-10, 1.0, 1e10); p <- points) {
+    for (t <- Seq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20); p <- points) {
       val viaT = p.exp(t)
       val viaScale = (p * t).exp()
       assertRel(viaT.s, viaScale.s, 1e-14, s"s for p = $p, t = $t")
@@ -67,7 +69,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("vector exp and translator log round trips are exact at any magnitude") {
-    for (m <- Seq(0.0, 1e-300, 1e-100, 1e-10, 1.0, 1e10, 1e100, 1e300);
+    for (m <- Seq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100, 1e300);
          (x, y) <- Seq((m, 0.0), (0.0, -m), (m, -m), (m, 1.0))) {
       val v = Pga2dVector(x, y)
       assert((v.exp().log() - v).norm == 0.0, s"v = $v")
@@ -77,7 +79,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("motor log is exact for pure translation motors") {
-    for (m <- Seq(0.0, 1e-300, 1e-100, 1e-10, 1.0, 1e10, 1e100)) {
+    for (m <- Seq(0.0, 1e-300, 1e-100, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e100)) {
       val motor = Pga2dMotor(s = 1.0, wx = m, wy = -m, xy = 0.0)
       val expected = Pga2dProjectivePoint(x = m, y = m, w = 0.0)
       assert((motor.log() - expected).norm == 0.0, s"motor = $motor")
@@ -112,7 +114,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     // sqrt(from.normSquare * to.normSquare) used to overflow (garbage rotor at ~1e100)
     // or underflow (NaN at ~1e-100); norms must only be multiplied after their sqrt
     val expected = Math.sqrt(0.5)
-    for (scale <- Seq(1e-140, 1e-100, 1e-50, 1e-10, 1.0, 1e10, 1e50, 1e100, 1e150)) {
+    for (scale <- Seq(1e-140, 1e-100, 1e-50, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e50, 1e100, 1e150)) {
       val r = Pga2dRotor.rotation(Pga2dVector(scale, 0.0), Pga2dVector(0.0, scale))
       assertRel(r.s, expected, 1e-15, s"s at scale $scale")
       assertRel(Math.abs(r.xy), expected, 1e-15, s"|xy| at scale $scale")
@@ -122,13 +124,11 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("rotation for nearly antipodal vectors keeps the deviation from pi") {
-    // the near-pi fallback keeps the first-order deviation (s = sin2a / 2), so no deviation
-    // is snapped away no matter how tiny. This construction is exactly representable, so
-    // every branch must be relative-precise here; for general inputs the deviation is limited
-    // by the ~1e-16 absolute error of r2a.xy from the geometric-product cancellation
-    // (~1e-8 relative at sin2a ~ 1e-8), which is all the inputs can provide
+    // the wedge is recomputed with ExactArith.diffOfProducts and the deviation goes through
+    // the well-conditioned asin, so it survives at relative precision for any input;
+    // all these angles are within acos(0.9) of pi, i.e. inside the exact-wedge branch
     val from = Pga2dVector(1, 0)
-    for (angleToPi <- Seq(0.0, 1e-300, 1e-12, 1e-9, 3e-8, 1e-7, 1e-6, 1e-4, 1e-3, 0.1)) {
+    for (angleToPi <- Seq(0.0, 1e-300, 1e-12, 1e-9, 3e-8, 1e-7, 1e-6, 1e-4, 1e-3, 0.1, 0.4)) {
       val to = Pga2dVector(-Math.cos(angleToPi), Math.sin(angleToPi))
       val r = Pga2dRotor.rotation(from, to)
       assert(Math.abs(r.norm - 1.0) < 1e-14, s"norm at pi - $angleToPi")
@@ -136,37 +136,48 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       assert((rotated - to).norm <= 1e-13, s"rotated at pi - $angleToPi: $rotated vs $to")
       if (angleToPi > 0.0) {
         assert(rotated.y != 0.0, s"deviation $angleToPi from pi was dropped")
-        // attainable relative accuracy of the deviation: exact in the fallback zone
-        // (sin2a <= 1e-8, where s = sin2a / 2 uses no trig at all), ~ulp(pi)/2 / sin2a in the
-        // atan2 zone above it, and capped by the (1 + dot) cancellation in the half-angle branch
-        val relTol = if (angleToPi <= 1e-8) 1e-15 else 1e-12 + 4.4e-16 / angleToPi
-        assertRel(rotated.y, to.y, relTol, s"deviation at pi - $angleToPi")
+        assertRel(rotated.y, to.y, 1e-14, s"deviation at pi - $angleToPi")
       }
     }
   }
 
-  test("rotation is continuous and first-order exact across the sin2a = 1e-8 threshold") {
-    // to = (-cos(eps), sin(eps)) is at the angle (pi - eps) from from = (1, 0), and for
-    // eps ~ 1e-8 all intermediate values are exactly representable (to.norm == 1.0,
-    // r2a.xy == -sin(eps)), so the branch computations are measured in isolation.
-    // expected rotor s component: sin(eps / 2)
-    val from = Pga2dVector(1, 0)
-
-    // below the threshold: the first-order fallback s = 0.5 * sin2a is exact in double
-    // (the dropped eps^2/8 term ~1.2e-17 is below the 1.1e-16 rounding step of double)
-    for (eps <- Seq(0.99e-8, 0.5e-8, 1e-10)) {
-      val r = Pga2dRotor.rotation(from, Pga2dVector(-Math.cos(eps), Math.sin(eps)))
-      assertRel(r.s, Math.sin(eps / 2), 5e-16, s"fallback s at eps = $eps")
-      assert(Math.abs(r.xy) == 1.0, s"fallback xy at eps = $eps")
+  test("rotation near antipodal preserves the deviation for generic directions") {
+    // components of generic from/to have no zeros, so the naive wedge would cancel
+    // catastrophically; this is the case the exact products are for
+    val from = Pga2dVector(0.6, 0.8)
+    val perp = Pga2dVector(0.8, -0.6)
+    for (eps <- Seq(0.4, 0.1, 1e-2, 1.4e-3, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-16)) {
+      val to = -(from * Math.cos(eps) + perp * Math.sin(eps))
+      val r = Pga2dRotor.rotation(from, to)
+      val err = (r.sandwich(from) - to).norm
+      assert(err <= 3e-15, s"err = $err at pi - $eps")
     }
+  }
 
-    // above the threshold: atan2(sin2a, r2a.s) near pi carries ~ulp(pi)/2 ~ 1.1e-16 absolute
-    // error, so s = cos(angle2/2) ~ 5e-9 is only ~2e-8-relative accurate at the threshold;
-    // that (not the fallback) is the attainable continuity bound at sin2a = 1e-8
-    for (eps <- Seq(1.01e-8, 2e-8)) {
+  test("rotation is accurate on both sides of the main-branch boundary") {
+    // the exact-wedge branch starts at dot <= -0.9, i.e. eps0 = acos(0.9) ~ 0.451 away
+    // from pi; the guard keeps (1 + dot) >= 0.1 in the main branch and the asin argument
+    // below sin(eps0) ~ 0.44 in the exact-wedge branch, so both sides stay at ~1e-15
+    val eps0 = Math.acos(0.9)
+    val from = Pga2dVector(0.6, 0.8)
+    val perp = Pga2dVector(0.8, -0.6)
+    for (eps <- Seq(eps0 * 0.98, eps0 * 0.999, eps0, eps0 * 1.001, eps0 * 1.02)) {
+      val to = -(from * Math.cos(eps) + perp * Math.sin(eps))
+      val r = Pga2dRotor.rotation(from, to)
+      assert(Math.abs(r.norm - 1.0) <= 1e-14, s"norm at pi - $eps")
+      val err = (r.sandwich(from) - to).norm
+      assert(err <= 5e-15, s"err = $err at pi - $eps")
+    }
+  }
+
+  test("rotation half-angle rotor is relative-exact throughout the antipodal zone") {
+    // to = (-cos(eps), sin(eps)) is at the angle (pi - eps) from from = (1, 0);
+    // expected rotor: s = sin(eps / 2), |xy| = cos(eps / 2)
+    val from = Pga2dVector(1, 0)
+    for (eps <- Seq(1e-10, 0.5e-8, 0.99e-8, 1.01e-8, 2e-8, 1e-6, 1e-4, 1e-3, 1e-2, 0.4)) {
       val r = Pga2dRotor.rotation(from, Pga2dVector(-Math.cos(eps), Math.sin(eps)))
-      assertRel(r.s, Math.sin(eps / 2), 2e-8, s"atan2-branch s at eps = $eps")
-      assertRel(Math.abs(r.xy), 1.0, 1e-15, s"atan2-branch xy at eps = $eps")
+      assertRel(r.s, Math.sin(eps / 2), 5e-16, s"s at eps = $eps")
+      assertRel(Math.abs(r.xy), Math.cos(eps / 2), 1e-15, s"|xy| at eps = $eps")
     }
   }
 
@@ -192,19 +203,6 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val tinyLine = Pga2dRotor.rotation(Pga2dLineIdeal(1, 0), Pga2dLineIdeal(1, 1e-200))
     assert(tinyLine.s == 1.0, s"lineIdeal tiny rotation: $tinyLine")
     assertRel(Math.abs(tinyLine.xy), 5e-201, 1e-15, s"lineIdeal tiny rotation: $tinyLine")
-  }
-
-  test("rotation is continuous across the dot = -1 + 1e-6 branch threshold") {
-    // the threshold sits at eps0 = acos(1 - 1e-6) ~ 1.41421e-3 away from pi; larger eps takes
-    // the half-angle branch whose (1 + dot) cancellation costs ~eps_machine / (1 + dot)
-    // relative (~1e-10 at the boundary), smaller eps takes the well-conditioned atan2 branch
-    val from = Pga2dVector(1, 0)
-    for ((eps, maxRelErr) <- Seq((1.5e-3, 1e-9), (2e-3, 1e-9), (1e-2, 1e-9), (1.3e-3, 1e-12))) {
-      val to = Pga2dVector(-Math.cos(eps), Math.sin(eps))
-      val r = Pga2dRotor.rotation(from, to)
-      assertRel(r.s, Math.sin(eps / 2), maxRelErr, s"s at pi - $eps")
-      assert((r.normalizedByNorm.sandwich(from) - to).norm <= 2 * maxRelErr, s"rotated at pi - $eps")
-    }
   }
 
   test("motor log angle recovery is continuous across the 1e-5 branch threshold") {
@@ -242,7 +240,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val motor = Pga2dTranslator.addVector(Pga2dVector(3, -4)).geometric(Pga2dRotor(Math.cos(0.6), Math.sin(0.6)))
     val expected = motor.renormalized
     // bulk components stay in the representable range of squares for scales up to ~1e150
-    for (k <- Seq(1e-100, 1e-20, 1e-3, 1.0, 1e3, 1e20, 1e100, 1e150)) {
+    for (k <- Seq(1e-100, 1e-20, 1e-15, 1e-3, 1.0, 1e3, 1e15, 1e20, 1e100, 1e150)) {
       val renormalized = (motor * k).renormalized
       assertRel(renormalized.s, expected.s, 1e-14, s"s for k = $k")
       assertRel(renormalized.wx, expected.wx, 1e-14, s"wx for k = $k")
@@ -256,7 +254,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("motor split preserves tiny translations and recovers the rotor exactly") {
     for (h <- Seq(0.0, 1e-10, 0.6, 2.5);
-         v <- Seq(Pga2dVector(0, 0), Pga2dVector(1e-100, -1e-100), Pga2dVector(1e-20, 1e-20), Pga2dVector(3, -4))) {
+         v <- Seq(Pga2dVector(0, 0), Pga2dVector(1e-100, -1e-100), Pga2dVector(1e-20, 1e-20), Pga2dVector(1e-15, -1e-20), Pga2dVector(3, -4), Pga2dVector(1e15, -1e20))) {
       val rotor = Pga2dRotor(Math.cos(h), Math.sin(h))
       val tr = Pga2dTranslator.addVector(v)
 
@@ -295,7 +293,7 @@ class PrecisionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("norm and normalizedByNorm at extreme magnitudes") {
-    for (scale <- Seq(1e-100, 1e-50, 1e-10, 1.0, 1e10, 1e50, 1e150)) {
+    for (scale <- Seq(1e-100, 1e-50, 1e-20, 1e-15, 1e-10, 1.0, 1e10, 1e15, 1e20, 1e50, 1e150)) {
       val v = Pga2dVector(3 * scale, -4 * scale)
       assertRel(v.norm, 5 * scale, 1e-15, s"vector norm at $scale")
       val n = v.normalizedByNorm

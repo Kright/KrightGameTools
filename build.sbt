@@ -137,7 +137,7 @@ lazy val pga3d = crossProject(JSPlatform, JVMPlatform)
   .settings(sonatypeSettings, name := "gametools-pga3d")
   .dependsOn(
     matrix,
-    mathutil % "test",
+    mathutil,
     flatarray,
   )
 
