@@ -56,6 +56,13 @@ sbt "pgaNdCodeGen/runMain me.kright.gametools.pga.codegen.runCodeGenCheck"
 It prints a summary (count and paths of files that would change, or "all ... up-to-date" if none would) and exits
 with a NONZERO status if any file would change (zero when the tree is clean).
 
+CI runs this check on every push/PR (see `.github/workflows/test.yml`), so a change to the generator must be
+committed together with the regenerated output (and vice versa - generated files must not be edited by hand).
+
+Note: this module is deliberately excluded from the root sbt aggregate - it is a development-time code
+generator, not part of the published gametools library, so `sbt test`/`sbt compile` at the root do not touch
+it. The dedicated CI step above is what keeps it compiling.
+
 File output is abstracted behind the `GeneratedFileSystem` trait in `common` (implementations `RealFileSystem` and
 `CheckFileSystem`); the three run functions `runScala3dCodeGen` / `runScala2dCodeGen` / `runCppCodeGen` take it as
 a parameter, and the param-less `@main`s default to `RealFileSystem`.

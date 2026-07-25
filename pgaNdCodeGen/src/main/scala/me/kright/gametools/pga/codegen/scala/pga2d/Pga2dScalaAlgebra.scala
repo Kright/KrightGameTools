@@ -8,6 +8,8 @@ import me.kright.gametools.pga.codegen.scala.common.ops.*
 import me.kright.gametools.pga.codegen.scala.pga2d.ops.*
 import me.kright.gametools.symbolic.Sym
 
+import _root_.scala.collection.immutable.ListSet
+
 object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
 
   given ScalaPgaAlgebra = this
@@ -84,8 +86,8 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
     pointCenter, zeroCls,
   )
 
-  override val additionGroups: Seq[Set[ScalaMultivectorSubClass]] = Seq(
-    Set(projectivePoint, point, vector),
+  override val additionGroups: Seq[ListSet[ScalaMultivectorSubClass]] = Seq(
+    ListSet(projectivePoint, point, vector),
   )
 
   override val unaryOperations = Seq(

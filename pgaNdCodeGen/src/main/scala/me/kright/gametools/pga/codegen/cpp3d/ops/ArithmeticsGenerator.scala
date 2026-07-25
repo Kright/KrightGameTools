@@ -5,6 +5,8 @@ import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
 import me.kright.gametools.symbolic.Sym
 
+import scala.collection.immutable.ListSet
+
 class ArithmeticsGenerator extends CppCodeGenerator:
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] = {
     val code = CppCodeBuilder()
@@ -80,8 +82,8 @@ class ArithmeticsGenerator extends CppCodeGenerator:
       }
     }
 
-    val points = Set(CppSubclasses.projectivePoint, CppSubclasses.point, CppSubclasses.vector)
-    val bivectors = Set(CppSubclasses.bivector, CppSubclasses.bivectorBulk, CppSubclasses.bivectorWeight)
+    val points = ListSet(CppSubclasses.projectivePoint, CppSubclasses.point, CppSubclasses.vector)
+    val bivectors = ListSet(CppSubclasses.bivector, CppSubclasses.bivectorBulk, CppSubclasses.bivectorWeight)
 
     for (cls <- CppSubclasses.all if cls.shouldBeGenerated) {
       val self = cls.self

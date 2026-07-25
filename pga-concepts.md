@@ -63,8 +63,9 @@ Every class splits into two parts with respect to the degenerate generator `w` (
 * **weight** — the components that contain `w`. They describe the ideal ("at infinity") part
   (e.g. the translational part of a bivector, or the offset of a plane from the origin).
 
-Each class provides `bulk`, `weight`, and the corresponding norms `bulkNorm`, `weightNorm`
-and `norm` with `normalizedBy...` helpers.
+Following the narrowest-result-type rule, each class provides `bulk`/`bulkNorm`/`normalizedByBulk`
+and `weight`/`weightNorm`/`normalizedByWeight` only where the corresponding part can be non-zero
+(a rotor has no weight methods, a vector no bulk ones), plus `norm`/`normalizedByNorm` on every class.
 
 ## Duality
 

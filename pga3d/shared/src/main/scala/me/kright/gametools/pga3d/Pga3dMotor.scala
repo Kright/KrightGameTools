@@ -97,7 +97,7 @@ final case class Pga3dMotor(s: Double = 0.0,
 
   /**
    * see [[https://arxiv.org/abs/2206.07496]], page 14
-   * and [[https://https://bivector.net/PGAdyn.pdf.net/PGAdyn.pdf]], page 42
+   * and [[https://bivector.net/PGAdyn.pdf]], page 42
    */
   def renormalized: Pga3dMotor =
     val a2 = 1.0 / (s * s + xy * xy + xz * xz + yz * yz)

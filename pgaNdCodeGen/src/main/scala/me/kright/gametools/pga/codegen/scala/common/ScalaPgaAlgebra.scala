@@ -3,6 +3,8 @@ package me.kright.gametools.pga.codegen.scala.common
 import me.kright.gametools.ga.{MultiVector, PGA}
 import me.kright.gametools.symbolic.Sym
 
+import _root_.scala.collection.immutable.ListSet
+
 /**
  * Per-dimension configuration for the shared Scala generation framework: implemented once per algebra
  * (Pga3dScalaAlgebra, Pga2dScalaAlgebra) and injected into the single [[ScalaMultivectorSubClass]] class
@@ -44,8 +46,10 @@ trait ScalaPgaAlgebra:
   /**
    * groups of classes that cross-combine with `+`, `-` and `madd` (e.g. the point family, or in 3d the
    * bivector family); a class not covered by any group only combines with itself. Used by DefPlusMinusMadd.
+   * ListSet (not HashSet) because iteration order drives the order of the emitted methods,
+   * and ListSet traverses in insertion order.
    */
-  def additionGroups: Seq[Set[ScalaMultivectorSubClass]]
+  def additionGroups: Seq[ListSet[ScalaMultivectorSubClass]]
 
   def unaryOperations: Seq[MultivectorUnaryOp]
   def binaryOperations: Seq[MultivectorBinaryOp]

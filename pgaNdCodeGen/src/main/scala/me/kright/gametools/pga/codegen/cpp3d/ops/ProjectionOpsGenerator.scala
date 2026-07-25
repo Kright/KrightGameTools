@@ -3,8 +3,10 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 import me.kright.gametools.pga.codegen.common.FileContent
 import me.kright.gametools.pga.codegen.cpp3d.{CppCodeBuilder, CppCodeGenerator, CppSubclass, CppSubclasses, Pga3dCodeGenCpp, StructBodyPart}
 
+import scala.collection.immutable.ArraySeq
+
 class ProjectionOpsGenerator extends CppCodeGenerator:
-  private val pointClasses = Set(
+  private val pointClasses = ArraySeq(
     CppSubclasses.projectivePoint,
     CppSubclasses.point,
     CppSubclasses.pointCenter,

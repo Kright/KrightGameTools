@@ -31,7 +31,7 @@ val mirroredPoint = plane.sandwich(point)
 
 * [**Pga3dPoint**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dPoint.scala): Point in space. Stored as dual representation with human-friendly fields x, y, z and fixed w=1.
 * [**Pga3dPointCenter**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dPointCenter.scala): singleton object, center of coordinates.
-* [**Pga3dVector**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dVector.scala): difference between points. Consist of x, y, z and fixed w=0. Pga3dTranslator moved points, but not
+* [**Pga3dVector**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dVector.scala): difference between points. Consist of x, y, z and fixed w=0. Pga3dTranslator moves points, but not
   vectors.
 * [**Pga3dProjectivePoint**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dProjectivePoint.scala): general case with four homogeneous coordinates (x, y, z, w). Could be mapped to point via (x/w, y/w, z/w) when w != 0.
 
@@ -102,7 +102,9 @@ val rotor = Pga3dRotor.rotation(from, to)
 val rotor2 = plane1 geometric plane2
 
 // Applying rotation to anything using the sandwich product (could rotate point, line, plane, rotor, etc.)
-val rotatedPoint = rotor.sandwich(point)
+// For a point the result is a Pga3dProjectivePoint (homogeneous coordinates); read it out with
+// .toPointUnsafe if the rotor is normalized, or .toPoint to renormalize on the spot
+val rotatedPoint = rotor.sandwich(point).toPointUnsafe
 
 // Inverse of rotation
 val inverseRotation = rotor.reverse
@@ -118,13 +120,14 @@ val translator = Pga3dTranslator.addVector(vector)
 // Applying translation to a point
 val translatedPoint = translator.sandwich(point)
 // This is equivalent to:
-val translatedPoint = point + vector
+val translatedPoint2 = point + vector
 
 // Creating a motor by combining a translator and a rotor
 val motor = translator.geometric(rotor)
 
-// Applying a motor to a point (combined rotation and translation)
-val transformedPoint = motor.sandwich(point)
+// Applying a motor to a point (combined rotation and translation);
+// like the rotor case, the result is a Pga3dProjectivePoint
+val transformedPoint = motor.sandwich(point).toPointUnsafe
 
 // Computing the logarithm of a motor 
 val bivector = motor.log()

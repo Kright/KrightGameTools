@@ -16,5 +16,7 @@ jobs:
       - uses: sbt/setup-sbt@v1
       - name: Run JVM tests
         run: sbt test
+      - name: Check generated code is in sync with pgaNdCodeGen
+        run: sbt "pgaNdCodeGen/runMain me.kright.gametools.pga.codegen.runCodeGenCheck"
       - name: Compile JS tests
         run: sbt "mathutilJS/Test/compile; vectorJS/Test/compile; matrixJS/Test/compile; pga3dJS/Test/compile; pga2dJS/Test/compile; pga3dgeomJS/Test/compile; pga3dphysicsJS/Test/compile"

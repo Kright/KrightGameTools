@@ -82,7 +82,9 @@ val rotor = Pga2dRotor.rotation(from, to)
 val rotor2 = Pga2dRotor.restore(axisX, axisY)
 
 // Applying rotation to anything using the sandwich product (could rotate point, line, rotor, etc.)
-val rotatedPoint = rotor.sandwich(point)
+// For a point the result is a Pga2dProjectivePoint (homogeneous coordinates); read it out with
+// .toPointUnsafe if the rotor is normalized, or .toPoint to renormalize on the spot
+val rotatedPoint = rotor.sandwich(point).toPointUnsafe
 
 // Inverse of rotation
 val inverseRotation = rotor.reverse
@@ -103,8 +105,9 @@ val translatedPoint2 = point + vector
 // Creating a motor by combining a translator and a rotor
 val motor = translator.geometric(rotor)
 
-// Applying a motor to a point (combined rotation and translation)
-val transformedPoint = motor.sandwich(point)
+// Applying a motor to a point (combined rotation and translation);
+// like the rotor case, the result is a Pga2dProjectivePoint
+val transformedPoint = motor.sandwich(point).toPointUnsafe
 
 // Computing the logarithm of a motor (a grade-2 element, i.e. a projective point)
 val logarithm = motor.log()
@@ -122,7 +125,7 @@ val approxHalfway = rotor.nlerp(rotor2, 0.5)
 ### Other classes:
 
 * [**Pga2dMultivector**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dMultivector.scala): class with all 8 fields for a general case
-* [**Pga2dPseudoScalar**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dPseudoScalar.scala): class with one field (xyw). Library has no scalar class and uses just Double instead.
+* [**Pga2dPseudoScalar**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dPseudoScalar.scala): class with one field `i` (the wxy blade). Library has no scalar class and uses just Double instead.
 
 ```scala
 // Converting specialized classes to multivector

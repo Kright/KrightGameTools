@@ -130,7 +130,7 @@ class MotorOpsGenerator extends CppCodeGenerator {
         s"""
            |/**
            | * see [[https://arxiv.org/abs/2206.07496]], page 14
-           | * and [[https://https://bivector.net/PGAdyn.pdf.net/PGAdyn.pdf]], page 42
+           | * and [[https://bivector.net/PGAdyn.pdf]], page 42
            | */
            |[[nodiscard]] inline ${CppSubclasses.motor.name} ${CppSubclasses.motor.name}::renormalized() const noexcept {
            |    const double a2 = 1.0 / (s * s + xy * xy + xz * xz + yz * yz);
