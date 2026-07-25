@@ -6,13 +6,13 @@ import me.kright.gametools.symbolic.Sym
 object DefMultiplyToScalar:
   def apply()(using algebra: ScalaPgaAlgebra): MultivectorUnaryOp = MultivectorUnaryOp { (cls, _) =>
     GeneratedCode { code =>
-      val v = Sym("v")
-      val result = cls.self * v
+      val r = Sym("r")
+      val result = cls.self * r
       val resultCls = algebra.findMatchingClass(result)
       code(
         s"""
            |@targetName("times")
-           |def *(v: Double): ${resultCls.typeName} =""".stripMargin)
+           |def *(r: Double): ${resultCls.typeName} =""".stripMargin)
       code.block {
         code(resultCls.makeConstructor(result))
       }

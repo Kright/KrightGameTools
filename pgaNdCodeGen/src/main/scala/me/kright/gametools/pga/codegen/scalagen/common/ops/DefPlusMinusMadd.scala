@@ -26,16 +26,16 @@ object DefPlusMinusMadd:
       algebra.additionGroups.find(_.contains(cls)) match {
         case Some(group) =>
           for (pClass <- group) {
-            val v = pClass.makeSymbolic("v")
-            makeMethod(self + v, s"def +(v: ${pClass.typeName})", "plus")
-            makeMethod(self - v, s"def -(v: ${pClass.typeName})", "minus")
-            makeMethod(self + v * Sym("mult"), s"def madd(v: ${pClass.typeName}, mult: Double)", targetName = null)
+            val r = pClass.makeSymbolic("r")
+            makeMethod(self + r, s"def +(r: ${pClass.typeName})", "plus")
+            makeMethod(self - r, s"def -(r: ${pClass.typeName})", "minus")
+            makeMethod(self + r * Sym("mult"), s"def madd(r: ${pClass.typeName}, mult: Double)", targetName = null)
           }
         case None =>
-          val v = cls.makeSymbolic("v")
-          makeMethod(self + v, s"def +(v: ${cls.typeName})", "plus")
-          makeMethod(self - v, s"def -(v: ${cls.typeName})", "minus")
-          makeMethod(self + v * Sym("mult"), s"def madd(v: ${cls.typeName}, mult: Double)", targetName = null)
+          val r = cls.makeSymbolic("r")
+          makeMethod(self + r, s"def +(r: ${cls.typeName})", "plus")
+          makeMethod(self - r, s"def -(r: ${cls.typeName})", "minus")
+          makeMethod(self + r * Sym("mult"), s"def madd(r: ${cls.typeName}, mult: Double)", targetName = null)
       }
 
       // Unlike other operations, `scale` and `reciprocal` work on raw class fields, not on basis
@@ -46,17 +46,19 @@ object DefPlusMinusMadd:
       // componentwise division: a.scale(b.reciprocal).
       if (!cls.isObject) {
         code("")
-        code(s"def scale(v: ${cls.typeName}): ${cls.typeName} =")
+        code(s"/** componentwise product on the raw fields; NOT a geometric-algebra operation (basis-dependent) */")
+        code(s"def scale(r: ${cls.typeName}): ${cls.typeName} =")
         code.block {
           code(s"${cls.typeName}(")
           code.block {
             for (f <- cls.variableFields) {
-              code(s"${f.name} = ${f.name} * v.${f.name},")
+              code(s"${f.name} = ${f.name} * r.${f.name},")
             }
           }
           code(")")
         }
         code("")
+        code(s"/** componentwise 1/x on the raw fields (a zero field yields Infinity); NOT the multiplicative inverse */")
         code(s"def reciprocal: ${cls.typeName} =")
         code.block {
           code(s"${cls.typeName}(")

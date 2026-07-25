@@ -154,23 +154,23 @@ class ScalaMultivectorSubClass(name: String,
              if (rightCls != algebra.zeroCls)
                && (rightCls != algebra.scalar)
                && ((this == algebra.multivector) == (rightCls == algebra.multivector))) {
-          val v = rightCls.makeSymbolic("v")
-          binaryOp(self, v) match {
+          val r = rightCls.makeSymbolic("r")
+          binaryOp(self, r) match {
             case None => ()
             case Some(result) => {
               val resultCls = algebra.findMatchingClass(result)
               if (resultCls != algebra.zeroCls) {
-                code(s"\ninfix def ${binaryOp.name}(v: ${rightCls.typeName}): ${resultCls.typeName} =")
+                code(s"\ninfix def ${binaryOp.name}(r: ${rightCls.typeName}): ${resultCls.typeName} =")
 
                 code.block {
                   if (resultCls == this && result == self) {
                     code("this")
                   } else if (resultCls == this && result == -self) {
                     code("-this")
-                  } else if (resultCls == rightCls && result == v) {
-                    code("v")
-                  } else if (resultCls == rightCls && result == -v) {
-                    code("-v")
+                  } else if (resultCls == rightCls && result == r) {
+                    code("r")
+                  } else if (resultCls == rightCls && result == -r) {
+                    code("-r")
                   } else {
                     binaryOp.name match
                       case "sandwich" | "reverseSandwich" => code(makeConstructorOptimized(result, resultCls))
@@ -179,7 +179,7 @@ class ScalaMultivectorSubClass(name: String,
                 }
 
                 for (opName <- binaryOp.names.tail) {
-                  code(s"\ninline infix def ${opName}(v: ${rightCls.typeName}): ${resultCls.typeName} = ${binaryOp.name}(v)")
+                  code(s"\ninline infix def ${opName}(r: ${rightCls.typeName}): ${resultCls.typeName} = ${binaryOp.name}(r)")
                 }
               }
             }

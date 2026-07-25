@@ -3,8 +3,6 @@ package me.kright.gametools.pga3d
 import me.kright.gametools.matrix.Matrix
 import me.kright.gametools.flatarray.FlatDoubleSerializer
 
-import scala.collection.immutable.ArraySeq
-
 /**
  * Conversions between linear operators on Pga3dBivector and 6x6 matrices.
  *
@@ -12,7 +10,7 @@ import scala.collection.immutable.ArraySeq
  * Do not edit by hand: change the generator and re-run it.
  */
 object Pga3dMatrix:
-  private val basis = ArraySeq[Pga3dBivector](
+  private val basis = Seq[Pga3dBivector](
     Pga3dBivector(1, 0, 0, 0, 0, 0),
     Pga3dBivector(0, 1, 0, 0, 0, 0),
     Pga3dBivector(0, 0, 1, 0, 0, 0),

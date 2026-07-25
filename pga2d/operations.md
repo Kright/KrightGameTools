@@ -232,12 +232,12 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dMultivector`
-- `/(v: Double): Pga2dMultivector`
-- `+(v: Pga2dMultivector): Pga2dMultivector`
-- `-(v: Pga2dMultivector): Pga2dMultivector`
-- `madd(v: Pga2dMultivector, mult: Double): Pga2dMultivector`
-- `scale(v: Pga2dMultivector): Pga2dMultivector`
+- `*(r: Double): Pga2dMultivector`
+- `/(r: Double): Pga2dMultivector`
+- `+(r: Pga2dMultivector): Pga2dMultivector`
+- `-(r: Pga2dMultivector): Pga2dMultivector`
+- `madd(r: Pga2dMultivector, mult: Double): Pga2dMultivector`
+- `scale(r: Pga2dMultivector): Pga2dMultivector`
 - `reciprocal: Pga2dMultivector`
 - `toMotorUnsafe: Pga2dMotor`
 - `toLineUnsafe: Pga2dLine`
@@ -267,12 +267,12 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dMotor`
-- `/(v: Double): Pga2dMotor`
-- `+(v: Pga2dMotor): Pga2dMotor`
-- `-(v: Pga2dMotor): Pga2dMotor`
-- `madd(v: Pga2dMotor, mult: Double): Pga2dMotor`
-- `scale(v: Pga2dMotor): Pga2dMotor`
+- `*(r: Double): Pga2dMotor`
+- `/(r: Double): Pga2dMotor`
+- `+(r: Pga2dMotor): Pga2dMotor`
+- `-(r: Pga2dMotor): Pga2dMotor`
+- `madd(r: Pga2dMotor, mult: Double): Pga2dMotor`
+- `scale(r: Pga2dMotor): Pga2dMotor`
 - `reciprocal: Pga2dMotor`
 - `log(): Pga2dProjectivePoint`
 - `slerp(b: Pga2dMotor, t: Double): Pga2dMotor`
@@ -304,12 +304,12 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dLine`
-- `/(v: Double): Pga2dLine`
-- `+(v: Pga2dLine): Pga2dLine`
-- `-(v: Pga2dLine): Pga2dLine`
-- `madd(v: Pga2dLine, mult: Double): Pga2dLine`
-- `scale(v: Pga2dLine): Pga2dLine`
+- `*(r: Double): Pga2dLine`
+- `/(r: Double): Pga2dLine`
+- `+(r: Pga2dLine): Pga2dLine`
+- `-(r: Pga2dLine): Pga2dLine`
+- `madd(r: Pga2dLine, mult: Double): Pga2dLine`
+- `scale(r: Pga2dLine): Pga2dLine`
 - `reciprocal: Pga2dLine`
 - `toMultivector: Pga2dMultivector`
 - `toLineIdealUnsafe: Pga2dLineIdeal`
@@ -331,18 +331,18 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dProjectivePoint`
-- `/(v: Double): Pga2dProjectivePoint`
-- `+(v: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `-(v: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `madd(v: Pga2dProjectivePoint, mult: Double): Pga2dProjectivePoint`
-- `+(v: Pga2dPoint): Pga2dProjectivePoint`
-- `-(v: Pga2dPoint): Pga2dProjectivePoint`
-- `madd(v: Pga2dPoint, mult: Double): Pga2dProjectivePoint`
-- `+(v: Pga2dVector): Pga2dProjectivePoint`
-- `-(v: Pga2dVector): Pga2dProjectivePoint`
-- `madd(v: Pga2dVector, mult: Double): Pga2dProjectivePoint`
-- `scale(v: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `*(r: Double): Pga2dProjectivePoint`
+- `/(r: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `-(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `madd(r: Pga2dProjectivePoint, mult: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dPoint): Pga2dProjectivePoint`
+- `-(r: Pga2dPoint): Pga2dProjectivePoint`
+- `madd(r: Pga2dPoint, mult: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dVector): Pga2dProjectivePoint`
+- `-(r: Pga2dVector): Pga2dProjectivePoint`
+- `madd(r: Pga2dVector, mult: Double): Pga2dProjectivePoint`
+- `scale(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
 - `reciprocal: Pga2dProjectivePoint`
 - `exp(): Pga2dMotor`
 - `exp(t: Double): Pga2dMotor`
@@ -369,12 +369,12 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dRotor`
-- `/(v: Double): Pga2dRotor`
-- `+(v: Pga2dRotor): Pga2dRotor`
-- `-(v: Pga2dRotor): Pga2dRotor`
-- `madd(v: Pga2dRotor, mult: Double): Pga2dRotor`
-- `scale(v: Pga2dRotor): Pga2dRotor`
+- `*(r: Double): Pga2dRotor`
+- `/(r: Double): Pga2dRotor`
+- `+(r: Pga2dRotor): Pga2dRotor`
+- `-(r: Pga2dRotor): Pga2dRotor`
+- `madd(r: Pga2dRotor, mult: Double): Pga2dRotor`
+- `scale(r: Pga2dRotor): Pga2dRotor`
 - `reciprocal: Pga2dRotor`
 - `log(): Double`
 - `slerp(b: Pga2dRotor, t: Double): Pga2dRotor`
@@ -403,12 +403,12 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dProjectiveTranslator`
-- `/(v: Double): Pga2dProjectiveTranslator`
-- `+(v: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator`
-- `-(v: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator`
-- `madd(v: Pga2dProjectiveTranslator, mult: Double): Pga2dProjectiveTranslator`
-- `scale(v: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator`
+- `*(r: Double): Pga2dProjectiveTranslator`
+- `/(r: Double): Pga2dProjectiveTranslator`
+- `+(r: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator`
+- `-(r: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator`
+- `madd(r: Pga2dProjectiveTranslator, mult: Double): Pga2dProjectiveTranslator`
+- `scale(r: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator`
 - `reciprocal: Pga2dProjectiveTranslator`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
@@ -433,12 +433,12 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dProjectiveTranslator`
-- `/(v: Double): Pga2dProjectiveTranslator`
-- `+(v: Pga2dTranslator): Pga2dProjectiveTranslator`
-- `-(v: Pga2dTranslator): Pga2dVector`
-- `madd(v: Pga2dTranslator, mult: Double): Pga2dProjectiveTranslator`
-- `scale(v: Pga2dTranslator): Pga2dTranslator`
+- `*(r: Double): Pga2dProjectiveTranslator`
+- `/(r: Double): Pga2dProjectiveTranslator`
+- `+(r: Pga2dTranslator): Pga2dProjectiveTranslator`
+- `-(r: Pga2dTranslator): Pga2dVector`
+- `madd(r: Pga2dTranslator, mult: Double): Pga2dProjectiveTranslator`
+- `scale(r: Pga2dTranslator): Pga2dTranslator`
 - `reciprocal: Pga2dTranslator`
 - `log(): Pga2dVector`
 - `toMultivector: Pga2dMultivector`
@@ -462,18 +462,18 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dVector`
-- `/(v: Double): Pga2dVector`
-- `+(v: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `-(v: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `madd(v: Pga2dProjectivePoint, mult: Double): Pga2dProjectivePoint`
-- `+(v: Pga2dPoint): Pga2dPoint`
-- `-(v: Pga2dPoint): Pga2dProjectivePoint`
-- `madd(v: Pga2dPoint, mult: Double): Pga2dProjectivePoint`
-- `+(v: Pga2dVector): Pga2dVector`
-- `-(v: Pga2dVector): Pga2dVector`
-- `madd(v: Pga2dVector, mult: Double): Pga2dVector`
-- `scale(v: Pga2dVector): Pga2dVector`
+- `*(r: Double): Pga2dVector`
+- `/(r: Double): Pga2dVector`
+- `+(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `-(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `madd(r: Pga2dProjectivePoint, mult: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dPoint): Pga2dPoint`
+- `-(r: Pga2dPoint): Pga2dProjectivePoint`
+- `madd(r: Pga2dPoint, mult: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dVector): Pga2dVector`
+- `-(r: Pga2dVector): Pga2dVector`
+- `madd(r: Pga2dVector, mult: Double): Pga2dVector`
+- `scale(r: Pga2dVector): Pga2dVector`
 - `reciprocal: Pga2dVector`
 - `exp(): Pga2dTranslator`
 - `exp(t: Double): Pga2dTranslator`
@@ -498,19 +498,19 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dProjectivePoint`
-- `/(v: Double): Pga2dProjectivePoint`
+- `*(r: Double): Pga2dProjectivePoint`
+- `/(r: Double): Pga2dProjectivePoint`
 - `distanceTo(point: Pga2dPoint): Double`
-- `+(v: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `-(v: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `madd(v: Pga2dProjectivePoint, mult: Double): Pga2dProjectivePoint`
-- `+(v: Pga2dPoint): Pga2dProjectivePoint`
-- `-(v: Pga2dPoint): Pga2dVector`
-- `madd(v: Pga2dPoint, mult: Double): Pga2dProjectivePoint`
-- `+(v: Pga2dVector): Pga2dPoint`
-- `-(v: Pga2dVector): Pga2dPoint`
-- `madd(v: Pga2dVector, mult: Double): Pga2dPoint`
-- `scale(v: Pga2dPoint): Pga2dPoint`
+- `+(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `-(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `madd(r: Pga2dProjectivePoint, mult: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dPoint): Pga2dProjectivePoint`
+- `-(r: Pga2dPoint): Pga2dVector`
+- `madd(r: Pga2dPoint, mult: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dVector): Pga2dPoint`
+- `-(r: Pga2dVector): Pga2dPoint`
+- `madd(r: Pga2dVector, mult: Double): Pga2dPoint`
+- `scale(r: Pga2dPoint): Pga2dPoint`
 - `reciprocal: Pga2dPoint`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
@@ -534,12 +534,12 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dLineIdeal`
-- `/(v: Double): Pga2dLineIdeal`
-- `+(v: Pga2dLineIdeal): Pga2dLineIdeal`
-- `-(v: Pga2dLineIdeal): Pga2dLineIdeal`
-- `madd(v: Pga2dLineIdeal, mult: Double): Pga2dLineIdeal`
-- `scale(v: Pga2dLineIdeal): Pga2dLineIdeal`
+- `*(r: Double): Pga2dLineIdeal`
+- `/(r: Double): Pga2dLineIdeal`
+- `+(r: Pga2dLineIdeal): Pga2dLineIdeal`
+- `-(r: Pga2dLineIdeal): Pga2dLineIdeal`
+- `madd(r: Pga2dLineIdeal, mult: Double): Pga2dLineIdeal`
+- `scale(r: Pga2dLineIdeal): Pga2dLineIdeal`
 - `reciprocal: Pga2dLineIdeal`
 - `toMultivector: Pga2dMultivector`
 - `toLine: Pga2dLine`
@@ -557,12 +557,12 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `normSquare: Double`
 - `norm: Double`
 - `normalizedByNorm`
-- `*(v: Double): Pga2dPseudoScalar`
-- `/(v: Double): Pga2dPseudoScalar`
-- `+(v: Pga2dPseudoScalar): Pga2dPseudoScalar`
-- `-(v: Pga2dPseudoScalar): Pga2dPseudoScalar`
-- `madd(v: Pga2dPseudoScalar, mult: Double): Pga2dPseudoScalar`
-- `scale(v: Pga2dPseudoScalar): Pga2dPseudoScalar`
+- `*(r: Double): Pga2dPseudoScalar`
+- `/(r: Double): Pga2dPseudoScalar`
+- `+(r: Pga2dPseudoScalar): Pga2dPseudoScalar`
+- `-(r: Pga2dPseudoScalar): Pga2dPseudoScalar`
+- `madd(r: Pga2dPseudoScalar, mult: Double): Pga2dPseudoScalar`
+- `scale(r: Pga2dPseudoScalar): Pga2dPseudoScalar`
 - `reciprocal: Pga2dPseudoScalar`
 - `toMultivector: Pga2dMultivector`
 
@@ -573,10 +573,10 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `unary_- : Pga2dRotor`
 - `reverse: Pga2dRotor`
 - `antiReverse: Pga2dPointCenter.type`
-- `*(v: Double): Pga2dRotor`
-- `/(v: Double): Pga2dRotor`
-- `+(v: Pga2dPointCenter.type): Pga2dRotor`
-- `madd(v: Pga2dPointCenter.type, mult: Double): Pga2dRotor`
+- `*(r: Double): Pga2dRotor`
+- `/(r: Double): Pga2dRotor`
+- `+(r: Pga2dPointCenter.type): Pga2dRotor`
+- `madd(r: Pga2dPointCenter.type, mult: Double): Pga2dRotor`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
 - `toProjectivePoint: Pga2dProjectivePoint`
