@@ -24,6 +24,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The parameter of the generated binary operations is renamed `v` -> `r` (affects named-argument
   call sites; also removes the `def v(v: ...)` join-alias shadowing).
 - `rotation(from, to)`: the exact-wedge branch now starts at `dot <= -0.9` (was `-1 + 1e-6`).
+- `gametools-pga3d` now depends on `gametools-mathutil` at compile scope (it was already a
+  transitive dependency through `gametools-matrix`).
 
 ### Added
 
@@ -47,15 +49,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Precision of `rotation(from, to)` near antipodal inputs: the rotation axis is recovered with
   error-free products (fma) and the deviation angle via asin, keeping the mapping error at
-  ~1e-15 for any deviation down to exactly antipodal (was up to ~1e-8, with a wrong-sign result
-  from `toPointUnsafe`-style shortcuts). Applies to 2d, 3d and C++.
+  ~1e-15 for any deviation down to exactly antipodal (was up to ~1e-8 near the old branch
+  threshold). Applies to 2d, 3d and C++.
 - Small-angle Taylor branches of `Pga3dBivector.exp` and `Pga3dMotor.log` had wrong second-order
   coefficients (numerically negligible below the branch threshold, but incorrect); all series now
   carry step-by-step derivations in the generated comments.
 - C++ `Motor::log` / `Rotor::log` used `1/(1 - s*s)`, which cancels catastrophically for small
   angles; now shares the exact formulas with Scala.
-- `log()` avoided: redundant `sqrt` round trips, un-normalized main rotation branch near its
-  threshold, a broken documentation URL, whitespace defects in generated C++.
+- Miscellaneous: redundant `sqrt`/division round trips in `log`, a broken documentation URL in
+  the motor renormalization scaladoc, whitespace defects in the generated C++ headers.
 
 ### Internal
 
@@ -67,3 +69,5 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The generator package `codegen.scala` is renamed to `codegen.scalagen` (no more shadowing of
   the root `scala` package); CI compiles the generator and fails on generated-code drift
   (`runCodeGenCheck`).
+- `Seq(...)` literals are created as `ArraySeq(...)` across the codebase (array-backed instead
+  of the default linked list); `Seq` remains the interface type.

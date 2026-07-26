@@ -66,7 +66,8 @@ val lineThroughPoints_ = point1 v point2
 
 ### Movement
 
-* [**Pga2dRotor**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dRotor.scala): represents rotation, 2 fields (scalar, xy) - cos and sin of the half-angle. The 2d analog of Pga3dRotor, it is the exponent of a rotation around the center
+* [**Pga2dRotor**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dRotor.scala): represents rotation, 2 fields (scalar, xy) - cos and sin of the half-angle. The 2d analog of Pga3dRotor, it is the exponent of a rotation around the center.
+  `Pga2dRotor.id` is the identity rotation, `Pga2dRotor.zero` is the zero element (e.g. for derivatives)
 * [**Pga2dTranslator**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dTranslator.scala): represents linear movement, 2 fields (wx, wy). It is the exponent of Pga2dVector
 * [**Pga2dMotor**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dMotor.scala): combination of rotation and linear movement, 4 fields (scalar, wx, wy, xy) - the even subalgebra. Exponent of Pga2dProjectivePoint
 
@@ -124,6 +125,9 @@ val rotor3 = Pga2dRotor.exp(halfAngle)
 // (motor.renormalized is a uniform scale in 2d, unlike the 3d motor case.)
 val halfway = rotor.slerp(rotor2, 0.5)
 val approxHalfway = rotor.nlerp(rotor2, 0.5)
+
+// Fractional power of a motion (motor, rotor or translator): pow(0.5) is the half motion
+val halfMotor = motor.pow(0.5)
 ```
 
 ### Other classes:
