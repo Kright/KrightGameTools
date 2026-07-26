@@ -34,11 +34,13 @@ object Pga3dForque:
   def getTorqueAroundCenter(forque: Pga3dBivector): Pga3dVector = {
     val v = getLinearForce(forque)
     val vNormSquare = v.normSquare
+    val torque = Pga3dVector(forque.wx, forque.wy, forque.wz)
     if (vNormSquare > 1e-100) {
-      val inv = 1.0 / Math.sqrt(vNormSquare)
-      Pga3dVector(forque.wx * v.x * inv, forque.wy * v.y * inv, forque.wz * v.z * inv)
+      // the part of the torque parallel to the force; the perpendicular part
+      // is represented by the force applied at getCenter
+      v * ((torque antiDotI v) / vNormSquare)
     } else {
-      Pga3dVector(forque.wx, forque.wy, forque.wz)
+      torque
     }
   }
 

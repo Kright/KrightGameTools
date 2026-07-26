@@ -81,6 +81,35 @@ class Pga3dForqueTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     assert(extractedCenter == center)
   }
 
+  test("torque around center for force couples") {
+    forAll(Pga3dGenerators.points, Pga3dGenerators.vectors, Pga3dGenerators.vectors) { (center, f, dir) =>
+      val perp = dir - f * ((dir antiDotI f) / f.normSquare)
+      whenever(f.norm > 1e-2 && perp.norm > 1e-2) {
+        val d = perp.normalizedByNorm
+
+        // couple: f at (center + d), -f at (center - d) is the pure moment 2 * (d v f)
+        val couplePerp = Pga3dForque.force(center + d, f) + Pga3dForque.force(center - d, -f)
+        assert((couplePerp - (d v f) * 2.0).norm <= 1e-12)
+        assert(Pga3dForque.getLinearForce(couplePerp).norm <= 1e-12)
+        assert((Pga3dForque.torque(Pga3dForque.getTorqueAroundCenter(couplePerp)) - couplePerp).norm <= 1e-12)
+
+        // g = d rotated 90 degrees around the axis along f, so the moment 2 * (d v g) is parallel to f
+        val fHat = f.normalizedByNorm
+        val g = (Pga3dPointCenter v fHat).exp(Math.PI / 4).sandwich(d)
+        val couplePar = Pga3dForque.force(center + d, g) + Pga3dForque.force(center - d, -g)
+
+        val sum = Pga3dForque.force(center, f) + couplePerp + couplePar
+
+        assert((Pga3dForque.getLinearForce(sum) - f).norm <= 1e-12)
+        assert((Pga3dForque.torque(Pga3dForque.getTorqueAroundCenter(sum)) - couplePar).norm <= 1e-12)
+
+        val reconstructed = Pga3dForque.force(Pga3dForque.getCenter(sum), Pga3dForque.getLinearForce(sum))
+          + Pga3dForque.torque(Pga3dForque.getTorqueAroundCenter(sum))
+        assert((reconstructed - sum).norm <= 1e-12)
+      }
+    }
+  }
+
   test("forque of spring") {
     val a = Pga3dPoint(0, 0, 0)
     val b = Pga3dPoint(0, 0, 1)
