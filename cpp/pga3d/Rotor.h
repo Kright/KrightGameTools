@@ -39,6 +39,9 @@ namespace pga3d {
 
         [[nodiscard]] inline Rotor projectToRotationInPlane(const PlaneCentral& plane) const noexcept;
         [[nodiscard]] inline double restoreRotationInPlane(const PlaneCentral& plane) const noexcept;
+        [[nodiscard]] inline double restoreRotationInPlaneX() const noexcept;
+        [[nodiscard]] inline double restoreRotationInPlaneY() const noexcept;
+        [[nodiscard]] inline double restoreRotationInPlaneZ() const noexcept;
 
         [[nodiscard]] constexpr Vector axisX() const noexcept;
         [[nodiscard]] constexpr Vector axisY() const noexcept;

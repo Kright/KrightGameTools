@@ -19,6 +19,9 @@ class RotorOpsGenerator extends CppCodeGenerator {
       code("")
       code(s"[[nodiscard]] inline ${CppSubclasses.rotor.name} projectToRotationInPlane(const ${CppSubclasses.planeCentral.name}& plane) const noexcept;")
       code(s"[[nodiscard]] inline double restoreRotationInPlane(const ${CppSubclasses.planeCentral.name}& plane) const noexcept;")
+      code(s"[[nodiscard]] inline double restoreRotationInPlaneX() const noexcept;")
+      code(s"[[nodiscard]] inline double restoreRotationInPlaneY() const noexcept;")
+      code(s"[[nodiscard]] inline double restoreRotationInPlaneZ() const noexcept;")
       code("")
       RotorAndMotorAxes.makeDeclaration(code, cls)
     }
@@ -83,20 +86,24 @@ class RotorOpsGenerator extends CppCodeGenerator {
            |}
            |""".stripMargin)
 
+      code(s"[[nodiscard]] inline ${CppSubclasses.rotor.name} ${CppSubclasses.rotor.name}::projectToRotationInPlane(const ${CppSubclasses.planeCentral.name}& plane) const noexcept {")
+      code.block {
+        code(FormulaTemplate.renderCpp(SharedFormulas.rotorProjectToRotationInPlane))
+      }
+      code("}")
+      code("")
+
+      code(s"[[nodiscard]] inline double ${CppSubclasses.rotor.name}::restoreRotationInPlane(const ${CppSubclasses.planeCentral.name}& plane) const noexcept {")
+      code.block {
+        code(FormulaTemplate.renderCpp(SharedFormulas.rotorRestoreRotationInPlane))
+      }
+      code("}")
+      code("")
+
       code(
-        s"""
-           |[[nodiscard]] inline ${CppSubclasses.rotor.name} ${CppSubclasses.rotor.name}::projectToRotationInPlane(const ${CppSubclasses.planeCentral.name}& plane) const noexcept {
-           |    const ${CppSubclasses.rotor.name} q = normalizedByNorm();
-           |    const ${CppSubclasses.rotor.name} qPart = ${CppSubclasses.rotor.name}::rotation(q.sandwich(plane), plane);
-           |    return qPart.geometric(q);
-           |}
-           |
-           |[[nodiscard]] inline double ${CppSubclasses.rotor.name}::restoreRotationInPlane(const ${CppSubclasses.planeCentral.name}& plane) const noexcept {
-           |    const ${CppSubclasses.rotor.name} q0 = projectToRotationInPlane(plane);
-           |    const ${CppSubclasses.bivectorWeight.name} logDual = q0.log().dual();
-           |    const double currentAngle = 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm();
-           |    return currentAngle;
-           |}
+        s"""[[nodiscard]] inline double ${CppSubclasses.rotor.name}::restoreRotationInPlaneX() const noexcept { return restoreRotationInPlane(${CppSubclasses.planeCentral.name}(1, 0, 0)); }
+           |[[nodiscard]] inline double ${CppSubclasses.rotor.name}::restoreRotationInPlaneY() const noexcept { return restoreRotationInPlane(${CppSubclasses.planeCentral.name}(0, 1, 0)); }
+           |[[nodiscard]] inline double ${CppSubclasses.rotor.name}::restoreRotationInPlaneZ() const noexcept { return restoreRotationInPlane(${CppSubclasses.planeCentral.name}(0, 0, 1)); }
            |""".stripMargin)
 
       code("")

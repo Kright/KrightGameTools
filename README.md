@@ -129,6 +129,13 @@ the narrowest-result-type rule) are described in [pga-concepts.md](pga-concepts.
 The current implementation is experimental and may be changed in the future.
 I use C++ 20 because of Unreal Engine 5 requirements.
 
+## Code conventions
+
+* Immutable API; `Seq(...)` literals are created as `ArraySeq(...)` (array-backed), `Seq` stays as the
+  interface type.
+* Generated code (pga2d, pga3d, cpp/pga3d) is never edited by hand - change [pgaNdCodeGen](pgaNdCodeGen/README.md)
+  and regenerate; CI checks for drift.
+
 ## Tests
 
 ```bash

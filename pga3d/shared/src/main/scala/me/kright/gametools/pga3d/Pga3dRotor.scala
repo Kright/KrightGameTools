@@ -165,6 +165,11 @@ final case class Pga3dRotor(s: Double = 0.0,
       yz = b * yz,
     )
 
+
+  /** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */
+  def pow(t: Double): Pga3dRotor =
+    log.exp(t)
+
   def toMultivector: Pga3dMultivector =
     Pga3dMultivector(
       s = s,
@@ -246,13 +251,12 @@ final case class Pga3dRotor(s: Double = 0.0,
   def projectToRotationInPlane(plane: Pga3dPlaneCentral): Pga3dRotor =
     val q = this.normalizedByNorm
     val qPart = Pga3dRotor.rotation(q.sandwich(plane), plane)
-    qPart.geometric(q)
+    return qPart.geometric(q)
 
   def restoreRotationInPlane(plane: Pga3dPlaneCentral): Double =
     val q0 = this.projectToRotationInPlane(plane)
     val logDual = q0.log.dual
-    val currentAngle = 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm
-    currentAngle
+    return 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm
 
   def restoreRotationInPlaneX: Double =
     restoreRotationInPlane(Pga3dPlaneCentral(1, 0, 0))

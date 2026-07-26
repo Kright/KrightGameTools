@@ -41,11 +41,21 @@ object DefLogForMotor:
                |${projectivePoint.makeConstructor(result)}
                |""".stripMargin)
         }
+        code(s"\n/** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */")
+        code(s"def pow(t: Double): ${cls.name} =")
+        code.block {
+          code("log.exp(t)")
+        }
       }
       if (cls == translator) {
         code(s"\ndef log: ${vector.typeName} =")
         code.block {
           code(vector.makeConstructor(self.weight))
+        }
+        code(s"\n/** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */")
+        code(s"def pow(t: Double): ${cls.name} =")
+        code.block {
+          code("log.exp(t)")
         }
       }
       if (cls == rotor) {
@@ -61,6 +71,11 @@ object DefLogForMotor:
           code(
             s"""if (s < 0.0) Math.atan2(-xy, -s)
                |else Math.atan2(xy, s)""".stripMargin)
+        }
+        code(s"\n/** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */")
+        code(s"def pow(t: Double): ${cls.name} =")
+        code.block {
+          code(s"${cls.name}.exp(log * t)")
         }
       }
     }

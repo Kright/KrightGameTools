@@ -1120,6 +1120,9 @@ namespace pga3d {
 
         [[nodiscard]] inline Rotor projectToRotationInPlane(const PlaneCentral& plane) const noexcept;
         [[nodiscard]] inline double restoreRotationInPlane(const PlaneCentral& plane) const noexcept;
+        [[nodiscard]] inline double restoreRotationInPlaneX() const noexcept;
+        [[nodiscard]] inline double restoreRotationInPlaneY() const noexcept;
+        [[nodiscard]] inline double restoreRotationInPlaneZ() const noexcept;
 
         [[nodiscard]] constexpr Vector axisX() const noexcept;
         [[nodiscard]] constexpr Vector axisY() const noexcept;
@@ -6504,19 +6507,21 @@ namespace pga3d {
     [[nodiscard]] inline Rotor Rotor::pow(double p) const noexcept {
        return (log() * p).exp();
     }
-
     [[nodiscard]] inline Rotor Rotor::projectToRotationInPlane(const PlaneCentral& plane) const noexcept {
-        const Rotor q = normalizedByNorm();
+        const Rotor q = (*this).normalizedByNorm();
         const Rotor qPart = Rotor::rotation(q.sandwich(plane), plane);
         return qPart.geometric(q);
     }
 
     [[nodiscard]] inline double Rotor::restoreRotationInPlane(const PlaneCentral& plane) const noexcept {
-        const Rotor q0 = projectToRotationInPlane(plane);
+        const Rotor q0 = (*this).projectToRotationInPlane(plane);
         const BivectorWeight logDual = q0.log().dual();
-        const double currentAngle = 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm();
-        return currentAngle;
+        return 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm();
     }
+
+    [[nodiscard]] inline double Rotor::restoreRotationInPlaneX() const noexcept { return restoreRotationInPlane(PlaneCentral(1, 0, 0)); }
+    [[nodiscard]] inline double Rotor::restoreRotationInPlaneY() const noexcept { return restoreRotationInPlane(PlaneCentral(0, 1, 0)); }
+    [[nodiscard]] inline double Rotor::restoreRotationInPlaneZ() const noexcept { return restoreRotationInPlane(PlaneCentral(0, 0, 1)); }
 
     [[nodiscard]] constexpr Vector Rotor::axisX() const noexcept { return {.x = (s * s + yz * yz - xy * xy - xz * xz), .y = 2.0 * (-s * xy - xz * yz), .z = 2.0 * (xy * yz - s * xz)}; }
     [[nodiscard]] constexpr Vector Rotor::axisY() const noexcept { return {.x = 2.0 * (s * xy - xz * yz), .y = (s * s + xz * xz - xy * xy - yz * yz), .z = 2.0 * (-s * yz - xy * xz)}; }

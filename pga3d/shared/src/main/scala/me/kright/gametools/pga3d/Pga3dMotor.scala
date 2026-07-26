@@ -292,6 +292,11 @@ final case class Pga3dMotor(s: Double = 0.0,
       yz = b * yz,
     )
 
+
+  /** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */
+  def pow(t: Double): Pga3dMotor =
+    log.exp(t)
+
   def toMultivector: Pga3dMultivector =
     Pga3dMultivector(
       s = s,

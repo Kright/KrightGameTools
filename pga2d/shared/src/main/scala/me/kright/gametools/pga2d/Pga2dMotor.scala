@@ -210,6 +210,10 @@ final case class Pga2dMotor(s: Double = 0.0,
       w = b * xy,
     )
 
+  /** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */
+  def pow(t: Double): Pga2dMotor =
+    log.exp(t)
+
   /**
    * Spherical linear interpolation along the geodesic from this (t = 0) to b (t = 1),
    * with constant angular velocity. Computes this * (this.reverse.geometric(b))^t via log/exp.

@@ -28,6 +28,24 @@ class ExponentTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     }
   }
 
+
+  test("pow composes the motion") {
+    forAll(Pga3dGenerators.normalizedMotors) { m =>
+      assert((m.pow(2.0) - m.geometric(m)).norm < 1e-13, s"m = $m")
+      val half = m.pow(0.5)
+      val restored = half.geometric(half)
+      assert(Math.min((restored - m).norm, (restored + m).norm) < 1e-13, s"m = $m")
+    }
+    forAll(Pga3dGenerators.normalizedRotors) { r =>
+      val half = r.pow(0.5)
+      val restored = half.geometric(half)
+      assert(Math.min((restored - r).norm, (restored + r).norm) < 1e-13, s"r = $r")
+    }
+    forAll(Pga3dGenerators.translators) { tr =>
+      assert((tr.pow(2.0) - tr.geometric(tr)).norm < 1e-13 * (1.0 + tr.norm), s"tr = $tr")
+    }
+  }
+
   test("log returns the principal branch for half-angle > pi/2") {
     // historical failing case: bulkNorm ~ 1.587 > pi/2, so motor.s = cos(bulkNorm) < 0.
     // log cannot return b itself here - it lands on the principal branch (flipping the

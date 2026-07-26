@@ -164,3 +164,15 @@ object SharedFormulas:
 
   def bivectorSplitShift(self: MultiVector[Sym])(using GA): MultiVector[Sym] =
     self.geometric(MultiVector("i" -> Sym("pseudoScalar")))
+
+  /** the body of Rotor.projectToRotationInPlane(plane: PlaneCentral): Rotor */
+  val rotorProjectToRotationInPlane: String =
+    """@q: {Rotor} = {this}.normalizedByNorm
+      |@qPart: {Rotor} = {Rotor}::rotation(q.sandwich(plane), plane)
+      |return qPart.geometric(q)""".stripMargin
+
+  /** the body of Rotor.restoreRotationInPlane(plane: PlaneCentral): Double */
+  val rotorRestoreRotationInPlane: String =
+    """@q0: {Rotor} = {this}.projectToRotationInPlane(plane)
+      |@logDual: {BivectorWeight} = q0.log.dual
+      |return 2.0 * (logDual.wx * plane.x + logDual.wy * plane.y + logDual.wz * plane.z) / plane.norm""".stripMargin

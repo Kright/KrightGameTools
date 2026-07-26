@@ -36,3 +36,20 @@ class ExponentTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       assert((mm - Pga2dMotor(s = 1.0)).norm < 1e-14)
     }
   }
+
+  test("pow composes the motion") {
+    forAll(Pga2dGenerators.normalizedMotors) { m =>
+      assert((m.pow(2.0) - m.geometric(m)).norm < 1e-13, s"m = $m")
+      val half = m.pow(0.5)
+      val restored = half.geometric(half)
+      assert(Math.min((restored - m).norm, (restored + m).norm) < 1e-13, s"m = $m")
+    }
+    forAll(Pga2dGenerators.normalizedRotors) { r =>
+      val half = r.pow(0.5)
+      val restored = half.geometric(half)
+      assert(Math.min((restored - r).norm, (restored + r).norm) < 1e-13, s"r = $r")
+    }
+    forAll(Pga2dGenerators.translators) { tr =>
+      assert((tr.pow(2.0) - tr.geometric(tr)).norm < 1e-13 * (1.0 + tr.norm), s"tr = $tr")
+    }
+  }

@@ -143,6 +143,10 @@ final case class Pga2dTranslator(wx: Double = 0.0,
       y = wx,
     )
 
+  /** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */
+  def pow(t: Double): Pga2dTranslator =
+    log.exp(t)
+
   def toMultivector: Pga2dMultivector =
     Pga2dMultivector(
       s = 1.0,

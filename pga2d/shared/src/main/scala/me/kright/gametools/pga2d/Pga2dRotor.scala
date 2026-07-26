@@ -127,6 +127,10 @@ final case class Pga2dRotor(s: Double = 0.0,
     if (s < 0.0) Math.atan2(-xy, -s)
     else Math.atan2(xy, s)
 
+  /** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */
+  def pow(t: Double): Pga2dRotor =
+    Pga2dRotor.exp(log * t)
+
   /**
    * Spherical linear interpolation along the geodesic from this (t = 0) to b (t = 1),
    * with constant angular velocity. Computes this * (this.reverse.geometric(b))^t via log/exp.

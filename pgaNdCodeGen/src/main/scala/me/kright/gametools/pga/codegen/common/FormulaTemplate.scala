@@ -21,7 +21,7 @@ import scala.util.matching.Regex
  */
 object FormulaTemplate:
   private val mathFunctions = ArraySeq("sqrt", "sin", "cos", "asin", "atan2", "abs")
-  private val properties = ArraySeq("normSquare", "norm", "bulkNorm", "normalizedByNorm", "log", "exp")
+  private val properties = ArraySeq("normSquare", "norm", "bulkNorm", "normalizedByNorm", "log", "exp", "dual")
   // zero-arg methods called on `this` without a dot; must not collide with template locals
   private val bareProperties = ArraySeq("bulkNormSquare", "bulkNorm")
   private val classPlaceholder: Regex = """\{(\w+)\}""".r
@@ -36,6 +36,7 @@ object FormulaTemplate:
                                 propertySuffix: String,
                                 minusThis: String,
                                 thisRef: String,
+                                staticSep: String,
                                 indent: String => String)
 
   private def scalaLang(classPrefix: String) = TargetLang(
@@ -50,6 +51,7 @@ object FormulaTemplate:
     propertySuffix = "",
     minusThis = "(-this)",
     thisRef = "this",
+    staticSep = ".",
     indent = identity,
   )
 
@@ -65,6 +67,7 @@ object FormulaTemplate:
     propertySuffix = "()",
     minusThis = "(-(*this))",
     thisRef = "(*this)",
+    staticSep = "::",
     indent = spaces => spaces + spaces, // the templates nest by 2 spaces, C++ by 4
   )
 
@@ -126,4 +129,5 @@ object FormulaTemplate:
     for (p <- properties) t = t.replaceAll(s"\\.$p\\b(?!\\()", s".$p${lang.propertySuffix}").nn
     for (p <- bareProperties) t = t.replaceAll(s"(?<![.\\w])$p\\b(?!\\()", s"$p${lang.propertySuffix}").nn
     t = t.replace("(-this)", lang.minusThis)
+    t = t.replace("::", lang.staticSep)
     t

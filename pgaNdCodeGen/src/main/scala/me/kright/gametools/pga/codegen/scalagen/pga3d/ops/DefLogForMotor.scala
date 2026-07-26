@@ -20,11 +20,21 @@ object DefLogForMotor:
           code(bivector.makeConstructor(SharedFormulas.motorLogResult(self)))
           code("")
         }
+        code(s"\n/** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */")
+        code(s"def pow(t: Double): ${cls.name} =")
+        code.block {
+          code("log.exp(t)")
+        }
       }
       if (cls == translator) {
         code(s"\ndef log: ${bivectorWeight.typeName} =")
         code.block {
           code(bivectorWeight.makeConstructor(self.weight))
+        }
+        code(s"\n/** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */")
+        code(s"def pow(t: Double): ${cls.name} =")
+        code.block {
+          code("log.exp(t)")
         }
       }
       if (cls == rotor) {
@@ -34,6 +44,11 @@ object DefLogForMotor:
           code("")
           code(bivectorBulk.makeConstructor(SharedFormulas.rotorLogResult(self)))
           code("")
+        }
+        code(s"\n/** the fractional power of the motion: pow(0.5) is the half motion, pow(2.0) applies it twice */")
+        code(s"def pow(t: Double): ${cls.name} =")
+        code.block {
+          code("log.exp(t)")
         }
       }
     }
