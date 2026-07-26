@@ -24,3 +24,25 @@ TEST_CASE("convert to multivector and back") {
     CHECK(mv.toBivectorWeightUnsafe().toMultivector().toBivectorWeightUnsafe() == mv.toBivectorWeightUnsafe());
 }
 
+
+TEST_CASE("cross product right- and left-handed") {
+    constexpr pga3d::Vector x{.x = 1.0};
+    constexpr pga3d::Vector y{.y = 1.0};
+    constexpr pga3d::Vector z{.z = 1.0};
+
+    static_assert(pga3d::Vector::crossRightHanded(x, y) == z);
+    static_assert(pga3d::Vector::crossRightHanded(y, z) == x);
+    static_assert(pga3d::Vector::crossRightHanded(z, x) == y);
+
+    static_assert(pga3d::Vector::crossLeftHanded(x, y) == -z);
+    static_assert(pga3d::Vector::crossLeftHanded(y, z) == -x);
+    static_assert(pga3d::Vector::crossLeftHanded(z, x) == -y);
+
+    const pga3d::Vector a{.x = 0.5, .y = -1.25, .z = 2.0};
+    const pga3d::Vector b{.x = -3.0, .y = 0.75, .z = 1.5};
+    const pga3d::BivectorWeight m = a.antiWedge(b);
+    const pga3d::Vector cross = pga3d::Vector::crossRightHanded(a, b);
+
+    CHECK(cross == pga3d::Vector{.x = m.wx, .y = m.wy, .z = m.wz});
+    CHECK(pga3d::Vector::crossLeftHanded(a, b) == -cross);
+}

@@ -1091,3 +1091,19 @@ object Pga3dVector:
 
   def interpolate(a: Pga3dVector, b: Pga3dVector, t: Double): Pga3dVector =
     a * (1.0 - t) + b * t
+
+  /**
+   * classical cross product for a right-handed basis: crossRightHanded(x, y) == z.
+   * It is not an operation of geometric algebra and exists for convenience and for adapting code
+   * from other libraries. In GA terms it is the join (a v b), an ideal line, read back as a vector
+   * by the commutator product with the origin.
+   */
+  def crossRightHanded(a: Pga3dVector, b: Pga3dVector): Pga3dVector =
+    Pga3dPointCenter.cross(a.antiWedge(b))
+
+  /**
+   * classical cross product for a left-handed basis: crossLeftHanded(x, y) == -z,
+   * the negation of [[crossRightHanded]]. It is not an operation of geometric algebra.
+   */
+  def crossLeftHanded(a: Pga3dVector, b: Pga3dVector): Pga3dVector =
+    crossRightHanded(b, a)

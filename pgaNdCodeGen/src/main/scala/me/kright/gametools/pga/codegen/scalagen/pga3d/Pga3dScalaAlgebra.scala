@@ -159,4 +159,5 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
     DefObjectMethodsForTranslator(),
     DefObjectMethodsForRotor(),
     DefObjectMethodsForMotor(),
+    DefObjectMethodsForVector(),
   )

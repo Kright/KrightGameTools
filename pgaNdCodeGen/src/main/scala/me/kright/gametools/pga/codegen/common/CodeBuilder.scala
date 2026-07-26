@@ -18,5 +18,14 @@ trait CodeBuilder:
     }
   }
 
+  /** a javadoc-style doc comment: the first and the last lines hold only the markers */
+  def comment(lines: String): Unit = {
+    apply("/**")
+    for (line <- lines.split("\n")) {
+      apply(if (line.isBlank) " *" else s" * $line")
+    }
+    apply(" */")
+  }
+
   override def toString: String =
     code.toString().split("\n").map(s => if (s.isBlank) "" else s).mkString("\n")

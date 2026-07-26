@@ -44,6 +44,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   cancellation).
 - Test suites: `PrecisionTest` and `GeometricProductTest` for pga3d, pow/log/exp round trips,
   extreme-magnitude sweeps (1e-300..1e300, the 2^53 integer boundary).
+- `Pga3dVector.crossRightHanded(a, b)` / `crossLeftHanded(a, b)` (Scala and C++): the classical
+  cross product for both basis orientations. Not a GA operation (the GA-native form is the join
+  `a v b`); provided for convenience and for adapting code from other libraries.
 
 ### Fixed
 
@@ -56,6 +59,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   carry step-by-step derivations in the generated comments.
 - C++ `Motor::log` / `Rotor::log` used `1/(1 - s*s)`, which cancels catastrophically for small
   angles; now shares the exact formulas with Scala.
+- `Pga3dForque.getTorqueAroundCenter` multiplied the torque and force components elementwise
+  instead of projecting the torque onto the force direction; it was correct only for
+  axis-aligned forces. Now `force(getCenter, getLinearForce) + torque(getTorqueAroundCenter)`
+  reconstructs the original forque (property-tested with force couples).
 - Miscellaneous: redundant `sqrt`/division round trips in `log`, a broken documentation URL in
   the motor renormalization scaladoc, whitespace defects in the generated C++ headers.
 

@@ -11,7 +11,17 @@ class VectorOpsGenerator extends CppCodeGenerator {
       structBodyPart(
         s"""[[nodiscard]] constexpr ${CppSubclasses.vector.name} min(const ${CppSubclasses.vector.name}& other) const noexcept;
            |[[nodiscard]] constexpr ${CppSubclasses.vector.name} max(const ${CppSubclasses.vector.name}& other) const noexcept;
-           |[[nodiscard]] constexpr ${CppSubclasses.vector.name} clamp(const ${CppSubclasses.vector.name}& minV, const ${CppSubclasses.vector.name}& maxV) const noexcept;""".stripMargin
+           |[[nodiscard]] constexpr ${CppSubclasses.vector.name} clamp(const ${CppSubclasses.vector.name}& minV, const ${CppSubclasses.vector.name}& maxV) const noexcept;
+           |
+           |// classical cross product for a right-handed basis: crossRightHanded(x, y) == z.
+           |// It is not an operation of geometric algebra and exists for convenience and for adapting code
+           |// from other libraries. In GA terms it is the join antiWedge(a, b), an ideal line, read back
+           |// as a vector by the commutator product with the origin.
+           |[[nodiscard]] static constexpr ${CppSubclasses.vector.name} crossRightHanded(const ${CppSubclasses.vector.name}& a, const ${CppSubclasses.vector.name}& b) noexcept;
+           |
+           |// classical cross product for a left-handed basis: crossLeftHanded(x, y) == -z,
+           |// the negation of crossRightHanded. It is not an operation of geometric algebra.
+           |[[nodiscard]] static constexpr ${CppSubclasses.vector.name} crossLeftHanded(const ${CppSubclasses.vector.name}& a, const ${CppSubclasses.vector.name}& b) noexcept;""".stripMargin
       )
     } else ArraySeq()
   }
@@ -23,6 +33,8 @@ class VectorOpsGenerator extends CppCodeGenerator {
       ArraySeq(
         "#include <algorithm>",
         s"#include \"Vector.h\"",
+        s"#include \"BivectorWeight.h\"",
+        s"#include \"PointCenter.h\"",
       ),
       code.generatorName(this))
 
@@ -51,6 +63,14 @@ class VectorOpsGenerator extends CppCodeGenerator {
            |        .y = std::clamp(y, minV.y, maxV.y),
            |        .z = std::clamp(z, minV.z, maxV.z),
            |    };
+           |}
+           |
+           |[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.vector.name}::crossRightHanded(const ${CppSubclasses.vector.name}& a, const ${CppSubclasses.vector.name}& b) noexcept {
+           |    return ${CppSubclasses.pointCenter.name}{}.cross(a.antiWedge(b));
+           |}
+           |
+           |[[nodiscard]] constexpr ${CppSubclasses.vector.name} ${CppSubclasses.vector.name}::crossLeftHanded(const ${CppSubclasses.vector.name}& a, const ${CppSubclasses.vector.name}& b) noexcept {
+           |    return crossRightHanded(b, a);
            |}
            |""".stripMargin)
     }
