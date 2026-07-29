@@ -171,6 +171,8 @@ lazy val pga2dgeom = crossProject(JSPlatform, JVMPlatform)
   .dependsOn(
     pga2d % "compile->compile;test->test",
     mathutil,
+    // 2d geometry is the z=0 special case of 3d: the correspondence is property-tested
+    pga3dgeom % "test->compile",
   )
 
 lazy val pga3dphysics = crossProject(JSPlatform, JVMPlatform)
@@ -196,4 +198,5 @@ lazy val benchmark = (project in file("benchmark"))
     flatarray.jvm,
     pga3d.jvm,
     pga3dgeom.jvm,
+    pga2dgeom.jvm,
   )

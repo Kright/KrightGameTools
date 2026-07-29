@@ -37,18 +37,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   could return NaN or an arbitrary point of the supporting plane for collinear vertices).
   The legacy implementation is kept in `Pga3dTriangleNearestPointTest` as a correctness
   reference.
+- `Pga2dTriangle.getNearestPoint` gets the same Voronoi rewrite (9-11x faster on outside
+  points, see `benchmark/NearestPoint2dBenchmark`), with a 2d bonus: a point inside the
+  triangle is returned as is, exactly. The 2d-as-z=0-slice-of-3d correspondence is
+  property-tested in `Pga2dTo3dCorrespondenceTest`.
 
 ### Added
 
-- `Pga3dTriangle.fartherThan(p, maxDistance)`: conservative early reject against the triangle's
-  bounding box - a few comparisons, no multiplications and no allocations (4.4 vs 6.7 ns for
-  the allocating `toAABB.contains` equivalent). A prefilter before `getNearestPoint` when
-  scanning many triangles; `true` is reliable for any input including degenerate triangles,
-  NaN or infinite arguments.
-- `distanceSquareTo` on `Pga3dTriangle` (point), `Pga3dEdge` (point and edge-edge) and
-  `Pga3dAABB` (point): sqrt-free companions of `distanceTo` for comparisons, symmetric with
-  `norm`/`normSquare`. `distanceTo` delegates to them; `contains(p, eps)` compares squares
-  (one sqrt less on the `intersection` path) and is guarded against negative/NaN eps.
+- `Pga3dTriangle.fartherThan(p, maxDistance)` / `Pga2dTriangle.fartherThan`: conservative early
+  reject against the triangle's bounding box - a few comparisons, no multiplications and no
+  allocations (4.4 vs 6.7 ns for the allocating `toAABB.contains` equivalent). A prefilter
+  before `getNearestPoint` when scanning many triangles; `true` is reliable for any input
+  including degenerate triangles, NaN or infinite arguments.
+- `distanceSquareTo` on `Pga3dTriangle`/`Pga2dTriangle` (point), `Pga3dEdge`/`Pga2dEdge`
+  (point and edge-edge) and `Pga3dAABB`/`Pga2dAABB` (point): sqrt-free companions of
+  `distanceTo` for comparisons, symmetric with `norm`/`normSquare`. `distanceTo` delegates to
+  them; `contains(p, eps)` and 2d `Pga2dEdge.intersects(other, eps)` compare squares
+  (one sqrt less on the `intersection` path) and are guarded against negative/NaN eps.
 - `pow(t)` on Motor, Rotor and Translator in 2d and 3d (`motor.pow(0.5)` is the half motion);
   C++ gains the `restoreRotationInPlaneX/Y/Z` wrappers for parity.
 - `Pga2dRotor.log: Double` (the half-angle) and `Pga2dRotor.exp(halfAngle)`; `slerp` no longer
@@ -70,9 +75,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Zero-length (degenerate) edges no longer produce NaN: `Pga3dEdge.getNearestPoint` had 0/0
-  in the interpolation factor, `getNearestPoints` divided 0/0 for a pair of zero-length edges.
-  A degenerate edge now behaves as a single point in all distance queries.
+- Zero-length (degenerate) edges no longer produce NaN: `Pga3dEdge.getNearestPoint` /
+  `Pga2dEdge.getNearestPoint` had 0/0 in the interpolation factor, `getNearestPoints` divided
+  0/0 for a pair of zero-length edges. A degenerate edge now behaves as a single point in all
+  distance queries.
 - Precision of `rotation(from, to)` near antipodal inputs: the rotation axis is recovered with
   error-free products (fma) and the deviation angle via asin, keeping the mapping error at
   ~1e-15 for any deviation down to exactly antipodal (was up to ~1e-8 near the old branch
