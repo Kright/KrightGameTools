@@ -2,7 +2,6 @@ package me.kright.gametools.ga
 
 import me.kright.gametools.ga.PGA2.*
 import me.kright.gametools.symbolic.Sym
-import me.kright.gametools.mathutil.EqualityEps
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -16,7 +15,6 @@ class PGA2Test extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   private given doubleEquality: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(eps)
 
-  private given equalityEps: EqualityEps = EqualityEps(eps)
 
   test("point is intersection of two lines") {
     val one = Sym.one

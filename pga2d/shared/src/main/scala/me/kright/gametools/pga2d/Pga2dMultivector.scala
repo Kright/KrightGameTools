@@ -2,6 +2,7 @@ package me.kright.gametools.pga2d
 
 import scala.annotation.targetName
 import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 
 
 /**
@@ -19,7 +20,7 @@ final case class Pga2dMultivector(s: Double = 0.0,
                                   wx: Double = 0.0,
                                   wy: Double = 0.0,
                                   xy: Double = 0.0,
-                                  i: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
+                                  i: Double = 0.0) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga2dMultivector(s = $s, w = $w, x = $x, y = $y, wx = $wx, wy = $wy, xy = $xy, i = $i)"

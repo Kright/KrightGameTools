@@ -2,6 +2,7 @@ package me.kright.gametools.pga3d
 
 import scala.annotation.targetName
 import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 
 
 /**
@@ -15,7 +16,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
  */
 final case class Pga3dBivectorBulk(xy: Double = 0.0,
                                    xz: Double = 0.0,
-                                   yz: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
+                                   yz: Double = 0.0) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga3dBivectorBulk(xy = $xy, xz = $xz, yz = $yz)"

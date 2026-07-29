@@ -1,8 +1,10 @@
 package me.kright.gametools.vector
 
+import me.kright.gametools.mathutil.CanEqualWithEps
+
 final case class Vector3d(x: Double,
                           y: Double,
-                          z: Double) extends VectorNd[Vector3d]:
+                          z: Double) extends VectorNd[Vector3d] derives CanEqual, CanEqualWithEps:
 
   override def +(v: Vector3d): Vector3d = Vector3d(x + v.x, y + v.y, z + v.z)
 
@@ -51,9 +53,6 @@ final case class Vector3d(x: Double,
 
   def sin(v: Vector3d): Double =
     Math.sqrt(cross(v).squareMag / (squareMag * v.squareMag))
-
-  override def isEquals(v: Vector3d, eps: Double): Boolean =
-    Math.abs(x - v.x) <= eps && Math.abs(y - v.y) <= eps && Math.abs(z - v.z) <= eps
 
   override def toString: String = s"Vector3d($x, $y, $z)"
 

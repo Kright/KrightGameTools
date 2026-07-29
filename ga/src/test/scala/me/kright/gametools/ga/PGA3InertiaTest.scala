@@ -1,7 +1,6 @@
 package me.kright.gametools.ga
 
 import me.kright.gametools.symbolic.Sym
-import me.kright.gametools.mathutil.EqualityEps
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -17,7 +16,6 @@ class PGA3InertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   private given doubleEquality: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(eps)
 
-  private given equalityEps: EqualityEps = EqualityEps(eps)
 
   private val b = Sym.multiVector("b").grade(2)
 

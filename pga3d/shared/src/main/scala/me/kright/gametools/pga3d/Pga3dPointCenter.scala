@@ -2,6 +2,7 @@ package me.kright.gametools.pga3d
 
 import scala.annotation.targetName
 import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 
 
 /**

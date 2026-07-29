@@ -1,7 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.*
-import me.kright.gametools.mathutil.{EqualityEps, FastRange}
+import me.kright.gametools.mathutil.FastRange
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -12,7 +12,6 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
 
   private given doubleEquality: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(eps)
 
-  private given equalityEps: EqualityEps = EqualityEps(eps)
 
   test("getAcceleration is equal to apply invert") {
     forAll(Pga3dGenerators.bivectors, Pga3dGenerators.bivectors, Pga3dInertiaGenerators.inertiaLocal(0.1, 10.0, 0.1, 10.0), MinSuccessful(1000)) { (forque, b, inertia) =>

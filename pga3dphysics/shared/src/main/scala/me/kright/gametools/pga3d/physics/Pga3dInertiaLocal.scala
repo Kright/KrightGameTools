@@ -1,11 +1,13 @@
 package me.kright.gametools.pga3d.physics
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 import me.kright.gametools.pga3d.*
 
 final case class Pga3dInertiaLocal(mass: Double,
                                    mryz: Double,
                                    mrxz: Double,
-                                   mrxy: Double) extends Pga3dInertia derives CanEqual:
+                                   mrxy: Double) extends Pga3dInertia derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga3dInertiaLocal(mass = $mass, mryz = $mryz, mrxz = $mrxz, mrxy = $mrxy)"

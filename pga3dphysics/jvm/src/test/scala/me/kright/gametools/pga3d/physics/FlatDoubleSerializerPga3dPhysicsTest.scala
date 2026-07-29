@@ -11,6 +11,10 @@ class FlatDoubleSerializerPga3dPhysicsTest extends AnyFunSuiteLike with ScalaChe
   test("check sizes") {
     assert(FlatDoubleSerializer.getSize[Pga3dInertiaLocal] == Pga3dInertiaLocal.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dInertiaSummable] == Pga3dInertiaSummable.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dInertiaSimple] == Pga3dInertiaSimple.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dBodyState] == Pga3dMotor.componentsCount + Pga3dBivector.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dInertiaMovedLocal] == Pga3dMotor.componentsCount + Pga3dInertiaLocal.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dInertiaMovedSimple] == Pga3dTranslator.componentsCount + Pga3dInertiaSimple.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dPoint] == Pga3dPoint.componentsCount)
   }
 
@@ -30,6 +34,10 @@ class FlatDoubleSerializerPga3dPhysicsTest extends AnyFunSuiteLike with ScalaChe
   test("check serialization and deserialization") {
     myCheck(Pga3dInertiaGenerators.inertiaMovedLocal.map(_.localInertia))
     myCheck(Pga3dInertiaGenerators.inertiaMovedLocal.map(_.toSummable))
+    myCheck(Pga3dInertiaGenerators.inertiaSimple(minMass = 0.1, maxMass = 10.0, minR = 0.1, maxR = 10.0))
+    myCheck(for (motor <- Pga3dGenerators.anyMotors; b <- Pga3dGenerators.bivectors) yield Pga3dBodyState(motor, b))
+    myCheck(Pga3dInertiaGenerators.inertiaMovedLocal)
+    myCheck(Pga3dInertiaGenerators.inertiaMovedSimple)
   }
 
 object FlatDoubleSerializerPga3dPhysicsTest:

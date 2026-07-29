@@ -1,8 +1,6 @@
 package me.kright.gametools.vector
 
-import me.kright.gametools.mathutil.IEqualsWithEps
-
-trait VectorNd[Vec <: VectorNd[Vec]] extends IEqualsWithEps[Vec]:
+trait VectorNd[Vec <: VectorNd[Vec]]:
   self: Vec =>
 
   def +(v: Vec): Vec
@@ -48,8 +46,6 @@ trait VectorNd[Vec <: VectorNd[Vec]] extends IEqualsWithEps[Vec]:
   def squareDistance(v: Vec): Double
 
   def distance(v: Vec): Double = Math.sqrt(squareDistance(v))
-
-  def isEquals(v: Vec, eps: Double): Boolean
 
 
 object VectorNd:

@@ -1,7 +1,9 @@
 package me.kright.gametools.vector
 
+import me.kright.gametools.mathutil.CanEqualWithEps
+
 final case class Vector2d(x: Double,
-                          y: Double) extends VectorNd[Vector2d]:
+                          y: Double) extends VectorNd[Vector2d] derives CanEqual, CanEqualWithEps:
 
   override def +(v: Vector2d): Vector2d = Vector2d(x + v.x, y + v.y)
 
@@ -39,9 +41,6 @@ final case class Vector2d(x: Double,
 
   override def rejected(axis: Vector2d): Vector2d =
     this - projected(axis)
-
-  override def isEquals(v: Vector2d, eps: Double): Boolean =
-    Math.abs(x - v.x) <= eps && Math.abs(y - v.y) <= eps
 
   def sin(v: Vector2d): Double =
     (x * v.y - y * v.x) / Math.sqrt(squareMag * v.squareMag)

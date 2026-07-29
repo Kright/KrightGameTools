@@ -2,6 +2,7 @@ package me.kright.gametools.pga2d
 
 import scala.annotation.targetName
 import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 
 
 /**
@@ -15,7 +16,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
  * Do not edit by hand: change the generator and re-run it.
  */
 final case class Pga2dRotor(s: Double = 0.0,
-                            xy: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
+                            xy: Double = 0.0) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga2dRotor(s = $s, xy = $xy)"

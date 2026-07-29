@@ -3,7 +3,6 @@ package me.kright.gametools.ga
 import me.kright.gametools.ga.PGA3.*
 import me.kright.gametools.vector.{Vector3d, VectorMathGenerators}
 import me.kright.gametools.symbolic.Sym
-import me.kright.gametools.mathutil.EqualityEps
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -17,7 +16,6 @@ class PGA3Test extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   private given doubleEquality: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(eps)
 
-  private given equalityEps: EqualityEps = EqualityEps(eps)
 
   test("point is intersection of three planes") {
     val num = summon[Numeric[Sym]]
@@ -64,7 +62,7 @@ class PGA3Test extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
       assert(planeNormal.mag === 1.0)
       assert((0.5 * (pointVec + mirroredVec)).dot(planeNormal) === -plane("w"))
-      assert((pointVec - mirroredVec).rejected(axis = planeNormal) === Vector3d.zero)
+      assert((pointVec - mirroredVec).rejected(axis = planeNormal).equalsWithEps(Vector3d.zero, eps))
     }
   }
 

@@ -2,6 +2,7 @@ package me.kright.gametools.pga3d
 
 import scala.annotation.targetName
 import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 
 
 /**
@@ -15,7 +16,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 final case class Pga3dProjectiveTranslator(s: Double = 0.0,
                                            wx: Double = 0.0,
                                            wy: Double = 0.0,
-                                           wz: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
+                                           wz: Double = 0.0) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga3dProjectiveTranslator(s = $s, wx = $wx, wy = $wy, wz = $wz)"

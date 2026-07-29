@@ -26,6 +26,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `rotation(from, to)`: the exact-wedge branch now starts at `dot <= -0.9` (was `-1 + 1e-6`).
 - `gametools-pga3d` now depends on `gametools-mathutil` at compile scope (it was already a
   transitive dependency through `gametools-matrix`).
+- `mathutil.IEqualsWithEps` and `mathutil.EqualityEps` are removed in favor of the
+  `CanEqualWithEps` typeclass: the `===` operator with an implicit eps is gone - pass eps
+  explicitly (`a.equalsWithEps(b, eps)` via `CanEqualWithEps`, or the plain `isEquals(other, eps)`
+  methods that `Matrix` and `VectorNd` keep).
 
 ### Changed
 
@@ -88,6 +92,27 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   (`flatArray(i)` builds a triangle + 3 points) loses badly when the JIT fails to
   scalar-replace the nested construction (~432 B/element, JMH `gc.alloc.rate.norm`) - boxed
   reads scalar-replace to zero allocation.
+- `mathutil.CanEqualWithEps`: a derivable typeclass for approximate equality with an explicit
+  tolerance - `a.equalsWithEps(b, eps)` is true iff the Chebyshev (L-infinity) distance over all
+  `Double` components is within `eps`. `derives CanEqualWithEps` follows the `FlatDoubleSerializer`
+  derivation rules (fields are `Double`s or, recursively, such case classes) and inlines to a flat
+  `&&`-chain with early exit and no allocations; equal infinities compare equal, NaN never does.
+  The comparison is componentwise: projective types compare homogeneous representatives, and a
+  rotor is not equal to its negation. Derived by every generated pga3d/pga2d class and the
+  geometry case classes; a `CanEqualWithEps[Double]` instance lives in the companion
+  (`import CanEqualWithEps.given` for direct calls on `Double`). The array-backed `Matrix`
+  gets a hand-written instance in its companion delegating to `Matrix.isEquals` (matrices of
+  different sizes are not equal), since the derivation macro needs a case class of `Double`s.
+- `Vector2d` / `Vector3d` / `Vector4d` derive `CanEqual` and `CanEqualWithEps` as well.
+- The pga3dphysics case classes `Pga3dInertiaLocal`, `Pga3dInertiaSimple`, `Pga3dInertiaSummable`
+  and `Pga3dBodyState` derive `CanEqual`, `CanEqualWithEps` and `FlatDoubleSerializer`
+  (`Pga3dBodyState` = motor + bivector exercises the nested derivation); round trips are covered
+  in `FlatDoubleSerializerPga3dPhysicsTest`. `Pga3dInertiaMovedLocal` and `Pga3dInertiaMovedSimple`
+  are converted from plain classes to `final case class` (equality becomes structural) and derive
+  the same three typeclasses; `Pga3dInertiaPrecomputed` stays a plain class - it wraps the
+  `Pga3dInertia` trait (a dynamic type cannot be flattened statically) and caches matrices.
+
+### Fixed
 
 - Zero-length (degenerate) edges no longer produce NaN: `Pga3dEdge.getNearestPoint` /
   `Pga2dEdge.getNearestPoint` had 0/0 in the interpolation factor, `getNearestPoints` divided

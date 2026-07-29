@@ -2,6 +2,7 @@ package me.kright.gametools.pga2d
 
 import scala.annotation.targetName
 import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 
 
 /**
@@ -17,7 +18,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 final case class Pga2dMotor(s: Double = 0.0,
                             wx: Double = 0.0,
                             wy: Double = 0.0,
-                            xy: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
+                            xy: Double = 0.0) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga2dMotor(s = $s, wx = $wx, wy = $wy, xy = $xy)"

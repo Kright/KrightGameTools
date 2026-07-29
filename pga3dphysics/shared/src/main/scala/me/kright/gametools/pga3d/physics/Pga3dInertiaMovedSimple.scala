@@ -1,11 +1,14 @@
 package me.kright.gametools.pga3d.physics
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 import me.kright.gametools.pga3d.*
 
 /**
  * Pga3dInertiaSimple is fully symmetrical. So rotation is not needed and Pga3dTranslator is enough.
  */
-class Pga3dInertiaMovedSimple(val localToGlobal: Pga3dTranslator, val localInertia: Pga3dInertiaSimple) extends Pga3dInertia:
+final case class Pga3dInertiaMovedSimple(localToGlobal: Pga3dTranslator,
+                                         localInertia: Pga3dInertiaSimple) extends Pga3dInertia derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga3dInertiaMovedSimple(localToGlobal = $localToGlobal, localInertia = $localInertia)"

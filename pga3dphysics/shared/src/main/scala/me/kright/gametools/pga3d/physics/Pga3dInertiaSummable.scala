@@ -1,5 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 import me.kright.gametools.matrix.{Matrix, SymmetricMatrixDiagonalization}
 import me.kright.gametools.pga3d.*
 import me.kright.gametools.pga3d.physics.Pga3dInertiaSummable.sandwich
@@ -15,7 +17,7 @@ final case class Pga3dInertiaSummable(ww: Double,
                                       zz: Double,
                                       xy: Double,
                                       yz: Double,
-                                      xz: Double) extends Pga3dInertia derives CanEqual:
+                                      xz: Double) extends Pga3dInertia derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   /** lazy cache for computing inversion */
   private var inertiaMovedLocalOrNull: Pga3dInertiaMovedLocal | Null = null

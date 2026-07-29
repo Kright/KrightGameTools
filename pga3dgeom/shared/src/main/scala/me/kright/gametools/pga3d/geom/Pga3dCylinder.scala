@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d.geom
 
 import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dPoint, Pga3dVector}
 
 /**
@@ -11,7 +12,7 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dPoint, Pga3dVector}
  */
 case class Pga3dCylinder(a: Pga3dPoint,
                          b: Pga3dPoint,
-                         r: Double) derives CanEqual, FlatDoubleSerializer:
+                         r: Double) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   def ab: Pga3dVector =
     b - a

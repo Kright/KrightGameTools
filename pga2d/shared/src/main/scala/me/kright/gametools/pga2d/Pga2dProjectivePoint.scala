@@ -2,6 +2,7 @@ package me.kright.gametools.pga2d
 
 import scala.annotation.targetName
 import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 
 
 /**
@@ -17,7 +18,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
  */
 final case class Pga2dProjectivePoint(x: Double = 0.0,
                                       y: Double = 0.0,
-                                      w: Double = 0.0) derives CanEqual, FlatDoubleSerializer:
+                                      w: Double = 0.0) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   inline def wy: Double = -x
 

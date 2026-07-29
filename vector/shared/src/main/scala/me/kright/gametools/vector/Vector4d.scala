@@ -1,9 +1,11 @@
 package me.kright.gametools.vector
 
+import me.kright.gametools.mathutil.CanEqualWithEps
+
 final case class Vector4d(x: Double,
                           y: Double,
                           z: Double,
-                          w: Double) extends VectorNd[Vector4d]:
+                          w: Double) extends VectorNd[Vector4d] derives CanEqual, CanEqualWithEps:
 
 
   override def +(v: Vector4d): Vector4d = Vector4d(x + v.x, y + v.y, z + v.z, w + v.w)
@@ -44,9 +46,6 @@ final case class Vector4d(x: Double,
     val dz = z - v.z
     val dw = w - v.w
     dx * dx + dy * dy + dz * dz + dw * dw
-
-  override def isEquals(v: Vector4d, eps: Double): Boolean =
-    Math.abs(x - v.x) <= eps && Math.abs(y - v.y) <= eps && Math.abs(z - v.z) <= eps && Math.abs(w - v.w) <= eps
 
   override def toString: String = s"Vector4d($x, $y, $z, $w)"
 

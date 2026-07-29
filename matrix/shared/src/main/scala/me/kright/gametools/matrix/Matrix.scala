@@ -1,13 +1,13 @@
 package me.kright.gametools.matrix
 
 import me.kright.arrayview.ArrayView2d
-import me.kright.gametools.mathutil.{FastRange, IEqualsWithEps}
+import me.kright.gametools.mathutil.{CanEqualWithEps, FastRange}
 
 import scala.annotation.targetName
 
 class Matrix(val h: Int,
              val w: Int,
-             override val data: Array[Double]) extends ArrayView2d[Double] with IEqualsWithEps[Matrix]:
+             override val data: Array[Double]) extends ArrayView2d[Double]:
   require(data.length == h * w)
 
   override def shape0: Int = h
@@ -155,13 +155,19 @@ class Matrix(val h: Int,
     throw new UnsupportedOperationException("Inversion for matrices larger than 4x4 is not implemented")
   }
 
-  override def isEquals(other: Matrix, eps: Double): Boolean = {
+  def isEquals(other: Matrix, eps: Double): Boolean = {
     if (h != other.h || w != other.w) return false
     data.view.zip(other.data).forall((d1, d2) => Math.abs(d1 - d2) <= eps)
   }
 
 
 object Matrix:
+  // the derivation macro needs a case class of Doubles, so the array-backed Matrix
+  // gets a hand-written instance delegating to isEquals (false for size mismatch)
+  given CanEqualWithEps[Matrix] = new CanEqualWithEps[Matrix]:
+    extension (a: Matrix)
+      def equalsWithEps(b: Matrix, eps: Double): Boolean = a.isEquals(b, eps)
+
   def apply(h: Int, w: Int): Matrix =
     new Matrix(h, w, new Array[Double](h * w))
 

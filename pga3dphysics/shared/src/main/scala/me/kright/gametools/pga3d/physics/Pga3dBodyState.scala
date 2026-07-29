@@ -1,9 +1,11 @@
 package me.kright.gametools.pga3d.physics
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor, Pga3dPointCenter, Pga3dProjectivePoint}
 
 case class Pga3dBodyState(motor: Pga3dMotor,
-                          localB: Pga3dBivector):
+                          localB: Pga3dBivector) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   def madd(derivative: Pga3dBodyState, dt: Double): Pga3dBodyState =
     Pga3dBodyState(

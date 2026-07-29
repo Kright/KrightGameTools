@@ -1,5 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 import me.kright.gametools.pga3d.*
 
 /**
@@ -10,7 +12,7 @@ import me.kright.gametools.pga3d.*
  * @param mr2  - square of effective radius multiplied by mass
  */
 final case class Pga3dInertiaSimple(mass: Double,
-                                    mr2: Double) extends Pga3dInertia:
+                                    mr2: Double) extends Pga3dInertia derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   private val massInv = 1.0 / mass
   private val mr2Inv = 1.0 / mr2

@@ -59,6 +59,7 @@ class ScalaMultivectorSubClass(name: String,
   override def generateImports(): String =
     """import scala.annotation.targetName
       |import me.kright.gametools.flatarray.FlatDoubleSerializer
+      |import me.kright.gametools.mathutil.CanEqualWithEps
       |
       |""".stripMargin
 
@@ -127,7 +128,7 @@ class ScalaMultivectorSubClass(name: String,
         .map(f => s"${f.name}: Double = 0.0")
         .zipWithIndex
         .map((s, i) => if (i == 0) s else pad + s)
-        .mkString(start, ",\n", ") derives CanEqual, FlatDoubleSerializer:"))
+        .mkString(start, ",\n", ") derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:"))
     }
   }
 

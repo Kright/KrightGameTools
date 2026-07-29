@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d.geom
 
 import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.mathutil.CanEqualWithEps
 import me.kright.gametools.mathutil.MathUtil.{maxNanSafe, minNanSafe}
 import me.kright.gametools.pga3d.{Pga3dPoint, Pga3dVector}
 
@@ -9,7 +10,7 @@ import me.kright.gametools.pga3d.{Pga3dPoint, Pga3dVector}
  */
 final case class Pga3dRay(origin: Pga3dPoint,
                           direction: Pga3dVector,
-                          directionReciprocal: Pga3dVector) derives CanEqual, FlatDoubleSerializer {
+                          directionReciprocal: Pga3dVector) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer {
 
   def hasIntersection(aabb: Pga3dAABB): Boolean =
     intersectionT(aabb) < Double.PositiveInfinity
