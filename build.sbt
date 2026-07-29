@@ -195,4 +195,5 @@ lazy val benchmark = (project in file("benchmark"))
   .dependsOn(
     flatarray.jvm,
     pga3d.jvm,
+    pga3dgeom.jvm,
   )

@@ -63,9 +63,11 @@ case class Pga3dAABB(min: Pga3dPoint,
   def clamp(p: Pga3dPoint): Pga3dPoint =
     p.max(min).min(max)
 
+  def distanceSquareTo(p: Pga3dPoint): Double =
+    (clamp(p) - p).normSquare
+
   def distanceTo(p: Pga3dPoint): Double =
-    val clampedPoint = clamp(p)
-    (clampedPoint - p).norm
+    Math.sqrt(distanceSquareTo(p))
 
   def union(a: Pga3dAABB): Pga3dAABB =
     Pga3dAABB(

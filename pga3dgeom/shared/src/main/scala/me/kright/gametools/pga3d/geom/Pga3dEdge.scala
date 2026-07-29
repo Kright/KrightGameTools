@@ -59,14 +59,21 @@ case class Pga3dEdge(a: Pga3dPoint,
     (projected - p).norm
 
   def getNearestPoint(p: Pga3dPoint): Pga3dPoint =
-    val t = getInterpolationFactor(p).clamp(0.0, 1.0)
-    interpolatedPoint(t)
+    val t = getInterpolationFactor(p)
+    // !(t > 0.0) also catches the NaN factor (0/0) of a zero-length edge,
+    // so a degenerate edge behaves as the point a
+    if (!(t > 0.0)) a
+    else if (t >= 1.0) b
+    else interpolatedPoint(t)
+
+  def distanceSquareTo(p: Pga3dPoint): Double =
+    (getNearestPoint(p) - p).normSquare
 
   def distanceTo(p: Pga3dPoint): Double =
-    (getNearestPoint(p) - p).norm
+    Math.sqrt(distanceSquareTo(p))
 
   def contains(p: Pga3dPoint, eps: Double): Boolean =
-    distanceTo(p) <= eps
+    eps >= 0.0 && distanceSquareTo(p) <= eps * eps
 
   def getNearestPointsBinSearch(other: Pga3dEdge): (Pga3dPoint, Pga3dPoint) =
     Pga3dEdge.getNearestPointsBinSearch(this, other, 0.0, 1.0)
@@ -74,9 +81,12 @@ case class Pga3dEdge(a: Pga3dPoint,
   def getNearestPoints(other: Pga3dEdge): (Pga3dPoint, Pga3dPoint) =
     Pga3dEdge.getNearestPoints(this, other)
 
-  def distanceTo(other: Pga3dEdge): Double =
+  def distanceSquareTo(other: Pga3dEdge): Double =
     val (p1, p2) = getNearestPoints(other)
-    (p1 - p2).norm
+    (p1 - p2).normSquare
+
+  def distanceTo(other: Pga3dEdge): Double =
+    Math.sqrt(distanceSquareTo(other))
 
 
 object Pga3dEdge:
@@ -126,6 +136,11 @@ object Pga3dEdge:
   def getNearestPoints(self: Pga3dEdge, other: Pga3dEdge): (Pga3dPoint, Pga3dPoint) = {
     val mag2 = self.magnitudeSquare
     val otherMag2 = other.magnitudeSquare
+
+    if (mag2 == 0.0 && otherMag2 == 0.0) {
+      // both edges are single points; the general path would divide 0/0
+      return (self.a, other.a)
+    }
 
     if (mag2 * 1e16 < otherMag2) {
       val center = self.center

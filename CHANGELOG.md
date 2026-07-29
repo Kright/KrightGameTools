@@ -27,8 +27,28 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `gametools-pga3d` now depends on `gametools-mathutil` at compile scope (it was already a
   transitive dependency through `gametools-matrix`).
 
+### Changed
+
+- `Pga3dTriangle.getNearestPoint` is rewritten via Voronoi regions (Ericson, "Real-Time
+  Collision Detection", 5.1.5): no intermediate collections, no square roots, 4-8x faster
+  (JMH: 77 -> 9 ns far from the triangle, 64 -> 12 ns near the surface, 53 -> 12 ns for
+  points projecting inside; see `benchmark/NearestPointBenchmark`). Degenerate triangles now
+  deterministically fall back to the nearest point of the longest edge (the old implementation
+  could return NaN or an arbitrary point of the supporting plane for collinear vertices).
+  The legacy implementation is kept in `Pga3dTriangleNearestPointTest` as a correctness
+  reference.
+
 ### Added
 
+- `Pga3dTriangle.fartherThan(p, maxDistance)`: conservative early reject against the triangle's
+  bounding box - a few comparisons, no multiplications and no allocations (4.4 vs 6.7 ns for
+  the allocating `toAABB.contains` equivalent). A prefilter before `getNearestPoint` when
+  scanning many triangles; `true` is reliable for any input including degenerate triangles,
+  NaN or infinite arguments.
+- `distanceSquareTo` on `Pga3dTriangle` (point), `Pga3dEdge` (point and edge-edge) and
+  `Pga3dAABB` (point): sqrt-free companions of `distanceTo` for comparisons, symmetric with
+  `norm`/`normSquare`. `distanceTo` delegates to them; `contains(p, eps)` compares squares
+  (one sqrt less on the `intersection` path) and is guarded against negative/NaN eps.
 - `pow(t)` on Motor, Rotor and Translator in 2d and 3d (`motor.pow(0.5)` is the half motion);
   C++ gains the `restoreRotationInPlaneX/Y/Z` wrappers for parity.
 - `Pga2dRotor.log: Double` (the half-angle) and `Pga2dRotor.exp(halfAngle)`; `slerp` no longer
@@ -50,6 +70,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Zero-length (degenerate) edges no longer produce NaN: `Pga3dEdge.getNearestPoint` had 0/0
+  in the interpolation factor, `getNearestPoints` divided 0/0 for a pair of zero-length edges.
+  A degenerate edge now behaves as a single point in all distance queries.
 - Precision of `rotation(from, to)` near antipodal inputs: the rotation axis is recovered with
   error-free products (fma) and the deviation angle via asin, keeping the mapping error at
   ~1e-15 for any deviation down to exactly antipodal (was up to ~1e-8 near the old branch
