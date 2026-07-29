@@ -5,7 +5,7 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 
 case class Pga3dTriangle(a: Pga3dPoint,
                          b: Pga3dPoint,
-                         c: Pga3dPoint):
+                         c: Pga3dPoint) derives CanEqual, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga3dTriangle(a = $a, b = $b, c = $c)"

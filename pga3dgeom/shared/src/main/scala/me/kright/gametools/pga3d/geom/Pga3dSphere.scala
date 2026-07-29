@@ -1,9 +1,10 @@
 package me.kright.gametools.pga3d.geom
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
 import me.kright.gametools.pga3d.Pga3dPoint
 
 case class Pga3dSphere(center: Pga3dPoint,
-                       r: Double):
+                       r: Double) derives CanEqual, FlatDoubleSerializer:
 
   def toAABB: Pga3dAABB =
     Pga3dAABB(this)

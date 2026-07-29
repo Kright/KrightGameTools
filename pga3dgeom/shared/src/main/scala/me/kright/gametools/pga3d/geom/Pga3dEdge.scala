@@ -1,11 +1,12 @@
 package me.kright.gametools.pga3d.geom
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
 import me.kright.gametools.mathutil.MathUtil.clamp
 import me.kright.gametools.pga3d.*
 import me.kright.gametools.mathutil.MathUtil
 
 case class Pga3dEdge(a: Pga3dPoint,
-                     b: Pga3dPoint) derives CanEqual:
+                     b: Pga3dPoint) derives CanEqual, FlatDoubleSerializer:
 
   override def toString: String = s"Pga3dEdge(a = $a, b = $b)"
 

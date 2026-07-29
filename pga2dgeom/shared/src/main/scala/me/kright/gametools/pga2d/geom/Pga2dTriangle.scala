@@ -1,10 +1,11 @@
 package me.kright.gametools.pga2d.geom
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
 import me.kright.gametools.pga2d.{Pga2dPoint, Pga2dVector}
 
 case class Pga2dTriangle(a: Pga2dPoint,
                          b: Pga2dPoint,
-                         c: Pga2dPoint):
+                         c: Pga2dPoint) derives CanEqual, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga2dTriangle(a = $a, b = $b, c = $c)"

@@ -1,5 +1,6 @@
 package me.kright.gametools.pga2d.geom
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
 import me.kright.gametools.pga2d.{Pga2dLine, Pga2dPoint, Pga2dTranslator, Pga2dVector}
 
 import scala.annotation.targetName
@@ -9,7 +10,7 @@ import scala.annotation.targetName
  * [[https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box]]
  */
 case class Pga2dAABB(min: Pga2dPoint,
-                     max: Pga2dPoint):
+                     max: Pga2dPoint) derives CanEqual, FlatDoubleSerializer:
 
   override def toString: String =
     s"Pga2dAABB(min = $min, max = $max)"

@@ -1,12 +1,13 @@
 package me.kright.gametools.pga2d.geom
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
 import me.kright.gametools.pga2d.Pga2dPoint
 
 /**
  * the 2d sibling of Pga3dSphere
  */
 case class Pga2dCircle(center: Pga2dPoint,
-                       r: Double):
+                       r: Double) derives CanEqual, FlatDoubleSerializer:
 
   def toAABB: Pga2dAABB =
     Pga2dAABB(this)

@@ -27,6 +27,9 @@ sbt "benchmark/Jmh/run -p size=500000,2000000 .*"
 
 # smallest wiring smoke test
 sbt "benchmark/Jmh/run -wi 1 -i 1 -f1 -p size=500000 .*"
+
+# only one benchmark class
+sbt 'benchmark/Jmh/run -f1 .*Pga3dTriangleRotorBenchmark.*'
 ```
 
 The trailing argument is a regex over benchmark method names (`.*` = all).

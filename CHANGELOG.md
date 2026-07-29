@@ -72,8 +72,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `Pga3dVector.crossRightHanded(a, b)` / `crossLeftHanded(a, b)` (Scala and C++): the classical
   cross product for both basis orientations. Not a GA operation (the GA-native form is the join
   `a v b`); provided for convenience and for adapting code from other libraries.
-
-### Fixed
+- `FlatDoubleSerializer` derivation now recurses into nested case classes: a field may be a
+  `Double` or another case class whose fields are (recursively) `Double`s, flattened into
+  consecutive doubles at compile time - so `FlatArray[Pga3dTriangle]` packs 9 doubles per
+  element with no per-field indirection.
+- The geometry case classes derive `CanEqual` and `FlatDoubleSerializer`: `Triangle`, `Edge`,
+  `AABB`, `Ray`, plus `Sphere`/`Cylinder` in 3d and `Circle` in 2d (`Edge` already had
+  `CanEqual`). Round trips are property-tested in `FlatDoubleSerializerPga3dGeomTest` /
+  `FlatDoubleSerializerPga2dGeomTest`, including flattened-size checks.
+- Benchmarks `Pga3dVectorRotorBenchmark` and `Pga3dTriangleRotorBenchmark`: rotor sandwich over
+  10k elements - the cache-resident complement to `FlatArrayRotorBenchmark`'s 500k-8M. Findings:
+  write-back through `FlatArray` stays ~6x faster even when everything fits in L2 (the boxed cost
+  is dominated by allocating the replacement objects, 4 per triangle); boxed sequential *reads*
+  are on par with flat for vectors, while for triangles the naive materializing flat read
+  (`flatArray(i)` builds a triangle + 3 points) loses badly when the JIT fails to
+  scalar-replace the nested construction (~432 B/element, JMH `gc.alloc.rate.norm`) - boxed
+  reads scalar-replace to zero allocation.
 
 - Zero-length (degenerate) edges no longer produce NaN: `Pga3dEdge.getNearestPoint` /
   `Pga2dEdge.getNearestPoint` had 0/0 in the interpolation factor, `getNearestPoints` divided
