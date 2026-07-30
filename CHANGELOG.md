@@ -136,6 +136,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Internal
 
+- Scala is updated to 3.8.4.
 - The code generator now has single sources of truth shared by the Scala and C++ backends:
   class field structure (`PgaSubclassFields`), norm and axis derivations (`NormSymbolics`,
   `AxesSymbolics`) and all hand-written numerical formulas (`SharedFormulas` rendered by
