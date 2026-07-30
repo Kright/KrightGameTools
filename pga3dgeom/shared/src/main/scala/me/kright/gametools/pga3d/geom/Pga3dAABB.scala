@@ -153,16 +153,13 @@ case class Pga3dAABB(min: Pga3dPoint,
   def intersects(edge: Pga3dEdge): Boolean =
     intersection(edge).isDefined
 
-  def intersects(triangle: Pga3dTriangle, eps: Double): Boolean = {
-    if (!intersects(triangle.toAABB)) return false // short path for triangles far away
-    if (contains(triangle.a) || contains(triangle.b) || contains(triangle.c)) return true // when vertex inside AABB
-
-    if (!intersects(triangle.normalizedPlane)) return false
-
-    // currently code below is not much efficient, but correctness and code size are more important
-    if (triangle.edges.exists(this.intersects)) return true
-    edges.exists(e => triangle.intersects(e, eps))
-  }
+  /**
+   * exact triangle-box overlap test,
+   * see [[Pga3dAABB.intersects(aabb:Pga3dAABB,triangle:Pga3dTriangle)]].
+   * For a tolerance, expand the box once: `aabb.expand(eps).intersects(triangle)`
+   */
+  def intersects(triangle: Pga3dTriangle): Boolean =
+    Pga3dAABB.intersects(this, triangle)
 
   def intersection(edge: Pga3dEdge): Option[Pga3dEdge] =
     Pga3dAABB.intersection(this, edge)
@@ -266,6 +263,110 @@ object Pga3dAABB:
     val minDistance = alongNormMinX * plane.x + alongNormMinY * plane.y + alongNormMinZ * plane.z + plane.w
 
     maxDistance >= 0 && minDistance <= 0
+  }
+
+  private inline def separated(p0: Double, p1: Double, p2: Double, r: Double): Boolean =
+    (p0 > r && p1 > r && p2 > r) || (p0 < -r && p1 < -r && p2 < -r)
+
+  private inline def rawSeparated(a: Double, b: Double, c: Double, lo: Double, hi: Double): Boolean =
+    (a < lo && b < lo && c < lo) || (a > hi && b > hi && c > hi)
+
+  private inline def insideRaw(p: Pga3dPoint,
+                               loX: Double, hiX: Double,
+                               loY: Double, hiY: Double,
+                               loZ: Double, hiZ: Double): Boolean =
+    p.x >= loX && p.x <= hiX && p.y >= loY && p.y <= hiY && p.z >= loZ && p.z <= hiZ
+
+  /**
+   * triangle-box overlap via the separating axis theorem (Akenine-Moller, "Fast 3D
+   * Triangle-Box Overlap Testing"): 13 axes - 3 box face normals, the triangle plane
+   * and 9 cross products of box axes with triangle edges. No allocations, square roots
+   * or divisions. Degenerate triangles need no special cases: a zero cross-product axis
+   * projects everything to 0 and never separates, so a segment is tested by the
+   * known-complete segment-box axis subset and a point by the box axes alone.
+   *
+   * With NaN anywhere no axis reports separation and the answer degrades to
+   * a conservative `true`. For a tolerance, expand the box once:
+   * `aabb.expand(eps).intersects(triangle)`
+   */
+  def intersects(aabb: Pga3dAABB, triangle: Pga3dTriangle): Boolean = {
+    // 3 box face normals first, on the raw coordinates: no multiplications and exact
+    // comparisons - in a grid scan most triangles are rejected right here
+    val loX = aabb.min.x
+    val hiX = aabb.max.x
+    if (rawSeparated(triangle.a.x, triangle.b.x, triangle.c.x, loX, hiX)) return false
+
+    val loY = aabb.min.y
+    val hiY = aabb.max.y
+    if (rawSeparated(triangle.a.y, triangle.b.y, triangle.c.y, loY, hiY)) return false
+
+    val loZ = aabb.min.z
+    val hiZ = aabb.max.z
+    if (rawSeparated(triangle.a.z, triangle.b.z, triangle.c.z, loZ, hiZ)) return false
+
+    // early accept: a vertex inside the box
+    if (insideRaw(triangle.a, loX, hiX, loY, hiY, loZ, hiZ)) return true
+    if (insideRaw(triangle.b, loX, hiX, loY, hiY, loZ, hiZ)) return true
+    if (insideRaw(triangle.c, loX, hiX, loY, hiY, loZ, hiZ)) return true
+
+    // the remaining axes work in the box-center frame
+    val hx = (aabb.max.x - aabb.min.x) * 0.5
+    val hy = (aabb.max.y - aabb.min.y) * 0.5
+    val hz = (aabb.max.z - aabb.min.z) * 0.5
+    val cx = (aabb.max.x + aabb.min.x) * 0.5
+    val cy = (aabb.max.y + aabb.min.y) * 0.5
+    val cz = (aabb.max.z + aabb.min.z) * 0.5
+
+    val v0x = triangle.a.x - cx
+    val v0y = triangle.a.y - cy
+    val v0z = triangle.a.z - cz
+    val v1x = triangle.b.x - cx
+    val v1y = triangle.b.y - cy
+    val v1z = triangle.b.z - cz
+    val v2x = triangle.c.x - cx
+    val v2y = triangle.c.y - cy
+    val v2z = triangle.c.z - cz
+
+    val f0x = v1x - v0x
+    val f0y = v1y - v0y
+    val f0z = v1z - v0z
+    val f1x = v2x - v1x
+    val f1y = v2y - v1y
+    val f1z = v2z - v1z
+    val f2x = v0x - v2x
+    val f2y = v0y - v2y
+    val f2z = v0z - v2z
+
+    // 9 cross products of the box axes with the triangle edges:
+    // u_x x f = (0, -f.z, f.y), u_y x f = (f.z, 0, -f.x), u_z x f = (-f.y, f.x, 0)
+    if (separated(f0y * v0z - f0z * v0y, f0y * v1z - f0z * v1y, f0y * v2z - f0z * v2y, hy * Math.abs(f0z) + hz * Math.abs(f0y))) return false
+    if (separated(f0z * v0x - f0x * v0z, f0z * v1x - f0x * v1z, f0z * v2x - f0x * v2z, hx * Math.abs(f0z) + hz * Math.abs(f0x))) return false
+    if (separated(f0x * v0y - f0y * v0x, f0x * v1y - f0y * v1x, f0x * v2y - f0y * v2x, hx * Math.abs(f0y) + hy * Math.abs(f0x))) return false
+
+    if (separated(f1y * v0z - f1z * v0y, f1y * v1z - f1z * v1y, f1y * v2z - f1z * v2y, hy * Math.abs(f1z) + hz * Math.abs(f1y))) return false
+    if (separated(f1z * v0x - f1x * v0z, f1z * v1x - f1x * v1z, f1z * v2x - f1x * v2z, hx * Math.abs(f1z) + hz * Math.abs(f1x))) return false
+    if (separated(f1x * v0y - f1y * v0x, f1x * v1y - f1y * v1x, f1x * v2y - f1y * v2x, hx * Math.abs(f1y) + hy * Math.abs(f1x))) return false
+
+    if (separated(f2y * v0z - f2z * v0y, f2y * v1z - f2z * v1y, f2y * v2z - f2z * v2y, hy * Math.abs(f2z) + hz * Math.abs(f2y))) return false
+    if (separated(f2z * v0x - f2x * v0z, f2z * v1x - f2x * v1z, f2z * v2x - f2x * v2z, hx * Math.abs(f2z) + hz * Math.abs(f2x))) return false
+    if (separated(f2x * v0y - f2y * v0x, f2x * v1y - f2y * v1x, f2x * v2y - f2y * v2x, hx * Math.abs(f2y) + hy * Math.abs(f2x))) return false
+
+    // the triangle plane: for a (nearly) degenerate triangle the computed normal is pure
+    // rounding noise and could fake a separation, so the axis is trusted only when the
+    // normal is far above the noise floor (|n|^2 = |f0|^2 * |f1|^2 * sin^2, the threshold
+    // is sin > 1e-10); below it the answer is conservative - the other 12 axes are already
+    // complete for segments and points
+    val nx = f0y * f1z - f0z * f1y
+    val ny = f0z * f1x - f0x * f1z
+    val nz = f0x * f1y - f0y * f1x
+    val n2 = nx * nx + ny * ny + nz * nz
+    val f02 = f0x * f0x + f0y * f0y + f0z * f0z
+    val f12 = f1x * f1x + f1y * f1y + f1z * f1z
+    if (n2 <= 1e-20 * f02 * f12) return true
+
+    val d = nx * v0x + ny * v0y + nz * v0z
+    val r = hx * Math.abs(nx) + hy * Math.abs(ny) + hz * Math.abs(nz)
+    !(d > r || d < -r)
   }
 
   def intersection(aabb: Pga3dAABB, edge: Pga3dEdge): Option[Pga3dEdge] =

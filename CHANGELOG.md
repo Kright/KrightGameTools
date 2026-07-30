@@ -45,6 +45,31 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   points, see `benchmark/NearestPoint2dBenchmark`), with a 2d bonus: a point inside the
   triangle is returned as is, exactly. The 2d-as-z=0-slice-of-3d correspondence is
   property-tested in `Pga2dTo3dCorrespondenceTest`.
+- `Pga3dAABB.intersects(triangle)` / `Pga2dAABB.intersects(triangle)` are rewritten via the
+  separating axis theorem (Akenine-Moller; 13 axes in 3d, 5 in 2d): no allocations, square
+  roots or divisions. The box-face phase runs on raw coordinates (no multiplications,
+  exact comparisons) with a vertex-inside early accept; the box-center frame is built only
+  for candidates that survive it. JMH (`benchmark/AABBTriangleBenchmark`): the hard miss
+  (bounding boxes overlap, the triangle is diagonally beyond a corner) 204 -> 15 ns (13x),
+  overlap 8.4 -> 6.2 ns, far miss 5.2 -> 6.8 ns (the one case slightly behind; one avoided
+  hard miss pays for ~100 far misses, and this is the once-per-build grid path).
+  The `eps` parameter is removed (breaking): its meaning was muddled (a fuzzy edge-distance
+  tolerance in 3d, silently unused in 2d) - for a tolerance, expand the box once outside
+  the scan loop: `aabb.expand(eps).intersects(triangle)`, which is exactly equivalent
+  and takes the additions off the per-triangle path.
+  Degenerate triangles work (segments and points are covered by the remaining axes; the
+  noise-normal plane axis is guarded by a relative threshold), and zero-thickness boxes
+  are handled exactly - the legacy implementation returned false for collinear triangles
+  (NaN plane) and was ulp-unstable on flat boxes; it is kept in `Pga3dAABBTriangleTest` /
+  `Pga2dAABBTriangleTest` as a reference for the non-degenerate cases.
+- `Pga3dTriangle.intersection` / `Pga2dTriangle.intersection` hot path: the AABB early reject
+  compares coordinates directly instead of constructing two AABBs (allocation-free by
+  construction - the JIT scalar-replaced them in monomorphic code, but Scala.js/Native and
+  polymorphic call sites get the guarantee too), and the 3d parallelism check compares
+  dot^2 against |dir|^2 instead of normalizing the direction (one sqrt less per call).
+  The previous implementation is kept in `Pga3dTriangleIntersectionTest` /
+  `Pga2dTriangleIntersectionTest` as a correctness reference. A degenerate (collinear)
+  triangle behaves as a segment through the parallel-branch fallback (unit-tested).
 
 ### Added
 
@@ -53,6 +78,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   allocations (4.4 vs 6.7 ns for the allocating `toAABB.contains` equivalent). A prefilter
   before `getNearestPoint` when scanning many triangles; `true` is reliable for any input
   including degenerate triangles, NaN or infinite arguments.
+- `intersection(edge, normalizedPlane, eps)` overload on `Pga3dTriangle`: for static geometry
+  the caller can compute `normalizedPlane` once (e.g. in an array parallel to the triangles)
+  and take the per-call plane construction with its sqrt off the raycast hot path. JMH
+  wheel-raycast scenario (`benchmark/IntersectionBenchmark`): hit 59 -> 52 ns, with the cached
+  plane 37 ns; the AABB-reject path stays at ~6 ns.
 - `distanceSquareTo` on `Pga3dTriangle`/`Pga2dTriangle` (point), `Pga3dEdge`/`Pga2dEdge`
   (point and edge-edge) and `Pga3dAABB`/`Pga2dAABB` (point): sqrt-free companions of
   `distanceTo` for comparisons, symmetric with `norm`/`normSquare`. `distanceTo` delegates to

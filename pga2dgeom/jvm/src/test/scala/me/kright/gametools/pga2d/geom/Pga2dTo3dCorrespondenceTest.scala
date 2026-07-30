@@ -89,6 +89,16 @@ class Pga2dTo3dCorrespondenceTest extends AnyFunSuiteLike with ScalaCheckPropert
     }
   }
 
+  test("aabb-triangle intersects agrees exactly with the 3d embedding") {
+    // a flat (z in [0, 0]) 3d box against a z=0 triangle: the extra 3d SAT axes are all
+    // vacuous (zero projections against zero radii), so the answers are bit-identical
+    forAll(Pga2dPhysicsGenerators.aabbIn(bounds), triangles, MinSuccessful(2000)) { (aabb, triangle) =>
+      val flatBox = Pga3dAABB(to3d(aabb.min), to3d(aabb.max))
+      assert(aabb.intersects(triangle) == flatBox.intersects(to3d(triangle)),
+        s"aabb = $aabb, triangle = $triangle")
+    }
+  }
+
   test("aabb: distanceSquareTo agrees with the 3d embedding") {
     forAll(triangles, points, MinSuccessful(2000)) { (triangle, p) =>
       val aabb2d = triangle.toAABB

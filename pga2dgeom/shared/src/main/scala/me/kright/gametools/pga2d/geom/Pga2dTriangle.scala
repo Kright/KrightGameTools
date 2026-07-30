@@ -177,8 +177,16 @@ object Pga2dTriangle:
     (a < lo && b < lo && c < lo) || (a > hi && b > hi && c > hi)
   }
 
+  /** allocation-free separation test: the AABB of the edge (expanded by eps) vs the triangle's */
+  private inline def axisSeparates(e1: Double, e2: Double, a: Double, b: Double, c: Double, expand: Double): Boolean = {
+    val lo = Math.min(e1, e2) - expand
+    val hi = Math.max(e1, e2) + expand
+    (a < lo && b < lo && c < lo) || (a > hi && b > hi && c > hi)
+  }
+
   def intersection(triangle: Pga2dTriangle, edge: Pga2dEdge, eps: Double): Option[Pga2dPoint] = {
-    if (!triangle.toAABB.intersects(edge.toAABB, expand = eps)) {
+    if (axisSeparates(edge.a.x, edge.b.x, triangle.a.x, triangle.b.x, triangle.c.x, eps) ||
+      axisSeparates(edge.a.y, edge.b.y, triangle.a.y, triangle.b.y, triangle.c.y, eps)) {
       // short path when edge and triangle are far away from each other
       return None
     }

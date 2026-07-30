@@ -135,14 +135,13 @@ case class Pga2dAABB(min: Pga2dPoint,
   def intersects(edge: Pga2dEdge): Boolean =
     intersection(edge).isDefined
 
-  def intersects(triangle: Pga2dTriangle, eps: Double): Boolean = {
-    if (!intersects(triangle.toAABB)) return false // short path for triangles far away
-    if (contains(triangle.a) || contains(triangle.b) || contains(triangle.c)) return true // when vertex inside AABB
-    if (triangle.contains(center)) return true // when AABB is fully inside the triangle
-
-    // currently code below is not much efficient, but correctness and code size are more important
-    triangle.edges.exists(this.intersects)
-  }
+  /**
+   * exact triangle-box overlap test,
+   * see [[Pga2dAABB.intersects(aabb:Pga2dAABB,triangle:Pga2dTriangle)]].
+   * For a tolerance, expand the box once: `aabb.expand(eps).intersects(triangle)`
+   */
+  def intersects(triangle: Pga2dTriangle): Boolean =
+    Pga2dAABB.intersects(this, triangle)
 
   def intersection(edge: Pga2dEdge): Option[Pga2dEdge] =
     Pga2dAABB.intersection(this, edge)
@@ -236,6 +235,66 @@ object Pga2dAABB:
     val minDistance = alongNormMinX * line.x + alongNormMinY * line.y + line.w
 
     maxDistance >= 0 && minDistance <= 0
+  }
+
+  private inline def separated(p0: Double, p1: Double, p2: Double, r: Double): Boolean =
+    (p0 > r && p1 > r && p2 > r) || (p0 < -r && p1 < -r && p2 < -r)
+
+  private inline def rawSeparated(a: Double, b: Double, c: Double, lo: Double, hi: Double): Boolean =
+    (a < lo && b < lo && c < lo) || (a > hi && b > hi && c > hi)
+
+  /**
+   * triangle-box overlap via the separating axis theorem: 5 axes - 2 box face normals
+   * and 3 triangle edge normals. No allocations, square roots or divisions.
+   * Degenerate triangles need no special cases: a zero edge normal never separates,
+   * so a segment or a point is tested correctly.
+   *
+   * With NaN anywhere no axis reports separation and the answer degrades to
+   * a conservative `true`. For a tolerance, expand the box once:
+   * `aabb.expand(eps).intersects(triangle)`
+   */
+  def intersects(aabb: Pga2dAABB, triangle: Pga2dTriangle): Boolean = {
+    // 2 box face normals first, on the raw coordinates: no multiplications and exact
+    // comparisons - in a grid scan most triangles are rejected right here
+    val loX = aabb.min.x
+    val hiX = aabb.max.x
+    if (rawSeparated(triangle.a.x, triangle.b.x, triangle.c.x, loX, hiX)) return false
+
+    val loY = aabb.min.y
+    val hiY = aabb.max.y
+    if (rawSeparated(triangle.a.y, triangle.b.y, triangle.c.y, loY, hiY)) return false
+
+    // early accept: a vertex inside the box
+    if (triangle.a.x >= loX && triangle.a.x <= hiX && triangle.a.y >= loY && triangle.a.y <= hiY) return true
+    if (triangle.b.x >= loX && triangle.b.x <= hiX && triangle.b.y >= loY && triangle.b.y <= hiY) return true
+    if (triangle.c.x >= loX && triangle.c.x <= hiX && triangle.c.y >= loY && triangle.c.y <= hiY) return true
+
+    // the remaining axes work in the box-center frame
+    val hx = (aabb.max.x - aabb.min.x) * 0.5
+    val hy = (aabb.max.y - aabb.min.y) * 0.5
+    val cx = (aabb.max.x + aabb.min.x) * 0.5
+    val cy = (aabb.max.y + aabb.min.y) * 0.5
+
+    val v0x = triangle.a.x - cx
+    val v0y = triangle.a.y - cy
+    val v1x = triangle.b.x - cx
+    val v1y = triangle.b.y - cy
+    val v2x = triangle.c.x - cx
+    val v2y = triangle.c.y - cy
+
+    val f0x = v1x - v0x
+    val f0y = v1y - v0y
+    val f1x = v2x - v1x
+    val f1y = v2y - v1y
+    val f2x = v0x - v2x
+    val f2y = v0y - v2y
+
+    // 3 triangle edge normals (-f.y, f.x)
+    if (separated(f0x * v0y - f0y * v0x, f0x * v1y - f0y * v1x, f0x * v2y - f0y * v2x, hx * Math.abs(f0y) + hy * Math.abs(f0x))) return false
+    if (separated(f1x * v0y - f1y * v0x, f1x * v1y - f1y * v1x, f1x * v2y - f1y * v2x, hx * Math.abs(f1y) + hy * Math.abs(f1x))) return false
+    if (separated(f2x * v0y - f2y * v0x, f2x * v1y - f2y * v1x, f2x * v2y - f2y * v2x, hx * Math.abs(f2y) + hy * Math.abs(f2x))) return false
+
+    true
   }
 
   def intersection(aabb: Pga2dAABB, edge: Pga2dEdge): Option[Pga2dEdge] =

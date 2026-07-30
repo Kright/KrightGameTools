@@ -252,7 +252,7 @@ class Pga2dAABBTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     for (i <- -10 to 10; j <- -10 to 10) {
       val aabb = Pga2dAABB(Pga2dPoint(i, j)).expand(0.5)
 
-      assert(triangles.exists { t => aabb.intersects(t, eps = 1e-12) })
+      assert(triangles.exists { t => aabb.intersects(t) })
     }
   }
 
@@ -260,7 +260,7 @@ class Pga2dAABBTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val triangle = Pga2dTriangle(Pga2dPoint(-10, -10), Pga2dPoint(10, -10), Pga2dPoint(0, 10))
     val aabb = Pga2dAABB(Pga2dPoint(0, 0)).expand(0.5)
 
-    assert(aabb.intersects(triangle, eps = 1e-12))
-    assert(aabb.expand(100).intersects(triangle, eps = 1e-12)) // triangle fully inside aabb
-    assert(!Pga2dAABB(Pga2dPoint(100, 100)).expand(0.5).intersects(triangle, eps = 1e-12))
+    assert(aabb.intersects(triangle))
+    assert(aabb.expand(100).intersects(triangle)) // triangle fully inside aabb
+    assert(!Pga2dAABB(Pga2dPoint(100, 100)).expand(0.5).intersects(triangle))
   }

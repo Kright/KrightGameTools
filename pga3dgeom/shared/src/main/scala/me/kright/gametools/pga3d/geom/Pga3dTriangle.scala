@@ -54,6 +54,10 @@ case class Pga3dTriangle(a: Pga3dPoint,
   def intersection(edge: Pga3dEdge, eps: Double): Option[Pga3dPoint] =
     Pga3dTriangle.intersection(this, edge, eps)
 
+  /** variant with `normalizedPlane` precomputed by the caller (cacheable for static geometry) */
+  def intersection(edge: Pga3dEdge, normalizedPlane: Pga3dPlane, eps: Double): Option[Pga3dPoint] =
+    Pga3dTriangle.intersection(this, edge, normalizedPlane, eps)
+
   def intersects(e: Pga3dEdge, eps: Double): Boolean =
     intersection(e, eps).isDefined
 
@@ -209,24 +213,50 @@ object Pga3dTriangle:
     }
   }
 
+  /** allocation-free separation test: the AABB of the edge (expanded by eps) vs the triangle's */
+  private inline def axisSeparates(e1: Double, e2: Double, a: Double, b: Double, c: Double, expand: Double): Boolean = {
+    val lo = Math.min(e1, e2) - expand
+    val hi = Math.max(e1, e2) + expand
+    (a < lo && b < lo && c < lo) || (a > hi && b > hi && c > hi)
+  }
+
+  private def separatedByAABB(triangle: Pga3dTriangle, edge: Pga3dEdge, eps: Double): Boolean =
+    axisSeparates(edge.a.x, edge.b.x, triangle.a.x, triangle.b.x, triangle.c.x, eps) ||
+      axisSeparates(edge.a.y, edge.b.y, triangle.a.y, triangle.b.y, triangle.c.y, eps) ||
+      axisSeparates(edge.a.z, edge.b.z, triangle.a.z, triangle.b.z, triangle.c.z, eps)
+
   def intersection(triangle: Pga3dTriangle, edge: Pga3dEdge, eps: Double): Option[Pga3dPoint] = {
-    if (!triangle.toAABB.intersects(edge.toAABB, expand = eps)) {
+    if (separatedByAABB(triangle, edge, eps)) {
       // short path when edge and triangle are far away from each other
       return None
     }
 
-    val normalizedPlane: Pga3dPlane = triangle.normalizedPlane
+    intersectionImpl(triangle, edge, triangle.normalizedPlane, eps)
+  }
 
+  /**
+   * variant with the triangle's `normalizedPlane` precomputed by the caller: for static
+   * geometry the plane can be computed once and stored alongside the triangle, which takes
+   * the plane construction and its sqrt off the hot path. Behaves exactly as
+   * `intersection(triangle, edge, eps)`
+   */
+  def intersection(triangle: Pga3dTriangle, edge: Pga3dEdge, normalizedPlane: Pga3dPlane, eps: Double): Option[Pga3dPoint] = {
+    if (separatedByAABB(triangle, edge, eps)) return None
+    intersectionImpl(triangle, edge, normalizedPlane, eps)
+  }
+
+  private def intersectionImpl(triangle: Pga3dTriangle, edge: Pga3dEdge, normalizedPlane: Pga3dPlane, eps: Double): Option[Pga3dPoint] = {
     val da: Double = normalizedPlane v edge.a
     val db: Double = normalizedPlane v edge.b
 
     if (da > eps && db > eps) return None // edge is far away
     if (da < -eps && db < -eps) return None // edge is far away
 
-    val eAB: Pga3dVector = edge.normalizedDirection
-    val cos = normalizedPlane.x * eAB.x + normalizedPlane.y * eAB.y + normalizedPlane.z * eAB.z
+    val dir: Pga3dVector = edge.direction
+    val dot = normalizedPlane.x * dir.x + normalizedPlane.y * dir.y + normalizedPlane.z * dir.z
 
-    if (Math.abs(cos) > 0.001) {
+    // dot^2 > 1e-6 * |dir|^2 is |cos| > 0.001 without normalizing the direction (no sqrt)
+    if (dot * dot > 1e-6 * dir.normSquare) {
       // common case, edge is not parallel to plane
       val intersectionPoint = edge.interpolatedPoint(da / (da - db))
 
