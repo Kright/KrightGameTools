@@ -155,6 +155,49 @@ case class Pga3dTriangle(a: Pga3dPoint,
     }
 
 
+  /**
+   * the pair (point on the triangle, point on the edge) minimizing the distance.
+   * Candidates in the spirit of Ericson 5.1.10: the edge against the three triangle sides,
+   * the edge endpoints against the triangle, and the plane-crossing point; when the edge
+   * pierces the triangle interior the distance is exactly zero.
+   * Degenerate triangles and zero-length edges are handled by the same candidates
+   */
+  def getNearestPoints(edge: Pga3dEdge): (Pga3dPoint, Pga3dPoint) = {
+    val acc = Pga3dPairOfNearestPoints(getNearestPoint(edge.a), edge.a)
+    acc.update(getNearestPoint(edge.b), edge.b)
+
+    // the plane-crossing candidate; NaN distances of a degenerate triangle skip the branch
+    val plane = normalizedPlane
+    val da: Double = plane v edge.a
+    val db: Double = plane v edge.b
+
+    if (da * db < 0.0) {
+      val p = edge.interpolatedPoint(da / (da - db))
+      val nearestToP = getNearestPoint(p)
+      // the interior test goes through the (degeneracy-hardened) nearest point rather than
+      // barycentric signs: within the reconstruction noise of the triangle scale is inside
+      val threshold = 1e-9 * perimeter
+      if ((nearestToP - p).normSquare <= threshold * threshold) {
+        // the edge pierces the triangle: the distance is exactly zero
+        return (p, p)
+      }
+      acc.update(nearestToP, p)
+    }
+
+    acc.update(Pga3dEdge(a, b).getNearestPoints(edge))
+    acc.update(Pga3dEdge(b, c).getNearestPoints(edge))
+    acc.update(Pga3dEdge(c, a).getNearestPoints(edge))
+
+    acc.pair
+  }
+
+  def distanceSquareTo(edge: Pga3dEdge): Double =
+    val (onTriangle, onEdge) = getNearestPoints(edge)
+    (onTriangle - onEdge).normSquare
+
+  def distanceTo(edge: Pga3dEdge): Double =
+    Math.sqrt(distanceSquareTo(edge))
+
   def distanceSquareTo(p: Pga3dPoint): Double =
     (getNearestPoint(p) - p).normSquare
 

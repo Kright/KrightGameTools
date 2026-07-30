@@ -17,6 +17,7 @@ class FlatDoubleSerializerPga2dGeomTest extends AnyFunSuiteLike with ScalaCheckP
     assert(FlatDoubleSerializer.getSize[Pga2dAABB] == 4)
     assert(FlatDoubleSerializer.getSize[Pga2dCircle] == 3)
     assert(FlatDoubleSerializer.getSize[Pga2dRay] == 6)
+    assert(FlatDoubleSerializer.getSize[Pga2dCapsule] == 5)
   }
 
   test("check serialization and deserialization") {
@@ -27,4 +28,5 @@ class FlatDoubleSerializerPga2dGeomTest extends AnyFunSuiteLike with ScalaCheckP
     myCheck(Pga2dPhysicsGenerators.aabbIn(box))
     myCheck(for (center <- Pga2dPhysicsGenerators.pointIn(box); r <- radii) yield Pga2dCircle(center, r))
     myCheck(for (origin <- Pga2dPhysicsGenerators.pointIn(box); direction <- Pga2dPhysicsGenerators.vectorIn(box)) yield Pga2dRay(origin, direction))
+    myCheck(for (a <- Pga2dPhysicsGenerators.pointIn(box); b <- Pga2dPhysicsGenerators.pointIn(box); r <- radii) yield Pga2dCapsule(a, b, r))
   }

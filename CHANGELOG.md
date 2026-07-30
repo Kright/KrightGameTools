@@ -26,6 +26,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `rotation(from, to)`: the exact-wedge branch now starts at `dot <= -0.9` (was `-1 + 1e-6`).
 - `gametools-pga3d` now depends on `gametools-mathutil` at compile scope (it was already a
   transitive dependency through `gametools-matrix`).
+- `Pga3dNearestPoint.update` / `Pga3dPairOfNearestPoints.update` (and the 2d twins) return
+  `Boolean` - whether the candidate improved the accumulator (e.g. to know which of several
+  queried volumes produced the final contact). The comparison is NaN-safe in both
+  directions: a NaN candidate never wins, and a NaN stored distance is replaced by the
+  first real candidate instead of silently blocking all further updates.
+- `getNearestPointsBinSearch` is removed from `Pga3dEdge` / `Pga2dEdge`: slow, allocating,
+  and easy to call by accident instead of the analytic `getNearestPoints`. The
+  implementation lives on in the test sources (`Pga3dEdgeBinSearchReference` /
+  `Pga2dEdgeBinSearchReference`) as a near-perfect-precision reference.
 - `mathutil.IEqualsWithEps` and `mathutil.EqualityEps` are removed in favor of the
   `CanEqualWithEps` typeclass: the `===` operator with an implicit eps is gone - pass eps
   explicitly (`a.equalsWithEps(b, eps)` via `CanEqualWithEps`, or the plain `isEquals(other, eps)`
@@ -83,6 +92,40 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   and take the per-call plane construction with its sqrt off the raycast hot path. JMH
   wheel-raycast scenario (`benchmark/IntersectionBenchmark`): hit 59 -> 52 ns, with the cached
   plane 37 ns; the AABB-reject path stays at ~6 ns.
+- `Pga3dCapsule(a, b, r)`: all points within r of the segment [a, b], stored by the two
+  hemisphere centers - no unit or normalization invariants, `a == b` degenerates to a
+  sphere (`Pga3dCapsule(sphere)`). The engine-style representation is bidirectional:
+  `Pga3dCapsule.fromCenter(center, halfAxis, r)` and the `center` / `halfAxis` accessors.
+  Plus `edge`, `toAABB` (the edge AABB expanded by r), `expand(dr)`, `map` and
+  motor/rotor/translator sandwich.
+- Capsule collision queries: `intersects(sphere/capsule/triangle)` (with the symmetric
+  `sphere.intersects(capsule)` / `circle.intersects(capsule)` delegates) and
+  `deepestContact(triangle): Option[Pga3dContact]`. The non-piercing contact mirrors the
+  sphere (nearest pair, radial normal, depth `r - distance`); when the axis pierces the
+  triangle the normal is the plane normal oriented towards the larger part of the axis
+  (computed geometrically, independent of the plane orientation convention) and the depth
+  is `r + reach` - pushing by depth fully separates the capsule. Property-tested: a
+  zero-radius capsule behaves as its edge, an `a == b` capsule matches the sphere answers.
+- `Pga2dCapsule(a, b, r)` (a stadium shape) mirrors the 3d capsule: the same accessors,
+  constructors, sandwich extensions and `intersects(circle/capsule/triangle)`, backed by
+  `Pga2dTriangle.getNearestPoints(edge)` / `distanceSquareTo(edge)` - the 2d triangle is
+  filled, so an edge endpoint inside it or a proper boundary crossing (detected by
+  orientation predicates) yields an exactly zero distance. 2d `deepestContact` is deferred
+  together with the circle one (the interior-contact convention needs a design decision).
+- `Pga3dTriangle.getNearestPoints(edge)` / `distanceSquareTo(edge)` / `distanceTo(edge)`:
+  the segment-triangle nearest pair (Ericson 5.1.10-style candidates: three edge-edge
+  pairs, two endpoint-triangle pairs and the plane crossing). A piercing edge yields
+  exactly zero distance; the interior test goes through the degeneracy-hardened
+  getNearestPoint, so nearly degenerate triangles and extreme scales (1e+-30) stay correct.
+- Sphere and circle as collision queries: `Pga3dSphere.intersects(triangle)` (a comparison of
+  `distanceSquareTo` against r^2) and `Pga3dSphere.deepestContact(triangle): Option[Pga3dContact]` -
+  the nearest triangle point, the unit normal towards the sphere center and the penetration
+  depth; a center exactly on the triangle falls back to the plane normal, and the pathological
+  "center exactly on a degenerate triangle" returns None. `Pga3dContact(point, normal, depth)`
+  is a new case class (7 flat doubles). `Pga2dCircle.intersects(triangle)` mirrors the 2d side
+  (2d `deepestContact` is deferred: an interior center is common in 2d and its normal/depth
+  convention deserves a design decision). Both gain an `intersects(sphere/circle)` alias for
+  `hasIntersection`.
 - `distanceSquareTo` on `Pga3dTriangle`/`Pga2dTriangle` (point), `Pga3dEdge`/`Pga2dEdge`
   (point and edge-edge) and `Pga3dAABB`/`Pga2dAABB` (point): sqrt-free companions of
   `distanceTo` for comparisons, symmetric with `norm`/`normSquare`. `distanceTo` delegates to

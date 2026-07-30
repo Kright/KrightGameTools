@@ -167,6 +167,15 @@ object Pga2dAABB:
       max = (t.a max t.b) max t.c,
     )
 
+  def apply(capsule: Pga2dCapsule): Pga2dAABB = {
+    val r = capsule.r
+    val rVector = Pga2dVector(r, r)
+    Pga2dAABB(
+      min = (capsule.a min capsule.b) - rVector,
+      max = (capsule.a max capsule.b) + rVector,
+    )
+  }
+
   def apply(circle: Pga2dCircle): Pga2dAABB = {
     val center = circle.center
     val r = circle.r

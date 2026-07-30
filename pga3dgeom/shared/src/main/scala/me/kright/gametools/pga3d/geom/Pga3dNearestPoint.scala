@@ -11,9 +11,17 @@ final class Pga3dNearestPoint(val origin: Pga3dPoint,
   def distance: Double =
     Math.sqrt(distSquare)
 
-  def update(newPoint: Pga3dPoint): Unit =
+  /**
+   * accepts newPoint when it is strictly closer to origin; returns true when the accumulator
+   * was updated (e.g. to know which of several queried volumes produced the final contact).
+   * NaN-safe in both directions: a NaN candidate never wins, and a NaN stored distance
+   * is replaced by the first real candidate instead of blocking all further updates
+   */
+  def update(newPoint: Pga3dPoint): Boolean =
     val distSquare2 = (newPoint - origin).normSquare
-    if (distSquare2 < distSquare) {
+    // !(a >= b) is "a < b or either is NaN"
+    if (!(distSquare2 >= distSquare) && !distSquare2.isNaN) {
       distSquare = distSquare2
       nearestPoint = newPoint
-    }
+      true
+    } else false

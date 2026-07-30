@@ -160,6 +160,50 @@ case class Pga2dTriangle(a: Pga2dPoint,
     val (tba, tca) = getInterpolationFactors(p)
     tba >= 0.0 && tca >= 0.0 && tba + tca <= 1.0
 
+  /**
+   * the pair (point on the triangle, point on the edge) minimizing the distance.
+   * The 2d triangle is filled: an edge endpoint inside it or a proper crossing of the
+   * boundary yields an exactly zero distance
+   */
+  def getNearestPoints(edge: Pga2dEdge): (Pga2dPoint, Pga2dPoint) = {
+    // an interior endpoint is returned as is by the 2d getNearestPoint: exactly zero
+    val nearestToA = getNearestPoint(edge.a)
+    if (nearestToA == edge.a) return (edge.a, edge.a)
+    val nearestToB = getNearestPoint(edge.b)
+    if (nearestToB == edge.b) return (edge.b, edge.b)
+
+    // a proper crossing of a triangle side: exactly zero at the crossing point
+    val crossingAB = Pga2dTriangle.properCrossing(a, b, edge)
+    if (!crossingAB.isNaN) {
+      val p = edge.interpolatedPoint(crossingAB)
+      return (p, p)
+    }
+    val crossingBC = Pga2dTriangle.properCrossing(b, c, edge)
+    if (!crossingBC.isNaN) {
+      val p = edge.interpolatedPoint(crossingBC)
+      return (p, p)
+    }
+    val crossingCA = Pga2dTriangle.properCrossing(c, a, edge)
+    if (!crossingCA.isNaN) {
+      val p = edge.interpolatedPoint(crossingCA)
+      return (p, p)
+    }
+
+    val acc = Pga2dPairOfNearestPoints(nearestToA, edge.a)
+    acc.update(nearestToB, edge.b)
+    acc.update(Pga2dEdge(a, b).getNearestPoints(edge))
+    acc.update(Pga2dEdge(b, c).getNearestPoints(edge))
+    acc.update(Pga2dEdge(c, a).getNearestPoints(edge))
+    acc.pair
+  }
+
+  def distanceSquareTo(edge: Pga2dEdge): Double =
+    val (onTriangle, onEdge) = getNearestPoints(edge)
+    (onTriangle - onEdge).normSquare
+
+  def distanceTo(edge: Pga2dEdge): Double =
+    Math.sqrt(distanceSquareTo(edge))
+
   def distanceSquareTo(p: Pga2dPoint): Double =
     (getNearestPoint(p) - p).normSquare
 
@@ -171,6 +215,27 @@ case class Pga2dTriangle(a: Pga2dPoint,
 
 
 object Pga2dTriangle:
+  /** > 0 when a -> b -> c turns counter-clockwise */
+  private inline def orient(a: Pga2dPoint, b: Pga2dPoint, c: Pga2dPoint): Double =
+    (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+
+  /**
+   * the interpolation factor along `edge` where it properly crosses the segment [p, q],
+   * or NaN when the segments do not properly cross (touching or collinear cases are left
+   * to the distance candidates, which classify them within rounding noise anyway)
+   */
+  private def properCrossing(p: Pga2dPoint, q: Pga2dPoint, edge: Pga2dEdge): Double = {
+    val o1 = orient(p, q, edge.a)
+    val o2 = orient(p, q, edge.b)
+    if (!(o1 * o2 < 0.0)) return Double.NaN
+
+    val o3 = orient(edge.a, edge.b, p)
+    val o4 = orient(edge.a, edge.b, q)
+    if (!(o3 * o4 < 0.0)) return Double.NaN
+
+    o1 / (o1 - o2)
+  }
+
   private inline def outsideAxis(p: Double, radius: Double, a: Double, b: Double, c: Double): Boolean = {
     val lo = p - radius
     val hi = p + radius

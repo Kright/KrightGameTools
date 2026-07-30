@@ -18,6 +18,8 @@ class FlatDoubleSerializerPga3dGeomTest extends AnyFunSuiteLike with ScalaCheckP
     assert(FlatDoubleSerializer.getSize[Pga3dSphere] == 4)
     assert(FlatDoubleSerializer.getSize[Pga3dCylinder] == 7)
     assert(FlatDoubleSerializer.getSize[Pga3dRay] == 9)
+    assert(FlatDoubleSerializer.getSize[Pga3dCapsule] == 7)
+    assert(FlatDoubleSerializer.getSize[Pga3dContact] == 7)
   }
 
   test("check serialization and deserialization") {
@@ -29,4 +31,6 @@ class FlatDoubleSerializerPga3dGeomTest extends AnyFunSuiteLike with ScalaCheckP
     myCheck(for (center <- Pga3dPhysicsGenerators.pointIn(box); r <- radii) yield Pga3dSphere(center, r))
     myCheck(for (a <- Pga3dPhysicsGenerators.pointIn(box); b <- Pga3dPhysicsGenerators.pointIn(box); r <- radii) yield Pga3dCylinder(a, b, r))
     myCheck(for (origin <- Pga3dPhysicsGenerators.pointIn(box); direction <- Pga3dPhysicsGenerators.vectorIn(box)) yield Pga3dRay(origin, direction))
+    myCheck(for (a <- Pga3dPhysicsGenerators.pointIn(box); b <- Pga3dPhysicsGenerators.pointIn(box); r <- radii) yield Pga3dCapsule(a, b, r))
+    myCheck(for (p <- Pga3dPhysicsGenerators.pointIn(box); n <- Pga3dPhysicsGenerators.vectorIn(box); d <- radii) yield Pga3dContact(p, n, d))
   }

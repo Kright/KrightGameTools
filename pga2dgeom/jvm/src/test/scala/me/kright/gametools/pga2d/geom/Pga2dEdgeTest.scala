@@ -74,7 +74,7 @@ class Pga2dEdgeTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
     for ((p1, p2) <- ArraySeq(
       edge.getNearestPoints(edge2),
-      edge.getNearestPointsBinSearch(edge2)
+      Pga2dEdgeBinSearchReference.getNearestPoints(edge, edge2)
     )) {
       assert(edge.contains(p1, eps = 1e-12))
       assert(edge2.contains(p2, eps = 1e-12))
@@ -99,7 +99,7 @@ class Pga2dEdgeTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       assert(edge1.contains(p1, eps = 1e-13))
       assert(edge2.contains(p2, eps = 1e-13))
 
-      val (ep1, ep2) = edge1.getNearestPointsBinSearch(edge2)
+      val (ep1, ep2) = Pga2dEdgeBinSearchReference.getNearestPoints(edge1, edge2)
       assert(edge1.contains(ep1, eps = 1e-13))
       assert(edge2.contains(ep2, eps = 1e-13))
 
@@ -149,7 +149,7 @@ class Pga2dEdgeTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       assert(edge1.contains(p1, eps = 1e-12))
       assert(edge2.contains(p2, eps = 1e-12))
 
-      val (ep1, ep2) = edge1.getNearestPointsBinSearch(edge2)
+      val (ep1, ep2) = Pga2dEdgeBinSearchReference.getNearestPoints(edge1, edge2)
       assert(edge1.contains(ep1, eps = 1e-12))
       assert(edge2.contains(ep2, eps = 1e-12))
 

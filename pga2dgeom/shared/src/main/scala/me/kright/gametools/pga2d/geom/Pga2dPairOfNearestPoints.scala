@@ -19,13 +19,20 @@ final class Pga2dPairOfNearestPoints(var a: Pga2dPoint,
   def pair: (Pga2dPoint, Pga2dPoint) =
     (a, b)
 
-  def update(a2: Pga2dPoint, b2: Pga2dPoint): Unit =
+  /**
+   * accepts the pair when it is strictly closer; returns true when the accumulator was
+   * updated. NaN-safe in both directions: a NaN candidate never wins, and a NaN stored
+   * distance is replaced by the first real candidate instead of blocking further updates
+   */
+  def update(a2: Pga2dPoint, b2: Pga2dPoint): Boolean =
     val distSquare2 = (a2 - b2).normSquare
-    if (distSquare2 < distSquare) {
+    // !(a >= b) is "a < b or either is NaN"
+    if (!(distSquare2 >= distSquare) && !distSquare2.isNaN) {
       distSquare = distSquare2
       a = a2
       b = b2
-    }
+      true
+    } else false
 
-  def update(pair: (Pga2dPoint, Pga2dPoint)): Unit =
+  def update(pair: (Pga2dPoint, Pga2dPoint)): Boolean =
     update(pair._1, pair._2)

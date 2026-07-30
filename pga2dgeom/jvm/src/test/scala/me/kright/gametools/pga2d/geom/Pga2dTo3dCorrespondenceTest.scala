@@ -99,6 +99,31 @@ class Pga2dTo3dCorrespondenceTest extends AnyFunSuiteLike with ScalaCheckPropert
     }
   }
 
+  test("circle-triangle intersects agrees with the 3d sphere embedding") {
+    val radii = Gen.oneOf(
+      Pga2dVectorMathGenerators.doubleInRange(0.0, 1.0),
+      Pga2dVectorMathGenerators.doubleInRange(0.0, 2.0 * halfSize),
+    )
+
+    forAll(triangles, points, radii, MinSuccessful(2000)) { (triangle, center, r) =>
+      val circle = Pga2dCircle(center, r)
+      val sphere = me.kright.gametools.pga3d.geom.Pga3dSphere(to3d(center), r)
+
+      // for an interior center the 2d distance is exactly 0 while the 3d branch
+      // reconstructs the projection with rounding noise, so the booleans are only
+      // required to agree outside a noise shell around r
+      val noise = 1e-9 * (1.0 + triangle.perimeter)
+      val d2 = Math.sqrt(triangle.distanceSquareTo(center))
+      val d3 = Math.sqrt(to3d(triangle).distanceSquareTo(to3d(center)))
+
+      assert((d2 - d3).abs <= noise, s"d2 = $d2, d3 = $d3, circle = $circle, triangle = $triangle")
+      if ((d2 - r).abs > noise) {
+        assert(circle.intersects(triangle) == sphere.intersects(to3d(triangle)),
+          s"circle = $circle, triangle = $triangle")
+      }
+    }
+  }
+
   test("aabb: distanceSquareTo agrees with the 3d embedding") {
     forAll(triangles, points, MinSuccessful(2000)) { (triangle, p) =>
       val aabb2d = triangle.toAABB

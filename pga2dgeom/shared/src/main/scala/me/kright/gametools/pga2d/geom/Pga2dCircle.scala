@@ -19,3 +19,12 @@ case class Pga2dCircle(center: Pga2dPoint,
   def hasIntersection(s: Pga2dCircle): Boolean =
     val rSum = r + s.r
     (center - s.center).normSquare <= rSum * rSum
+
+  def intersects(s: Pga2dCircle): Boolean =
+    hasIntersection(s)
+
+  def intersects(capsule: Pga2dCapsule): Boolean =
+    capsule.intersects(this)
+
+  def intersects(triangle: Pga2dTriangle): Boolean =
+    triangle.distanceSquareTo(center) <= r * r

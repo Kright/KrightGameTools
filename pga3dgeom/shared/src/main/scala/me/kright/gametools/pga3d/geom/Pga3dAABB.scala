@@ -185,6 +185,15 @@ object Pga3dAABB:
       max = (t.a max t.b) max t.c,
     )
 
+  def apply(capsule: Pga3dCapsule): Pga3dAABB = {
+    val r = capsule.r
+    val rVector = Pga3dVector(r, r, r)
+    Pga3dAABB(
+      min = (capsule.a min capsule.b) - rVector,
+      max = (capsule.a max capsule.b) + rVector,
+    )
+  }
+
   def apply(sphere: Pga3dSphere): Pga3dAABB = {
     val center = sphere.center
     val r = sphere.r

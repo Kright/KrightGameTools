@@ -4,7 +4,6 @@ import me.kright.gametools.flatarray.FlatDoubleSerializer
 import me.kright.gametools.mathutil.CanEqualWithEps
 import me.kright.gametools.mathutil.MathUtil.clamp
 import me.kright.gametools.pga3d.*
-import me.kright.gametools.mathutil.MathUtil
 
 case class Pga3dEdge(a: Pga3dPoint,
                      b: Pga3dPoint) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
@@ -77,9 +76,6 @@ case class Pga3dEdge(a: Pga3dPoint,
   def contains(p: Pga3dPoint, eps: Double): Boolean =
     eps >= 0.0 && distanceSquareTo(p) <= eps * eps
 
-  def getNearestPointsBinSearch(other: Pga3dEdge): (Pga3dPoint, Pga3dPoint) =
-    Pga3dEdge.getNearestPointsBinSearch(this, other, 0.0, 1.0)
-
   def getNearestPoints(other: Pga3dEdge): (Pga3dPoint, Pga3dPoint) =
     Pga3dEdge.getNearestPoints(this, other)
 
@@ -104,36 +100,6 @@ object Pga3dEdge:
     def sandwich(edge: Pga3dEdge): Pga3dEdge =
       edge.map(p.sandwich(_).toPointUnsafe)
 
-
-  /**
-   * Not effective, straightforward implementation with near perfect precision
-   * Search distance between two edges by binary search.
-   */
-  def getNearestPointsBinSearch(a: Pga3dEdge, b: Pga3dEdge,
-                                t0: Double = 0.0, t1: Double = 1.0): (Pga3dPoint, Pga3dPoint) = {
-    val numberToDistance: Seq[(Int, Double)] = (0 to 4)
-      .map { i =>
-        val t = MathUtil.interpolate(t0, t1, i / 4.0)
-        val ai = a.interpolatedPoint(t)
-        val dist = b.distanceTo(ai)
-        (i, dist)
-      }
-
-    val maxDist = numberToDistance.map(_._2).max
-    val (minI, minDist) = numberToDistance.minBy(_._2)
-
-    if ((maxDist - minDist) / minDist < 1e-14 || (t1 - t0) < 1e-14) {
-      val (bestI, _) = numberToDistance.minBy(_._2)
-      val t = MathUtil.interpolate(t0, t1, bestI / 4.0)
-      val ap = a.interpolatedPoint(t)
-      return (ap, b.getNearestPoint(ap))
-    }
-
-    getNearestPointsBinSearch(a, b,
-      t0 = MathUtil.interpolate(t0, t1, Math.max(minI - 1, 0) / 4.0),
-      t1 = MathUtil.interpolate(t0, t1, Math.min(minI + 1, 4) / 4.0),
-    )
-  }
 
   def getNearestPoints(self: Pga3dEdge, other: Pga3dEdge): (Pga3dPoint, Pga3dPoint) = {
     val mag2 = self.magnitudeSquare
