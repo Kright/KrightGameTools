@@ -40,6 +40,15 @@ for (step <- 0 until stepsCount) {
 
 Actually, for Runge-Kutta method of fourth grade, function addForquesToBodies is called four times.
 
+## Solvers
+
+Eight solvers with orders from 1 (Euler) to 4 (RK4, RKMK4, RKF45, GaussLegendre), including a
+Verlet on the motor group, plus hard distance constraints (rod / rope / strut) that plug into
+any of them. These are reference implementations - simple and readable first, and usable as a
+test baseline and an order-of-precision example when you write an optimized solver for your
+own data layout. See [Solvers.md](Solvers.md) for the full table with orders, costs and
+measured accuracies, a selection guide and the constraint resolver details.
+
 ## Inertia representations:
 
 * **Pga3dInertia**: common interface

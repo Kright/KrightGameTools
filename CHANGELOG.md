@@ -82,6 +82,66 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Hard distance constraints for pga3dphysics: `Pga3dDistanceConstraint` (rod / rope / strut
+  between two body or world anchor points), `Pga3dConstraintResolver` (exact acceleration-level
+  constraint forques for the force callback + post-step Gauss-Seidel projection of positions
+  and velocities in the inverse-inertia metric) and `Pga3dPhysicsSolverConstrained(inner,
+  resolver)` wiring both into any solver except Verlet. The constrained RK4 keeps the 4th
+  order (measured 4.06-4.10 on a rigid pendulum with an off-center anchor), holds distances to
+  ~1e-15 and conserves the momentum of body-body constraints to ~1e-12. Coupled constraints
+  (chains) are solved by running the Gauss-Seidel sweeps to convergence (the iteration counts
+  are only safety bounds): on a swinging 4-body rod chain every solver keeps its own order
+  (euler 1.21, heun/midPoint 2.05, rk4/rkmk4 4.15, rkf45 4.33, gaussLegendre(6) 3.94), the
+  rods hold to the machine epsilon and the energy error stays at the truncation level.
+- `Pga3dPhysicsSolverVerletConstrained`: a RATTLE on the motor group - the Verlet-family
+  solver with hard distance constraints built into the step itself (a generic projection
+  composite over Verlet only reaches the 1st order). Like the plain Verlet it is a stateless
+  strategy over caller-owned pose arrays, not a `Pga3dPhysicsSolver`; the constraints (and the
+  iteration caps) are arguments of `step`, so they may change freely between steps - e.g.
+  contact-like constraints regenerated every frame. The step reconstructs the node momenta
+  from the poses (redoing the second RATTLE half kick of the previous segment with its
+  velocity-stage impulses - so the user force callback runs once per step), then performs the
+  first half kick with the position-stage constraint impulses whose gradients are evaluated at
+  the old poses (the variational SHAKE/RATTLE ingredient), solved by Newton/Gauss-Seidel
+  sweeps through the midframe drift. Only the poses come out; `reconstructNode(...)` gives honest
+  observer velocities. Measured on the rod chain: 2nd-order convergence (2.00, 2.00, 2.00),
+  rods to ~3e-11 (the sweep exit threshold; single constraints to ~1e-15), dumbbell momentum
+  to ~8e-12 and energy to ~1e-12 over 20k steps, bounded energy oscillation (~0.1% on the
+  off-center pendulum over 200 s, 1e-5 relative on the chain). Pose edits between steps still
+  become velocity edits, like in the plain Verlet.
+- `benchmark/PhysicsSolverBenchmark`: JMH comparison of the per-step overhead of all physics
+  solvers with an empty force callback (ns per body per step: euler 117, midPoint 230, heun 239,
+  verlet 406, rk4 472, rkmk4 657, rkf45 1056, gaussLegendre(3) 1079); the solvers table in
+  pga3dphysics/Solvers.md cites these numbers.
+- `Pga3dPhysicsSolverVerlet`: a position-Verlet (leapfrog) on the motor group, 2nd order, one
+  force evaluation per step. Like the classic Verlet it stores no velocities at all: it is a
+  stateless strategy (not a `Pga3dPhysicsSolver`) whose state is two consecutive pose arrays
+  owned by the caller - `step(inertias, prevMotors, motors, globalForques, prevDt, dt,
+  nextMotors, nextLocalBs)`, with `makePrevMotors` building the virtual previous poses for the
+  first step. The half-step twist is reconstructed as the Lie derivative of the pose
+  (`-2 * (prevMotor.reverse * motor).log / dt`), and the kick is applied to the world-frame
+  momentum (the discrete Moser-Veselov idea) with the next displacement solved from the
+  momentum by a fixed-point iterated to convergence, so the gyroscopic term never appears
+  explicitly and re-deriving the momentum from the poses every step loses nothing. Free
+  precession at dt = 0.01: momentum exact to rounding (~1e-15), energy error bounded
+  (4.1666e-6 after 1k steps and after 100k) instead of drifting (midpoint: 1.7e-4). Editing a
+  motor between steps implicitly edits the velocity, like in position-based dynamics.
+- `Pga3dPhysicsSolverRKF45`: a Runge-Kutta-Fehlberg 4(5) embedded pair with a fixed step. The
+  committed state is the 4th-order solution; the extra stages build the embedded 5th-order one
+  and the norm of their difference is a per-step, per-body local-error estimate exposed via
+  `lastMotorErrors` / `lastLocalBErrors` / `lastMaxError` - a dev build can log it during the
+  simulation and map where the error lives (impacts, stiff constraints, fast-spinning bodies)
+  instead of rerunning at a smaller dt. The estimate is essentially exact (measured 0.98-1.01
+  of the true single-step error) and scales as dt^5. It is a class, not an object: each
+  instance keeps its own last-step estimate. Bonus: the Fehlberg 4th-order tableau shows ~8x
+  smaller free-precession error constants than the classic RK4 one.
+- `Pga3dPhysicsSolverRKMK4`: a Runge-Kutta-Munthe-Kaas 4th-order solver. Instead of adding
+  scaled motor derivatives in flat R^8 like `Pga3dPhysicsSolverRK4`, it integrates
+  `u' = dexpInv(-u, -localB / 2)` (the series truncated at the `ad^2/12` term) on the flat
+  bivector Lie algebra and updates with a single `M0 * exp(u)`, so every stage and the result
+  are exact motors by construction and renormalization only removes rounding noise of the
+  product. On the free-precession test it matches renormalized RK4 (both are geometric
+  4th-order methods) with a slightly smaller error constant (~0.5% at practical step sizes).
 - `Pga3dTriangle.fartherThan(p, maxDistance)` / `Pga2dTriangle.fartherThan`: conservative early
   reject against the triangle's bounding box - a few comparisons, no multiplications and no
   allocations (4.4 vs 6.7 ns for the allocating `toAABB.contains` equivalent). A prefilter

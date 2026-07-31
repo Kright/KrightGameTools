@@ -364,6 +364,8 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
       Pga3dPhysicsSolverHeun,
       Pga3dPhysicsSolverMidPoint,
       Pga3dPhysicsSolverRK4,
+      Pga3dPhysicsSolverRKMK4,
+      Pga3dPhysicsSolverRKF45(),
 
       Pga3dPhysicsSolverGaussLegendre(iterations = 0),
       Pga3dPhysicsSolverGaussLegendre(iterations = 1),

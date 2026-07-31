@@ -199,4 +199,5 @@ lazy val benchmark = (project in file("benchmark"))
     pga3d.jvm,
     pga3dgeom.jvm,
     pga2dgeom.jvm,
+    pga3dphysics.jvm,
   )
