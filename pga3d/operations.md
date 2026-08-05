@@ -381,6 +381,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `reciprocal: Pga3dBivector`
 - `exp: Pga3dMotor`
 - `exp(t: Double): Pga3dMotor`
+- `dexp(b: Pga3dBivector): Pga3dBivector`
+- `dexpInv(b: Pga3dBivector): Pga3dBivector`
 - `split: (Pga3dBivector, Pga3dBivectorWeight)`
 - `toMultivector: Pga3dMultivector`
 - `toMotor: Pga3dMotor`
@@ -646,6 +648,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `reciprocal: Pga3dBivectorBulk`
 - `exp: Pga3dRotor`
 - `exp(t: Double): Pga3dRotor`
+- `dexp(b: Pga3dBivector): Pga3dBivector`
+- `dexpInv(b: Pga3dBivector): Pga3dBivector`
 - `toMultivector: Pga3dMultivector`
 - `toMotor: Pga3dMotor`
 - `toBivector: Pga3dBivector`
@@ -679,6 +683,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga3dRotor.rotation`) are not lis
 - `reciprocal: Pga3dBivectorWeight`
 - `exp: Pga3dTranslator`
 - `exp(t: Double): Pga3dTranslator`
+- `dexp(b: Pga3dBivector): Pga3dBivector`
+- `dexpInv(b: Pga3dBivector): Pga3dBivector`
 - `toMultivector: Pga3dMultivector`
 - `toMotor: Pga3dMotor`
 - `toBivector: Pga3dBivector`

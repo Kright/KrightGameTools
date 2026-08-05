@@ -174,6 +174,34 @@ final case class Pga2dVector(x: Double = 0.0,
       wy = -t * x,
     )
 
+  /**
+   * The differential of exp at an ideal (pure-translation) u. The commutator operator is
+   * nilpotent here (u x (u x b) == 0), so the series terminates and the two-term form is exact:
+   *   dexp(u, b) = b + u.cross(b)
+   * See Pga2dProjectivePoint.dexp for the general form.
+   */
+  def dexp(b: Pga2dProjectivePoint): Pga2dProjectivePoint =
+    val ub = this.cross(b)
+    Pga2dProjectivePoint(
+      x = (b.x + ub.x),
+      y = (b.y + ub.y),
+      w = b.w,
+    )
+
+  /**
+   * The inverse of the differential of exp at an ideal (pure-translation) u; exact,
+   * no trigonometry:
+   *   dexpInv(u, b) = b - u.cross(b)
+   * See Pga2dProjectivePoint.dexpInv for the general form.
+   */
+  def dexpInv(b: Pga2dProjectivePoint): Pga2dProjectivePoint =
+    val ub = this.cross(b)
+    Pga2dProjectivePoint(
+      x = (b.x - ub.x),
+      y = (b.y - ub.y),
+      w = b.w,
+    )
+
   def toMultivector: Pga2dMultivector =
     Pga2dMultivector(
       s = 0.0,

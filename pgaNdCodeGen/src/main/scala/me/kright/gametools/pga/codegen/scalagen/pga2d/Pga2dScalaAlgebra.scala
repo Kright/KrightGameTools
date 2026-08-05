@@ -100,6 +100,7 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
     DefPlusMinusMadd(),
     DefExpForBivector(),
     DefLogForMotor(),
+    DefDexpForBivector(),
     DefInterpolation(),
     DefConvertTo(),
     DefProjection(),

@@ -129,6 +129,7 @@ object Pga3dScalaAlgebra extends ScalaPgaAlgebra:
     DefPlusMinusMadd(),
     DefExpForBivector(),
     DefLogForMotor(),
+    DefDexpForBivector(),
     DefBivectorSplit(),
     DefConvertTo(),
     DefProjection(),

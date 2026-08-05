@@ -104,3 +104,87 @@ object PGA extends CommonMethods:
       } else (1.0 / 3.0) * (1.0 + 0.8 * len * len)
 
       MultiVector.scalar(cos) + (line + IBdiv2) * sinDivLen + aIBettaDiv2 * sinMinusCosDivLen2
+
+    /**
+     * The differential of exp as a plain numerical series - a slow reference implementation
+     * for testing the closed forms in pga3d:
+     *
+     *   dexp(u, b) = sum ad_u^k (b) / (k + 1)!,  where ad_u(x) = u * x - x * u = 2 * u.cross(x)
+     *
+     * The defining property (the left trivialization; the left Jacobian in SE(3)/robotics terms):
+     *
+     *   exp(u + b * h) == exp(dexp(u, b) * h) * exp(u) + O(h^2)
+     *
+     * The fixed 32 terms converge to full double precision for u with bulk norm below ~2
+     * (the term ratio is ~(2 * bulkNorm / k), so the tail at k = 32 is far below 1e-17).
+     */
+    def dexp(u: MultiVector[Double], b: MultiVector[Double])(using ga: GA): MultiVector[Double] =
+      var term = b // ad^k (b) / (k + 1)!
+      var result = b
+      for (k <- 1 until 32) {
+        term = u.crossX2(term) / (k + 1.0)
+        result += term
+      }
+      result
+
+    /**
+     * The inverse of [[dexp]] as a plain numerical series - a slow reference implementation
+     * for testing the closed forms in pga3d:
+     *
+     *   dexpInv(u, b) = sum B_k * ad_u^k (b) / k!,  where B_k are the Bernoulli numbers
+     *   (B_1 = -1/2) and ad_u(x) = u * x - x * u = 2 * u.cross(x)
+     *
+     * so dexpInv(u, dexp(u, b)) == b. Unlike the dexp series this one has a finite convergence
+     * radius: bulk norm of u below pi, and the truncation at B_34 reaches ~1e-15 relative
+     * accuracy only for bulk norm up to ~1.2 (the term ratio is ~(bulkNorm / pi)^2).
+     */
+    def dexpInv(u: MultiVector[Double], b: MultiVector[Double])(using ga: GA): MultiVector[Double] =
+      var term = b // ad^k (b) / k!
+      var result = b // B_0 = 1
+      for (k <- 1 until bernoulliNumbers.length) {
+        term = u.crossX2(term) / k.toDouble
+        val bk = bernoulliNumbers(k)
+        if (bk != 0.0) {
+          result += term * bk
+        }
+      }
+      result
+
+    /** B_0 .. B_34 with B_1 = -1/2; the odd numbers beyond B_1 are zero */
+    private val bernoulliNumbers: Array[Double] = Array(
+      1.0, // B_0
+      -0.5, // B_1
+      1.0 / 6.0, // B_2
+      0.0,
+      -1.0 / 30.0, // B_4
+      0.0,
+      1.0 / 42.0, // B_6
+      0.0,
+      -1.0 / 30.0, // B_8
+      0.0,
+      5.0 / 66.0, // B_10
+      0.0,
+      -691.0 / 2730.0, // B_12
+      0.0,
+      7.0 / 6.0, // B_14
+      0.0,
+      -3617.0 / 510.0, // B_16
+      0.0,
+      43867.0 / 798.0, // B_18
+      0.0,
+      -174611.0 / 330.0, // B_20
+      0.0,
+      854513.0 / 138.0, // B_22
+      0.0,
+      -236364091.0 / 2730.0, // B_24
+      0.0,
+      8553103.0 / 6.0, // B_26
+      0.0,
+      -23749461029.0 / 870.0, // B_28
+      0.0,
+      8615841276005.0 / 14322.0, // B_30
+      0.0,
+      -7709321041217.0 / 510.0, // B_32
+      0.0,
+      2577687858367.0 / 6.0, // B_34
+    )

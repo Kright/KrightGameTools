@@ -193,6 +193,39 @@ final case class Pga3dBivectorWeight(wx: Double = 0.0,
       wz = t * wz,
     )
 
+  /**
+   * The differential of exp at a pure-weight (ideal) u. The commutator operator is nilpotent
+   * here (u x (u x b) == 0), so the series terminates and the two-term form is exact:
+   *   dexp(u, b) = b + u.cross(b)
+   * See Pga3dBivector.dexp for the general form.
+   */
+  def dexp(b: Pga3dBivector): Pga3dBivector =
+    val ub = this.cross(b)
+    Pga3dBivector(
+      wx = (b.wx + ub.wx),
+      wy = (b.wy + ub.wy),
+      wz = (b.wz + ub.wz),
+      xy = b.xy,
+      xz = b.xz,
+      yz = b.yz,
+    )
+
+  /**
+   * The inverse of the differential of exp at a pure-weight (ideal) u; exact, no trigonometry:
+   *   dexpInv(u, b) = b - u.cross(b)
+   * See Pga3dBivector.dexpInv for the general form.
+   */
+  def dexpInv(b: Pga3dBivector): Pga3dBivector =
+    val ub = this.cross(b)
+    Pga3dBivector(
+      wx = (b.wx - ub.wx),
+      wy = (b.wy - ub.wy),
+      wz = (b.wz - ub.wz),
+      xy = b.xy,
+      xz = b.xz,
+      yz = b.yz,
+    )
+
   def toMultivector: Pga3dMultivector =
     Pga3dMultivector(
       s = 0.0,

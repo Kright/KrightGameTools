@@ -304,6 +304,159 @@ final case class Pga3dBivector(wx: Double = 0.0,
       i = sinDivLen * t * t * (wx * yz + wz * xy - wy * xz),
     )
 
+  /**
+   * The differential of exp: maps the direction b of change of this bivector u to the resulting
+   * velocity of u.exp, expressed as a bivector (the left trivialization):
+   *   (u + b * h).exp == (u.dexp(b) * h).exp.geometric(u.exp) + O(h^2)
+   * In SE(3)/robotics terms this is the left Jacobian of exp applied to b;
+   * the right Jacobian (for the motor.geometric(u.exp) update convention) is (-u).dexp(b).
+   * The closed form (x is `cross`, c is the dual angle of u, c^2 = -u.geometric(u)):
+   *   dexp(u, b) = b + (sin(c)^2/c^2) * (u x b) + ((2c - sin(2c))/(2c^3)) * (u x (u x b))
+   * Degenerate cases are exact and NaN-free: Pga3dBivector.zero.dexp(b) == b, and for a
+   * pure-weight u the series terminates at b + u.cross(b).
+   * The inverse is dexpInv: u.dexpInv(u.dexp(b)) == b.
+   */
+  def dexp(b: Pga3dBivector): Pga3dBivector =
+    val len = bulkNorm
+    val cos = Math.cos(len)
+
+    // sin(x)/x = 1 - x^2/6 + x^4/120 - ...; at x <= 1e-5 the dropped x^4/120 <= 8.4e-23
+    // relative term is far below 1e-17, so the second-order form is exact in double
+    val sinDivLen = if (len > 1e-5) {
+      Math.sin(len) / len
+    } else {
+      1.0 - (len * len) / 6.0
+    }
+
+    // (sin(x)/x - cos(x)) / x^2, step by step:
+    //   sin(x)   = x - x^3/6 + x^5/120 - x^7/5040 + ...
+    //   sin(x)/x = 1 - x^2/6 + x^4/120 - x^6/5040 + ...
+    //   cos(x)   = 1 - x^2/2 + x^4/24  - x^6/720  + ...
+    //   sin(x)/x - cos(x) = (1/2 - 1/6)*x^2 + (1/120 - 1/24)*x^4 + (1/720 - 1/5040)*x^6 + ...
+    //                     = x^2/3 - x^4/30 + x^6/840 - ...
+    //   divide by x^2:      1/3   - x^2/30 + x^4/840 - ...
+    // at x <= 1e-5 the dropped x^4/840 <= 1.2e-23 is relatively far below 1e-17,
+    // so the second-order form is exact in double
+    val sinMinusCosDivLen2 = if (len > 1e-5) {
+      (sinDivLen - cos) / (len * len)
+    } else {
+      1.0 / 3.0 - (len * len) / 30.0
+    }
+
+    val p = 2.0 * (wx * yz + wz * xy - wy * xz)
+
+    // k1 = sin(c)^2 / c^2 = (sin(c)/c)^2
+    val k1 = sinDivLen * sinDivLen
+
+    // the dual part of k1: d(sinDivLen)/dm = -sinMinusCosDivLen2 / 2 over m = len^2 (check the
+    // series: d/dm (1 - m/6 + m^2/120 - ...) = -1/6 + m/60 - ... = -(1/3 - m/30 + ...) / 2),
+    // so k1' = 2 * sinDivLen * d(sinDivLen)/dm = -sinDivLen * sinMinusCosDivLen2 and the dual
+    // multiplier -p * k1' reuses the two series-guarded factors: no extra branch needed
+    val k1d = p * sinDivLen * sinMinusCosDivLen2
+
+    // k2 = (2c - sin(2c)) / (2c^3) = (1 - sinDivLen * cos) / c^2, since sin(2c)/(2c) = sinDivLen * cos;
+    //   1 - sin(2c)/(2c) = (2c)^2/3! - (2c)^4/5! + ... = (2/3)*c^2 - (2/15)*c^4 + (4/315)*c^6 - ...
+    //   divide by c^2:     2/3 - (2/15)*c^2 + (4/315)*c^4 - ...
+    // at c <= 1e-5 the dropped (4/315)*c^4 <= 2e-22 relative term is far below 1e-17,
+    // so the second-order form is exact in double
+    val k2 = if (len > 1e-5) {
+      (1.0 - sinDivLen * cos) / (len * len)
+    } else {
+      2.0 / 3.0 - (len * len) * (2.0 / 15.0)
+    }
+
+    // the dual part of k2, via the product rule on k2 = (1 - S*C)/m with S = sinDivLen, C = cos,
+    // m = len^2, dS/dm = -sinMinusCosDivLen2/2 and dC/dm = -S/2:
+    //   k2' = (sinMinusCosDivLen2 * C + S*S) / (2m) - k2/m
+    // so -k2' = (k2 - (sinMinusCosDivLen2 * C + S*S)/2) / m; differentiating the series of k2
+    // gives the small-angle branch k2' = -2/15 + (8/315)*m - ..., where the dropped m^2 term
+    // is ~2e-23 relative at c <= 1e-5, exact in double
+    val k2d = if (len > 1e-5) {
+      p * (k2 - (sinMinusCosDivLen2 * cos + sinDivLen * sinDivLen) * 0.5) / (len * len)
+    } else {
+      p * (2.0 / 15.0 - (len * len) * (8.0 / 315.0))
+    }
+
+    val ub = this.cross(b)
+    val uub = this.cross(ub)
+
+    Pga3dBivector(
+      wx = (b.wx + k1 * ub.wx + k2 * uub.wx - k1d * ub.yz - k2d * uub.yz),
+      wy = (b.wy + k1 * ub.wy + k1d * ub.xz + k2 * uub.wy + k2d * uub.xz),
+      wz = (b.wz + k1 * ub.wz + k2 * uub.wz - k1d * ub.xy - k2d * uub.xy),
+      xy = (b.xy + k1 * ub.xy + k2 * uub.xy),
+      xz = (b.xz + k1 * ub.xz + k2 * uub.xz),
+      yz = (b.yz + k1 * ub.yz + k2 * uub.yz),
+    )
+
+  /**
+   * The inverse of the differential of exp: u.dexpInv(u.dexp(b)) == b. Maps the velocity of
+   * u.exp (as a bivector, left trivialization) back to the rate of change of u itself - the
+   * workhorse of Lie-group ODE integrators (RKMK4), which integrate in the flat bivector space
+   * and return to the group with one exp, keeping the motor normalized by construction.
+   * The closed form (x is `cross`, c is the dual angle of u, c^2 = -u.geometric(u)):
+   *   dexpInv(u, b) = b - (u x b) + ((1 - c*cot(c))/c^2) * (u x (u x b))
+   * The coefficient of (u x b) is exactly -1: the odd Bernoulli numbers beyond B1 vanish.
+   * Singular at bulkNorm == pi, where exp stops being injective. Degenerate cases are exact
+   * and NaN-free: Pga3dBivector.zero.dexpInv(b) == b, pure-weight u gives b - u.cross(b).
+   */
+  def dexpInv(b: Pga3dBivector): Pga3dBivector =
+    val len = bulkNorm
+    val cos = Math.cos(len)
+
+    // sin(x)/x = 1 - x^2/6 + x^4/120 - ...; at x <= 1e-5 the dropped x^4/120 <= 8.4e-23
+    // relative term is far below 1e-17, so the second-order form is exact in double
+    val sinDivLen = if (len > 1e-5) {
+      Math.sin(len) / len
+    } else {
+      1.0 - (len * len) / 6.0
+    }
+
+    // (sin(x)/x - cos(x)) / x^2, step by step:
+    //   sin(x)   = x - x^3/6 + x^5/120 - x^7/5040 + ...
+    //   sin(x)/x = 1 - x^2/6 + x^4/120 - x^6/5040 + ...
+    //   cos(x)   = 1 - x^2/2 + x^4/24  - x^6/720  + ...
+    //   sin(x)/x - cos(x) = (1/2 - 1/6)*x^2 + (1/120 - 1/24)*x^4 + (1/720 - 1/5040)*x^6 + ...
+    //                     = x^2/3 - x^4/30 + x^6/840 - ...
+    //   divide by x^2:      1/3   - x^2/30 + x^4/840 - ...
+    // at x <= 1e-5 the dropped x^4/840 <= 1.2e-23 is relatively far below 1e-17,
+    // so the second-order form is exact in double
+    val sinMinusCosDivLen2 = if (len > 1e-5) {
+      (sinDivLen - cos) / (len * len)
+    } else {
+      1.0 / 3.0 - (len * len) / 30.0
+    }
+
+    val p = 2.0 * (wx * yz + wz * xy - wy * xz)
+
+    // k3 = (1 - c*cot(c)) / c^2 = ((sin(c)/c - cos(c)) / (sin(c)/c)) / c^2 = sinMinusCosDivLen2 / sinDivLen;
+    // both factors carry their own small-angle series, no extra branch; the series:
+    // k3 = 1/3 + m/45 + (2/945)*m^2 + ..., m = c^2; diverges at c = pi where exp stops being injective
+    val k3 = sinMinusCosDivLen2 / sinDivLen
+
+    // the dual part of k3, via the quotient rule on k3 = T/S with T = sinMinusCosDivLen2,
+    // S = sinDivLen, m = len^2, dT/dm = (S - 3*T)/(2m) and dS/dm = -T/2:
+    //   k3' = (dT/dm * S - T * dS/dm) / S^2 = (S*(S - 3*T)/m + T*T) / (2*S*S)
+    // differentiating the series of k3 gives the small-angle branch k3' = 1/45 + (4/945)*m + ...,
+    // where the dropped m^2 term is far below 1e-17 relative at c <= 1e-5, exact in double
+    val k3d = if (len > 1e-5) {
+      -p * (sinDivLen * (sinDivLen - 3.0 * sinMinusCosDivLen2) / (len * len) + sinMinusCosDivLen2 * sinMinusCosDivLen2) / (2.0 * sinDivLen * sinDivLen)
+    } else {
+      -p * (1.0 / 45.0 + (len * len) * (4.0 / 945.0))
+    }
+
+    val ub = this.cross(b)
+    val uub = this.cross(ub)
+
+    Pga3dBivector(
+      wx = (b.wx - ub.wx + k3 * uub.wx - k3d * uub.yz),
+      wy = (b.wy - ub.wy + k3 * uub.wy + k3d * uub.xz),
+      wz = (b.wz - ub.wz + k3 * uub.wz - k3d * uub.xy),
+      xy = (b.xy - ub.xy + k3 * uub.xy),
+      xz = (b.xz - ub.xz + k3 * uub.xz),
+      yz = (b.yz - ub.yz + k3 * uub.yz),
+    )
+
   def split: (Pga3dBivector, Pga3dBivectorWeight) =
     val div = bulkNormSquare
     if (div < 1e-100) {

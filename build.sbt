@@ -140,6 +140,8 @@ lazy val pga3d = crossProject(JSPlatform, JVMPlatform)
     mathutil,
     flatarray,
   )
+  // the JVM tests check the generated closed forms (exp, dexp, ...) against the slow generic reference in ga
+  .jvmConfigure(_.dependsOn(ga % "test"))
 
 lazy val pga2d = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
@@ -151,6 +153,8 @@ lazy val pga2d = crossProject(JSPlatform, JVMPlatform)
     matrix,
     flatarray,
   )
+  // the JVM tests check the generated closed forms (exp, dexp, ...) against the slow generic reference in ga
+  .jvmConfigure(_.dependsOn(ga % "test"))
 
 lazy val pga3dgeom = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)

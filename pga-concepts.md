@@ -97,6 +97,30 @@ around that point, and the exponent of an ideal point (a vector) is a translatio
 `slerp` follows the exact geodesic via `log`/`exp` (constant angular velocity), while `nlerp` is a
 cheaper renormalized-lerp approximation of it.
 
+The generator (grade-2) classes of both dimensions also provide `dexp`/`dexpInv` — the
+differential of `exp` and its inverse, in closed form. `u.dexp(b)` answers "if the generator u
+changes in the direction b, how does the motor `u.exp` move?", with the answer expressed as a
+grade-2 element again; the defining property is
+
+```
+(u + b * h).exp == (u.dexp(b) * h).exp.geometric(u.exp) + O(h^2)
+```
+
+and `u.dexpInv(u.dexp(b)) == b`. This is what Lie-group ODE integrators (RKMK4 and friends) need:
+they integrate the equations of motion in the flat bivector space (the Lie algebra) and return to
+the group with a single `exp`, so the motor stays normalized by construction — `dexpInv` converts
+the body velocity into the rate of change of the accumulated generator at every stage.
+
+For readers coming from SE(3)/robotics: `dexp` is the *left Jacobian* of the exponential map
+(and `dexpInv` its inverse); the *right* Jacobian is obtained by negating the argument,
+`(-u).dexp(b)` — that is the variant matching the `motor.geometric(u.exp)` update convention used
+by the physics solvers. `dexpInv` is singular where `exp` stops being injective (`bulkNorm == pi`);
+degenerate arguments are handled exactly (`zero.dexp(b) == b`, and for a pure-weight `u` the
+series terminates at `b + u.cross(b)`). In 2d every grade-2 element squares to a real scalar
+(`bulk ^ weight == 0`), so the coefficients need no dual (study-number) corrections there.
+The generic `ga` module carries slow series reference implementations of both, which the closed
+forms are property-tested against.
+
 ## Normalization and homogeneous coordinates
 
 There is deliberately no "normalized" type in this library, and operations do not renormalize their results.

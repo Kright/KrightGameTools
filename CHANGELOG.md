@@ -82,6 +82,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `dexp` / `dexpInv` on the generator (grade-2) classes: `Pga3dBivector`, `Pga3dBivectorBulk`,
+  `Pga3dBivectorWeight`, `Pga2dProjectivePoint`, `Pga2dVector` - the differential of `exp`
+  and its inverse in closed form (the left Jacobian of SE(3)/SE(2) and its inverse; the right
+  variant is `(-u).dexp(b)`), the building block of Lie-group ODE integrators like RKMK4.
+  Same study-number branches and thresholds as `exp`/`log` (in 2d the angle is real, no dual
+  corrections); degenerate arguments are exact (`zero.dexp(b) == b`, a pure-weight `u` gives
+  `b ± u.cross(b)`), `dexpInv` is singular at `bulkNorm == pi`. The generic `ga` module gains
+  slow series reference implementations (`PGA.dexp` with `ad^k/(k+1)!`, `PGA.dexpInv` with
+  Bernoulli numbers), and the closed forms are property-tested against them, including the
+  finite-difference defining property `(u + b*h).exp ≈ (u.dexp(b) * h).exp * u.exp`.
 - Hard distance constraints for pga3dphysics: `Pga3dDistanceConstraint` (rod / rope / strut
   between two body or world anchor points), `Pga3dConstraintResolver` (exact acceleration-level
   constraint forques for the force callback + post-step Gauss-Seidel projection of positions

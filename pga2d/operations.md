@@ -347,6 +347,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `reciprocal: Pga2dProjectivePoint`
 - `exp: Pga2dMotor`
 - `exp(t: Double): Pga2dMotor`
+- `dexp(b: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `dexpInv(b: Pga2dProjectivePoint): Pga2dProjectivePoint`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
 - `toRotorUnsafe: Pga2dRotor`
@@ -481,6 +483,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `reciprocal: Pga2dVector`
 - `exp: Pga2dTranslator`
 - `exp(t: Double): Pga2dTranslator`
+- `dexp(b: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `dexpInv(b: Pga2dProjectivePoint): Pga2dProjectivePoint`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
 - `toProjectivePoint: Pga2dProjectivePoint`

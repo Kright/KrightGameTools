@@ -153,6 +153,100 @@ object SharedFormulas:
   def weightExpResult(b: MultiVector[Sym])(using GA): MultiVector[Sym] =
     MultiVector.scalar(Sym(1.0)) + b
 
+  // ------------------------------------------------------------------------------------------
+  // dexp / dexpInv: the differential of exp and its inverse (the left Jacobian of SE(3) and its
+  // inverse, in robotics terms). The operator X = u.cross(_) on bivectors satisfies
+  // X^3 = -c^2 * X, where c^2 = -u*u = len^2 - p*I is a study number (I^2 = 0), so the series
+  //   dexp_u    = sum ad_u^k / (k+1)!     (ad_u = 2 * u.cross(_))
+  //   dexpInv_u = sum B_k * ad_u^k / k!   (B_k the Bernoulli numbers)
+  // collapse into quadratic polynomials in X:
+  //   dexp(u, b)    = b + (sin(c)^2/c^2) * (u x b) + ((2c - sin(2c))/(2c^3)) * (u x (u x b))
+  //   dexpInv(u, b) = b -            (u x b) + ((1 - c*cot(c))/c^2)          * (u x (u x b))
+  // Every coefficient is an even function of c, i.e. an analytic function f of m = c^2; on the
+  // study number it evaluates as f(c^2) = f(len^2) - p * f'(len^2) * I. The real parts
+  // (k1, k2, k3) multiply the commutators directly, the dual parts (k1d, k2d, k3d, each already
+  // containing the -p factor) multiply (commutator * I).
+  // ------------------------------------------------------------------------------------------
+
+  /** the pseudoscalar part p of the bivector's geometric square: u * u = -bulkNormSquare + p * I */
+  def dexpPseudoScalarP(self: MultiVector[Sym])(using GA): String =
+    s"@p = ${self.geometric(self).pseudoScalar.groupMultipliers()}"
+
+  /** k1 of dexp; needs expSinDivLen rendered before */
+  val dexpK1: String =
+    """// k1 = sin(c)^2 / c^2 = (sin(c)/c)^2
+      |@k1 = sinDivLen * sinDivLen""".stripMargin
+
+  /** the dual part of k1; needs expSinDivLen, expSinMinusCos and the @p line rendered before */
+  val dexpK1Dual: String =
+    """// the dual part of k1: d(sinDivLen)/dm = -sinMinusCosDivLen2 / 2 over m = len^2 (check the
+      |// series: d/dm (1 - m/6 + m^2/120 - ...) = -1/6 + m/60 - ... = -(1/3 - m/30 + ...) / 2),
+      |// so k1' = 2 * sinDivLen * d(sinDivLen)/dm = -sinDivLen * sinMinusCosDivLen2 and the dual
+      |// multiplier -p * k1' reuses the two series-guarded factors: no extra branch needed
+      |@k1d = p * sinDivLen * sinMinusCosDivLen2""".stripMargin
+
+  /** k2 of dexp; needs expSinDivLen rendered before */
+  val dexpK2: String =
+    """// k2 = (2c - sin(2c)) / (2c^3) = (1 - sinDivLen * cos) / c^2, since sin(2c)/(2c) = sinDivLen * cos;
+      |//   1 - sin(2c)/(2c) = (2c)^2/3! - (2c)^4/5! + ... = (2/3)*c^2 - (2/15)*c^4 + (4/315)*c^6 - ...
+      |//   divide by c^2:     2/3 - (2/15)*c^2 + (4/315)*c^4 - ...
+      |// at c <= 1e-5 the dropped (4/315)*c^4 <= 2e-22 relative term is far below 1e-17,
+      |// so the second-order form is exact in double
+      |@k2 = IF len > 1e-5 THEN (1.0 - sinDivLen * cos) / (len * len) ELSE 2.0 / 3.0 - (len * len) * (2.0 / 15.0)""".stripMargin
+
+  /** the dual part of k2; needs dexpK2 and the @p line rendered before */
+  val dexpK2Dual: String =
+    """// the dual part of k2, via the product rule on k2 = (1 - S*C)/m with S = sinDivLen, C = cos,
+      |// m = len^2, dS/dm = -sinMinusCosDivLen2/2 and dC/dm = -S/2:
+      |//   k2' = (sinMinusCosDivLen2 * C + S*S) / (2m) - k2/m
+      |// so -k2' = (k2 - (sinMinusCosDivLen2 * C + S*S)/2) / m; differentiating the series of k2
+      |// gives the small-angle branch k2' = -2/15 + (8/315)*m - ..., where the dropped m^2 term
+      |// is ~2e-23 relative at c <= 1e-5, exact in double
+      |@k2d = IF len > 1e-5 THEN p * (k2 - (sinMinusCosDivLen2 * cos + sinDivLen * sinDivLen) * 0.5) / (len * len) ELSE p * (2.0 / 15.0 - (len * len) * (8.0 / 315.0))""".stripMargin
+
+  /** k3 of dexpInv; needs expSinDivLen and expSinMinusCos rendered before */
+  val dexpInvK3: String =
+    """// k3 = (1 - c*cot(c)) / c^2 = ((sin(c)/c - cos(c)) / (sin(c)/c)) / c^2 = sinMinusCosDivLen2 / sinDivLen;
+      |// both factors carry their own small-angle series, no extra branch; the series:
+      |// k3 = 1/3 + m/45 + (2/945)*m^2 + ..., m = c^2; diverges at c = pi where exp stops being injective
+      |@k3 = sinMinusCosDivLen2 / sinDivLen""".stripMargin
+
+  /** the dual part of k3; needs dexpInvK3 and the @p line rendered before */
+  val dexpInvK3Dual: String =
+    """// the dual part of k3, via the quotient rule on k3 = T/S with T = sinMinusCosDivLen2,
+      |// S = sinDivLen, m = len^2, dT/dm = (S - 3*T)/(2m) and dS/dm = -T/2:
+      |//   k3' = (dT/dm * S - T * dS/dm) / S^2 = (S*(S - 3*T)/m + T*T) / (2*S*S)
+      |// differentiating the series of k3 gives the small-angle branch k3' = 1/45 + (4/945)*m + ...,
+      |// where the dropped m^2 term is far below 1e-17 relative at c <= 1e-5, exact in double
+      |@k3d = IF len > 1e-5 THEN -p * (sinDivLen * (sinDivLen - 3.0 * sinMinusCosDivLen2) / (len * len) + sinMinusCosDivLen2 * sinMinusCosDivLen2) / (2.0 * sinDivLen * sinDivLen) ELSE -p * (1.0 / 45.0 + (len * len) * (4.0 / 945.0))""".stripMargin
+
+  /** dexp(u, b) for a full bivector u; ub = u x b, uub = u x (u x b) */
+  def dexpResult(b: MultiVector[Sym], ub: MultiVector[Sym], uub: MultiVector[Sym])(using GA): MultiVector[Sym] =
+    val pseudoScalarUnit = MultiVector[Sym]("i" -> Sym(1.0))
+    b + ub * Sym("k1") + ub.geometric(pseudoScalarUnit) * Sym("k1d") +
+      uub * Sym("k2") + uub.geometric(pseudoScalarUnit) * Sym("k2d")
+
+  /** dexp(u, b) for a pure-bulk u (the classical so(3) case): u*u has no pseudoscalar part */
+  def dexpBulkResult(b: MultiVector[Sym], ub: MultiVector[Sym], uub: MultiVector[Sym]): MultiVector[Sym] =
+    b + ub * Sym("k1") + uub * Sym("k2")
+
+  /** dexp(u, b) for a pure-weight u: X^2 = 0, the series terminates, the two-term form is exact */
+  def dexpWeightResult(b: MultiVector[Sym], ub: MultiVector[Sym]): MultiVector[Sym] =
+    b + ub
+
+  /** dexpInv(u, b) for a full bivector u; the coefficient of ub is exactly -1 (odd Bernoulli numbers beyond B1 vanish) */
+  def dexpInvResult(b: MultiVector[Sym], ub: MultiVector[Sym], uub: MultiVector[Sym])(using GA): MultiVector[Sym] =
+    val pseudoScalarUnit = MultiVector[Sym]("i" -> Sym(1.0))
+    b - ub + uub * Sym("k3") + uub.geometric(pseudoScalarUnit) * Sym("k3d")
+
+  /** dexpInv(u, b) for a pure-bulk u (the classical so(3) case) */
+  def dexpInvBulkResult(b: MultiVector[Sym], ub: MultiVector[Sym], uub: MultiVector[Sym]): MultiVector[Sym] =
+    b - ub + uub * Sym("k3")
+
+  /** dexpInv(u, b) for a pure-weight u: exact */
+  def dexpInvWeightResult(b: MultiVector[Sym], ub: MultiVector[Sym]): MultiVector[Sym] =
+    b - ub
+
   /** the guard of Bivector.split; the early return inside is emitted per language */
   val bivectorSplitGuard: String =
     """@div = bulkNormSquare
