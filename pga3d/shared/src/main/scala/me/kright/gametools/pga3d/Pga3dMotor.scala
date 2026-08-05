@@ -2290,9 +2290,9 @@ final case class Pga3dMotor(s: Double = 0.0,
 
   infix def cross(r: Pga3dMotor): Pga3dBivector =
     Pga3dBivector(
-      wx = (r.wy * xy + r.wz * xz - r.xy * wy - r.xz * wz),
-      wy = (r.wz * yz + r.xy * wx - r.wx * xy - r.yz * wz),
-      wz = (r.xz * wx + r.yz * wy - r.wx * xz - r.wy * yz),
+      wx = ((r.wy * xy - r.xy * wy) + (r.wz * xz - r.xz * wz)),
+      wy = ((r.wz * yz - r.yz * wz) + (r.xy * wx - r.wx * xy)),
+      wz = ((r.xz * wx - r.wx * xz) + (r.yz * wy - r.wy * yz)),
       xy = (r.xz * yz - r.yz * xz),
       xz = (r.yz * xy - r.xy * yz),
       yz = (r.xy * xz - r.xz * xy),
@@ -2320,9 +2320,9 @@ final case class Pga3dMotor(s: Double = 0.0,
 
   infix def cross(r: Pga3dBivector): Pga3dBivector =
     Pga3dBivector(
-      wx = (r.wy * xy + r.wz * xz - r.xy * wy - r.xz * wz),
-      wy = (r.wz * yz + r.xy * wx - r.wx * xy - r.yz * wz),
-      wz = (r.xz * wx + r.yz * wy - r.wx * xz - r.wy * yz),
+      wx = ((r.wy * xy - r.xy * wy) + (r.wz * xz - r.xz * wz)),
+      wy = ((r.wz * yz - r.yz * wz) + (r.xy * wx - r.wx * xy)),
+      wz = ((r.xz * wx - r.wx * xz) + (r.yz * wy - r.wy * yz)),
       xy = (r.xz * yz - r.yz * xz),
       xz = (r.yz * xy - r.xy * yz),
       yz = (r.xy * xz - r.xz * xy),

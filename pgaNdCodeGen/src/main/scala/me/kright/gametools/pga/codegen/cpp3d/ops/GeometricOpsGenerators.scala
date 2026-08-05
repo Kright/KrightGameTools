@@ -2,7 +2,7 @@ package me.kright.gametools.pga.codegen.cpp3d.ops
 
 import me.kright.gametools.ga.MultiVector
 import me.kright.gametools.mathutil.Sign.Positive
-import me.kright.gametools.pga.codegen.common.FileContent
+import me.kright.gametools.pga.codegen.common.{FileContent, SortAntisymmetricPairs}
 import me.kright.gametools.pga.codegen.cpp3d.*
 import me.kright.gametools.symbolic.Sym
 import me.kright.gametools.symbolic.Sym.given_Numeric_Sym.mkNumericOps
@@ -124,7 +124,10 @@ class SandwichOpGenerator extends BinaryMethodCodeGen(
 class CrossOpGenerator extends BinaryMethodCodeGen(
   methodName = "cross",
   fileName = "opsCross.h",
-  op = (a: MultiVector[Sym], b: MultiVector[Sym]) => a.crossX2(b) * Sym(0.5)
+  op = (a: MultiVector[Sym], b: MultiVector[Sym]) => a.crossX2(b) * Sym(0.5),
+  // pair the mirrored summands of the commutator, so that cross(u, u * 2^k)
+  // (and every same-class self-cross) is exactly zero; see SortAntisymmetricPairs
+  postProcessComponent = _.map(SortAntisymmetricPairs),
 )
 
 
@@ -148,7 +151,8 @@ private class BinaryMethodCodeGen(val methodName: String,
                                   val op: (MultiVector[Sym], MultiVector[Sym]) => MultiVector[Sym],
                                   val alternativeNames: Seq[String] = ArraySeq(),
                                   val makeCustomBody: Option[CustomFuncBody] = None,
-                                  val comment: Option[String] = None) extends CppCodeGenerator:
+                                  val comment: Option[String] = None,
+                                  val postProcessComponent: Sym => Sym = identity) extends CppCodeGenerator:
 
   override def generateFiles(codeGen: Pga3dCodeGenCpp): Seq[FileContent] =
     val code = CppCodeBuilder()
@@ -183,7 +187,7 @@ private class BinaryMethodCodeGen(val methodName: String,
                     code("}")
                   }
                   case None => {
-                    code(s"[[nodiscard]] constexpr ${target.name} ${methodName}(const ${left.name}& a, const ${right.name}& b) noexcept { return ${target.makeBracesInit(resultS, multiline = true)}; }")
+                    code(s"[[nodiscard]] constexpr ${target.name} ${methodName}(const ${left.name}& a, const ${right.name}& b) noexcept { return ${target.makeBracesInit(resultS, multiline = true, postProcess = postProcessComponent)}; }")
                   }
                 }
 

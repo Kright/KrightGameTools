@@ -120,6 +120,7 @@ class OpWithMultivectorConsistencyTest extends AnyFunSuiteLike with ScalaCheckPr
       "antiWedge",
       "sandwich",
       "reverseSandwich",
+      "cross",
     )
 
     methodNames.foreach(testBinop)

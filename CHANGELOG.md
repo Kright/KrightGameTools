@@ -42,6 +42,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The generated `cross` groups the mirrored summands of the commutator into parenthesized
+  differences: `(a.f * b.g - a.g * b.f) + ...` instead of the interleaved canonical sort
+  (Scala, both dimensions, and C++). Two identities become bit-exact: `u.cross(u * 2^k)`
+  (in particular `u.cross(u)`) is exactly zero, and `a.cross(b) == -b.cross(a)` for
+  same-class operands - so `dexp`/`dexpInv` pass collinear arguments through exactly, and a
+  constant twist integrates without drift. Results of `cross` on unrelated arguments may
+  change by ~1 ulp (the summation order changed); the operation count is the same.
 - `Pga3dTriangle.getNearestPoint` is rewritten via Voronoi regions (Ericson, "Real-Time
   Collision Detection", 5.1.5): no intermediate collections, no square roots, 4-8x faster
   (JMH: 77 -> 9 ns far from the triangle, 64 -> 12 ns near the surface, 53 -> 12 ns for

@@ -18701,28 +18701,28 @@ namespace pga3d {
 namespace pga3d {
     [[nodiscard]] constexpr Multivector cross(const Multivector& a, const Multivector& b) noexcept { return {
         .s = 0.0,
-        .w = (a.wx * b.x + a.wy * b.y + a.wz * b.z + a.xyz * b.i - a.i * b.xyz - a.x * b.wx - a.y * b.wy - a.z * b.wz),
-        .x = (a.xy * b.y + a.xz * b.z - a.y * b.xy - a.z * b.xz),
-        .y = (a.x * b.xy + a.yz * b.z - a.xy * b.x - a.z * b.yz),
-        .z = (a.x * b.xz + a.y * b.yz - a.xz * b.x - a.yz * b.y),
-        .wx = (a.w * b.x + a.xy * b.wy + a.xyz * b.wyz + a.xz * b.wz - a.wy * b.xy - a.wyz * b.xyz - a.wz * b.xz - a.x * b.w),
-        .wy = (a.w * b.y + a.wx * b.xy + a.wxz * b.xyz + a.yz * b.wz - a.wz * b.yz - a.xy * b.wx - a.xyz * b.wxz - a.y * b.w),
-        .wz = (a.w * b.z + a.wx * b.xz + a.wy * b.yz + a.xyz * b.wxy - a.wxy * b.xyz - a.xz * b.wx - a.yz * b.wy - a.z * b.w),
-        .xy = (a.x * b.y + a.yz * b.xz - a.xz * b.yz - a.y * b.x),
-        .xz = (a.x * b.z + a.xy * b.yz - a.yz * b.xy - a.z * b.x),
-        .yz = (a.xz * b.xy + a.y * b.z - a.xy * b.xz - a.z * b.y),
-        .wxy = (a.i * b.z + a.wyz * b.xz + a.wz * b.xyz + a.yz * b.wxz - a.wxz * b.yz - a.xyz * b.wz - a.xz * b.wyz - a.z * b.i),
-        .wxz = (a.wxy * b.yz + a.xy * b.wyz + a.xyz * b.wy + a.y * b.i - a.i * b.y - a.wy * b.xyz - a.wyz * b.xy - a.yz * b.wxy),
-        .wyz = (a.i * b.x + a.wx * b.xyz + a.wxz * b.xy + a.xz * b.wxy - a.wxy * b.xz - a.x * b.i - a.xy * b.wxz - a.xyz * b.wx),
+        .w = ((a.wx * b.x - a.x * b.wx) + (a.wy * b.y - a.y * b.wy) + (a.wz * b.z - a.z * b.wz) + (a.xyz * b.i - a.i * b.xyz)),
+        .x = ((a.xy * b.y - a.y * b.xy) + (a.xz * b.z - a.z * b.xz)),
+        .y = ((a.x * b.xy - a.xy * b.x) + (a.yz * b.z - a.z * b.yz)),
+        .z = ((a.x * b.xz - a.xz * b.x) + (a.y * b.yz - a.yz * b.y)),
+        .wx = ((a.w * b.x - a.x * b.w) + (a.xy * b.wy - a.wy * b.xy) + (a.xyz * b.wyz - a.wyz * b.xyz) + (a.xz * b.wz - a.wz * b.xz)),
+        .wy = ((a.w * b.y - a.y * b.w) + (a.wx * b.xy - a.xy * b.wx) + (a.wxz * b.xyz - a.xyz * b.wxz) + (a.yz * b.wz - a.wz * b.yz)),
+        .wz = ((a.w * b.z - a.z * b.w) + (a.wx * b.xz - a.xz * b.wx) + (a.wy * b.yz - a.yz * b.wy) + (a.xyz * b.wxy - a.wxy * b.xyz)),
+        .xy = ((a.x * b.y - a.y * b.x) + (a.yz * b.xz - a.xz * b.yz)),
+        .xz = ((a.x * b.z - a.z * b.x) + (a.xy * b.yz - a.yz * b.xy)),
+        .yz = ((a.xz * b.xy - a.xy * b.xz) + (a.y * b.z - a.z * b.y)),
+        .wxy = ((a.i * b.z - a.z * b.i) + (a.wyz * b.xz - a.xz * b.wyz) + (a.wz * b.xyz - a.xyz * b.wz) + (a.yz * b.wxz - a.wxz * b.yz)),
+        .wxz = ((a.wxy * b.yz - a.yz * b.wxy) + (a.xy * b.wyz - a.wyz * b.xy) + (a.xyz * b.wy - a.wy * b.xyz) + (a.y * b.i - a.i * b.y)),
+        .wyz = ((a.i * b.x - a.x * b.i) + (a.wx * b.xyz - a.xyz * b.wx) + (a.wxz * b.xy - a.xy * b.wxz) + (a.xz * b.wxy - a.wxy * b.xz)),
         .xyz = 0.0,
-        .i = (a.w * b.xyz + a.wxy * b.z + a.wyz * b.x + a.y * b.wxz - a.wxz * b.y - a.x * b.wyz - a.xyz * b.w - a.z * b.wxy)
+        .i = ((a.w * b.xyz - a.xyz * b.w) + (a.wxy * b.z - a.z * b.wxy) + (a.wyz * b.x - a.x * b.wyz) + (a.y * b.wxz - a.wxz * b.y))
     }; }
     constexpr Multivector Multivector::cross(const Multivector& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Bivector cross(const Motor& a, const Motor& b) noexcept { return {
-        .wx = (a.xy * b.wy + a.xz * b.wz - a.wy * b.xy - a.wz * b.xz),
-        .wy = (a.wx * b.xy + a.yz * b.wz - a.wz * b.yz - a.xy * b.wx),
-        .wz = (a.wx * b.xz + a.wy * b.yz - a.xz * b.wx - a.yz * b.wy),
+        .wx = ((a.xy * b.wy - a.wy * b.xy) + (a.xz * b.wz - a.wz * b.xz)),
+        .wy = ((a.wx * b.xy - a.xy * b.wx) + (a.yz * b.wz - a.wz * b.yz)),
+        .wz = ((a.wx * b.xz - a.xz * b.wx) + (a.wy * b.yz - a.yz * b.wy)),
         .xy = (a.yz * b.xz - a.xz * b.yz),
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
@@ -18750,9 +18750,9 @@ namespace pga3d {
     constexpr Multivector Motor::cross(const Plane& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Bivector cross(const Motor& a, const Bivector& b) noexcept { return {
-        .wx = (a.xy * b.wy + a.xz * b.wz - a.wy * b.xy - a.wz * b.xz),
-        .wy = (a.wx * b.xy + a.yz * b.wz - a.wz * b.yz - a.xy * b.wx),
-        .wz = (a.wx * b.xz + a.wy * b.yz - a.xz * b.wx - a.yz * b.wy),
+        .wx = ((a.xy * b.wy - a.wy * b.xy) + (a.xz * b.wz - a.wz * b.xz)),
+        .wy = ((a.wx * b.xy - a.xy * b.wx) + (a.yz * b.wz - a.wz * b.yz)),
+        .wz = ((a.wx * b.xz - a.xz * b.wx) + (a.wy * b.yz - a.yz * b.wy)),
         .xy = (a.yz * b.xz - a.xz * b.yz),
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
@@ -19001,9 +19001,9 @@ namespace pga3d {
     constexpr PseudoScalar Plane::cross(const PointCenter& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Bivector cross(const Bivector& a, const Motor& b) noexcept { return {
-        .wx = (a.xy * b.wy + a.xz * b.wz - a.wy * b.xy - a.wz * b.xz),
-        .wy = (a.wx * b.xy + a.yz * b.wz - a.wz * b.yz - a.xy * b.wx),
-        .wz = (a.wx * b.xz + a.wy * b.yz - a.xz * b.wx - a.yz * b.wy),
+        .wx = ((a.xy * b.wy - a.wy * b.xy) + (a.xz * b.wz - a.wz * b.xz)),
+        .wy = ((a.wx * b.xy - a.xy * b.wx) + (a.yz * b.wz - a.wz * b.yz)),
+        .wz = ((a.wx * b.xz - a.xz * b.wx) + (a.wy * b.yz - a.yz * b.wy)),
         .xy = (a.yz * b.xz - a.xz * b.yz),
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)
@@ -19019,9 +19019,9 @@ namespace pga3d {
     constexpr Plane Bivector::cross(const Plane& b) const noexcept { return pga3d::cross(*this, b); }
 
     [[nodiscard]] constexpr Bivector cross(const Bivector& a, const Bivector& b) noexcept { return {
-        .wx = (a.xy * b.wy + a.xz * b.wz - a.wy * b.xy - a.wz * b.xz),
-        .wy = (a.wx * b.xy + a.yz * b.wz - a.wz * b.yz - a.xy * b.wx),
-        .wz = (a.wx * b.xz + a.wy * b.yz - a.xz * b.wx - a.yz * b.wy),
+        .wx = ((a.xy * b.wy - a.wy * b.xy) + (a.xz * b.wz - a.wz * b.xz)),
+        .wy = ((a.wx * b.xy - a.xy * b.wx) + (a.yz * b.wz - a.wz * b.yz)),
+        .wz = ((a.wx * b.xz - a.xz * b.wx) + (a.wy * b.yz - a.yz * b.wy)),
         .xy = (a.yz * b.xz - a.xz * b.yz),
         .xz = (a.xy * b.yz - a.yz * b.xy),
         .yz = (a.xz * b.xy - a.xy * b.xz)

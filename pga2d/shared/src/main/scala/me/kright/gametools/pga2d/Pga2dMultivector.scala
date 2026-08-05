@@ -417,11 +417,11 @@ final case class Pga2dMultivector(s: Double = 0.0,
   infix def cross(r: Pga2dMultivector): Pga2dMultivector =
     Pga2dMultivector(
       s = 0.0,
-      w = (r.x * wx + r.y * wy - r.wx * x - r.wy * y),
+      w = ((r.x * wx - r.wx * x) + (r.y * wy - r.wy * y)),
       x = (r.y * xy - r.xy * y),
       y = (r.xy * x - r.x * xy),
-      wx = (r.wy * xy + r.x * w - r.w * x - r.xy * wy),
-      wy = (r.xy * wx + r.y * w - r.w * y - r.wx * xy),
+      wx = ((r.wy * xy - r.xy * wy) + (r.x * w - r.w * x)),
+      wy = ((r.xy * wx - r.wx * xy) + (r.y * w - r.w * y)),
       xy = (r.y * x - r.x * y),
       i = 0.0,
     )

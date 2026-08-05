@@ -113,16 +113,14 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     }
   }
 
-  test("collinear arguments pass through (up to the rounding of cross)") {
+  test("collinear arguments pass through exactly") {
     forAll(Pga3dGenerators.bivectors) { u =>
-      // mathematically u.cross(u * t) == 0 and dexp(u, u * t) == u * t exactly; in floating
-      // point the weight components of cross leave ~1 ulp of residue (the cancelling product
-      // pairs are interleaved in the generated sum), so the check is ulp-level, not exact
+      // the generated cross groups the mirrored product pairs (see SortAntisymmetricPairs),
+      // so u.cross(u * t) is exactly zero for power-of-two t and dexp passes b through exactly
       for (t <- Seq(1.0, 2.0, 0.5, -4.0)) {
         val b = u * t
-        val tol = 1e-14 * (1.0 + b.norm) * (1.0 + u.norm)
-        assert((u.dexp(b) - b).norm <= tol, s"u = $u, t = $t")
-        assert((u.dexpInv(b) - b).norm <= tol, s"u = $u, t = $t")
+        assert(u.dexp(b) == b, s"u = $u, t = $t")
+        assert(u.dexpInv(b) == b, s"u = $u, t = $t")
       }
     }
   }

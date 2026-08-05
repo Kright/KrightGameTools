@@ -28,20 +28,20 @@ class CppSubclass(name: String,
         constantFields.map((f, v) => f.basisBlade -> Sym(v).pipe(e => if (f.sign == Sign.Positive) e else -e))
     )
 
-  def makeBracesInit(v: MultiVector[Sym], multiline: Boolean = false): String =
+  def makeBracesInit(v: MultiVector[Sym], multiline: Boolean = false, postProcess: Sym => Sym = identity): String =
     val groupedResult = v.mapValues(_.groupMultipliers())
 
     if (this == CppSubclasses.scalar) {
       val expr = groupedResult.get(variableFields.head.basisBlade).getOrElse(Sym.zero)
-      return expr.toString
+      return postProcess(expr).toString
     }
 
     val elems = this.variableFields.map { f =>
       val expr: Sym = groupedResult.get(f.basisBlade).getOrElse(Sym.zero)
 
       val exprString: String =
-        if (f.sign == Sign.Positive) expr.toString
-        else (-expr).groupMultipliers().toString
+        if (f.sign == Sign.Positive) postProcess(expr).toString
+        else postProcess((-expr).groupMultipliers()).toString
 
       require(!exprString.startsWith("--"))
 

@@ -83,11 +83,11 @@ class ScalaMultivectorSubClass(name: String,
       )
     }
 
-  def makeConstructor(value: MultiVector[Sym]): String =
+  def makeConstructor(value: MultiVector[Sym], postProcess: Sym => Sym = identity): String =
     val groupedResult = value.mapValues(_.groupMultipliers())
     if (name == "Double") {
       val expr = groupedResult.get(variableFields.head.basisBlade).getOrElse(Sym.zero)
-      return expr.toString
+      return postProcess(expr).toString
     }
     if (isObject) {
       return name
@@ -100,8 +100,8 @@ class ScalaMultivectorSubClass(name: String,
         val expr: Sym = groupedResult.get(f.basisBlade).getOrElse(Sym.zero)
 
         val exprString: String =
-          if (f.sign == Sign.Positive) expr.toString
-          else (-expr).groupMultipliers().toString
+          if (f.sign == Sign.Positive) postProcess(expr).toString
+          else postProcess((-expr).groupMultipliers()).toString
 
         require(!exprString.startsWith("--"), s"expString = '${exprString}',\n-expr = ${(-expr).symbol},\nexpr = ${expr.symbol}")
 
@@ -176,6 +176,9 @@ class ScalaMultivectorSubClass(name: String,
                   } else {
                     binaryOp.name match
                       case "sandwich" | "reverseSandwich" => code(makeConstructorOptimized(result, resultCls))
+                      // pair the mirrored summands of the commutator, so that cross(u, u * 2^k)
+                      // (and every same-class self-cross) is exactly zero; see SortAntisymmetricPairs
+                      case "cross" => code(resultCls.makeConstructor(result, ScalaMultivectorSubClass.sortCrossPairs))
                       case _ => code(resultCls.makeConstructor(result))
                   }
                 }
@@ -240,3 +243,5 @@ class ScalaMultivectorSubClass(name: String,
 object ScalaMultivectorSubClass:
   // instances are singletons compared by reference identity (no case class / structural equality involved)
   given CanEqual[ScalaMultivectorSubClass, ScalaMultivectorSubClass] = CanEqual.derived
+
+  val sortCrossPairs: Sym => Sym = _.map(me.kright.gametools.pga.codegen.common.SortAntisymmetricPairs)
