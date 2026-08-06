@@ -48,18 +48,18 @@ case class Pga3dTriangle(a: Pga3dPoint,
       Pga3dEdge(c, a)
     )
 
-  def intersectionWithPlane(edge: Pga3dEdge, eps: Double): Option[Pga3dPoint] =
+  def intersectionWithPlane(edge: Pga3dEdge, eps: Double): Pga3dPoint | Null =
     Pga3dTriangle.intersectionWithPlane(this, edge, eps)
 
-  def intersection(edge: Pga3dEdge, eps: Double): Option[Pga3dPoint] =
+  def intersection(edge: Pga3dEdge, eps: Double): Pga3dPoint | Null =
     Pga3dTriangle.intersection(this, edge, eps)
 
   /** variant with `normalizedPlane` precomputed by the caller (cacheable for static geometry) */
-  def intersection(edge: Pga3dEdge, normalizedPlane: Pga3dPlane, eps: Double): Option[Pga3dPoint] =
+  def intersection(edge: Pga3dEdge, normalizedPlane: Pga3dPlane, eps: Double): Pga3dPoint | Null =
     Pga3dTriangle.intersection(this, edge, normalizedPlane, eps)
 
   def intersects(e: Pga3dEdge, eps: Double): Boolean =
-    intersection(e, eps).isDefined
+    intersection(e, eps) ne null
 
   def distanceToPlane(p: Pga3dPoint): Double =
     (getNearestPointOnPlane(p) - p).norm
@@ -227,22 +227,22 @@ object Pga3dTriangle:
     (a < lo && b < lo && c < lo) || (a > hi && b > hi && c > hi)
   }
 
-  def intersectionWithPlane(plane: Pga3dTriangle, edge: Pga3dEdge, eps: Double = 1e-9): Option[Pga3dPoint] = {
+  def intersectionWithPlane(plane: Pga3dTriangle, edge: Pga3dEdge, eps: Double = 1e-9): Pga3dPoint | Null = {
     val normalizedPlane = plane.normalizedPlane
 
     val da: Double = normalizedPlane v edge.a
     val db: Double = normalizedPlane v edge.b
 
-    if (da > eps && db > eps) return None // on the same side relative to the plane and far away
-    if (da < -eps && db < -eps) return None // on the same side relative to the plane and far away
+    if (da > eps && db > eps) return null // on the same side relative to the plane and far away
+    if (da < -eps && db < -eps) return null // on the same side relative to the plane and far away
 
     val diff = da - db
 
     if (da * db <= 0.0) { // on different sides to plane
       if (diff > 1e-50 || diff < -1e-50) { // non-parallel to plane
-        return Option(Pga3dPoint.interpolate(edge.a, edge.b, t = da / diff))
+        return Pga3dPoint.interpolate(edge.a, edge.b, t = da / diff)
       } else {
-        return Option(edge.center)
+        return edge.center
       }
     }
 
@@ -250,9 +250,9 @@ object Pga3dTriangle:
 
     // Now (-eps < da < eps) or (-eps < db < eps)
     if (Math.abs(da) < Math.abs(db)) {
-      return Option(edge.a)
+      return edge.a
     } else {
-      return Option(edge.b)
+      return edge.b
     }
   }
 
@@ -268,10 +268,10 @@ object Pga3dTriangle:
       axisSeparates(edge.a.y, edge.b.y, triangle.a.y, triangle.b.y, triangle.c.y, eps) ||
       axisSeparates(edge.a.z, edge.b.z, triangle.a.z, triangle.b.z, triangle.c.z, eps)
 
-  def intersection(triangle: Pga3dTriangle, edge: Pga3dEdge, eps: Double): Option[Pga3dPoint] = {
+  def intersection(triangle: Pga3dTriangle, edge: Pga3dEdge, eps: Double): Pga3dPoint | Null = {
     if (separatedByAABB(triangle, edge, eps)) {
       // short path when edge and triangle are far away from each other
-      return None
+      return null
     }
 
     intersectionImpl(triangle, edge, triangle.normalizedPlane, eps)
@@ -283,17 +283,17 @@ object Pga3dTriangle:
    * the plane construction and its sqrt off the hot path. Behaves exactly as
    * `intersection(triangle, edge, eps)`
    */
-  def intersection(triangle: Pga3dTriangle, edge: Pga3dEdge, normalizedPlane: Pga3dPlane, eps: Double): Option[Pga3dPoint] = {
-    if (separatedByAABB(triangle, edge, eps)) return None
+  def intersection(triangle: Pga3dTriangle, edge: Pga3dEdge, normalizedPlane: Pga3dPlane, eps: Double): Pga3dPoint | Null = {
+    if (separatedByAABB(triangle, edge, eps)) return null
     intersectionImpl(triangle, edge, normalizedPlane, eps)
   }
 
-  private def intersectionImpl(triangle: Pga3dTriangle, edge: Pga3dEdge, normalizedPlane: Pga3dPlane, eps: Double): Option[Pga3dPoint] = {
+  private def intersectionImpl(triangle: Pga3dTriangle, edge: Pga3dEdge, normalizedPlane: Pga3dPlane, eps: Double): Pga3dPoint | Null = {
     val da: Double = normalizedPlane v edge.a
     val db: Double = normalizedPlane v edge.b
 
-    if (da > eps && db > eps) return None // edge is far away
-    if (da < -eps && db < -eps) return None // edge is far away
+    if (da > eps && db > eps) return null // edge is far away
+    if (da < -eps && db < -eps) return null // edge is far away
 
     val dir: Pga3dVector = edge.direction
     val dot = normalizedPlane.x * dir.x + normalizedPlane.y * dir.y + normalizedPlane.z * dir.z
@@ -304,9 +304,9 @@ object Pga3dTriangle:
       val intersectionPoint = edge.interpolatedPoint(da / (da - db))
 
       if (edge.contains(intersectionPoint, eps) && triangle.contains(intersectionPoint, eps)) {
-        return Option(intersectionPoint)
+        return intersectionPoint
       } else {
-        return None
+        return null
       }
     }
 
@@ -339,8 +339,8 @@ object Pga3dTriangle:
 
     val parallelEps = eps * 2.0 // allow a bit bigger error to avoid computation errors
 
-    if (triangle.contains(clampedEdge.a, parallelEps)) return Option(clampedEdge.a)
-    if (triangle.contains(clampedEdge.b, parallelEps)) return Option(clampedEdge.b)
+    if (triangle.contains(clampedEdge.a, parallelEps)) return clampedEdge.a
+    if (triangle.contains(clampedEdge.b, parallelEps)) return clampedEdge.b
 
     val triangleEdges = triangle.edges
 
@@ -349,8 +349,8 @@ object Pga3dTriangle:
     pairOfNearestPoints.update(triangleEdges(2).getNearestPoints(edge))
 
     if (pairOfNearestPoints.distanceSquare <= parallelEps * parallelEps) {
-      Option(pairOfNearestPoints.a)
+      pairOfNearestPoints.a
     } else {
-      None
+      null
     }
   }

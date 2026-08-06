@@ -86,7 +86,7 @@ class Pga2dAABBTriangleTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
       val tc = t.max(0.0).min(1.0)
       val triangle = Pga2dTriangle(edge.a, edge.b, edge.interpolatedPoint(tc))
       val actual = aabb.intersects(triangle)
-      val expected = aabb.intersection(edge).isDefined
+      val expected = aabb.intersection(edge) ne null
       assertAgreesOrGrazes(aabb, triangle, actual, expected, s"aabb = $aabb, edge = $edge, t = $tc")
     }
   }

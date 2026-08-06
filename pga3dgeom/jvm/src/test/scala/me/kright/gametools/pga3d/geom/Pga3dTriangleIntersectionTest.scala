@@ -11,9 +11,9 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
  * with a sqrt for the parallelism check.
  */
 object LegacyPga3dTriangleIntersection:
-  def intersection(triangle: Pga3dTriangle, edge: Pga3dEdge, eps: Double): Option[Pga3dPoint] = {
+  def intersection(triangle: Pga3dTriangle, edge: Pga3dEdge, eps: Double): Pga3dPoint | Null = {
     if (!triangle.toAABB.intersects(edge.toAABB, expand = eps)) {
-      return None
+      return null
     }
 
     val normalizedPlane: Pga3dPlane = triangle.normalizedPlane
@@ -21,8 +21,8 @@ object LegacyPga3dTriangleIntersection:
     val da: Double = normalizedPlane v edge.a
     val db: Double = normalizedPlane v edge.b
 
-    if (da > eps && db > eps) return None
-    if (da < -eps && db < -eps) return None
+    if (da > eps && db > eps) return null
+    if (da < -eps && db < -eps) return null
 
     val eAB: Pga3dVector = edge.normalizedDirection
     val cos = normalizedPlane.x * eAB.x + normalizedPlane.y * eAB.y + normalizedPlane.z * eAB.z
@@ -31,9 +31,9 @@ object LegacyPga3dTriangleIntersection:
       val intersectionPoint = edge.interpolatedPoint(da / (da - db))
 
       if (edge.contains(intersectionPoint, eps) && triangle.contains(intersectionPoint, eps)) {
-        return Option(intersectionPoint)
+        return intersectionPoint
       } else {
-        return None
+        return null
       }
     }
 
@@ -60,8 +60,8 @@ object LegacyPga3dTriangleIntersection:
 
     val parallelEps = eps * 2.0
 
-    if (triangle.contains(clampedEdge.a, parallelEps)) return Option(clampedEdge.a)
-    if (triangle.contains(clampedEdge.b, parallelEps)) return Option(clampedEdge.b)
+    if (triangle.contains(clampedEdge.a, parallelEps)) return clampedEdge.a
+    if (triangle.contains(clampedEdge.b, parallelEps)) return clampedEdge.b
 
     val triangleEdges = triangle.edges
 
@@ -70,9 +70,9 @@ object LegacyPga3dTriangleIntersection:
     pairOfNearestPoints.update(triangleEdges(2).getNearestPoints(edge))
 
     if (pairOfNearestPoints.distanceSquare <= parallelEps * parallelEps) {
-      Option(pairOfNearestPoints.a)
+      pairOfNearestPoints.a
     } else {
-      None
+      null
     }
   }
 
@@ -94,17 +94,20 @@ class Pga3dTriangleIntersectionTest extends AnyFunSuiteLike with ScalaCheckPrope
     val actual = triangle.intersection(edge, eps)
     val expected = LegacyPga3dTriangleIntersection.intersection(triangle, edge, eps)
 
-    assert(actual.isDefined == expected.isDefined,
+    assert((actual ne null) == (expected ne null),
       s"actual = $actual, expected = $expected, triangle = $triangle, edge = $edge, eps = $eps")
 
-    for (a <- actual; e <- expected) {
+    if ((actual ne null) && (expected ne null)) {
+      val a = actual
+      val e = expected
       assert((a - e).norm <= 1e-9 * (1.0 + triangle.perimeter + edge.magnitude),
         s"actual = $a, expected = $e, triangle = $triangle, edge = $edge, eps = $eps")
     }
 
     // validity: a returned point must be close to both shapes
     // (the parallel branch legitimately allows up to 2 * eps)
-    for (p <- actual) {
+    if (actual ne null) {
+      val p = actual
       val slack = 2.0 * eps + 1e-9 * (1.0 + triangle.perimeter + edge.magnitude)
       assert(triangle.distanceSquareTo(p) <= slack * slack,
         s"point = $p is too far from the triangle, triangle = $triangle, edge = $edge, eps = $eps")
@@ -146,8 +149,11 @@ class Pga3dTriangleIntersectionTest extends AnyFunSuiteLike with ScalaCheckPrope
     forAll(triangles, edges, epsGen, MinSuccessful(1000)) { (triangle, edge, eps) =>
       val precomputed = triangle.intersection(edge, triangle.normalizedPlane, eps)
       val direct = triangle.intersection(edge, eps)
-      assert(precomputed == direct,
-        s"precomputed = $precomputed, direct = $direct, triangle = $triangle, edge = $edge, eps = $eps")
+      val clue = s"precomputed = $precomputed, direct = $direct, triangle = $triangle, edge = $edge, eps = $eps"
+      assert((precomputed eq null) == (direct eq null), clue)
+      if (precomputed ne null) {
+        assert((direct ne null) && precomputed == direct, clue)
+      }
     }
   }
 
@@ -158,11 +164,11 @@ class Pga3dTriangleIntersectionTest extends AnyFunSuiteLike with ScalaCheckPrope
     val eps = 1e-9
 
     val crossing = triangle.intersection(Pga3dEdge(Pga3dPoint(1, 0, -1), Pga3dPoint(1, 0, 1)), eps)
-    assert(crossing.isDefined && (crossing.get - Pga3dPoint(1, 0, 0)).norm <= 2 * eps, s"crossing = $crossing")
+    assert((crossing ne null) && (crossing - Pga3dPoint(1, 0, 0)).norm <= 2 * eps, s"crossing = $crossing")
 
     val missFar = triangle.intersection(Pga3dEdge(Pga3dPoint(5, 0, -1), Pga3dPoint(5, 0, 1)), eps)
-    assert(missFar.isEmpty, s"missFar = $missFar")
+    assert(missFar eq null, s"missFar = $missFar")
 
     val missNear = triangle.intersection(Pga3dEdge(Pga3dPoint(1, 1, -1), Pga3dPoint(1, 1, 1)), eps)
-    assert(missNear.isEmpty, s"missNear = $missNear")
+    assert(missNear eq null, s"missNear = $missNear")
   }

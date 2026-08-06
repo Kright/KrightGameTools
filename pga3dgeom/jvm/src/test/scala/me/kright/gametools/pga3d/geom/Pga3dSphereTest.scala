@@ -35,7 +35,7 @@ class Pga3dSphereTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       // the only allowed exception: the center exactly on a degenerate triangle has no normal
       val exotic = triangle.area == 0.0 && triangle.distanceSquareTo(sphere.center) == 0.0
       if (!exotic) {
-        assert(sphere.deepestContact(triangle).isDefined == sphere.intersects(triangle),
+        assert((sphere.deepestContact(triangle) ne null) == sphere.intersects(triangle),
           s"sphere = $sphere, triangle = $triangle")
       }
     }
@@ -43,7 +43,8 @@ class Pga3dSphereTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("deepestContact returns a consistent point, normal and depth") {
     forAll(spheres, triangles, MinSuccessful(2000)) { (sphere, triangle) =>
-      for (contact <- sphere.deepestContact(triangle)) {
+      val contact = sphere.deepestContact(triangle)
+      if (contact ne null) {
         val scene = 1.0 + triangle.perimeter + sphere.r
 
         assert(triangle.distanceSquareTo(contact.point) <= 1e-18 * scene * scene,
@@ -65,25 +66,25 @@ class Pga3dSphereTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val triangle = Pga3dTriangle(Pga3dPoint(-10, -10, 0), Pga3dPoint(10, -10, 0), Pga3dPoint(0, 10, 0))
 
     val above = Pga3dSphere(Pga3dPoint(0, 0, 2), r = 3.0)
-    val contact = above.deepestContact(triangle).get
+    val contact = above.deepestContact(triangle).nn
     assert((contact.point - Pga3dPoint(0, 0, 0)).norm <= 1e-12)
     assert((contact.normal - Pga3dVector(0, 0, 1)).norm <= 1e-12)
     assert((contact.depth - 1.0).abs <= 1e-12)
 
     // center exactly on the triangle: the plane normal (winding of this triangle gives +z)
     val onSurface = Pga3dSphere(Pga3dPoint(0, 0, 0), r = 2.0)
-    val central = onSurface.deepestContact(triangle).get
+    val central = onSurface.deepestContact(triangle).nn
     assert((central.point - Pga3dPoint(0, 0, 0)).norm <= 1e-12)
     assert(central.normal.z.abs == 1.0, s"normal = ${central.normal}")
     assert(central.depth == 2.0)
 
-    assert(Pga3dSphere(Pga3dPoint(0, 0, 5), r = 3.0).deepestContact(triangle).isEmpty)
+    assert(Pga3dSphere(Pga3dPoint(0, 0, 5), r = 3.0).deepestContact(triangle) eq null)
 
     // center exactly on a degenerate triangle: no normal is defined
     val degenerate = Pga3dTriangle(Pga3dPoint(-1, 0, 0), Pga3dPoint(1, 0, 0), Pga3dPoint(0, 0, 0))
-    assert(Pga3dSphere(Pga3dPoint(0, 0, 0), r = 1.0).deepestContact(degenerate).isEmpty)
+    assert(Pga3dSphere(Pga3dPoint(0, 0, 0), r = 1.0).deepestContact(degenerate) eq null)
     // but a center off it works: the contact is with the nearest point of the segment
-    val offset = Pga3dSphere(Pga3dPoint(0, 3, 0), r = 4.0).deepestContact(degenerate).get
+    val offset = Pga3dSphere(Pga3dPoint(0, 3, 0), r = 4.0).deepestContact(degenerate).nn
     assert((offset.point - Pga3dPoint(0, 0, 0)).norm <= 1e-12)
     assert((offset.normal - Pga3dVector(0, 1, 0)).norm <= 1e-12)
     assert((offset.depth - 1.0).abs <= 1e-12)

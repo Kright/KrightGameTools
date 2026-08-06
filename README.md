@@ -137,6 +137,9 @@ I use C++ 20 because of Unreal Engine 5 requirements.
   interface type.
 * Generated code (pga2d, pga3d, cpp/pga3d) is never edited by hand - change [pgaNdCodeGen](pgaNdCodeGen/README.md)
   and regenerate; CI checks for drift.
+* Queries that may find nothing (`intersection`, `deepestContact` in the geom modules) return `T | Null`
+  with `null` for "no result" instead of `Option[T]` - no allocation on the hot path. The library is
+  compiled with `-Yexplicit-nulls`, so the nullability is part of the type;
 
 ## Tests
 

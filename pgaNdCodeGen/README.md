@@ -66,9 +66,11 @@ with a NONZERO status if any file would change (zero when the tree is clean).
 CI runs this check on every push/PR (see `.github/workflows/test.yml`), so a change to the generator must be
 committed together with the regenerated output (and vice versa - generated files must not be edited by hand).
 
-Note: this module is deliberately excluded from the root sbt aggregate - it is a development-time code
-generator, not part of the published gametools library, so `sbt test`/`sbt compile` at the root do not touch
-it. The dedicated CI step above is what keeps it compiling.
+Note: this module is a development-time code generator, not part of the published gametools library
+(`publish / skip := true`). It is in the root sbt aggregate so `sbt test` covers its own tests, but it
+deliberately depends only on `ga` and `symbolic`, never on the generated modules - so even when a generator
+change produces broken generated code and the library stops compiling, the generator itself keeps working
+and the code can be regenerated and fixed.
 
 File output is abstracted behind the `GeneratedFileSystem` trait in `common` (implementations `RealFileSystem` and
 `CheckFileSystem`); the three run functions `runScala3dCodeGen` / `runScala2dCodeGen` / `runCppCodeGen` take it as

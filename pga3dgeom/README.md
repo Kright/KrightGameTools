@@ -6,13 +6,18 @@
 - **Axis-Aligned Bounding Box (AABB)**: Fast collision detection and spatial partitioning
 - **Triangles**: 3D triangle representation with various geometric operations
 - **Edges**: Line segments in 3D space with intersection testing
-- **Spheres and Cylinders**: Simple bounding volumes
+- **Spheres, Capsules and Cylinders**: Simple bounding volumes with collision queries
 - **Rays**: Precomputed rays for efficient intersection tests against many AABBs (e.g. BVH traversal)
 
 ### Geometric Algorithms
 - **Digital Differential Analyzer (DDA)**: Efficient ray traversal through a grid
 - **Nearest Point Calculations**: Find the nearest point on geometric primitives
 - **Intersection Testing**: Detect intersections between various geometric primitives
+- **Contact Queries**: `deepestContact` returns the contact point, unit normal and penetration depth
+
+The result of a query that may find nothing (`intersection`, `deepestContact`) is `T | Null` with
+`null` for "no intersection" - no `Option` allocation on the hot path; the boolean `intersects`
+methods are the cheap yes/no companions.
 
 ## Key Classes
 
@@ -52,6 +57,9 @@ val nearest = triangle.getNearestPoint(point)
 
 // Check for intersection with an edge
 val intersects = triangle.intersects(edge, eps)
+
+// The intersection point itself (null when there is none)
+val point: Pga3dPoint | Null = triangle.intersection(edge, eps)
 ```
 
 ### `Pga3dEdge`
@@ -72,11 +80,40 @@ Represents a sphere.
 ```scala
 val sphere = Pga3dSphere(center, r)
 
-// Check for intersection with another sphere
+// Boolean overlap queries
 val overlaps = sphere.intersects(otherSphere)
+val touchesTriangle = sphere.intersects(triangle)
+val touchesCapsule = sphere.intersects(capsule)
+
+// Contact with a triangle: nearest triangle point, unit normal towards the center,
+// penetration depth r - distance; null when there is no contact
+val contact: Pga3dContact | Null = sphere.deepestContact(triangle)
 
 // Bounding box of the sphere
 val aabb = sphere.toAABB
+```
+
+### `Pga3dCapsule`
+All points within `r` of the segment `[a, b]`, stored by the two hemisphere centers;
+`a == b` degenerates to a sphere. `Pga3dContact(point, normal, depth)` is 7 flat doubles.
+```scala
+val capsule = Pga3dCapsule(a, b, r)
+// or engine-style, from the center and the half axis
+val fromCenter = Pga3dCapsule.fromCenter(center, halfAxis, r)
+
+// Boolean overlap queries
+val hitsSphere = capsule.intersects(sphere)
+val hitsCapsule = capsule.intersects(otherCapsule)
+val hitsTriangle = capsule.intersects(triangle)
+
+// Contact with a triangle; when the axis pierces the triangle, the normal is the plane
+// normal towards the larger part of the axis and pushing by depth fully separates
+val contact: Pga3dContact | Null = capsule.deepestContact(triangle)
+
+// The axis segment, the bounding box, widening
+val axis = capsule.edge
+val aabb = capsule.toAABB
+val wider = capsule.expand(dr)
 ```
 
 ### `Pga3dRay`

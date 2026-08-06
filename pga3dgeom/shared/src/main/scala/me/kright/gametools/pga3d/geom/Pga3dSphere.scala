@@ -29,21 +29,21 @@ case class Pga3dSphere(center: Pga3dPoint,
    * penetration depth `r - distance`.
    * When the center lies exactly on the triangle, the normal falls back to the triangle's
    * plane normal (its sign follows the vertex winding); for the pathological combination
-   * "center exactly on a degenerate triangle" no normal is defined and None is returned
+   * "center exactly on a degenerate triangle" no normal is defined and null is returned
    */
-  def deepestContact(triangle: Pga3dTriangle): Option[Pga3dContact] = {
+  def deepestContact(triangle: Pga3dTriangle): Pga3dContact | Null = {
     val nearest = triangle.getNearestPoint(center)
     val toCenter = center - nearest
     val distSquare = toCenter.normSquare
-    if (!(distSquare <= r * r)) return None // NaN input also lands here
+    if (!(distSquare <= r * r)) return null // NaN input also lands here
 
     if (distSquare > 0.0) {
       val dist = Math.sqrt(distSquare)
-      Some(Pga3dContact(nearest, toCenter * (1.0 / dist), r - dist))
+      Pga3dContact(nearest, toCenter * (1.0 / dist), r - dist)
     } else {
       val plane = triangle.normalizedPlane
       val normal = Pga3dVector(plane.x, plane.y, plane.z)
       // a degenerate triangle has a NaN plane; NaN fails the check below
-      if (normal.normSquare > 0.5) Some(Pga3dContact(nearest, normal, r)) else None
+      if (normal.normSquare > 0.5) Pga3dContact(nearest, normal, r) else null
     }
   }

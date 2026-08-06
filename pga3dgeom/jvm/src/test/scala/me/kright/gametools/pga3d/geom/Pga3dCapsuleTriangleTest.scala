@@ -101,10 +101,12 @@ class Pga3dCapsuleTriangleTest extends AnyFunSuiteLike with ScalaCheckPropertyCh
 
         val capsuleContact = capsule.deepestContact(triangle)
         val sphereContact = sphere.deepestContact(triangle)
-        assert(capsuleContact.isDefined == sphereContact.isDefined,
+        assert((capsuleContact ne null) == (sphereContact ne null),
           s"capsule = $capsuleContact, sphere = $sphereContact, center = $center, r = $r, triangle = $triangle")
 
-        for (cc <- capsuleContact; sc <- sphereContact) {
+        if ((capsuleContact ne null) && (sphereContact ne null)) {
+          val cc = capsuleContact
+          val sc = sphereContact
           val tolerance = 1e-12 * (1.0 + triangle.perimeter + r)
           assert((cc.point - sc.point).norm <= tolerance && (cc.normal - sc.normal).norm <= tolerance &&
             (cc.depth - sc.depth).abs <= tolerance,
@@ -119,7 +121,7 @@ class Pga3dCapsuleTriangleTest extends AnyFunSuiteLike with ScalaCheckPropertyCh
       // the only allowed exception: the axis exactly touching a degenerate triangle has no normal
       val exotic = triangle.area == 0.0 && triangle.distanceSquareTo(edge) == 0.0
       if (!exotic) {
-        assert(capsule.deepestContact(triangle).isDefined == capsule.intersects(triangle),
+        assert((capsule.deepestContact(triangle) ne null) == capsule.intersects(triangle),
           s"capsule = $capsule, triangle = $triangle")
       }
     }
@@ -128,7 +130,8 @@ class Pga3dCapsuleTriangleTest extends AnyFunSuiteLike with ScalaCheckPropertyCh
   test("non-piercing deepestContact is consistent: point on triangle, unit normal, axis reconstruction") {
     forAll(edges, radii, triangles, MinSuccessful(1000)) { (edge, r, triangle) =>
       val capsule = Pga3dCapsule(edge.a, edge.b, r)
-      for (contact <- capsule.deepestContact(triangle) if contact.depth <= r) {
+      val contact = capsule.deepestContact(triangle)
+      if ((contact ne null) && contact.depth <= r) {
         val scene = 1.0 + triangle.perimeter + edge.magnitude + r
 
         assert(triangle.distanceSquareTo(contact.point) <= 1e-18 * scene * scene,
@@ -149,7 +152,7 @@ class Pga3dCapsuleTriangleTest extends AnyFunSuiteLike with ScalaCheckPropertyCh
     // the axis crosses the triangle at the origin; the larger part is above (+z)
     val capsule = Pga3dCapsule(Pga3dPoint(0, 0, -2), Pga3dPoint(0, 0, 3), 0.5)
 
-    val contact = capsule.deepestContact(triangle).get
+    val contact = capsule.deepestContact(triangle).nn
     assert((contact.point - Pga3dPoint(0, 0, 0)).norm <= 1e-12, s"contact = $contact")
     assert((contact.normal - Pga3dVector(0, 0, 1)).norm <= 1e-12, s"contact = $contact")
     // depth = r + reach below the plane = 0.5 + 2
@@ -157,7 +160,7 @@ class Pga3dCapsuleTriangleTest extends AnyFunSuiteLike with ScalaCheckPropertyCh
 
     // flipped: the larger part below - the normal flips
     val flipped = Pga3dCapsule(Pga3dPoint(0, 0, 2), Pga3dPoint(0, 0, -3), 0.5)
-    val flippedContact = flipped.deepestContact(triangle).get
+    val flippedContact = flipped.deepestContact(triangle).nn
     assert((flippedContact.normal - Pga3dVector(0, 0, -1)).norm <= 1e-12, s"contact = $flippedContact")
     assert((flippedContact.depth - 2.5).abs <= 1e-12, s"contact = $flippedContact")
   }
@@ -167,7 +170,7 @@ class Pga3dCapsuleTriangleTest extends AnyFunSuiteLike with ScalaCheckPropertyCh
     // horizontal axis at height 0.3 over the triangle interior, r = 0.5
     val capsule = Pga3dCapsule(Pga3dPoint(-1, 0, 0.3), Pga3dPoint(1, 0, 0.3), 0.5)
 
-    val contact = capsule.deepestContact(triangle).get
+    val contact = capsule.deepestContact(triangle).nn
     assert((contact.normal - Pga3dVector(0, 0, 1)).norm <= 1e-12, s"contact = $contact")
     assert((contact.depth - 0.2).abs <= 1e-12, s"contact = $contact")
     assert(contact.point.z.abs <= 1e-12 && contact.point.y.abs <= 1e-12, s"contact = $contact")

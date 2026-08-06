@@ -75,42 +75,42 @@ class IntersectionBenchmark:
     i
 
   @Benchmark
-  def hit: Option[Pga3dPoint] =
+  def hit: Pga3dPoint | Null =
     val j = next()
     triangles(j).intersection(hitEdges(j), eps)
 
   @Benchmark
-  def hitLegacy: Option[Pga3dPoint] =
+  def hitLegacy: Pga3dPoint | Null =
     val j = next()
     IntersectionBenchmark.intersectionLegacy(triangles(j), hitEdges(j), eps)
 
   @Benchmark
-  def hitCachedPlane: Option[Pga3dPoint] =
+  def hitCachedPlane: Pga3dPoint | Null =
     val j = next()
     triangles(j).intersection(hitEdges(j), planes(j), eps)
 
   @Benchmark
-  def missFar: Option[Pga3dPoint] =
+  def missFar: Pga3dPoint | Null =
     val j = next()
     triangles(j).intersection(missFarEdges(j), eps)
 
   @Benchmark
-  def missFarLegacy: Option[Pga3dPoint] =
+  def missFarLegacy: Pga3dPoint | Null =
     val j = next()
     IntersectionBenchmark.intersectionLegacy(triangles(j), missFarEdges(j), eps)
 
   @Benchmark
-  def missNear: Option[Pga3dPoint] =
+  def missNear: Pga3dPoint | Null =
     val j = next()
     triangles(j).intersection(missNearEdges(j), eps)
 
   @Benchmark
-  def missNearLegacy: Option[Pga3dPoint] =
+  def missNearLegacy: Pga3dPoint | Null =
     val j = next()
     IntersectionBenchmark.intersectionLegacy(triangles(j), missNearEdges(j), eps)
 
   @Benchmark
-  def missNearCachedPlane: Option[Pga3dPoint] =
+  def missNearCachedPlane: Pga3dPoint | Null =
     val j = next()
     triangles(j).intersection(missNearEdges(j), planes(j), eps)
 
@@ -118,9 +118,9 @@ class IntersectionBenchmark:
 object IntersectionBenchmark:
   /** Pga3dTriangle.intersection before the hot-path rework (only the non-parallel prelude
    * differs from the current code; the parallel branch is not exercised by this data) */
-  def intersectionLegacy(triangle: Pga3dTriangle, edge: Pga3dEdge, eps: Double): Option[Pga3dPoint] = {
+  def intersectionLegacy(triangle: Pga3dTriangle, edge: Pga3dEdge, eps: Double): Pga3dPoint | Null = {
     if (!triangle.toAABB.intersects(edge.toAABB, expand = eps)) {
-      return None
+      return null
     }
 
     val normalizedPlane: Pga3dPlane = triangle.normalizedPlane
@@ -128,8 +128,8 @@ object IntersectionBenchmark:
     val da: Double = normalizedPlane v edge.a
     val db: Double = normalizedPlane v edge.b
 
-    if (da > eps && db > eps) return None
-    if (da < -eps && db < -eps) return None
+    if (da > eps && db > eps) return null
+    if (da < -eps && db < -eps) return null
 
     val eAB: Pga3dVector = edge.normalizedDirection
     val cos = normalizedPlane.x * eAB.x + normalizedPlane.y * eAB.y + normalizedPlane.z * eAB.z
@@ -138,9 +138,9 @@ object IntersectionBenchmark:
       val intersectionPoint = edge.interpolatedPoint(da / (da - db))
 
       if (edge.contains(intersectionPoint, eps) && triangle.contains(intersectionPoint, eps)) {
-        return Option(intersectionPoint)
+        return intersectionPoint
       } else {
-        return None
+        return null
       }
     }
 

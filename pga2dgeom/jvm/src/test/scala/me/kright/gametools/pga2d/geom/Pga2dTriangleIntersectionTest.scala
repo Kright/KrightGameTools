@@ -10,13 +10,13 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
  * kept as a correctness reference.
  */
 object LegacyPga2dTriangleIntersection:
-  def intersection(triangle: Pga2dTriangle, edge: Pga2dEdge, eps: Double): Option[Pga2dPoint] = {
+  def intersection(triangle: Pga2dTriangle, edge: Pga2dEdge, eps: Double): Pga2dPoint | Null = {
     if (!triangle.toAABB.intersects(edge.toAABB, expand = eps)) {
-      return None
+      return null
     }
 
-    if (triangle.contains(edge.a, eps)) return Option(edge.a)
-    if (triangle.contains(edge.b, eps)) return Option(edge.b)
+    if (triangle.contains(edge.a, eps)) return edge.a
+    if (triangle.contains(edge.b, eps)) return edge.b
 
     val triangleEdges = triangle.edges
 
@@ -25,9 +25,9 @@ object LegacyPga2dTriangleIntersection:
     pairOfNearestPoints.update(triangleEdges(2).getNearestPoints(edge))
 
     if (pairOfNearestPoints.distanceSquare <= eps * eps) {
-      Option(pairOfNearestPoints.a)
+      pairOfNearestPoints.a
     } else {
-      None
+      null
     }
   }
 
@@ -49,7 +49,10 @@ class Pga2dTriangleIntersectionTest extends AnyFunSuiteLike with ScalaCheckPrope
     forAll(triangles, edges, epsGen, MinSuccessful(2000)) { (triangle, edge, eps) =>
       val actual = triangle.intersection(edge, eps)
       val expected = LegacyPga2dTriangleIntersection.intersection(triangle, edge, eps)
-      assert(actual == expected,
-        s"actual = $actual, expected = $expected, triangle = $triangle, edge = $edge, eps = $eps")
+      val clue = s"actual = $actual, expected = $expected, triangle = $triangle, edge = $edge, eps = $eps"
+      assert((actual ne null) == (expected ne null), clue)
+      if ((actual ne null) && (expected ne null)) {
+        assert(actual == expected, clue)
+      }
     }
   }

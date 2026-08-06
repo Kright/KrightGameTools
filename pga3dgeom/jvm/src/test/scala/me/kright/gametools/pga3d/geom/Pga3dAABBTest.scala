@@ -218,16 +218,16 @@ class Pga3dAABBTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("methods for finding intersection of Pga3dAABB and Pga3dEdge returns result inside AABB") {
     forAll(Pga3dPhysicsGenerators.aabbIn(bounds), Pga3dPhysicsGenerators.edgeIn(bounds), MinSuccessful(10000)) { (aabb, edge) =>
-      aabb.intersection(edge) match
-        case Some(intersection) =>
-          assert(aabb.contains(intersection, expand = 1e-10),
-            s"""
-               |distance to a = ${aabb.distanceTo(intersection.a)}
-               |distance to b = ${aabb.distanceTo(intersection.b)}
-               |AABB = ${aabb},
-               |edge = ${edge},
-               |intersection = ${intersection}""".stripMargin)
-        case None => ()
+      val intersection = aabb.intersection(edge)
+      if (intersection ne null) {
+        assert(aabb.contains(intersection, expand = 1e-10),
+          s"""
+             |distance to a = ${aabb.distanceTo(intersection.a)}
+             |distance to b = ${aabb.distanceTo(intersection.b)}
+             |AABB = ${aabb},
+             |edge = ${edge},
+             |intersection = ${intersection}""".stripMargin)
+      }
     }
   }
 
@@ -236,14 +236,14 @@ class Pga3dAABBTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       val intersection = aabb.intersection(edge)
       val intersects = aabb.intersects(edge)
 
-      assert(intersects == intersection.isDefined, s"\nintersection = ${intersection},\nintersects = $intersects")
+      assert(intersects == (intersection ne null), s"\nintersection = ${intersection},\nintersects = $intersects")
 
       if (aabb.contains(edge.a) || aabb.contains(edge.b)) {
         assert(intersects)
       }
 
       if (aabb.contains(edge.a) && aabb.contains(edge.b)) {
-        assert(intersection.get == edge, s"\nintersection = $intersection, \nedge = $edge, \naabb = $aabb")
+        assert((intersection ne null) && intersection == edge, s"\nintersection = $intersection, \nedge = $edge, \naabb = $aabb")
       }
     }
   }

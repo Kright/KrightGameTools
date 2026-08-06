@@ -65,6 +65,7 @@ lazy val root = (project in file("."))
     publish / skip := true,
   ).aggregate(
     symbolic,
+    pgaNdCodeGen,
     mathutil.jvm, mathutil.js,
     flatarray.jvm, flatarray.js,
     vector.jvm, vector.js,

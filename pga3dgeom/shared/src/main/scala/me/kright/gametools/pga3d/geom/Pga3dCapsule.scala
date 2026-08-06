@@ -56,17 +56,17 @@ case class Pga3dCapsule(a: Pga3dPoint,
    * Note the depth is discontinuous when the axis slides off the triangle boundary,
    * inherent to a single-contact result.
    * As for the sphere, the pathological "axis touches a degenerate triangle exactly"
-   * has no defined normal and returns None
+   * has no defined normal and returns null
    */
-  def deepestContact(triangle: Pga3dTriangle): Option[Pga3dContact] = {
+  def deepestContact(triangle: Pga3dTriangle): Pga3dContact | Null = {
     val (onTriangle, onEdge) = triangle.getNearestPoints(edge)
     val toAxis = onEdge - onTriangle
     val distSquare = toAxis.normSquare
-    if (!(distSquare <= r * r)) return None // NaN input also lands here
+    if (!(distSquare <= r * r)) return null // NaN input also lands here
 
     if (distSquare > 0.0) {
       val dist = Math.sqrt(distSquare)
-      return Some(Pga3dContact(onTriangle, toAxis * (1.0 / dist), r - dist))
+      return Pga3dContact(onTriangle, toAxis * (1.0 / dist), r - dist)
     }
 
     // the axis pierces or touches the triangle: the normal comes from the plane,
@@ -74,14 +74,14 @@ case class Pga3dCapsule(a: Pga3dPoint,
     // orientation convention of the plane join does not matter)
     val plane = triangle.normalizedPlane
     val n = Pga3dVector(plane.x, plane.y, plane.z)
-    if (!(n.normSquare > 0.5)) return None // degenerate triangle: no normal is defined
+    if (!(n.normSquare > 0.5)) return null // degenerate triangle: no normal is defined
 
     val ha = n.antiDotI(a - onTriangle)
     val hb = n.antiDotI(b - onTriangle)
     val sign = if (ha + hb >= 0.0) 1.0 else -1.0
     // how far the axis reaches beyond the plane against the normal; zero when only touching
     val reach = Math.max(-Math.min(sign * ha, sign * hb), 0.0)
-    Some(Pga3dContact(onTriangle, n * sign, r + reach))
+    Pga3dContact(onTriangle, n * sign, r + reach)
   }
 
 

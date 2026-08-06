@@ -10,13 +10,18 @@ and triangles gain 2d-only features: an interior (exact `contains` without eps) 
 - **Axis-Aligned Bounding Box (AABB)**: Fast collision detection and spatial partitioning
 - **Triangles**: 2D triangle representation with various geometric operations
 - **Edges**: Line segments in 2D space with intersection testing
-- **Circles**: The 2d sibling of the 3d sphere
+- **Circles and Capsules**: The 2d siblings of the 3d sphere and capsule (a capsule is a stadium shape)
 - **Rays**: Precomputed rays for efficient intersection tests against many AABBs (e.g. BVH traversal)
 
 ### Geometric Algorithms
 - **Digital Differential Analyzer (DDA)**: Efficient ray traversal through a grid
 - **Nearest Point Calculations**: Find the nearest point on geometric primitives
 - **Intersection Testing**: Detect intersections between various geometric primitives
+
+The result of a query that may find nothing (`intersection`) is `T | Null` with `null` for
+"no intersection" - no `Option` allocation on the hot path; the boolean `intersects` methods
+are the cheap yes/no companions. (`deepestContact` is 3d-only for now: the convention for a
+contact with the center inside the volume, common in 2d, deserves a design decision.)
 
 ## Key Classes
 
@@ -63,6 +68,9 @@ val nearest = triangle.getNearestPoint(point)
 
 // Check for intersection with an edge
 val intersects = triangle.intersects(edge, eps)
+
+// The intersection point itself (null when there is none)
+val point: Pga2dPoint | Null = triangle.intersection(edge, eps)
 ```
 
 ### `Pga2dEdge`
@@ -83,11 +91,32 @@ Represents a circle, the 2d sibling of `Pga3dSphere`.
 ```scala
 val circle = Pga2dCircle(center, r)
 
-// Check for intersection with another circle
+// Boolean overlap queries
 val overlaps = circle.intersects(otherCircle)
+val touchesTriangle = circle.intersects(triangle)
+val touchesCapsule = circle.intersects(capsule)
 
 // Bounding box of the circle
 val aabb = circle.toAABB
+```
+
+### `Pga2dCapsule`
+All points within `r` of the segment `[a, b]` (a stadium shape), stored by the two cap centers;
+`a == b` degenerates to a circle. Mirrors `Pga3dCapsule`.
+```scala
+val capsule = Pga2dCapsule(a, b, r)
+// or engine-style, from the center and the half axis
+val fromCenter = Pga2dCapsule.fromCenter(center, halfAxis, r)
+
+// Boolean overlap queries
+val hitsCircle = capsule.intersects(circle)
+val hitsCapsule = capsule.intersects(otherCapsule)
+val hitsTriangle = capsule.intersects(triangle)
+
+// The axis segment, the bounding box, widening
+val axis = capsule.edge
+val aabb = capsule.toAABB
+val wider = capsule.expand(dr)
 ```
 
 ### `Pga2dRay`

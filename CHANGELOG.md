@@ -50,6 +50,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `step(dynamicBodies: Array[Pga3dPhysicsBody], ...)`. The parameter was dead - the solvers
   call `Pga3dPhysicsBody` methods directly, so no other body type could ever instantiate it,
   and every implementation and call site already used exactly this type.
+- The geometry queries that may find nothing return `T | Null` instead of `Option[T]`:
+  `intersection` on `Pga3dTriangle` / `Pga2dTriangle` (all overloads, `intersectionWithPlane`
+  included) and on `Pga3dAABB` / `Pga2dAABB`, and `deepestContact` on `Pga3dSphere` /
+  `Pga3dCapsule`. `null` means "no intersection"; the library is compiled with
+  `-Yexplicit-nulls`, so the nullability stays in the type and a `ne null` check (with flow
+  typing) replaces `isDefined`/`.get`. Motivation: these are the BVH/raycast hot-path calls,
+  and the `Option` wrapper was one more allocation per query on top of the result itself.
 - `Pga3dPhysicsSolverVerletConstrained.step` takes an optional `localBs` output array (after
   `nextMotors`, before the trailing iteration limits; default `null` skips the output): the
   honest node twists of the consumed poses, which the step reconstructs anyway. Observers
@@ -208,7 +215,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   motor/rotor/translator sandwich.
 - Capsule collision queries: `intersects(sphere/capsule/triangle)` (with the symmetric
   `sphere.intersects(capsule)` / `circle.intersects(capsule)` delegates) and
-  `deepestContact(triangle): Option[Pga3dContact]`. The non-piercing contact mirrors the
+  `deepestContact(triangle): Pga3dContact | Null`. The non-piercing contact mirrors the
   sphere (nearest pair, radial normal, depth `r - distance`); when the axis pierces the
   triangle the normal is the plane normal oriented towards the larger part of the axis
   (computed geometrically, independent of the plane orientation convention) and the depth
@@ -226,10 +233,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   exactly zero distance; the interior test goes through the degeneracy-hardened
   getNearestPoint, so nearly degenerate triangles and extreme scales (1e+-30) stay correct.
 - Sphere and circle as collision queries: `Pga3dSphere.intersects(triangle)` (a comparison of
-  `distanceSquareTo` against r^2) and `Pga3dSphere.deepestContact(triangle): Option[Pga3dContact]` -
+  `distanceSquareTo` against r^2) and `Pga3dSphere.deepestContact(triangle): Pga3dContact | Null` -
   the nearest triangle point, the unit normal towards the sphere center and the penetration
   depth; a center exactly on the triangle falls back to the plane normal, and the pathological
-  "center exactly on a degenerate triangle" returns None. `Pga3dContact(point, normal, depth)`
+  "center exactly on a degenerate triangle" returns null. `Pga3dContact(point, normal, depth)`
   is a new case class (7 flat doubles). `Pga2dCircle.intersects(triangle)` mirrors the 2d side
   (2d `deepestContact` is deferred: an interior center is common in 2d and its normal/depth
   convention deserves a design decision). The sphere-sphere / circle-circle overlap query is
@@ -318,6 +325,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 
 - Scala is updated to 3.8.4.
+- `pgaNdCodeGen` joined the root aggregate, so `sbt test` covers its tests too. It stays
+  unpublished and depends only on `ga`/`symbolic` - broken generated code cannot break the
+  generator, which must always be able to regenerate it (see pgaNdCodeGen/README.md).
+- `cpp/cmake-build-debug/` is ignored by git.
 - The code generator now has single sources of truth shared by the Scala and C++ backends:
   class field structure (`PgaSubclassFields`), norm and axis derivations (`NormSymbolics`,
   `AxesSymbolics`) and all hand-written numerical formulas (`SharedFormulas` rendered by

@@ -90,7 +90,7 @@ class ShapeIntersectionBenchmark:
     spheresMiss(j).intersects(triangles(j))
 
   @Benchmark
-  def sphereDeepestContact: Option[Pga3dContact] =
+  def sphereDeepestContact: Pga3dContact | Null =
     val j = next()
     spheresHit(j).deepestContact(triangles(j))
 
@@ -110,12 +110,12 @@ class ShapeIntersectionBenchmark:
     capsulesPierce(j).intersects(triangles(j))
 
   @Benchmark
-  def capsuleDeepestContact: Option[Pga3dContact] =
+  def capsuleDeepestContact: Pga3dContact | Null =
     val j = next()
     capsulesHit(j).deepestContact(triangles(j))
 
   @Benchmark
-  def capsuleDeepestContactPierce: Option[Pga3dContact] =
+  def capsuleDeepestContactPierce: Pga3dContact | Null =
     val j = next()
     capsulesPierce(j).deepestContact(triangles(j))
 

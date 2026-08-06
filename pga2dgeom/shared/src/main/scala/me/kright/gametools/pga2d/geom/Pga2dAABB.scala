@@ -133,7 +133,7 @@ case class Pga2dAABB(min: Pga2dPoint,
       intersects1d(min.y - expand, max.y + expand, a.min.y, a.max.y)
 
   def intersects(edge: Pga2dEdge): Boolean =
-    intersection(edge).isDefined
+    intersection(edge) ne null
 
   /**
    * exact triangle-box overlap test,
@@ -143,7 +143,7 @@ case class Pga2dAABB(min: Pga2dPoint,
   def intersects(triangle: Pga2dTriangle): Boolean =
     Pga2dAABB.intersects(this, triangle)
 
-  def intersection(edge: Pga2dEdge): Option[Pga2dEdge] =
+  def intersection(edge: Pga2dEdge): Pga2dEdge | Null =
     Pga2dAABB.intersection(this, edge)
 
   /** @param line : normalized line */
@@ -306,8 +306,8 @@ object Pga2dAABB:
     true
   }
 
-  def intersection(aabb: Pga2dAABB, edge: Pga2dEdge): Option[Pga2dEdge] =
-    if (aabb.contains(edge.a) && aabb.contains(edge.b)) return Some(edge)
+  def intersection(aabb: Pga2dAABB, edge: Pga2dEdge): Pga2dEdge | Null =
+    if (aabb.contains(edge.a) && aabb.contains(edge.b)) return edge
 
     val searcher = new MinMaxSearcher()
 
@@ -315,8 +315,8 @@ object Pga2dAABB:
     searcher.updateMinMaxT(edge.a.y, edge.b.y, aabb.min.y, aabb.max.y)
 
     if (searcher.isSolutionExist) {
-      Option(Pga2dEdge(edge.interpolatedPoint(searcher.lowerBound), edge.interpolatedPoint(searcher.upperBound)))
-    } else None
+      Pga2dEdge(edge.interpolatedPoint(searcher.lowerBound), edge.interpolatedPoint(searcher.upperBound))
+    } else null
 
 
 private class MinMaxSearcher:

@@ -48,11 +48,11 @@ case class Pga2dTriangle(a: Pga2dPoint,
       Pga2dEdge(c, a)
     )
 
-  def intersection(edge: Pga2dEdge, eps: Double): Option[Pga2dPoint] =
+  def intersection(edge: Pga2dEdge, eps: Double): Pga2dPoint | Null =
     Pga2dTriangle.intersection(this, edge, eps)
 
   def intersects(e: Pga2dEdge, eps: Double): Boolean =
-    intersection(e, eps).isDefined
+    intersection(e, eps) ne null
 
   /**
    * closest point of the triangle to p, via Voronoi regions
@@ -249,15 +249,15 @@ object Pga2dTriangle:
     (a < lo && b < lo && c < lo) || (a > hi && b > hi && c > hi)
   }
 
-  def intersection(triangle: Pga2dTriangle, edge: Pga2dEdge, eps: Double): Option[Pga2dPoint] = {
+  def intersection(triangle: Pga2dTriangle, edge: Pga2dEdge, eps: Double): Pga2dPoint | Null = {
     if (axisSeparates(edge.a.x, edge.b.x, triangle.a.x, triangle.b.x, triangle.c.x, eps) ||
       axisSeparates(edge.a.y, edge.b.y, triangle.a.y, triangle.b.y, triangle.c.y, eps)) {
       // short path when edge and triangle are far away from each other
-      return None
+      return null
     }
 
-    if (triangle.contains(edge.a, eps)) return Option(edge.a)
-    if (triangle.contains(edge.b, eps)) return Option(edge.b)
+    if (triangle.contains(edge.a, eps)) return edge.a
+    if (triangle.contains(edge.b, eps)) return edge.b
 
     // both endpoints are outside: the edge intersects the triangle
     // only if it crosses (or comes eps-close to) the triangle boundary
@@ -268,8 +268,8 @@ object Pga2dTriangle:
     pairOfNearestPoints.update(triangleEdges(2).getNearestPoints(edge))
 
     if (pairOfNearestPoints.distanceSquare <= eps * eps) {
-      Option(pairOfNearestPoints.a)
+      pairOfNearestPoints.a
     } else {
-      None
+      null
     }
   }
