@@ -23,13 +23,13 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor}
  * satisfy u' = omega. The correction factor is the differential of exp: for the right-
  * trivialized form used here (M = M0 * exp(u), body-frame twist) it works out to
  *
- *   du/dt = dexpInv(-u, omega) = omega + [u, omega]/2 + [u, [u, omega]]/12 + O(u^4),
+ *   du/dt = dexpInv(-u, omega) = (-u).dexpInv(omega)
  *
- * where [a, b] = ab - ba. The coefficients 1, 1/2, 1/12 come from the Bernoulli-number series
- * x/(e^x - 1) (for the world-frame convention M = exp(u) * M0 the odd terms flip sign).
- * Truncating after the 1/12 term is exact enough for the 4th order: within a step u = O(h), so
- * the dropped terms start at [u,[u,[u,omega]]] whose Bernoulli coefficient is zero, and the
- * first really dropped term ad^4/720 = O(h^5) is below the accuracy of RK4 itself.
+ * via the closed-form [[Pga3dBivector.dexpInv]] (the library implements the left-trivialized
+ * variant; the right one is its mirror u -> -u, see the pga-concepts.md notes on dexp).
+ * A Bernoulli-series truncation omega + [u, omega]/2 + [u, [u, omega]]/12 would already
+ * preserve the 4th order (within a step u = O(h) and the first dropped term is O(h^5)), but
+ * the exact form costs about the same and keeps the series bookkeeping out of the solver.
  *
  * What this buys compared to RK4: every stage motor M0 * exp(u_i) and the result are exact
  * motors by construction, the right-hand side is always evaluated at a legal point of the
@@ -52,17 +52,17 @@ object Pga3dPhysicsSolverRKMK4 extends Pga3dPhysicsSolver[Pga3dPhysicsBody]:
     val u2 = ku1.map(_ * (0.5 * dt))
     setStage(dynamicBodies, initial, u2, a1, 0.5 * dt)
     val a2 = getAccelerations(dynamicBodies, 0.5 * dt, addForquesToBodies)
-    val ku2 = Array.tabulate(n)(i => dexpInv(u2(i), dynamicBodies(i).localB * -0.5))
+    val ku2 = Array.tabulate(n)(i => (-u2(i)).dexpInv(dynamicBodies(i).localB * -0.5))
 
     val u3 = ku2.map(_ * (0.5 * dt))
     setStage(dynamicBodies, initial, u3, a2, 0.5 * dt)
     val a3 = getAccelerations(dynamicBodies, 0.5 * dt, addForquesToBodies)
-    val ku3 = Array.tabulate(n)(i => dexpInv(u3(i), dynamicBodies(i).localB * -0.5))
+    val ku3 = Array.tabulate(n)(i => (-u3(i)).dexpInv(dynamicBodies(i).localB * -0.5))
 
     val u4 = ku3.map(_ * dt)
     setStage(dynamicBodies, initial, u4, a3, dt)
     val a4 = getAccelerations(dynamicBodies, dt, addForquesToBodies)
-    val ku4 = Array.tabulate(n)(i => dexpInv(u4(i), dynamicBodies(i).localB * -0.5))
+    val ku4 = Array.tabulate(n)(i => (-u4(i)).dexpInv(dynamicBodies(i).localB * -0.5))
 
     for (pos <- FastRange(n)) {
       val body = dynamicBodies(pos)
@@ -73,15 +73,6 @@ object Pga3dPhysicsSolverRKMK4 extends Pga3dPhysicsSolver[Pga3dPhysicsBody]:
       body.localB = i.localB + (a1(pos) + (a2(pos) + a3(pos)) * 2.0 + a4(pos)) * (dt / 6.0)
     }
   }
-
-  /**
-   * dexpInv(-u, omega) truncated for the 4th order.
-   * [[Pga3dBivector.cross]] is the commutator product (ab - ba) / 2, so
-   * [u, omega] / 2 = u cross omega and [u, [u, omega]] / 12 = (u cross (u cross omega)) / 3.
-   */
-  private def dexpInv(u: Pga3dBivector, omega: Pga3dBivector): Pga3dBivector =
-    val c1 = u.cross(omega)
-    omega + c1 + u.cross(c1) * (1.0 / 3.0)
 
   private def getAccelerations(dynamicBodies: Array[Pga3dPhysicsBody],
                                currentDt: Double,

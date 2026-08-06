@@ -54,11 +54,26 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     for (scale <- Seq(1.0, 1e-4, 1e-6)) {
       forAll(Pga2dGenerators.projectivePoints, Pga2dGenerators.projectivePoints) { (u0, b) =>
         val u = u0 * scale
-        val tol = 1e-12 * (1.0 + b.norm) * (1.0 + u.norm)
+        val tol = 1e-13 * (1.0 + b.norm) * (1.0 + u.norm)
         checkAgainstSeries(u.dexp(b), PGA2.dexp(toGa(u), toGa(b)), tol, s"u = $u, b = $b")
         checkAgainstSeries(u.dexpInv(b), PGA2.dexpInv(toGa(u), toGa(b)), tol, s"u = $u, b = $b")
         checkAgainstSeries(u.weight.dexp(b), PGA2.dexp(toGa(toPoint(u.weight)), toGa(b)), tol, s"u.weight = ${u.weight}, b = $b")
         checkAgainstSeries(u.weight.dexpInv(b), PGA2.dexpInv(toGa(toPoint(u.weight)), toGa(b)), tol, s"u.weight = ${u.weight}, b = $b")
+      }
+    }
+  }
+
+  test("machine precision for a tiny bulk with a unit-scale weight, across all branch windows") {
+    // the hardest inputs for the coefficient formulas: with the narrow (1e-5) series windows
+    // the closed forms lost up to ~4e-11 * weightNorm(u) * norm(b) just above the threshold;
+    // the wide polynomial windows of SharedFormulas.dexpSinMinusCos/dexpK2 keep the error at
+    // a few ulps for every bulk magnitude, which this sweep pins on both sides of the window
+    for (bulkScale <- Seq(1.2e-5, 1e-4, 1e-3, 1e-2, 0.1, 0.45, 0.55, 1.0)) {
+      forAll(Pga2dGenerators.projectivePoints, Pga2dGenerators.projectivePoints) { (u0, b) =>
+        val u = Pga2dProjectivePoint(u0.x, u0.y, if (u0.w < 0) -bulkScale else bulkScale)
+        val tol = 1e-14 * (1.0 + b.norm) * (1.0 + u.norm)
+        checkAgainstSeries(u.dexp(b), PGA2.dexp(toGa(u), toGa(b)), tol, s"bulkScale = $bulkScale, u = $u, b = $b")
+        checkAgainstSeries(u.dexpInv(b), PGA2.dexpInv(toGa(u), toGa(b)), tol, s"bulkScale = $bulkScale, u = $u, b = $b")
       }
     }
   }
@@ -113,13 +128,17 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     }
   }
 
-  test("no jump at the trigonometry/series threshold") {
-    forAll(Pga2dGenerators.projectivePoints.filter(_.bulkNorm > 1e-20), Pga2dGenerators.projectivePoints) { (u0, b) =>
-      val direction = u0.normalizedByBulk
-      val below = direction * (1e-5 * (1.0 - 1e-9))
-      val above = direction * (1e-5 * (1.0 + 1e-9))
-      val tol = 1e-10 * (1.0 + b.norm)
-      assert((below.dexp(b) - above.dexp(b)).norm < tol, s"u0 = $u0, b = $b")
-      assert((below.dexpInv(b) - above.dexpInv(b)).norm < tol, s"u0 = $u0, b = $b")
+  test("no jump at the trigonometry/series thresholds") {
+    // 1e-5 is the series window of sinDivLen, 0.5 the wide polynomial window of
+    // sinMinusCosDivLen2 and k2
+    for ((threshold, delta) <- Seq((1e-5, 1e-9), (0.5, 1e-12))) {
+      forAll(Pga2dGenerators.projectivePoints.filter(_.bulkNorm > 1e-20), Pga2dGenerators.projectivePoints) { (u0, b) =>
+        val direction = u0.normalizedByBulk
+        val below = direction * (threshold * (1.0 - delta))
+        val above = direction * (threshold * (1.0 + delta))
+        val tol = 1e-10 * (1.0 + b.norm) * (1.0 + direction.norm)
+        assert((below.dexp(b) - above.dexp(b)).norm < tol, s"threshold = $threshold, u0 = $u0, b = $b")
+        assert((below.dexpInv(b) - above.dexpInv(b)).norm < tol, s"threshold = $threshold, u0 = $u0, b = $b")
+      }
     }
   }

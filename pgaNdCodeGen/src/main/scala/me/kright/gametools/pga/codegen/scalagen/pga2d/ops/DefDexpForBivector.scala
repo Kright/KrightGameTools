@@ -43,7 +43,7 @@ object DefDexpForBivector:
              | */
              |def dexp(b: ${projectivePoint.typeName}): ${projectivePoint.typeName} =""".stripMargin)
         code.block {
-          render(SharedFormulas.expSinDivLen("bulkNorm"))
+          render(SharedFormulas.dexpSinDivLen)
           code("")
           render(SharedFormulas.dexpK1)
           code("")
@@ -71,9 +71,9 @@ object DefDexpForBivector:
              | */
              |def dexpInv(b: ${projectivePoint.typeName}): ${projectivePoint.typeName} =""".stripMargin)
         code.block {
-          render(SharedFormulas.expSinDivLen("bulkNorm"))
+          render(SharedFormulas.dexpSinDivLen)
           code("")
-          render(SharedFormulas.expSinMinusCos)
+          render(SharedFormulas.dexpSinMinusCos)
           code("")
           render(SharedFormulas.dexpInvK3)
           code("")

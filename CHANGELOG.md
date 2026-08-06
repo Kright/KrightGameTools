@@ -42,6 +42,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `Pga3dPhysicsSolverRKMK4` uses the closed-form `(-u).dexpInv(omega)` from pga3d instead of
+  its own Bernoulli-series truncation (which preserved the 4th order but was approximate).
+  The honest form pays a sqrt + sin + cos per stage: ~15% more pure per-step solver overhead
+  in `benchmark/PhysicsSolverBenchmark` (empty force callback; with real forces the share is
+  smaller).
+- The dexp/dexpInv coefficients with an inherent cancellation (`sinMinusCosDivLen2`, `k2`)
+  use wide polynomial windows (up to `bulkNorm = 0.5`, degree 7-8 in `bulkNorm^2`) instead of
+  the narrow 1e-5 series windows of exp/log: the closed forms are now accurate to a few ulps
+  for every argument, where previously a tiny bulk combined with a unit-scale weight lost up
+  to ~4e-11 * weightNorm(u) * norm(b) just above the threshold (harmless for integrators,
+  visible when dexp is used as a standalone Jacobian). The Horner polynomials are ~4x cheaper
+  than the trigonometric forms they replace (`benchmark/TrigVsPolynomialBenchmark`); exp/log
+  keep their narrow windows - their cancellations are damped by the structure of exp itself.
 - The generated `cross` groups the mirrored summands of the commutator into parenthesized
   differences: `(a.f * b.g - a.g * b.f) + ...` instead of the interleaved canonical sort
   (Scala, both dimensions, and C++). Two identities become bit-exact: `u.cross(u * 2^k)`

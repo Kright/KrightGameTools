@@ -239,6 +239,7 @@ final case class Pga2dProjectivePoint(x: Double = 0.0,
    */
   def dexp(b: Pga2dProjectivePoint): Pga2dProjectivePoint =
     val len = bulkNorm
+    val len2 = len * len
     val cos = Math.cos(len)
 
     // sin(x)/x = 1 - x^2/6 + x^4/120 - ...; at x <= 1e-5 the dropped x^4/120 <= 8.4e-23
@@ -246,21 +247,23 @@ final case class Pga2dProjectivePoint(x: Double = 0.0,
     val sinDivLen = if (len > 1e-5) {
       Math.sin(len) / len
     } else {
-      1.0 - (len * len) / 6.0
+      1.0 - len2 / 6.0
     }
 
     // k1 = sin(c)^2 / c^2 = (sin(c)/c)^2
     val k1 = sinDivLen * sinDivLen
 
     // k2 = (2c - sin(2c)) / (2c^3) = (1 - sinDivLen * cos) / c^2, since sin(2c)/(2c) = sinDivLen * cos;
-    //   1 - sin(2c)/(2c) = (2c)^2/3! - (2c)^4/5! + ... = (2/3)*c^2 - (2/15)*c^4 + (4/315)*c^6 - ...
-    //   divide by c^2:     2/3 - (2/15)*c^2 + (4/315)*c^4 - ...
-    // at c <= 1e-5 the dropped (4/315)*c^4 <= 2e-22 relative term is far below 1e-17,
-    // so the second-order form is exact in double
-    val k2 = if (len > 1e-5) {
-      (1.0 - sinDivLen * cos) / (len * len)
+    // as a series: sum_{k>=1} (-1)^(k+1) * 4^k * m^(k-1) / (2k+1)! = 2/3 - (2/15)*m + (4/315)*m^2 - ..., m = c^2.
+    // The polynomial window is wide because the 1 - sinDivLen * cos cancellation costs
+    // ~eps/c^2 of relative error, which the single compensating power of c in the term k2
+    // multiplies would turn into ~eps/c of absolute error in the result. Up to c = 0.5 the
+    // degree-8 polynomial in m is accurate to 1 ulp (the dropped 4^10*m^9/21! term is
+    // ~1e-19 relative); at c > 0.5 the trigonometric form is accurate to ~2 ulp
+    val k2 = if (len > 0.5) {
+      (1.0 - sinDivLen * cos) / len2
     } else {
-      2.0 / 3.0 - (len * len) * (2.0 / 15.0)
+      2.0 / 3.0 - len2 * (2.0 / 15.0 - len2 * (4.0 / 315.0 - len2 * (2.0 / 2835.0 - len2 * (4.0 / 155925.0 - len2 * (4.0 / 6081075.0 - len2 * (8.0 / 638512875.0 - len2 * (2.0 / 10854718875.0 - len2 * (4.0 / 1856156927625.0))))))))
     }
 
     val ub = this.cross(b)
@@ -286,6 +289,7 @@ final case class Pga2dProjectivePoint(x: Double = 0.0,
    */
   def dexpInv(b: Pga2dProjectivePoint): Pga2dProjectivePoint =
     val len = bulkNorm
+    val len2 = len * len
     val cos = Math.cos(len)
 
     // sin(x)/x = 1 - x^2/6 + x^4/120 - ...; at x <= 1e-5 the dropped x^4/120 <= 8.4e-23
@@ -293,27 +297,27 @@ final case class Pga2dProjectivePoint(x: Double = 0.0,
     val sinDivLen = if (len > 1e-5) {
       Math.sin(len) / len
     } else {
-      1.0 - (len * len) / 6.0
+      1.0 - len2 / 6.0
     }
 
-    // (sin(x)/x - cos(x)) / x^2, step by step:
-    //   sin(x)   = x - x^3/6 + x^5/120 - x^7/5040 + ...
-    //   sin(x)/x = 1 - x^2/6 + x^4/120 - x^6/5040 + ...
-    //   cos(x)   = 1 - x^2/2 + x^4/24  - x^6/720  + ...
-    //   sin(x)/x - cos(x) = (1/2 - 1/6)*x^2 + (1/120 - 1/24)*x^4 + (1/720 - 1/5040)*x^6 + ...
-    //                     = x^2/3 - x^4/30 + x^6/840 - ...
-    //   divide by x^2:      1/3   - x^2/30 + x^4/840 - ...
-    // at x <= 1e-5 the dropped x^4/840 <= 1.2e-23 is relatively far below 1e-17,
-    // so the second-order form is exact in double
-    val sinMinusCosDivLen2 = if (len > 1e-5) {
-      (sinDivLen - cos) / (len * len)
+    // (sin(c)/c - cos(c)) / c^2 = sum (-1)^k * (2k+2) * m^k / (2k+3)! = 1/3 - m/30 + m^2/840 - ..., m = c^2.
+    // The polynomial window is much wider than in exp: here the coefficient multiplies terms
+    // with only one compensating power of c, so the ~eps/c^2 relative error of the
+    // trigonometric form near small c (the sinDivLen - cos cancellation) would surface as
+    // ~eps/c of absolute error in the result (in exp the terms carry c^2 and hide it).
+    // Up to c = 0.5 the degree-7 polynomial in m is accurate to 1 ulp (the dropped
+    // 18*m^8/19! term is ~7e-21 relative); at c > 0.5 the trigonometric form is accurate
+    // to ~2 ulp (its cancellation costs eps/c^2 <= 4*eps of relative error there)
+    val sinMinusCosDivLen2 = if (len > 0.5) {
+      (sinDivLen - cos) / len2
     } else {
-      1.0 / 3.0 - (len * len) / 30.0
+      1.0 / 3.0 - len2 * (1.0 / 30.0 - len2 * (1.0 / 840.0 - len2 * (1.0 / 45360.0 - len2 * (1.0 / 3991680.0 - len2 * (1.0 / 518918400.0 - len2 * (1.0 / 93405312000.0 - len2 / 22230464256000.0))))))
     }
 
     // k3 = (1 - c*cot(c)) / c^2 = ((sin(c)/c - cos(c)) / (sin(c)/c)) / c^2 = sinMinusCosDivLen2 / sinDivLen;
-    // both factors carry their own small-angle series, no extra branch; the series:
-    // k3 = 1/3 + m/45 + (2/945)*m^2 + ..., m = c^2; diverges at c = pi where exp stops being injective
+    // with the wide-window sinMinusCosDivLen2 the quotient is accurate to a few ulps for any c;
+    // the series: k3 = 1/3 + m/45 + (2/945)*m^2 + ..., m = c^2; diverges at c = pi where exp
+    // stops being injective
     val k3 = sinMinusCosDivLen2 / sinDivLen
 
     val ub = this.cross(b)

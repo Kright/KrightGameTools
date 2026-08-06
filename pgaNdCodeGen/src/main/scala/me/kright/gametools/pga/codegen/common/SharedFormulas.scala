@@ -166,11 +166,45 @@ object SharedFormulas:
   // study number it evaluates as f(c^2) = f(len^2) - p * f'(len^2) * I. The real parts
   // (k1, k2, k3) multiply the commutators directly, the dual parts (k1d, k2d, k3d, each already
   // containing the -p factor) multiply (commutator * I).
+  //
+  // Precision design: unlike exp, whose cancellation-prone coefficients only multiply terms
+  // with an x^2-sized compensation (so the narrow 1e-5 series windows suffice there), the
+  // dexp/dexpInv coefficients multiply terms with a single compensating power of x, and the
+  // ~eps/x^2 relative error of the trigonometric forms would surface as ~eps/x absolute error
+  // in the result (peaking at ~4e-11 * |weight(u)| * |b| just above a 1e-5 window). The two
+  // primitives with an inherent cancellation - sinMinusCosDivLen2 and k2 - therefore use wide
+  // polynomial windows (up to c = 0.5) here; every other coefficient is assembled from them
+  // without further loss, which keeps the result at a few ulps for any argument.
   // ------------------------------------------------------------------------------------------
 
   /** the pseudoscalar part p of the bivector's geometric square: u * u = -bulkNormSquare + p * I */
   def dexpPseudoScalarP(self: MultiVector[Sym])(using GA): String =
     s"@p = ${self.geometric(self).pseudoScalar.groupMultipliers()}"
+
+  /** the dexp variant of expSinDivLen: hoists len2 = len * len for the polynomial windows below */
+  val dexpSinDivLen: String =
+    """@len = bulkNorm
+      |@len2 = len * len
+      |@cos = cos(len)
+      |
+      |// sin(x)/x = 1 - x^2/6 + x^4/120 - ...; at x <= 1e-5 the dropped x^4/120 <= 8.4e-23
+      |// relative term is far below 1e-17, so the second-order form is exact in double
+      |@sinDivLen = IF len > 1e-5 THEN sin(len) / len ELSE 1.0 - len2 / 6.0""".stripMargin
+
+  /**
+   * the wide-window variant of expSinMinusCos for the dexp/dexpInv coefficients;
+   * needs expSinDivLen and dexpLen2 rendered before
+   */
+  val dexpSinMinusCos: String =
+    """// (sin(c)/c - cos(c)) / c^2 = sum (-1)^k * (2k+2) * m^k / (2k+3)! = 1/3 - m/30 + m^2/840 - ..., m = c^2.
+      |// The polynomial window is much wider than in exp: here the coefficient multiplies terms
+      |// with only one compensating power of c, so the ~eps/c^2 relative error of the
+      |// trigonometric form near small c (the sinDivLen - cos cancellation) would surface as
+      |// ~eps/c of absolute error in the result (in exp the terms carry c^2 and hide it).
+      |// Up to c = 0.5 the degree-7 polynomial in m is accurate to 1 ulp (the dropped
+      |// 18*m^8/19! term is ~7e-21 relative); at c > 0.5 the trigonometric form is accurate
+      |// to ~2 ulp (its cancellation costs eps/c^2 <= 4*eps of relative error there)
+      |@sinMinusCosDivLen2 = IF len > 0.5 THEN (sinDivLen - cos) / len2 ELSE 1.0 / 3.0 - len2 * (1.0 / 30.0 - len2 * (1.0 / 840.0 - len2 * (1.0 / 45360.0 - len2 * (1.0 / 3991680.0 - len2 * (1.0 / 518918400.0 - len2 * (1.0 / 93405312000.0 - len2 / 22230464256000.0))))))""".stripMargin
 
   /** k1 of dexp; needs expSinDivLen rendered before */
   val dexpK1: String =
@@ -185,30 +219,35 @@ object SharedFormulas:
       |// multiplier -p * k1' reuses the two series-guarded factors: no extra branch needed
       |@k1d = p * sinDivLen * sinMinusCosDivLen2""".stripMargin
 
-  /** k2 of dexp; needs expSinDivLen rendered before */
+  /** k2 of dexp; needs expSinDivLen and dexpLen2 rendered before */
   val dexpK2: String =
     """// k2 = (2c - sin(2c)) / (2c^3) = (1 - sinDivLen * cos) / c^2, since sin(2c)/(2c) = sinDivLen * cos;
-      |//   1 - sin(2c)/(2c) = (2c)^2/3! - (2c)^4/5! + ... = (2/3)*c^2 - (2/15)*c^4 + (4/315)*c^6 - ...
-      |//   divide by c^2:     2/3 - (2/15)*c^2 + (4/315)*c^4 - ...
-      |// at c <= 1e-5 the dropped (4/315)*c^4 <= 2e-22 relative term is far below 1e-17,
-      |// so the second-order form is exact in double
-      |@k2 = IF len > 1e-5 THEN (1.0 - sinDivLen * cos) / (len * len) ELSE 2.0 / 3.0 - (len * len) * (2.0 / 15.0)""".stripMargin
+      |// as a series: sum_{k>=1} (-1)^(k+1) * 4^k * m^(k-1) / (2k+1)! = 2/3 - (2/15)*m + (4/315)*m^2 - ..., m = c^2.
+      |// The polynomial window is wide because the 1 - sinDivLen * cos cancellation costs
+      |// ~eps/c^2 of relative error, which the single compensating power of c in the term k2
+      |// multiplies would turn into ~eps/c of absolute error in the result. Up to c = 0.5 the
+      |// degree-8 polynomial in m is accurate to 1 ulp (the dropped 4^10*m^9/21! term is
+      |// ~1e-19 relative); at c > 0.5 the trigonometric form is accurate to ~2 ulp
+      |@k2 = IF len > 0.5 THEN (1.0 - sinDivLen * cos) / len2 ELSE 2.0 / 3.0 - len2 * (2.0 / 15.0 - len2 * (4.0 / 315.0 - len2 * (2.0 / 2835.0 - len2 * (4.0 / 155925.0 - len2 * (4.0 / 6081075.0 - len2 * (8.0 / 638512875.0 - len2 * (2.0 / 10854718875.0 - len2 * (4.0 / 1856156927625.0))))))))""".stripMargin
 
-  /** the dual part of k2; needs dexpK2 and the @p line rendered before */
+  /** the dual part of k2; needs dexpK2, dexpSinMinusCos and the @p line rendered before */
   val dexpK2Dual: String =
     """// the dual part of k2, via the product rule on k2 = (1 - S*C)/m with S = sinDivLen, C = cos,
       |// m = len^2, dS/dm = -sinMinusCosDivLen2/2 and dC/dm = -S/2:
       |//   k2' = (sinMinusCosDivLen2 * C + S*S) / (2m) - k2/m
-      |// so -k2' = (k2 - (sinMinusCosDivLen2 * C + S*S)/2) / m; differentiating the series of k2
-      |// gives the small-angle branch k2' = -2/15 + (8/315)*m - ..., where the dropped m^2 term
-      |// is ~2e-23 relative at c <= 1e-5, exact in double
-      |@k2d = IF len > 1e-5 THEN p * (k2 - (sinMinusCosDivLen2 * cos + sinDivLen * sinDivLen) * 0.5) / (len * len) ELSE p * (2.0 / 15.0 - (len * len) * (8.0 / 315.0))""".stripMargin
+      |// so -k2' = (k2 - (sinMinusCosDivLen2 * C + S*S)/2) / m. With the polynomial-accurate k2
+      |// and sinMinusCosDivLen2 the subtraction costs ~3*eps absolute, and the division by m is
+      |// fully damped by the c^3 scale of the term k2d multiplies, so no wide window is needed;
+      |// the branch below only guards the 0/0 of that division, and its series
+      |// k2' = -2/15 + (8/315)*m - ... is exact in double at c <= 1e-5
+      |@k2d = IF len > 1e-5 THEN p * (k2 - (sinMinusCosDivLen2 * cos + sinDivLen * sinDivLen) * 0.5) / len2 ELSE p * (2.0 / 15.0 - len2 * (8.0 / 315.0))""".stripMargin
 
-  /** k3 of dexpInv; needs expSinDivLen and expSinMinusCos rendered before */
+  /** k3 of dexpInv; needs expSinDivLen and dexpSinMinusCos rendered before */
   val dexpInvK3: String =
     """// k3 = (1 - c*cot(c)) / c^2 = ((sin(c)/c - cos(c)) / (sin(c)/c)) / c^2 = sinMinusCosDivLen2 / sinDivLen;
-      |// both factors carry their own small-angle series, no extra branch; the series:
-      |// k3 = 1/3 + m/45 + (2/945)*m^2 + ..., m = c^2; diverges at c = pi where exp stops being injective
+      |// with the wide-window sinMinusCosDivLen2 the quotient is accurate to a few ulps for any c;
+      |// the series: k3 = 1/3 + m/45 + (2/945)*m^2 + ..., m = c^2; diverges at c = pi where exp
+      |// stops being injective
       |@k3 = sinMinusCosDivLen2 / sinDivLen""".stripMargin
 
   /** the dual part of k3; needs dexpInvK3 and the @p line rendered before */
@@ -216,9 +255,11 @@ object SharedFormulas:
     """// the dual part of k3, via the quotient rule on k3 = T/S with T = sinMinusCosDivLen2,
       |// S = sinDivLen, m = len^2, dT/dm = (S - 3*T)/(2m) and dS/dm = -T/2:
       |//   k3' = (dT/dm * S - T * dS/dm) / S^2 = (S*(S - 3*T)/m + T*T) / (2*S*S)
-      |// differentiating the series of k3 gives the small-angle branch k3' = 1/45 + (4/945)*m + ...,
-      |// where the dropped m^2 term is far below 1e-17 relative at c <= 1e-5, exact in double
-      |@k3d = IF len > 1e-5 THEN -p * (sinDivLen * (sinDivLen - 3.0 * sinMinusCosDivLen2) / (len * len) + sinMinusCosDivLen2 * sinMinusCosDivLen2) / (2.0 * sinDivLen * sinDivLen) ELSE -p * (1.0 / 45.0 + (len * len) * (4.0 / 945.0))""".stripMargin
+      |// Like in k2d, the S - 3*T subtraction costs ~4*eps and the division by m is fully
+      |// damped by the c^3 scale of the term k3d multiplies; the branch below only guards the
+      |// 0/0 of that division, and its series k3' = 1/45 + (4/945)*m + ... is exact in double
+      |// at c <= 1e-5
+      |@k3d = IF len > 1e-5 THEN -p * (sinDivLen * (sinDivLen - 3.0 * sinMinusCosDivLen2) / len2 + sinMinusCosDivLen2 * sinMinusCosDivLen2) / (2.0 * sinDivLen * sinDivLen) ELSE -p * (1.0 / 45.0 + len2 * (4.0 / 945.0))""".stripMargin
 
   /** dexp(u, b) for a full bivector u; ub = u x b, uub = u x (u x b) */
   def dexpResult(b: MultiVector[Sym], ub: MultiVector[Sym], uub: MultiVector[Sym])(using GA): MultiVector[Sym] =

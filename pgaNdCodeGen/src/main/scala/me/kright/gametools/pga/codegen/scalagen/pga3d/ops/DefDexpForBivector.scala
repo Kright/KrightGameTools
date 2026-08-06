@@ -40,9 +40,9 @@ object DefDexpForBivector:
              | */
              |def dexp(b: ${bivector.typeName}): ${bivector.typeName} =""".stripMargin)
         code.block {
-          render(SharedFormulas.expSinDivLen("bulkNorm"))
+          render(SharedFormulas.dexpSinDivLen)
           code("")
-          render(SharedFormulas.expSinMinusCos)
+          render(SharedFormulas.dexpSinMinusCos)
           code("")
           render(SharedFormulas.dexpPseudoScalarP(self))
           code("")
@@ -75,9 +75,9 @@ object DefDexpForBivector:
              | */
              |def dexpInv(b: ${bivector.typeName}): ${bivector.typeName} =""".stripMargin)
         code.block {
-          render(SharedFormulas.expSinDivLen("bulkNorm"))
+          render(SharedFormulas.dexpSinDivLen)
           code("")
-          render(SharedFormulas.expSinMinusCos)
+          render(SharedFormulas.dexpSinMinusCos)
           code("")
           render(SharedFormulas.dexpPseudoScalarP(self))
           code("")
@@ -106,7 +106,7 @@ object DefDexpForBivector:
              | */
              |def dexp(b: ${bivector.typeName}): ${bivector.typeName} =""".stripMargin)
         code.block {
-          render(SharedFormulas.expSinDivLen("bulkNorm"))
+          render(SharedFormulas.dexpSinDivLen)
           code("")
           render(SharedFormulas.dexpK1)
           code("")
@@ -128,9 +128,9 @@ object DefDexpForBivector:
              | */
              |def dexpInv(b: ${bivector.typeName}): ${bivector.typeName} =""".stripMargin)
         code.block {
-          render(SharedFormulas.expSinDivLen("bulkNorm"))
+          render(SharedFormulas.dexpSinDivLen)
           code("")
-          render(SharedFormulas.expSinMinusCos)
+          render(SharedFormulas.dexpSinMinusCos)
           code("")
           render(SharedFormulas.dexpInvK3)
           code("")
