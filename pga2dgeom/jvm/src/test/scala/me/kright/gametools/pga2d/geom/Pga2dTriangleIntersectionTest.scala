@@ -24,7 +24,7 @@ object LegacyPga2dTriangleIntersection:
     pairOfNearestPoints.update(triangleEdges(1).getNearestPoints(edge))
     pairOfNearestPoints.update(triangleEdges(2).getNearestPoints(edge))
 
-    if (pairOfNearestPoints.distSquare <= eps * eps) {
+    if (pairOfNearestPoints.distanceSquare <= eps * eps) {
       Option(pairOfNearestPoints.a)
     } else {
       None

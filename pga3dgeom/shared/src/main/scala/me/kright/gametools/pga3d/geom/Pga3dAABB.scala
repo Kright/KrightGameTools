@@ -136,19 +136,19 @@ case class Pga3dAABB(min: Pga3dPoint,
       (min.z - expand <= a.min.z && max.z + expand >= a.max.z)
 
 
-  private def hasIntersection1d(min1: Double, max1: Double, min2: Double, max2: Double): Boolean =
+  private def intersects1d(min1: Double, max1: Double, min2: Double, max2: Double): Boolean =
     !(min1 > max2 || min2 > max1)
 
 
   def intersects(a: Pga3dAABB): Boolean =
-    hasIntersection1d(min.x, max.x, a.min.x, a.max.x) &&
-      hasIntersection1d(min.y, max.y, a.min.y, a.max.y) &&
-      hasIntersection1d(min.z, max.z, a.min.z, a.max.z)
+    intersects1d(min.x, max.x, a.min.x, a.max.x) &&
+      intersects1d(min.y, max.y, a.min.y, a.max.y) &&
+      intersects1d(min.z, max.z, a.min.z, a.max.z)
 
   def intersects(a: Pga3dAABB, expand: Double): Boolean =
-    hasIntersection1d(min.x - expand, max.x + expand, a.min.x, a.max.x) &&
-      hasIntersection1d(min.y - expand, max.y + expand, a.min.y, a.max.y) &&
-      hasIntersection1d(min.z - expand, max.z + expand, a.min.z, a.max.z)
+    intersects1d(min.x - expand, max.x + expand, a.min.x, a.max.x) &&
+      intersects1d(min.y - expand, max.y + expand, a.min.y, a.max.y) &&
+      intersects1d(min.z - expand, max.z + expand, a.min.z, a.max.z)
 
   def intersects(edge: Pga3dEdge): Boolean =
     intersection(edge).isDefined

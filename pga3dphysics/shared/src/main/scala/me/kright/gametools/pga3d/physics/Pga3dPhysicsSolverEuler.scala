@@ -3,7 +3,7 @@ package me.kright.gametools.pga3d.physics
 import me.kright.gametools.pga3d.physics.Pga3dPhysicsSolverUtil.{getDerivative, setNewState}
 
 /** First order of precision. Very imprecise */
-object Pga3dPhysicsSolverEuler extends Pga3dPhysicsSolver[Pga3dPhysicsBody]:
+object Pga3dPhysicsSolverEuler extends Pga3dPhysicsSolver:
   override def step(dynamicBodies: Array[Pga3dPhysicsBody],
                     dt: Double,
                     addForquesToBodies: (Double) => Unit): Unit = {

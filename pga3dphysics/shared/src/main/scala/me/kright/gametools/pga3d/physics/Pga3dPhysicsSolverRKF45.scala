@@ -17,7 +17,7 @@ import me.kright.gametools.pga3d.physics.Pga3dPhysicsSolverUtil.getDerivative
  * The estimate is refreshed by each [[step]] and is body-indexed in the `dynamicBodies` order.
  * It measures the local error per step, so it scales as dt^5: halving the step drops it ~32x.
  */
-class Pga3dPhysicsSolverRKF45 extends Pga3dPhysicsSolver[Pga3dPhysicsBody]:
+class Pga3dPhysicsSolverRKF45 extends Pga3dPhysicsSolver:
   /** per-body norm of the (5th - 4th order) motor difference of the last step */
   var lastMotorErrors: Array[Double] = Array.emptyDoubleArray
   /** per-body norm of the (5th - 4th order) localB difference of the last step */

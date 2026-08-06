@@ -47,7 +47,7 @@ class Pga3dConstrainedChainTest extends AnyFunSuiteLike:
       body.getKineticEnergy - body.inertia.mass * gravity.antiDotI(body.globalCenterOfMass.toVectorUnsafe)
     }.sum
 
-  private def runChain(inner: Pga3dPhysicsSolver[Pga3dPhysicsBody],
+  private def runChain(inner: Pga3dPhysicsSolver,
                        dt: Double,
                        totalTime: Double): (Array[Pga3dPhysicsBody], Pga3dConstraintResolver) =
     val (bodies, resolver) = chain(angle = 0.3)
@@ -66,7 +66,7 @@ class Pga3dConstrainedChainTest extends AnyFunSuiteLike:
     val totalTime = 1.0
     val (reference, _) = runChain(Pga3dPhysicsSolverRK4, dt = 1e-4, totalTime)
 
-    val solversAndExpectedOrder = ArraySeq[(Pga3dPhysicsSolver[Pga3dPhysicsBody], Double, Double)](
+    val solversAndExpectedOrder = ArraySeq[(Pga3dPhysicsSolver, Double, Double)](
       (Pga3dPhysicsSolverEuler, 0.7, 1.5),
       (Pga3dPhysicsSolverHeun, 1.7, 2.5),
       (Pga3dPhysicsSolverMidPoint, 1.7, 2.5),

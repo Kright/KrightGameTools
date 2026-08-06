@@ -84,7 +84,7 @@ Represents a circle, the 2d sibling of `Pga3dSphere`.
 val circle = Pga2dCircle(center, r)
 
 // Check for intersection with another circle
-val intersects = circle.hasIntersection(otherCircle)
+val overlaps = circle.intersects(otherCircle)
 
 // Bounding box of the circle
 val aabb = circle.toAABB
@@ -101,7 +101,7 @@ val ray = Pga2dRay(origin, direction)
 val normalizedRay = Pga2dRay.normalized(origin, direction)
 
 // Check for intersection with an AABB
-val hits = ray.hasIntersection(aabb)
+val hits = ray.intersects(aabb)
 
 // t of the entry point, 0.0 if origin is inside, Double.PositiveInfinity on miss
 val t = ray.intersectionT(aabb)

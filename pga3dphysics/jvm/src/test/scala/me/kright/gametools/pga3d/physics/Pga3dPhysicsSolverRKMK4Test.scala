@@ -7,7 +7,7 @@ import scala.collection.immutable.ArraySeq
 
 class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
 
-  private def precessionMaxError(solver: Pga3dPhysicsSolver[Pga3dPhysicsBody],
+  private def precessionMaxError(solver: Pga3dPhysicsSolver,
                                  motor: Pga3dMotor,
                                  stepsCount: Int = 1000,
                                  dt: Double = 0.01): ErrorOfEnergyAndMomentum =
@@ -58,7 +58,7 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
     }
   }
 
-  private def precessionFinalState(solver: Pga3dPhysicsSolver[Pga3dPhysicsBody],
+  private def precessionFinalState(solver: Pga3dPhysicsSolver,
                                    dt: Double,
                                    totalTime: Double): Pga3dBodyState =
     val system = Pga3dPhysicsSystemForTest(Array(Pga3dPhysicsSystemForTest.simpleBody(Pga3dMotor.id)), solver)
@@ -94,7 +94,7 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
     val totalTime = 12.0
     val reference = precessionFinalState(Pga3dPhysicsSolverRKMK4, dt = 1e-4, totalTime)
 
-    def run(solver: Pga3dPhysicsSolver[Pga3dPhysicsBody], dt: Double): (Pga3dBodyState, ErrorOfEnergyAndMomentum) =
+    def run(solver: Pga3dPhysicsSolver, dt: Double): (Pga3dBodyState, ErrorOfEnergyAndMomentum) =
       val system = Pga3dPhysicsSystemForTest(Array(Pga3dPhysicsSystemForTest.simpleBody(Pga3dMotor.id)), solver)
       val stepsCount = Math.round(totalTime / dt).toInt
       val errors = for (_ <- 0 until stepsCount) yield {

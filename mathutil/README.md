@@ -31,9 +31,15 @@ FastRange.cfor(0, _ < n, _ + 1) { i =>
 
 ### Precision helpers
 
-* `EqualityEps` — a wrapper around an epsilon value, passed implicitly.
-* `IEqualsWithEps[T]` — a typeclass for approximate equality; provides `a === b` given an implicit `EqualityEps`,
-  used throughout the tests to compare floating-point results.
+* `CanEqualWithEps[T]` — a derivable typeclass for approximate equality with an explicit tolerance:
+  `a.equalsWithEps(b, eps)` is true iff the Chebyshev (L-infinity) distance over all `Double` components is
+  within `eps`. `derives CanEqualWithEps` works for case classes whose fields are `Double`s or, recursively,
+  such case classes, and inlines to a flat `&&`-chain with early exit and no allocations; equal infinities
+  compare equal, NaN never does. Derived by the generated pga3d/pga2d classes and the geometry case classes;
+  `import CanEqualWithEps.given` provides the instance for plain `Double`.
+* `ExactArith` — error-free arithmetic building blocks: `fma(a, b, c)` (the JVM intrinsic; a Dekker-based
+  portable emulation on Scala.js) and `diffOfProducts(a, b, c, d)` for `a*b - c*d` via Kahan's algorithm,
+  at most 2 ulp of relative error even under catastrophic cancellation.
 
 ### MathUtil
 

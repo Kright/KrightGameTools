@@ -16,63 +16,63 @@ class Pga2dRayTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("ray through the box hits") {
     val ray = Pga2dRay(Pga2dPoint(-1, -1), Pga2dVector(1, 1))
-    assert(ray.hasIntersection(unitBox))
+    assert(ray.intersects(unitBox))
   }
 
   test("ray pointing away from the box misses") {
     val ray = Pga2dRay(Pga2dPoint(-1, -1), Pga2dVector(-1, -1))
-    assert(!ray.hasIntersection(unitBox))
+    assert(!ray.intersects(unitBox))
   }
 
   test("ray with origin inside the box hits") {
     val ray = Pga2dRay(Pga2dPoint(0.5, 0.5), Pga2dVector(0, 1))
-    assert(ray.hasIntersection(unitBox))
+    assert(ray.intersects(unitBox))
   }
 
   test("axis-parallel ray inside the slab hits") {
     val ray = Pga2dRay(Pga2dPoint(0.5, -1), Pga2dVector(0, 1))
-    assert(ray.hasIntersection(unitBox))
+    assert(ray.intersects(unitBox))
   }
 
   test("axis-parallel ray outside the slab misses") {
-    assert(!Pga2dRay(Pga2dPoint(2.0, -1), Pga2dVector(0, 1)).hasIntersection(unitBox))
-    assert(!Pga2dRay(Pga2dPoint(-0.5, -1), Pga2dVector(0, 1)).hasIntersection(unitBox))
+    assert(!Pga2dRay(Pga2dPoint(2.0, -1), Pga2dVector(0, 1)).intersects(unitBox))
+    assert(!Pga2dRay(Pga2dPoint(-0.5, -1), Pga2dVector(0, 1)).intersects(unitBox))
   }
 
   test("axis-parallel ray grazing the min side hits (0 * Inf = NaN case)") {
     // origin.x is exactly on the x = min.x side => (min.x - origin.x) * (1 / 0.0) = NaN
     val ray = Pga2dRay(Pga2dPoint(0.0, -1), Pga2dVector(0, 1))
-    assert(ray.hasIntersection(unitBox))
+    assert(ray.intersects(unitBox))
   }
 
   test("axis-parallel ray grazing the max side hits (0 * Inf = NaN case)") {
     val ray = Pga2dRay(Pga2dPoint(1.0, -1), Pga2dVector(0, 1))
-    assert(ray.hasIntersection(unitBox))
+    assert(ray.intersects(unitBox))
   }
 
   test("grazing ray with negative zero direction component hits") {
     val ray = Pga2dRay(Pga2dPoint(0.0, -1), Pga2dVector(-0.0, 1))
-    assert(ray.hasIntersection(unitBox))
+    assert(ray.intersects(unitBox))
   }
 
   test("grazing ray with subnormal direction component hits (reciprocal overflows to Inf)") {
     val ray = Pga2dRay(Pga2dPoint(0.0, -1), Pga2dVector(Double.MinPositiveValue, 1))
-    assert(ray.hasIntersection(unitBox))
+    assert(ray.intersects(unitBox))
   }
 
   test("box fully behind the ray misses") {
     val ray = Pga2dRay(Pga2dPoint(0.5, 2), Pga2dVector(0, 1))
-    assert(!ray.hasIntersection(unitBox))
+    assert(!ray.intersects(unitBox))
   }
 
   test("ray starting on the near side and pointing into the box hits") {
     val ray = Pga2dRay(Pga2dPoint(0.5, 0.0), Pga2dVector(0, 1))
-    assert(ray.hasIntersection(unitBox))
+    assert(ray.intersects(unitBox))
   }
 
   test("ray starting on the far side and pointing away misses (touch only at t = 0)") {
     val ray = Pga2dRay(Pga2dPoint(0.5, 1.0), Pga2dVector(0, 1))
-    assert(!ray.hasIntersection(unitBox))
+    assert(!ray.intersects(unitBox))
   }
 
   test("ray through any point of the aabb hits") {
@@ -86,11 +86,11 @@ class Pga2dRayTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
         if (direction.norm > 0) {
           val ray = Pga2dRay(rayOrigin, direction)
           if (aabb.contains(innerPoint, expand = -1e-6)) {
-            assert(ray.hasIntersection(aabb))
+            assert(ray.intersects(aabb))
           } else {
             // innerPoint is on (or within 1e-6 of) the boundary: an exact touch is not
             // guaranteed to survive rounding, so check against a slightly expanded box
-            assert(ray.hasIntersection(aabb.expand(1e-6)))
+            assert(ray.intersects(aabb.expand(1e-6)))
           }
         }
       }
@@ -104,15 +104,15 @@ class Pga2dRayTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       val dirY = Pga2dVector(0, 1)
 
       for (x <- ArraySeq(aabb.min.x, aabb.max.x, c.x)) {
-        assert(Pga2dRay(Pga2dPoint(x, belowY), dirY).hasIntersection(aabb))
+        assert(Pga2dRay(Pga2dPoint(x, belowY), dirY).intersects(aabb))
       }
 
-      assert(!Pga2dRay(Pga2dPoint(aabb.max.x + 1.0, belowY), dirY).hasIntersection(aabb))
-      assert(!Pga2dRay(Pga2dPoint(aabb.min.x - 1.0, belowY), dirY).hasIntersection(aabb))
+      assert(!Pga2dRay(Pga2dPoint(aabb.max.x + 1.0, belowY), dirY).intersects(aabb))
+      assert(!Pga2dRay(Pga2dPoint(aabb.min.x - 1.0, belowY), dirY).intersects(aabb))
     }
   }
 
-  test("if hasIntersection is false, no point along the ray is strictly inside the aabb") {
+  test("if intersects is false, no point along the ray is strictly inside the aabb") {
     forAll(
       Pga2dPhysicsGenerators.aabbIn(bounds),
       Pga2dPhysicsGenerators.pointIn(bounds),
@@ -121,7 +121,7 @@ class Pga2dRayTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     ) { (aabb, rayOrigin, direction) =>
       whenever(direction.norm > 0) {
         val ray = Pga2dRay(rayOrigin, direction)
-        if (!ray.hasIntersection(aabb)) {
+        if (!ray.intersects(aabb)) {
           for (i <- 0 to 32) {
             val p = rayOrigin.madd(direction, i * 0.125)
             assert(!aabb.contains(p, expand = -1e-9))
@@ -162,7 +162,7 @@ class Pga2dRayTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     assert(ray.intersectionT(nearBox) < ray.intersectionT(farBox))
   }
 
-  test("intersectionT is finite exactly when hasIntersection is true") {
+  test("intersectionT is finite exactly when intersects is true") {
     forAll(
       Pga2dPhysicsGenerators.aabbIn(bounds),
       Pga2dPhysicsGenerators.pointIn(bounds),
@@ -171,7 +171,7 @@ class Pga2dRayTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     ) { (aabb, rayOrigin, direction) =>
       whenever(direction.norm > 0) {
         val ray = Pga2dRay(rayOrigin, direction)
-        assert(ray.hasIntersection(aabb) == !ray.intersectionT(aabb).isPosInfinity)
+        assert(ray.intersects(aabb) == !ray.intersectionT(aabb).isPosInfinity)
       }
     }
   }

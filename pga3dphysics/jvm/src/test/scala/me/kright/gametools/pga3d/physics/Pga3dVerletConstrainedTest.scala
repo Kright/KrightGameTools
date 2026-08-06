@@ -39,17 +39,22 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
       Pga3dPhysicsSolverVerlet.makePrevMotors(inertias, motors, localBs, forquesAt(motors, localBs), dt)
     private var nextMotors: Array[Pga3dMotor] = new Array[Pga3dMotor](bodies.length)
 
+    /** the localBs output of the last step: the node twists of the poses that step consumed */
+    val stepLocalBs: Array[Pga3dBivector] = new Array[Pga3dBivector](bodies.length)
+
     def step(dt: Double, stepConstraints: Seq[Pga3dDistanceConstraint] = constraints): Unit =
       Pga3dPhysicsSolverVerletConstrained.step(
-        inertias, prevMotors, motors, stepConstraints, forquesAt, dt, dt, nextMotors)
+        inertias, prevMotors, motors, stepConstraints, forquesAt, dt, dt, nextMotors, stepLocalBs)
       val tmp = prevMotors
       prevMotors = motors
       motors = nextMotors
       nextMotors = tmp
 
     def localBs: Array[Pga3dBivector] =
+      val out = new Array[Pga3dBivector](motors.length)
       Pga3dPhysicsSolverVerletConstrained.reconstructNode(
-        inertias, prevMotors, motors, constraints, forquesAt, prevDt = dt, projectionIterations = 100)._1
+        inertias, prevMotors, motors, constraints, forquesAt, prevDt = dt, out, projectionIterations = 100)
+      out
 
     def maxRodError: Double =
       constraints.map { c =>
@@ -183,6 +188,32 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
       val order = math.log(errors(i - 1) / errors(i)) / math.log(2.0)
       // measured 1.998, 1.999, 2.000
       assert(order > 1.7 && order < 2.5, s"between dt=${dts(i - 1)} and dt=${dts(i)} the order is $order")
+    }
+  }
+
+  test("the localBs output of step equals a separate reconstructNode of the consumed poses") {
+    val (bodies, constraints) = chain(0.3)
+    val state = State(bodies, constraints, useGravity = true, dt = 0.01)
+    for (_ <- 0 until 10) {
+      val expected = new Array[Pga3dBivector](bodies.length)
+      Pga3dPhysicsSolverVerletConstrained.reconstructNode(
+        state.inertias, state.prevMotors, state.motors, constraints, state.forquesAt, prevDt = 0.01, expected)
+      state.step(0.01)
+      for (i <- bodies.indices) {
+        assert(state.stepLocalBs(i) == expected(i))
+      }
+    }
+
+    // the default localBs = null only drops the twists output, the poses are identical
+    val withOutput = new Array[Pga3dMotor](bodies.length)
+    val withoutOutput = new Array[Pga3dMotor](bodies.length)
+    val twists = new Array[Pga3dBivector](bodies.length)
+    Pga3dPhysicsSolverVerletConstrained.step(
+      state.inertias, state.prevMotors, state.motors, constraints, state.forquesAt, 0.01, 0.01, withOutput, twists)
+    Pga3dPhysicsSolverVerletConstrained.step(
+      state.inertias, state.prevMotors, state.motors, constraints, state.forquesAt, 0.01, 0.01, withoutOutput)
+    for (i <- bodies.indices) {
+      assert(withOutput(i) == withoutOutput(i))
     }
   }
 

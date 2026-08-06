@@ -37,21 +37,22 @@ All the code is under MIT license. Contributions are welcome, feel free to send 
 
 ```scala
 libraryDependencies ++= Seq(
-  "me.kright" %% "gametools-mathutil" % "0.9.0",
-  "me.kright" %% "gametools-vector" % "0.9.0",
-  "me.kright" %% "gametools-matrix" % "0.9.0",
-  "me.kright" %% "gametools-pga2d" % "0.9.0",
-  "me.kright" %% "gametools-pga2dgeom" % "0.9.0",
-  "me.kright" %% "gametools-pga3d" % "0.9.0",
-  "me.kright" %% "gametools-pga3dgeom" % "0.9.0",
-  "me.kright" %% "gametools-pga3dphysics" % "0.9.0"
+  "me.kright" %% "gametools-mathutil" % "0.10.0",
+  "me.kright" %% "gametools-flatarray" % "0.10.0",
+  "me.kright" %% "gametools-vector" % "0.10.0",
+  "me.kright" %% "gametools-matrix" % "0.10.0",
+  "me.kright" %% "gametools-pga2d" % "0.10.0",
+  "me.kright" %% "gametools-pga2dgeom" % "0.10.0",
+  "me.kright" %% "gametools-pga3d" % "0.10.0",
+  "me.kright" %% "gametools-pga3dgeom" % "0.10.0",
+  "me.kright" %% "gametools-pga3dphysics" % "0.10.0"
 )
 ```
 
 For Scala.js use `%%%` instead of `%%`:
 
 ```scala
-libraryDependencies += "me.kright" %%% "gametools-pga3d" % "0.9.0"
+libraryDependencies += "me.kright" %%% "gametools-pga3d" % "0.10.0"
 ```
 
 ### Gradle
@@ -60,14 +61,15 @@ Note: suffix `_3` is for Scala 3.
 
 ```groovy
 dependencies {
-  implementation 'me.kright:gametools-mathutil_3:0.9.0'
-  implementation 'me.kright:gametools-vector_3:0.9.0'
-  implementation 'me.kright:gametools-matrix_3:0.9.0'
-  implementation 'me.kright:gametools-pga2d_3:0.9.0'
-  implementation 'me.kright:gametools-pga2dgeom_3:0.9.0'
-  implementation 'me.kright:gametools-pga3d_3:0.9.0'
-  implementation 'me.kright:gametools-pga3dgeom_3:0.9.0'
-  implementation 'me.kright:gametools-pga3dphysics_3:0.9.0'
+  implementation 'me.kright:gametools-mathutil_3:0.10.0'
+  implementation 'me.kright:gametools-flatarray_3:0.10.0'
+  implementation 'me.kright:gametools-vector_3:0.10.0'
+  implementation 'me.kright:gametools-matrix_3:0.10.0'
+  implementation 'me.kright:gametools-pga2d_3:0.10.0'
+  implementation 'me.kright:gametools-pga2dgeom_3:0.10.0'
+  implementation 'me.kright:gametools-pga3d_3:0.10.0'
+  implementation 'me.kright:gametools-pga3dgeom_3:0.10.0'
+  implementation 'me.kright:gametools-pga3dphysics_3:0.10.0'
 }
 ```
 
@@ -88,10 +90,10 @@ the narrowest-result-type rule) are described in [pga-concepts.md](pga-concepts.
 
 * [**mathutil**](mathutil/README.md): small utilities shared by the other modules - fast math operations, fast ranges
   for loop iterations, precision-related helpers.
-* [**flatarray**](flatarray/README.md): home of the `FlatDoubleSerializer` typeclass for reading and writing
-  all-Double case classes as flat runs of `Double`s in an `Array[Double]`. Planned to grow into flat storage of small
-  all-Double structs (PGA points, vectors, rotors, etc.) with a compile-time-inlined hot path
-  (`FlatView`/`FlatArray`/`FlatBuffer`) so the JVM can scalar-replace temporary struct objects — not implemented yet.
+* [**flatarray**](flatarray/README.md): flat storage of small all-Double structs (PGA points, vectors, rotors,
+  triangles, etc.) as runs of `Double`s in an `Array[Double]`: the `FlatDoubleSerializer` typeclass (derivable,
+  recursing into nested case classes) plus `FlatArray`/`FlatBuffer`/`FlatView` with a compile-time-inlined hot
+  path, so bulk transforms avoid materializing the element objects (see the FlatArray benchmarks).
 * [**symbolic**](symbolic/README.md): simple implementation for AST like `(1.0 + ("y" * "x"))` with simplification
   rules. Used by the code generators to derive formulas symbolically.
 * [**ga**](ga/README.md): experimental support for geometric algebra (GA) and plane-based geometric algebra (PGA).
@@ -160,19 +162,19 @@ Or to the local maven:
 sbt publishM2
 ```
 
-In my case "~/.ivy2/local/me.kright/gametools-pga3d_3/0.9.1-SNAPSHOT"
-and "~/.m2/repository/me/kright/gametools-pga3d_3/0.9.1-SNAPSHOT"
+In my case "~/.ivy2/local/me.kright/gametools-pga3d_3/0.10.0-SNAPSHOT"
+and "~/.m2/repository/me/kright/gametools-pga3d_3/0.10.0-SNAPSHOT"
 
 After that, add the local library to another project. In my case, it was for sbt:
 
 ```scala
-libraryDependencies += "me.kright" %% "gametools-pga3d" % "0.9.1-SNAPSHOT"
+libraryDependencies += "me.kright" %% "gametools-pga3d" % "0.10.0-SNAPSHOT"
 ```
 
 And for Gradle:
 
 ```groovy
-implementation "me.kright:gametools-pga3d_3:0.9.1-SNAPSHOT"
+implementation "me.kright:gametools-pga3d_3:0.10.0-SNAPSHOT"
 ```
 
 Maybe you will need to remove cached lib, it will be placed in path like "~/.cache/coursier/v1/https/repo1.maven.org/maven2/me/kright/".

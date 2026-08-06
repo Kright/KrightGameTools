@@ -4,12 +4,12 @@ import me.kright.gametools.pga2d.Pga2dPoint
 
 final class Pga2dNearestPoint(val origin: Pga2dPoint,
                               var nearestPoint: Pga2dPoint | Null = null):
-  var distSquare: Double =
+  var distanceSquare: Double =
     if (nearestPoint eq null) Double.PositiveInfinity
     else (origin - nearestPoint.nn).normSquare
 
   def distance: Double =
-    Math.sqrt(distSquare)
+    Math.sqrt(distanceSquare)
 
   /**
    * accepts newPoint when it is strictly closer to origin; returns true when the accumulator
@@ -18,10 +18,10 @@ final class Pga2dNearestPoint(val origin: Pga2dPoint,
    * is replaced by the first real candidate instead of blocking all further updates
    */
   def update(newPoint: Pga2dPoint): Boolean =
-    val distSquare2 = (newPoint - origin).normSquare
+    val distanceSquare2 = (newPoint - origin).normSquare
     // !(a >= b) is "a < b or either is NaN"
-    if (!(distSquare2 >= distSquare) && !distSquare2.isNaN) {
-      distSquare = distSquare2
+    if (!(distanceSquare2 >= distanceSquare) && !distanceSquare2.isNaN) {
+      distanceSquare = distanceSquare2
       nearestPoint = newPoint
       true
     } else false

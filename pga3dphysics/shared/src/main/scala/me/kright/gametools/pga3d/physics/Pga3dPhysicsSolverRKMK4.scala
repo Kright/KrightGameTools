@@ -9,9 +9,10 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor}
  * The problem it addresses: the motor kinematics dM/dt = M * omega (omega = -0.5 * localB,
  * the body-frame convention of [[Pga3dBodyState.derivative]]) lives on the curved manifold of
  * unit motors. [[Pga3dPhysicsSolverRK4]] treats it as a flat R^8 ODE: its intermediate stages
- * M0 + (h/2)k are not motors at all, and the final sum is projected back by renormalization.
- * (Projecting the final sum is harmless for the order; projecting the stages would kill it -
- * the stages are the internal scaffolding of the Taylor matching and must stay untouched.)
+ * M0 + (h/2)k are not motors at all and are projected back onto the group by renormalization
+ * ([[Pga3dMotor.renormalized]] is a genuine manifold projection, and the measured order stays 4).
+ * RKMK4 never leaves the group in the first place: the change of variables through exp and
+ * dexpInv keeps every stage a motor by construction.
  *
  * The Munthe-Kaas idea is a change of variables before the same Runge-Kutta method: within a
  * step, look for a bivector u(t) such that M(t) = M0 * exp(u(t)). Bivectors form the flat Lie
@@ -38,7 +39,7 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor}
  * renormalized RK4 is a fraction of a percent at all step sizes - the shared tableau
  * truncation error dominates, see the measurements in Pga3dPhysicsSolverRKMK4Test.
  */
-object Pga3dPhysicsSolverRKMK4 extends Pga3dPhysicsSolver[Pga3dPhysicsBody]:
+object Pga3dPhysicsSolverRKMK4 extends Pga3dPhysicsSolver:
   override def step(dynamicBodies: Array[Pga3dPhysicsBody],
                     dt: Double,
                     addForquesToBodies: Double => Unit): Unit = {

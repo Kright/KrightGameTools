@@ -13,12 +13,9 @@ case class Pga3dSphere(center: Pga3dPoint,
   def expand(dr: Double): Pga3dSphere =
     Pga3dSphere(center, this.r + dr)
 
-  def hasIntersection(s: Pga3dSphere): Boolean =
-    val rSum = r + s.r
-    (center - s.center).normSquare <= rSum * rSum
-
-  def intersects(s: Pga3dSphere): Boolean =
-    hasIntersection(s)
+  def intersects(sphere: Pga3dSphere): Boolean =
+    val rSum = r + sphere.r
+    (center - sphere.center).normSquare <= rSum * rSum
 
   def intersects(capsule: Pga3dCapsule): Boolean =
     capsule.intersects(this)

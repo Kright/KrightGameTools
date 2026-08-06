@@ -9,7 +9,7 @@ import me.kright.gametools.mathutil.FastRange
  * @param iterations it looks like optimal iterations count is 3 or more. 
  *                   With two iterations precision is similar with [[Pga3dPhysicsSolverRK4]], but RK4 is faster to compute
  */
-class Pga3dPhysicsSolverGaussLegendre(val iterations: Int = 3) extends Pga3dPhysicsSolver[Pga3dPhysicsBody]:
+class Pga3dPhysicsSolverGaussLegendre(val iterations: Int = 3) extends Pga3dPhysicsSolver:
   override def step(dynamicBodies: Array[Pga3dPhysicsBody], dt: Double, addForquesToBodies: Double => Unit): Unit = {
     val c1 = 0.5 - Math.sqrt(3) / 6
     val c2 = 0.5 + Math.sqrt(3) / 6

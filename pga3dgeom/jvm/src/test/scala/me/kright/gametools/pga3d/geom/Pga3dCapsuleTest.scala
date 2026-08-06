@@ -93,7 +93,7 @@ class Pga3dCapsuleTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
       // both degenerate: plain sphere-sphere
       val sphere1 = Pga3dSphere(c1.a, c1.r)
-      assert(Pga3dCapsule(sphere1).intersects(degenerate) == sphere1.hasIntersection(sphere),
+      assert(Pga3dCapsule(sphere1).intersects(degenerate) == sphere1.intersects(sphere),
         s"sphere1 = $sphere1, sphere = $sphere")
     }
   }

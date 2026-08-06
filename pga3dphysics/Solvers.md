@@ -118,9 +118,11 @@ the node momenta from the poses (redoing the second RATTLE half kick of the prev
 including its velocity-stage impulses), then performs the first half kick with the
 position-stage constraint impulses whose gradients are evaluated at the old poses - the
 variational ingredient of SHAKE/RATTLE - solved by Newton/Gauss-Seidel sweeps through the
-midframe drift. Thanks to the reconstruction the user force callback runs once per step. Only
-the poses come out; for observers (energy, momentum) `reconstructNode(...)` completes the
-reconstruction honestly. Measured: 2nd-order convergence on the rod chain (2.00, 2.00, 2.00),
+midframe drift. Thanks to the reconstruction the user force callback runs once per step. The
+poses go to `nextMotors`, and the honest node twists of the consumed poses - what a separate
+`reconstructNode(...)` would return - come out through the `localBs` output, so observers
+(energy, momentum) do not pay a second reconstruction with its second force callback.
+Measured: 2nd-order convergence on the rod chain (2.00, 2.00, 2.00),
 rods to ~1e-15 (chain: 3e-11, the sweep exit threshold), the dumbbell momentum to ~8e-12 and
 energy to ~1e-12 over 20k steps, bounded energy oscillation (~0.1% on the off-center pendulum
 over 200 s, 1e-5 relative on the chain). Pose edits between steps still become velocity edits,

@@ -5,7 +5,7 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 
 class Pga3dPhysicsSolverRKF45Test extends AnyFunSuiteLike:
 
-  private def freeBodySystem(solver: Pga3dPhysicsSolver[Pga3dPhysicsBody]): Pga3dPhysicsSystemForTest =
+  private def freeBodySystem(solver: Pga3dPhysicsSolver): Pga3dPhysicsSystemForTest =
     Pga3dPhysicsSystemForTest(Array(Pga3dPhysicsSystemForTest.simpleBody(Pga3dMotor.id)), solver)
 
   test("calculate free rotation body precession for RKF45") {

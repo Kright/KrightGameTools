@@ -12,7 +12,7 @@ final case class Pga2dRay(origin: Pga2dPoint,
                           direction: Pga2dVector,
                           directionReciprocal: Pga2dVector) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer {
 
-  def hasIntersection(aabb: Pga2dAABB): Boolean =
+  def intersects(aabb: Pga2dAABB): Boolean =
     intersectionT(aabb) < Double.PositiveInfinity
 
   /**

@@ -10,9 +10,8 @@ package me.kright.gametools.pga3d.physics
  * caller, not (motor, localB) pairs): for constrained Verlet use the dedicated
  * [[Pga3dPhysicsSolverVerletConstrained]].
  */
-class Pga3dPhysicsSolverConstrained(val inner: Pga3dPhysicsSolver[Pga3dPhysicsBody],
-                                    val resolver: Pga3dConstraintResolver)
-  extends Pga3dPhysicsSolver[Pga3dPhysicsBody]:
+class Pga3dPhysicsSolverConstrained(val inner: Pga3dPhysicsSolver,
+                                    val resolver: Pga3dConstraintResolver) extends Pga3dPhysicsSolver:
 
   override def step(dynamicBodies: Array[Pga3dPhysicsBody],
                     dt: Double,

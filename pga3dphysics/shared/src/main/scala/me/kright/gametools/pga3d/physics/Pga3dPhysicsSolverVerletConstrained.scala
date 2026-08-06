@@ -33,14 +33,18 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor, Pga3dPoint, Pga3dVe
 object Pga3dPhysicsSolverVerletConstrained:
 
   /**
-   * one constrained Verlet step; only the poses are produced - like in the classic Verlet the
-   * poses are the whole state. For observers (energy, momentum, velocity-dependent logic
-   * outside the solver) use [[reconstructNode]], which completes the node reconstruction
-   * honestly; the raw segment twist [[Pga3dPhysicsSolverVerlet.segmentLocalB]] is half a step
-   * stale.
+   * one constrained Verlet step; the poses are the whole state, like in the classic Verlet,
+   * but the honest node twists the step reconstructs anyway are exposed through `localBs` -
+   * for observers (energy, momentum, velocity-dependent logic outside the solver) they are
+   * exactly what a separate [[reconstructNode]] call would produce, without paying its second
+   * force callback;
+   * the raw segment twist [[Pga3dPhysicsSolverVerlet.segmentLocalB]] is half a step stale.
    *
    * @param addForques (motors, localBs) => world forques at that state; called once
    * @param nextMotors output; may alias prevMotors, must not alias motors
+   * @param localBs    output: the honest node-time twists at `motors` (the poses this step
+   *                   consumes), after the velocity-stage constraint projection; null (the
+   *                   default) when the caller does not need them
    */
   def step(inertias: Array[Pga3dInertia],
            prevMotors: Array[Pga3dMotor],
@@ -50,24 +54,26 @@ object Pga3dPhysicsSolverVerletConstrained:
            prevDt: Double,
            dt: Double,
            nextMotors: Array[Pga3dMotor],
+           localBs: Array[Pga3dBivector] | Null = null,
            shakeIterations: Int = 100,
            projectionIterations: Int = 100): Unit = {
     val n = motors.length
-    val (localBs, forques) =
-      reconstructNode(inertias, prevMotors, motors, constraints, addForques, prevDt, projectionIterations)
+    val nodeLocalBs: Array[Pga3dBivector] = if (localBs eq null) new Array[Pga3dBivector](n) else localBs
+    val forques =
+      reconstructNode(inertias, prevMotors, motors, constraints, addForques, prevDt, nodeLocalBs, projectionIterations)
 
     // the first half kick of this step
     val lHalf = new Array[Pga3dBivector](n)
     for (pos <- FastRange(n)) {
-      lHalf(pos) = motors(pos).sandwich(inertias(pos)(localBs(pos))) + forques(pos) * (0.5 * dt)
+      lHalf(pos) = motors(pos).sandwich(inertias(pos)(nodeLocalBs(pos))) + forques(pos) * (0.5 * dt)
     }
 
     // the constraint gradients at the old poses, then SHAKE: solve the position-stage
     // impulses so the drifted poses satisfy the constraints; Gauss-Seidel - after each
     // impulse the affected bodies are re-drifted immediately
-    val geometries = constraints.map(c => geometry(inertias, motors, localBs, c)).toArray
+    val geometries = constraints.map(c => geometry(inertias, motors, nodeLocalBs, c)).toArray
     for (pos <- FastRange(n)) {
-      driftBody(inertias, motors, localBs, lHalf, dt, nextMotors, pos)
+      driftBody(inertias, motors, nodeLocalBs, lHalf, dt, nextMotors, pos)
     }
 
     val lambdas = new Array[Double](geometries.length)
@@ -98,11 +104,11 @@ object Pga3dPhysicsSolverVerletConstrained:
               val impulse = g.j * delta
               if (c.bodyA >= 0) {
                 lHalf(c.bodyA) = lHalf(c.bodyA) + impulse
-                driftBody(inertias, motors, localBs, lHalf, dt, nextMotors, c.bodyA)
+                driftBody(inertias, motors, nodeLocalBs, lHalf, dt, nextMotors, c.bodyA)
               }
               if (c.bodyB >= 0) {
                 lHalf(c.bodyB) = lHalf(c.bodyB) - impulse
-                driftBody(inertias, motors, localBs, lHalf, dt, nextMotors, c.bodyB)
+                driftBody(inertias, motors, nodeLocalBs, lHalf, dt, nextMotors, c.bodyB)
               }
             }
           }
@@ -119,9 +125,13 @@ object Pga3dPhysicsSolverVerletConstrained:
 
   /**
    * the node momenta reconstruction: the segment momenta derived from the poses, plus the
-   * second RATTLE half kick of the previous segment and its velocity-stage impulses. Returns
-   * (node-time twists at `motors`, the forques of the callback at that state) - the twists are
-   * the honest observer velocities. Calls `addForques` once.
+   * second RATTLE half kick of the previous segment and its velocity-stage impulses. The
+   * node-time twists at `motors` - the honest observer velocities - are written into the
+   * `localBs` output. Calls `addForques` once.
+   *
+   * @param localBs output: the node-time twists at `motors`; null (the default) when the
+   *                caller only needs the forques
+   * @return the forques of the callback at that state
    */
   def reconstructNode(inertias: Array[Pga3dInertia],
                       prevMotors: Array[Pga3dMotor],
@@ -129,28 +139,29 @@ object Pga3dPhysicsSolverVerletConstrained:
                       constraints: Seq[Pga3dDistanceConstraint],
                       addForques: (Array[Pga3dMotor], Array[Pga3dBivector]) => Array[Pga3dBivector],
                       prevDt: Double,
-                      projectionIterations: Int = 100): (Array[Pga3dBivector], Array[Pga3dBivector]) =
+                      localBs: Array[Pga3dBivector] | Null = null,
+                      projectionIterations: Int = 100): Array[Pga3dBivector] =
     val n = motors.length
+    val twists: Array[Pga3dBivector] = if (localBs eq null) new Array[Pga3dBivector](n) else localBs
     val lSegments = new Array[Pga3dBivector](n)
-    val localBs = new Array[Pga3dBivector](n)
     for (pos <- FastRange(n)) {
       val d = prevMotors(pos).reverse.geometric(motors(pos)).log
       val bHalf = d * (-2.0 / prevDt)
       val midFrame = prevMotors(pos).geometric((d * 0.5).exp)
       lSegments(pos) = midFrame.sandwich(inertias(pos)(bHalf))
-      localBs(pos) = inertias(pos).invert(motors(pos).reverseSandwich(lSegments(pos)))
+      twists(pos) = inertias(pos).invert(motors(pos).reverseSandwich(lSegments(pos)))
     }
 
-    val forques = addForques(motors, localBs)
+    val forques = addForques(motors, twists)
 
     for (pos <- FastRange(n)) {
-      localBs(pos) = inertias(pos).invert(
+      twists(pos) = inertias(pos).invert(
         motors(pos).reverseSandwich(lSegments(pos) + forques(pos) * (0.5 * prevDt)))
     }
 
-    projectVelocities(inertias, motors, localBs, constraints, projectionIterations)
+    projectVelocities(inertias, motors, twists, constraints, projectionIterations)
 
-    (localBs, forques)
+    forques
 
   /** the trial drift of one body from its current half-step momentum */
   private def driftBody(inertias: Array[Pga3dInertia],

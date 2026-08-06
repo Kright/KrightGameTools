@@ -227,7 +227,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
     // the momentum leak comes from the pose projection, so it scales with the solver's own
     // per-step drift: tiny for the 4th-order solvers, visible for the 2nd-order ones, and
     // only the distance is guaranteed for Euler
-    val solversAndMaxErrorL = ArraySeq[(Pga3dPhysicsSolver[Pga3dPhysicsBody], Double)](
+    val solversAndMaxErrorL = ArraySeq[(Pga3dPhysicsSolver, Double)](
       (Pga3dPhysicsSolverEuler, 1.0),
       (Pga3dPhysicsSolverHeun, 1e-5),
       (Pga3dPhysicsSolverMidPoint, 1e-5),

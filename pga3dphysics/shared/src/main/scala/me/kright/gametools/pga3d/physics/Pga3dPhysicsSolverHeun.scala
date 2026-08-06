@@ -3,7 +3,7 @@ package me.kright.gametools.pga3d.physics
 import me.kright.gametools.pga3d.physics.Pga3dPhysicsSolverUtil.*
 
 /** Second order of precision */
-object Pga3dPhysicsSolverHeun extends Pga3dPhysicsSolver[Pga3dPhysicsBody]:
+object Pga3dPhysicsSolverHeun extends Pga3dPhysicsSolver:
   override def step(dynamicBodies: Array[Pga3dPhysicsBody],
                     dt: Double,
                     addForquesToBodies: (Double) => Unit): Unit = {

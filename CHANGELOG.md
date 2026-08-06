@@ -39,6 +39,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `CanEqualWithEps` typeclass: the `===` operator with an implicit eps is gone - pass eps
   explicitly (`a.equalsWithEps(b, eps)` via `CanEqualWithEps`, or the plain `isEquals(other, eps)`
   methods that `Matrix` and `VectorNd` keep).
+- `hasIntersection` is renamed to `intersects` - the one name for every boolean overlap query:
+  `Pga3dSphere` / `Pga2dCircle` (which briefly had both names) and `Pga3dRay` / `Pga2dRay`
+  against an AABB.
+- The nearest-point accumulators spell out `distance`: `Pga3dPairOfNearestPoints.dist` /
+  `Pga2dPairOfNearestPoints.dist` are renamed to `distance` (matching the single-point
+  accumulators), and the `distSquare` field of all four accumulator classes is renamed to
+  `distanceSquare` (matching `normSquare` / `distanceSquareTo` everywhere else).
+- `Pga3dPhysicsSolver` loses its type parameter: it is `trait Pga3dPhysicsSolver` with
+  `step(dynamicBodies: Array[Pga3dPhysicsBody], ...)`. The parameter was dead - the solvers
+  call `Pga3dPhysicsBody` methods directly, so no other body type could ever instantiate it,
+  and every implementation and call site already used exactly this type.
+- `Pga3dPhysicsSolverVerletConstrained.step` takes an optional `localBs` output array (after
+  `nextMotors`, before the trailing iteration limits; default `null` skips the output): the
+  honest node twists of the consumed poses, which the step reconstructs anyway. Observers
+  (energy, momentum, velocity-dependent logic) previously had to run a second
+  `reconstructNode` - and pay a second force callback per step - to get the same values;
+  `reconstructNode` itself now writes into a caller-supplied array and returns the forques.
 
 ### Changed
 
@@ -133,8 +150,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   velocity-stage impulses - so the user force callback runs once per step), then performs the
   first half kick with the position-stage constraint impulses whose gradients are evaluated at
   the old poses (the variational SHAKE/RATTLE ingredient), solved by Newton/Gauss-Seidel
-  sweeps through the midframe drift. Only the poses come out; `reconstructNode(...)` gives honest
-  observer velocities. Measured on the rod chain: 2nd-order convergence (2.00, 2.00, 2.00),
+  sweeps through the midframe drift. The poses go to `nextMotors` and the honest observer
+  velocities of the consumed poses to the `localBs` output (the same values a separate
+  `reconstructNode(...)` computes). Measured on the rod chain: 2nd-order convergence (2.00, 2.00, 2.00),
   rods to ~3e-11 (the sweep exit threshold; single constraints to ~1e-15), dumbbell momentum
   to ~8e-12 and energy to ~1e-12 over 20k steps, bounded energy oscillation (~0.1% on the
   off-center pendulum over 200 s, 1e-5 relative on the chain). Pose edits between steps still
@@ -214,8 +232,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   "center exactly on a degenerate triangle" returns None. `Pga3dContact(point, normal, depth)`
   is a new case class (7 flat doubles). `Pga2dCircle.intersects(triangle)` mirrors the 2d side
   (2d `deepestContact` is deferred: an interior center is common in 2d and its normal/depth
-  convention deserves a design decision). Both gain an `intersects(sphere/circle)` alias for
-  `hasIntersection`.
+  convention deserves a design decision). The sphere-sphere / circle-circle overlap query is
+  `intersects` as well (the old `hasIntersection` name is renamed, see the breaking section).
 - `distanceSquareTo` on `Pga3dTriangle`/`Pga2dTriangle` (point), `Pga3dEdge`/`Pga2dEdge`
   (point and edge-edge) and `Pga3dAABB`/`Pga2dAABB` (point): sqrt-free companions of
   `distanceTo` for comparisons, symmetric with `norm`/`normSquare`. `distanceTo` delegates to

@@ -122,7 +122,7 @@ class Pga2dCapsuleTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       assert(circle.intersects(c1) == c1.intersects(circle), s"c1 = $c1, circle = $circle")
 
       val circle1 = Pga2dCircle(c1.a, c1.r)
-      assert(Pga2dCapsule(circle1).intersects(degenerate) == circle1.hasIntersection(circle),
+      assert(Pga2dCapsule(circle1).intersects(degenerate) == circle1.intersects(circle),
         s"circle1 = $circle1, circle = $circle")
     }
   }

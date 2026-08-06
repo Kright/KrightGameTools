@@ -73,7 +73,7 @@ Represents a sphere.
 val sphere = Pga3dSphere(center, r)
 
 // Check for intersection with another sphere
-val intersects = sphere.hasIntersection(otherSphere)
+val overlaps = sphere.intersects(otherSphere)
 
 // Bounding box of the sphere
 val aabb = sphere.toAABB
@@ -90,7 +90,7 @@ val ray = Pga3dRay(origin, direction)
 val normalizedRay = Pga3dRay.normalized(origin, direction)
 
 // Check for intersection with an AABB
-val hits = ray.hasIntersection(aabb)
+val hits = ray.intersects(aabb)
 
 // t of the entry point, 0.0 if origin is inside, Double.PositiveInfinity on miss
 val t = ray.intersectionT(aabb)

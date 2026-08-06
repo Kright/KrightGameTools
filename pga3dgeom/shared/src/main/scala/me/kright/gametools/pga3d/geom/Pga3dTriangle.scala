@@ -348,7 +348,7 @@ object Pga3dTriangle:
     pairOfNearestPoints.update(triangleEdges(1).getNearestPoints(edge))
     pairOfNearestPoints.update(triangleEdges(2).getNearestPoints(edge))
 
-    if (pairOfNearestPoints.distSquare <= parallelEps * parallelEps) {
+    if (pairOfNearestPoints.distanceSquare <= parallelEps * parallelEps) {
       Option(pairOfNearestPoints.a)
     } else {
       None
