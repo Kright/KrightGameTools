@@ -23,6 +23,8 @@ trait FlatView[T]:
   /** number of `T` elements stored in this view (NOT the length of `array`) */
   def size: Int
 
+  final inline def length: Int = size
+
 
 object FlatView:
   extension [T](view: FlatView[T]) {
