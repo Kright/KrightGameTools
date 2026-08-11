@@ -21,7 +21,8 @@ Source layout under `src/main/scala/me/kright/gametools/pga/codegen/`:
     whose logic is identical across dimensions (naming/field-count differences only), written once against
     `ScalaPgaAlgebra`
   * `scalagen/pga3d` - the `Pga3dScalaAlgebra` object (class list, op list, naming for 3d), the op generators whose
-    math genuinely differs per dimension or that are 3d-only, plus matrix conversions
+    math genuinely differs per dimension or that are 3d-only, plus matrix conversions and `Pga3dTransformCodeGen`
+    (the `Pga3dTransform` class: the motor sandwich cached as flat matrix coefficients)
   * `scalagen/pga2d` - the `Pga2dScalaAlgebra` object and its per-dimension op generators
 * `cpp3d` - 3d C++ generation (result placed into ../cpp/pga3d)
 

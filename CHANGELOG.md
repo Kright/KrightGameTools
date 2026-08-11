@@ -126,6 +126,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `Pga3dTransform`: a cached, immutable form of a motor for repeated applications. Built once with
+  `Pga3dTransform(motor)`, it stores the sandwich operator as flat public matrix coefficients
+  (rotation 3x3, the moment block for bivectors, the two translations, and the Study number
+  `normSquare` / `normSquareI`) - a case class deriving `CanEqual`, `CanEqualWithEps` and
+  `FlatDoubleSerializer` (34 doubles: the motor plus 26 coefficients), like the other pga3d
+  classes - so `sandwich` / `reverseSandwich` become plain matrix
+  multiplications (a bivector costs 36 multiplications instead of ~63, a point costs 9) with results
+  matching the motor up to rounding for any motor, normalized or not. Supports every argument class
+  the motor sandwich supports, including motor-like arguments (`Motor`, `Rotor`, the translators) -
+  for those the sandwich is not a composition but the change of coordinates of the transformation
+  itself. Generated symbolically by `Pga3dTransformCodeGen`: each coefficient is derived as a column
+  of the linear sandwich operator and registered once (26 cached fields), then the cached names are
+  substituted back into the full symbolic sandwich expression of every method, so the emitted code is
+  provably that expression with the coefficient groups named; a leftover motor field fails generation.
 - `dexp` / `dexpInv` on the generator (grade-2) classes: `Pga3dBivector`, `Pga3dBivectorBulk`,
   `Pga3dBivectorWeight`, `Pga2dProjectivePoint`, `Pga2dVector` - the differential of `exp`
   and its inverse in closed form (the left Jacobian of SE(3)/SE(2) and its inverse; the right
