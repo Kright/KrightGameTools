@@ -42,7 +42,7 @@ public class BodySystem {
             bodies.add(new Pga3dPhysicsBody(new Pga3dInertiaSimple(mass, mass), Pga3dTranslator.addVector(position).toMotor(), velocity.toBivector()));
         }
 
-        Pga3dPhysicsSolver<Pga3dPhysicsBody> solver = Pga3dPhysicsSolverRK4$.MODULE$;
+        Pga3dPhysicsSolver solver = Pga3dPhysicsSolverRK4$.MODULE$;
 
         bodySystem = new Pga3dPhysicsSystem(bodies.toArray(new Pga3dPhysicsBody[0]), solver, 0.0);
     }

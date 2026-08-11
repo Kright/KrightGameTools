@@ -15,7 +15,7 @@ dependencies {
   }
 
   // scala game math classes
-  implementation "me.kright:gametools-pga3d_3:0.9.0"
-  implementation "me.kright:gametools-pga3dphysics_3:0.9.0"
-  implementation "me.kright:gametools-mathutil_3:0.9.0"
+  implementation "me.kright:gametools-pga3d_3:0.10.0"
+  implementation "me.kright:gametools-pga3dphysics_3:0.10.0"
+  implementation "me.kright:gametools-mathutil_3:0.10.0"
 }
