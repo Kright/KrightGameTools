@@ -85,7 +85,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
     this / weightNorm
 
   def normSquare: Double =
-    (wx * wx + wy * wy + wz * wz + xy * xy + xz * xz + yz * yz)
+    ((wx * wx + wy * wy) + (wz * wz + xy * xy) + (xz * xz + yz * yz))
 
   def norm: Double =
     Math.sqrt(normSquare)
@@ -385,9 +385,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     val uub = this.cross(ub)
 
     Pga3dBivector(
-      wx = (b.wx + k1 * ub.wx + k2 * uub.wx - k1d * ub.yz - k2d * uub.yz),
-      wy = (b.wy + k1 * ub.wy + k1d * ub.xz + k2 * uub.wy + k2d * uub.xz),
-      wz = (b.wz + k1 * ub.wz + k2 * uub.wz - k1d * ub.xy - k2d * uub.xy),
+      wx = ((b.wx + k1 * ub.wx) + (k2 * uub.wx - k1d * ub.yz) - k2d * uub.yz),
+      wy = ((b.wy + k1 * ub.wy) + (k1d * ub.xz + k2 * uub.wy) + k2d * uub.xz),
+      wz = ((b.wz + k1 * ub.wz) + (k2 * uub.wz - k1d * ub.xy) - k2d * uub.xy),
       xy = (b.xy + k1 * ub.xy + k2 * uub.xy),
       xz = (b.xz + k1 * ub.xz + k2 * uub.xz),
       yz = (b.yz + k1 * ub.yz + k2 * uub.yz),
@@ -456,9 +456,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     val uub = this.cross(ub)
 
     Pga3dBivector(
-      wx = (b.wx - ub.wx + k3 * uub.wx - k3d * uub.yz),
-      wy = (b.wy - ub.wy + k3 * uub.wy + k3d * uub.xz),
-      wz = (b.wz - ub.wz + k3 * uub.wz - k3d * uub.xy),
+      wx = ((b.wx - ub.wx) + (k3 * uub.wx - k3d * uub.yz)),
+      wy = ((b.wy - ub.wy) + (k3 * uub.wy + k3d * uub.xz)),
+      wz = ((b.wz - ub.wz) + (k3 * uub.wz - k3d * uub.xy)),
       xy = (b.xy - ub.xy + k3 * uub.xy),
       xz = (b.xz - ub.xz + k3 * uub.xz),
       yz = (b.yz - ub.yz + k3 * uub.yz),
@@ -575,13 +575,13 @@ final case class Pga3dBivector(wx: Double = 0.0,
   infix def geometric(r: Pga3dMotor): Pga3dMotor =
     Pga3dMotor(
       s = (-r.xy * xy - r.xz * xz - r.yz * yz),
-      wx = (r.s * wx + r.wy * xy + r.wz * xz - r.i * yz - r.xy * wy - r.xz * wz),
-      wy = (r.i * xz + r.s * wy + r.wz * yz + r.xy * wx - r.wx * xy - r.yz * wz),
-      wz = (r.s * wz + r.xz * wx + r.yz * wy - r.i * xy - r.wx * xz - r.wy * yz),
+      wx = ((r.s * wx + r.wy * xy) + (r.wz * xz - r.i * yz) - (r.xy * wy + r.xz * wz)),
+      wy = ((r.i * xz + r.s * wy) + (r.wz * yz + r.xy * wx) - (r.wx * xy + r.yz * wz)),
+      wz = ((r.s * wz + r.xz * wx) + (r.yz * wy - r.i * xy) - (r.wx * xz + r.wy * yz)),
       xy = (r.s * xy + r.xz * yz - r.yz * xz),
       xz = (r.s * xz + r.yz * xy - r.xy * yz),
       yz = (r.s * yz + r.xy * xz - r.xz * xy),
-      i = (r.wx * yz + r.wz * xy + r.xy * wz + r.yz * wx - r.wy * xz - r.xz * wy),
+      i = ((r.wx * yz + r.wz * xy) + (r.xy * wz + r.yz * wx) - (r.wy * xz + r.xz * wy)),
     )
 
   infix def geometric(r: Pga3dPlane): Pga3dMultivector =
@@ -607,13 +607,13 @@ final case class Pga3dBivector(wx: Double = 0.0,
   infix def geometric(r: Pga3dBivector): Pga3dMotor =
     Pga3dMotor(
       s = (-r.xy * xy - r.xz * xz - r.yz * yz),
-      wx = (r.wy * xy + r.wz * xz - r.xy * wy - r.xz * wz),
-      wy = (r.wz * yz + r.xy * wx - r.wx * xy - r.yz * wz),
-      wz = (r.xz * wx + r.yz * wy - r.wx * xz - r.wy * yz),
+      wx = ((r.wy * xy + r.wz * xz) - (r.xy * wy + r.xz * wz)),
+      wy = ((r.wz * yz + r.xy * wx) - (r.wx * xy + r.yz * wz)),
+      wz = ((r.xz * wx + r.yz * wy) - (r.wx * xz + r.wy * yz)),
       xy = (r.xz * yz - r.yz * xz),
       xz = (r.yz * xy - r.xy * yz),
       yz = (r.xy * xz - r.xz * xy),
-      i = (r.wx * yz + r.wz * xy + r.xy * wz + r.yz * wx - r.wy * xz - r.xz * wy),
+      i = ((r.wx * yz + r.wz * xy) + (r.xy * wz + r.yz * wx) - (r.wy * xz + r.xz * wy)),
     )
 
   infix def geometric(r: Pga3dProjectivePoint): Pga3dMultivector =
@@ -889,7 +889,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
       xy = r.s * xy,
       xz = r.s * xz,
       yz = r.s * yz,
-      i = (r.wx * yz + r.wz * xy + r.xy * wz + r.yz * wx - r.wy * xz - r.xz * wy),
+      i = ((r.wx * yz + r.wz * xy) + (r.xy * wz + r.yz * wx) - (r.wy * xz + r.xz * wy)),
     )
 
   inline infix def ^(r: Pga3dMotor): Pga3dMotor = wedge(r)
@@ -910,7 +910,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
 
   infix def wedge(r: Pga3dBivector): Pga3dPseudoScalar =
     Pga3dPseudoScalar(
-      i = (r.wx * yz + r.wz * xy + r.xy * wz + r.yz * wx - r.wy * xz - r.xz * wy),
+      i = ((r.wx * yz + r.wz * xy) + (r.xy * wz + r.yz * wx) - (r.wy * xz + r.xz * wy)),
     )
 
   inline infix def ^(r: Pga3dBivector): Pga3dPseudoScalar = wedge(r)
@@ -997,13 +997,13 @@ final case class Pga3dBivector(wx: Double = 0.0,
 
   infix def antiGeometric(r: Pga3dMotor): Pga3dMotor =
     Pga3dMotor(
-      s = (r.wx * yz + r.wz * xy + r.xy * wz + r.yz * wx - r.wy * xz - r.xz * wy),
+      s = ((r.wx * yz + r.wz * xy) + (r.xy * wz + r.yz * wx) - (r.wy * xz + r.xz * wy)),
       wx = (r.i * wx + r.wy * wz - r.wz * wy),
       wy = (r.i * wy + r.wz * wx - r.wx * wz),
       wz = (r.i * wz + r.wx * wy - r.wy * wx),
-      xy = (r.i * xy + r.xz * wx + r.yz * wy - r.s * wz - r.wx * xz - r.wy * yz),
-      xz = (r.i * xz + r.s * wy + r.wx * xy + r.yz * wz - r.wz * yz - r.xy * wx),
-      yz = (r.i * yz + r.wy * xy + r.wz * xz - r.s * wx - r.xy * wy - r.xz * wz),
+      xy = ((r.i * xy + r.xz * wx) + (r.yz * wy - r.s * wz) - (r.wx * xz + r.wy * yz)),
+      xz = ((r.i * xz + r.s * wy) + (r.wx * xy + r.yz * wz) - (r.wz * yz + r.xy * wx)),
+      yz = ((r.i * yz + r.wy * xy) + (r.wz * xz - r.s * wx) - (r.xy * wy + r.xz * wz)),
       i = (-r.wx * wx - r.wy * wy - r.wz * wz),
     )
 
@@ -1029,13 +1029,13 @@ final case class Pga3dBivector(wx: Double = 0.0,
 
   infix def antiGeometric(r: Pga3dBivector): Pga3dMotor =
     Pga3dMotor(
-      s = (r.wx * yz + r.wz * xy + r.xy * wz + r.yz * wx - r.wy * xz - r.xz * wy),
+      s = ((r.wx * yz + r.wz * xy) + (r.xy * wz + r.yz * wx) - (r.wy * xz + r.xz * wy)),
       wx = (r.wy * wz - r.wz * wy),
       wy = (r.wz * wx - r.wx * wz),
       wz = (r.wx * wy - r.wy * wx),
-      xy = (r.xz * wx + r.yz * wy - r.wx * xz - r.wy * yz),
-      xz = (r.wx * xy + r.yz * wz - r.wz * yz - r.xy * wx),
-      yz = (r.wy * xy + r.wz * xz - r.xy * wy - r.xz * wz),
+      xy = ((r.xz * wx + r.yz * wy) - (r.wx * xz + r.wy * yz)),
+      xz = ((r.wx * xy + r.yz * wz) - (r.wz * yz + r.xy * wx)),
+      yz = ((r.wy * xy + r.wz * xz) - (r.xy * wy + r.xz * wz)),
       i = (-r.wx * wx - r.wy * wy - r.wz * wz),
     )
 
@@ -1299,7 +1299,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
 
   infix def antiWedge(r: Pga3dMotor): Pga3dMotor =
     Pga3dMotor(
-      s = (r.wx * yz + r.wz * xy + r.xy * wz + r.yz * wx - r.wy * xz - r.xz * wy),
+      s = ((r.wx * yz + r.wz * xy) + (r.xy * wz + r.yz * wx) - (r.wy * xz + r.xz * wy)),
       wx = r.i * wx,
       wy = r.i * wy,
       wz = r.i * wz,
@@ -1314,7 +1314,7 @@ final case class Pga3dBivector(wx: Double = 0.0,
   inline infix def join(r: Pga3dMotor): Pga3dMotor = antiWedge(r)
 
   infix def antiWedge(r: Pga3dBivector): Double =
-    (r.wx * yz + r.wz * xy + r.xy * wz + r.yz * wx - r.wy * xz - r.xz * wy)
+    ((r.wx * yz + r.wz * xy) + (r.xy * wz + r.yz * wx) - (r.wy * xz + r.xz * wy))
 
   inline infix def v(r: Pga3dBivector): Double = antiWedge(r)
 
@@ -1434,9 +1434,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     val yzMyz = yz * yz
     Pga3dMotor(
       s = r.s * (xyMxy + xzMxz + yzMyz),
-      wx = (2.0 * (r.wz * xyMyz + r.xy * (wxMxy + wzMyz) + r.xz * (wxMxz - wyMyz) + r.yz * (wxMyz + wyMxz - wzMxy) - r.wy * xzMyz) + r.wx * (yzMyz - xyMxy - xzMxz)),
-      wy = (2.0 * (r.xy * (wyMxy - wzMxz) + r.xz * (wxMyz + wyMxz + wzMxy) + r.yz * (wyMyz - wxMxz) - r.wx * xzMyz - r.wz * xyMxz) + r.wy * (xzMxz - xyMxy - yzMyz)),
-      wz = (2.0 * (r.wx * xyMyz + r.xy * (wyMxz + wzMxy - wxMyz) + r.xz * (wzMxz - wyMxy) + r.yz * (wxMxy + wzMyz) - r.wy * xyMxz) + r.wz * (xyMxy - xzMxz - yzMyz)),
+      wx = (2.0 * ((r.wz * xyMyz + r.xy * (wxMxy + wzMyz)) + (r.xz * (wxMxz - wyMyz) + r.yz * (wxMyz + wyMxz - wzMxy)) - r.wy * xzMyz) + r.wx * (yzMyz - xyMxy - xzMxz)),
+      wy = (2.0 * ((r.xy * (wyMxy - wzMxz) + r.xz * (wxMyz + wyMxz + wzMxy)) + (r.yz * (wyMyz - wxMxz) - r.wx * xzMyz) - r.wz * xyMxz) + r.wy * (xzMxz - xyMxy - yzMyz)),
+      wz = (2.0 * ((r.wx * xyMyz + r.xy * (wyMxz + wzMxy - wxMyz)) + (r.xz * (wzMxz - wyMxy) + r.yz * (wxMxy + wzMyz)) - r.wy * xyMxz) + r.wz * (xyMxy - xzMxz - yzMyz)),
       xy = (2.0 * (r.xz * xyMxz + r.yz * xyMyz) + r.xy * (xyMxy - xzMxz - yzMyz)),
       xz = (2.0 * (r.xy * xyMxz + r.yz * xzMyz) + r.xz * (xzMxz - xyMxy - yzMyz)),
       yz = (2.0 * (r.xy * xyMyz + r.xz * xzMyz) + r.yz * (yzMyz - xyMxy - xzMxz)),
@@ -1474,9 +1474,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     val xzMyz = xz * yz
     val yzMyz = yz * yz
     Pga3dBivector(
-      wx = (2.0 * (r.wz * xyMyz + r.xy * (wxMxy + wzMyz) + r.xz * (wxMxz - wyMyz) + r.yz * (wxMyz + wyMxz - wzMxy) - r.wy * xzMyz) + r.wx * (yzMyz - xyMxy - xzMxz)),
-      wy = (2.0 * (r.xy * (wyMxy - wzMxz) + r.xz * (wxMyz + wyMxz + wzMxy) + r.yz * (wyMyz - wxMxz) - r.wx * xzMyz - r.wz * xyMxz) + r.wy * (xzMxz - xyMxy - yzMyz)),
-      wz = (2.0 * (r.wx * xyMyz + r.xy * (wyMxz + wzMxy - wxMyz) + r.xz * (wzMxz - wyMxy) + r.yz * (wxMxy + wzMyz) - r.wy * xyMxz) + r.wz * (xyMxy - xzMxz - yzMyz)),
+      wx = (2.0 * ((r.wz * xyMyz + r.xy * (wxMxy + wzMyz)) + (r.xz * (wxMxz - wyMyz) + r.yz * (wxMyz + wyMxz - wzMxy)) - r.wy * xzMyz) + r.wx * (yzMyz - xyMxy - xzMxz)),
+      wy = (2.0 * ((r.xy * (wyMxy - wzMxz) + r.xz * (wxMyz + wyMxz + wzMxy)) + (r.yz * (wyMyz - wxMxz) - r.wx * xzMyz) - r.wz * xyMxz) + r.wy * (xzMxz - xyMxy - yzMyz)),
+      wz = (2.0 * ((r.wx * xyMyz + r.xy * (wyMxz + wzMxy - wxMyz)) + (r.xz * (wzMxz - wyMxy) + r.yz * (wxMxy + wzMyz)) - r.wy * xyMxz) + r.wz * (xyMxy - xzMxz - yzMyz)),
       xy = (2.0 * (r.xz * xyMxz + r.yz * xyMyz) + r.xy * (xyMxy - xzMxz - yzMyz)),
       xz = (2.0 * (r.xy * xyMxz + r.yz * xzMyz) + r.xz * (xzMxz - xyMxy - yzMyz)),
       yz = (2.0 * (r.xy * xyMyz + r.xz * xzMyz) + r.yz * (yzMyz - xyMxy - xzMxz)),
@@ -1580,9 +1580,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     val xzMyz = xz * yz
     val yzMyz = yz * yz
     Pga3dProjectivePoint(
-      x = (2.0 * (r.z * xyMyz - r.y * xzMyz - wy * xy - wz * xz) + r.x * (yzMyz - xyMxy - xzMxz)),
-      y = (2.0 * (wx * xy - r.x * xzMyz - r.z * xyMxz - wz * yz) + r.y * (xzMxz - xyMxy - yzMyz)),
-      z = (2.0 * (r.x * xyMyz + wx * xz + wy * yz - r.y * xyMxz) + r.z * (xyMxy - xzMxz - yzMyz)),
+      x = (2.0 * ((r.z * xyMyz - r.y * xzMyz) - (wy * xy + wz * xz)) + r.x * (yzMyz - xyMxy - xzMxz)),
+      y = (2.0 * ((wx * xy - r.x * xzMyz) - (r.z * xyMxz + wz * yz)) + r.y * (xzMxz - xyMxy - yzMyz)),
+      z = (2.0 * ((r.x * xyMyz + wx * xz) + (wy * yz - r.y * xyMxz)) + r.z * (xyMxy - xzMxz - yzMyz)),
       w = (xyMxy + xzMxz + yzMyz),
     )
 
@@ -1669,9 +1669,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     val yzMyz = yz * yz
     Pga3dMotor(
       s = r.s * (xyMxy + xzMxz + yzMyz),
-      wx = (2.0 * (r.wz * xyMyz + r.xy * (wxMxy + wzMyz) + r.xz * (wxMxz - wyMyz) + r.yz * (wxMyz + wyMxz - wzMxy) - r.wy * xzMyz) + r.wx * (yzMyz - xyMxy - xzMxz)),
-      wy = (2.0 * (r.xy * (wyMxy - wzMxz) + r.xz * (wxMyz + wyMxz + wzMxy) + r.yz * (wyMyz - wxMxz) - r.wx * xzMyz - r.wz * xyMxz) + r.wy * (xzMxz - xyMxy - yzMyz)),
-      wz = (2.0 * (r.wx * xyMyz + r.xy * (wyMxz + wzMxy - wxMyz) + r.xz * (wzMxz - wyMxy) + r.yz * (wxMxy + wzMyz) - r.wy * xyMxz) + r.wz * (xyMxy - xzMxz - yzMyz)),
+      wx = (2.0 * ((r.wz * xyMyz + r.xy * (wxMxy + wzMyz)) + (r.xz * (wxMxz - wyMyz) + r.yz * (wxMyz + wyMxz - wzMxy)) - r.wy * xzMyz) + r.wx * (yzMyz - xyMxy - xzMxz)),
+      wy = (2.0 * ((r.xy * (wyMxy - wzMxz) + r.xz * (wxMyz + wyMxz + wzMxy)) + (r.yz * (wyMyz - wxMxz) - r.wx * xzMyz) - r.wz * xyMxz) + r.wy * (xzMxz - xyMxy - yzMyz)),
+      wz = (2.0 * ((r.wx * xyMyz + r.xy * (wyMxz + wzMxy - wxMyz)) + (r.xz * (wzMxz - wyMxy) + r.yz * (wxMxy + wzMyz)) - r.wy * xyMxz) + r.wz * (xyMxy - xzMxz - yzMyz)),
       xy = (2.0 * (r.xz * xyMxz + r.yz * xyMyz) + r.xy * (xyMxy - xzMxz - yzMyz)),
       xz = (2.0 * (r.xy * xyMxz + r.yz * xzMyz) + r.xz * (xzMxz - xyMxy - yzMyz)),
       yz = (2.0 * (r.xy * xyMyz + r.xz * xzMyz) + r.yz * (yzMyz - xyMxy - xzMxz)),
@@ -1709,9 +1709,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     val xzMyz = xz * yz
     val yzMyz = yz * yz
     Pga3dBivector(
-      wx = (2.0 * (r.wz * xyMyz + r.xy * (wxMxy + wzMyz) + r.xz * (wxMxz - wyMyz) + r.yz * (wxMyz + wyMxz - wzMxy) - r.wy * xzMyz) + r.wx * (yzMyz - xyMxy - xzMxz)),
-      wy = (2.0 * (r.xy * (wyMxy - wzMxz) + r.xz * (wxMyz + wyMxz + wzMxy) + r.yz * (wyMyz - wxMxz) - r.wx * xzMyz - r.wz * xyMxz) + r.wy * (xzMxz - xyMxy - yzMyz)),
-      wz = (2.0 * (r.wx * xyMyz + r.xy * (wyMxz + wzMxy - wxMyz) + r.xz * (wzMxz - wyMxy) + r.yz * (wxMxy + wzMyz) - r.wy * xyMxz) + r.wz * (xyMxy - xzMxz - yzMyz)),
+      wx = (2.0 * ((r.wz * xyMyz + r.xy * (wxMxy + wzMyz)) + (r.xz * (wxMxz - wyMyz) + r.yz * (wxMyz + wyMxz - wzMxy)) - r.wy * xzMyz) + r.wx * (yzMyz - xyMxy - xzMxz)),
+      wy = (2.0 * ((r.xy * (wyMxy - wzMxz) + r.xz * (wxMyz + wyMxz + wzMxy)) + (r.yz * (wyMyz - wxMxz) - r.wx * xzMyz) - r.wz * xyMxz) + r.wy * (xzMxz - xyMxy - yzMyz)),
+      wz = (2.0 * ((r.wx * xyMyz + r.xy * (wyMxz + wzMxy - wxMyz)) + (r.xz * (wzMxz - wyMxy) + r.yz * (wxMxy + wzMyz)) - r.wy * xyMxz) + r.wz * (xyMxy - xzMxz - yzMyz)),
       xy = (2.0 * (r.xz * xyMxz + r.yz * xyMyz) + r.xy * (xyMxy - xzMxz - yzMyz)),
       xz = (2.0 * (r.xy * xyMxz + r.yz * xzMyz) + r.xz * (xzMxz - xyMxy - yzMyz)),
       yz = (2.0 * (r.xy * xyMyz + r.xz * xzMyz) + r.yz * (yzMyz - xyMxy - xzMxz)),
@@ -1815,9 +1815,9 @@ final case class Pga3dBivector(wx: Double = 0.0,
     val xzMyz = xz * yz
     val yzMyz = yz * yz
     Pga3dProjectivePoint(
-      x = (2.0 * (r.z * xyMyz - r.y * xzMyz - wy * xy - wz * xz) + r.x * (yzMyz - xyMxy - xzMxz)),
-      y = (2.0 * (wx * xy - r.x * xzMyz - r.z * xyMxz - wz * yz) + r.y * (xzMxz - xyMxy - yzMyz)),
-      z = (2.0 * (r.x * xyMyz + wx * xz + wy * yz - r.y * xyMxz) + r.z * (xyMxy - xzMxz - yzMyz)),
+      x = (2.0 * ((r.z * xyMyz - r.y * xzMyz) - (wy * xy + wz * xz)) + r.x * (yzMyz - xyMxy - xzMxz)),
+      y = (2.0 * ((wx * xy - r.x * xzMyz) - (r.z * xyMxz + wz * yz)) + r.y * (xzMxz - xyMxy - yzMyz)),
+      z = (2.0 * ((r.x * xyMyz + wx * xz) + (wy * yz - r.y * xyMxz)) + r.z * (xyMxy - xzMxz - yzMyz)),
       w = (xyMxy + xzMxz + yzMyz),
     )
 

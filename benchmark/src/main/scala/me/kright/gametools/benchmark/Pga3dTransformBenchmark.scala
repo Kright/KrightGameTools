@@ -19,23 +19,25 @@ import scala.compiletime.uninitialized
  *
  * Results on ryzen 5950 (size = 1000, so the score is ns per one application):
  * [info] Benchmark                                     (size)  Mode  Cnt   Score   Error  Units
- * [info] Pga3dTransformBenchmark.bivectorViaMotor        1000  avgt    5  17.821 ± 0.214  us/op
- * [info] Pga3dTransformBenchmark.bivectorViaTransform    1000  avgt    5   6.238 ± 0.104  us/op
- * [info] Pga3dTransformBenchmark.motorViaMotor           1000  avgt    5  20.662 ± 0.748  us/op
- * [info] Pga3dTransformBenchmark.motorViaTransform       1000  avgt    5   5.992 ± 0.124  us/op
- * [info] Pga3dTransformBenchmark.planeViaMotor           1000  avgt    5   9.676 ± 0.112  us/op
- * [info] Pga3dTransformBenchmark.planeViaTransform       1000  avgt    5   1.905 ± 0.040  us/op
- * [info] Pga3dTransformBenchmark.pointViaMotor           1000  avgt    5   9.379 ± 0.152  us/op
- * [info] Pga3dTransformBenchmark.pointViaTransform       1000  avgt    5   1.767 ± 0.032  us/op
- * [info] Pga3dTransformBenchmark.transformCreation       1000  avgt    5  23.239 ± 0.967  us/op
- * [info] Pga3dTransformBenchmark.vectorViaMotor          1000  avgt    5   1.615 ± 0.005  us/op
- * [info] Pga3dTransformBenchmark.vectorViaTransform      1000  avgt    5   1.854 ± 0.010  us/op
+ * [info] Pga3dTransformBenchmark.bivectorViaMotor        1000  avgt    5  17.716 ± 0.266  us/op
+ * [info] Pga3dTransformBenchmark.bivectorViaTransform    1000  avgt    5   5.641 ± 0.101  us/op
+ * [info] Pga3dTransformBenchmark.motorViaMotor           1000  avgt    5  20.160 ± 1.021  us/op
+ * [info] Pga3dTransformBenchmark.motorViaTransform       1000  avgt    5   6.345 ± 0.245  us/op
+ * [info] Pga3dTransformBenchmark.planeViaMotor           1000  avgt    5   9.610 ± 0.061  us/op
+ * [info] Pga3dTransformBenchmark.planeViaTransform       1000  avgt    5   1.896 ± 0.024  us/op
+ * [info] Pga3dTransformBenchmark.pointViaMotor           1000  avgt    5   9.397 ± 0.178  us/op
+ * [info] Pga3dTransformBenchmark.pointViaTransform       1000  avgt    5   1.660 ± 0.010  us/op
+ * [info] Pga3dTransformBenchmark.transformCreation       1000  avgt    5  22.448 ± 1.012  us/op
+ * [info] Pga3dTransformBenchmark.vectorViaMotor          1000  avgt    5   1.691 ± 0.054  us/op
+ * [info] Pga3dTransformBenchmark.vectorViaTransform      1000  avgt    5   1.878 ± 0.044  us/op
  *
  * The transform is ~3x faster for bivectors and motors and ~5x for points and planes; building it
  * costs about one motor-bivector sandwich, so it breaks even from the second application. The one
  * exception is the vector: motor.sandwich(vector) uses so few coefficient products that the JIT
  * hoists them out of this benchmark's loop (the motor is loop-invariant), matching the cached
  * transform; outside such a tight loop the transform is not worse.
+ * The pair-grouped sums of the generated code (see SymbolicToPrettyString) gave the 6-term rows
+ * of the bivector sandwich a further ~10% (6.24 -> 5.64 ns).
  *
  * Run with, e.g.:
  * sbt "benchmark/Jmh/run -wi 5 -i 5 -f1 Pga3dTransformBenchmark.*"

@@ -19,8 +19,8 @@ class SortAntisymmetricPairsTest extends AnyFunSuiteLike:
     // the wx component of Pga3dBivector.cross(r: Pga3dBivector)
     val expr = Sym("r.wy") * Sym("xy") + Sym("r.wz") * Sym("xz") - Sym("r.xy") * Sym("wy") - Sym("r.xz") * Sym("wz")
 
-    // the canonical sort interleaves the pairs...
-    assert(expr.toString == "(r.wy * xy + r.wz * xz - r.xy * wy - r.xz * wz)")
+    // the canonical sort interleaves the pairs (rendered with the pair grouping of sums of 4+ terms)...
+    assert(expr.toString == "((r.wy * xy + r.wz * xz) - (r.xy * wy + r.xz * wz))")
     // ...and the transform reunites them, each pair parenthesized
     assert(apply(expr) == "((r.wy * xy - r.xy * wy) + (r.wz * xz - r.xz * wz))")
   }

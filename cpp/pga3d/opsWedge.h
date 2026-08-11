@@ -14,17 +14,17 @@ namespace pga3d {
         .x = (a.s * b.x + a.x * b.s),
         .y = (a.s * b.y + a.y * b.s),
         .z = (a.s * b.z + a.z * b.s),
-        .wx = (a.s * b.wx + a.w * b.x + a.wx * b.s - a.x * b.w),
-        .wy = (a.s * b.wy + a.w * b.y + a.wy * b.s - a.y * b.w),
-        .wz = (a.s * b.wz + a.w * b.z + a.wz * b.s - a.z * b.w),
-        .xy = (a.s * b.xy + a.x * b.y + a.xy * b.s - a.y * b.x),
-        .xz = (a.s * b.xz + a.x * b.z + a.xz * b.s - a.z * b.x),
-        .yz = (a.s * b.yz + a.y * b.z + a.yz * b.s - a.z * b.y),
-        .wxy = (a.s * b.wxy + a.w * b.xy + a.wx * b.y + a.wxy * b.s + a.xy * b.w + a.y * b.wx - a.wy * b.x - a.x * b.wy),
-        .wxz = (a.s * b.wxz + a.w * b.xz + a.wx * b.z + a.wxz * b.s + a.xz * b.w + a.z * b.wx - a.wz * b.x - a.x * b.wz),
-        .wyz = (a.s * b.wyz + a.w * b.yz + a.wy * b.z + a.wyz * b.s + a.yz * b.w + a.z * b.wy - a.wz * b.y - a.y * b.wz),
-        .xyz = (a.s * b.xyz + a.x * b.yz + a.xy * b.z + a.xyz * b.s + a.yz * b.x + a.z * b.xy - a.xz * b.y - a.y * b.xz),
-        .i = (a.i * b.s + a.s * b.i + a.w * b.xyz + a.wx * b.yz + a.wxy * b.z + a.wyz * b.x + a.wz * b.xy + a.xy * b.wz + a.y * b.wxz + a.yz * b.wx - a.wxz * b.y - a.wy * b.xz - a.x * b.wyz - a.xyz * b.w - a.xz * b.wy - a.z * b.wxy)
+        .wx = ((a.s * b.wx + a.w * b.x) + (a.wx * b.s - a.x * b.w)),
+        .wy = ((a.s * b.wy + a.w * b.y) + (a.wy * b.s - a.y * b.w)),
+        .wz = ((a.s * b.wz + a.w * b.z) + (a.wz * b.s - a.z * b.w)),
+        .xy = ((a.s * b.xy + a.x * b.y) + (a.xy * b.s - a.y * b.x)),
+        .xz = ((a.s * b.xz + a.x * b.z) + (a.xz * b.s - a.z * b.x)),
+        .yz = ((a.s * b.yz + a.y * b.z) + (a.yz * b.s - a.z * b.y)),
+        .wxy = (((a.s * b.wxy + a.w * b.xy) + (a.wx * b.y + a.wxy * b.s)) + ((a.xy * b.w + a.y * b.wx) - (a.wy * b.x + a.x * b.wy))),
+        .wxz = (((a.s * b.wxz + a.w * b.xz) + (a.wx * b.z + a.wxz * b.s)) + ((a.xz * b.w + a.z * b.wx) - (a.wz * b.x + a.x * b.wz))),
+        .wyz = (((a.s * b.wyz + a.w * b.yz) + (a.wy * b.z + a.wyz * b.s)) + ((a.yz * b.w + a.z * b.wy) - (a.wz * b.y + a.y * b.wz))),
+        .xyz = (((a.s * b.xyz + a.x * b.yz) + (a.xy * b.z + a.xyz * b.s)) + ((a.yz * b.x + a.z * b.xy) - (a.xz * b.y + a.y * b.xz))),
+        .i = ((((a.i * b.s + a.s * b.i) + (a.w * b.xyz + a.wx * b.yz)) + ((a.wxy * b.z + a.wyz * b.x) + (a.wz * b.xy + a.xy * b.wz))) + (((a.y * b.wxz + a.yz * b.wx) - (a.wxz * b.y + a.wy * b.xz)) - ((a.x * b.wyz + a.xyz * b.w) + (a.xz * b.wy + a.z * b.wxy))))
     }; }
     [[nodiscard]] constexpr Multivector meet(const Multivector& a, const Multivector& b) noexcept { return wedge(a, b); }
     constexpr Multivector Multivector::wedge(const Multivector& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -39,7 +39,7 @@ namespace pga3d {
         .xy = (a.s * b.xy + a.xy * b.s),
         .xz = (a.s * b.xz + a.xz * b.s),
         .yz = (a.s * b.yz + a.yz * b.s),
-        .i = (a.i * b.s + a.s * b.i + a.wx * b.yz + a.wz * b.xy + a.xy * b.wz + a.yz * b.wx - a.wy * b.xz - a.xz * b.wy)
+        .i = (((a.i * b.s + a.s * b.i) + (a.wx * b.yz + a.wz * b.xy)) + ((a.xy * b.wz + a.yz * b.wx) - (a.wy * b.xz + a.xz * b.wy)))
     }; }
     [[nodiscard]] constexpr Motor meet(const Motor& a, const Motor& b) noexcept { return wedge(a, b); }
     constexpr Motor Motor::wedge(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -75,7 +75,7 @@ namespace pga3d {
         .xy = a.s * b.xy,
         .xz = a.s * b.xz,
         .yz = a.s * b.yz,
-        .i = (a.wx * b.yz + a.wz * b.xy + a.xy * b.wz + a.yz * b.wx - a.wy * b.xz - a.xz * b.wy)
+        .i = ((a.wx * b.yz + a.wz * b.xy) + (a.xy * b.wz + a.yz * b.wx) - (a.wy * b.xz + a.xz * b.wy))
     }; }
     [[nodiscard]] constexpr Motor meet(const Motor& a, const Bivector& b) noexcept { return wedge(a, b); }
     constexpr Motor Motor::wedge(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -99,7 +99,7 @@ namespace pga3d {
         .xy = (a.s * b.xy + a.xy * b.s),
         .xz = (a.s * b.xz + a.xz * b.s),
         .yz = (a.s * b.yz + a.yz * b.s),
-        .i = (a.i * b.s + a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
+        .i = ((a.i * b.s + a.wx * b.yz) + (a.wz * b.xy - a.wy * b.xz))
     }; }
     [[nodiscard]] constexpr Motor meet(const Motor& a, const Rotor& b) noexcept { return wedge(a, b); }
     constexpr Motor Motor::wedge(const Rotor& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -113,7 +113,7 @@ namespace pga3d {
         .xy = a.xy * b.s,
         .xz = a.xz * b.s,
         .yz = a.yz * b.s,
-        .i = (a.i * b.s + a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
+        .i = ((a.i * b.s + a.xy * b.wz) + (a.yz * b.wx - a.xz * b.wy))
     }; }
     [[nodiscard]] constexpr Motor meet(const Motor& a, const ProjectiveTranslator& b) noexcept { return wedge(a, b); }
     constexpr Motor Motor::wedge(const ProjectiveTranslator& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -127,7 +127,7 @@ namespace pga3d {
         .xy = a.xy,
         .xz = a.xz,
         .yz = a.yz,
-        .i = (a.i + a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
+        .i = ((a.i + a.xy * b.wz) + (a.yz * b.wx - a.xz * b.wy))
     }; }
     [[nodiscard]] constexpr Motor meet(const Motor& a, const Translator& b) noexcept { return wedge(a, b); }
     constexpr Motor Motor::wedge(const Translator& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -265,7 +265,7 @@ namespace pga3d {
     constexpr ProjectivePoint Plane::meet(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr PseudoScalar wedge(const Plane& a, const ProjectivePoint& b) noexcept { return {
-        .i = (a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z)
+        .i = ((a.w * b.w + a.x * b.x) + (a.y * b.y + a.z * b.z))
     }; }
     [[nodiscard]] constexpr PseudoScalar meet(const Plane& a, const ProjectivePoint& b) noexcept { return wedge(a, b); }
     constexpr PseudoScalar Plane::wedge(const ProjectivePoint& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -345,7 +345,7 @@ namespace pga3d {
     constexpr PseudoScalar Plane::meet(const Vector& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr PseudoScalar wedge(const Plane& a, const Point& b) noexcept { return {
-        .i = (a.w + a.x * b.x + a.y * b.y + a.z * b.z)
+        .i = ((a.w + a.x * b.x) + (a.y * b.y + a.z * b.z))
     }; }
     [[nodiscard]] constexpr PseudoScalar meet(const Plane& a, const Point& b) noexcept { return wedge(a, b); }
     constexpr PseudoScalar Plane::wedge(const Point& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -398,7 +398,7 @@ namespace pga3d {
         .xy = a.xy * b.s,
         .xz = a.xz * b.s,
         .yz = a.yz * b.s,
-        .i = (a.wx * b.yz + a.wz * b.xy + a.xy * b.wz + a.yz * b.wx - a.wy * b.xz - a.xz * b.wy)
+        .i = ((a.wx * b.yz + a.wz * b.xy) + (a.xy * b.wz + a.yz * b.wx) - (a.wy * b.xz + a.xz * b.wy))
     }; }
     [[nodiscard]] constexpr Motor meet(const Bivector& a, const Motor& b) noexcept { return wedge(a, b); }
     constexpr Motor Bivector::wedge(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -415,7 +415,7 @@ namespace pga3d {
     constexpr ProjectivePoint Bivector::meet(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr PseudoScalar wedge(const Bivector& a, const Bivector& b) noexcept { return {
-        .i = (a.wx * b.yz + a.wz * b.xy + a.xy * b.wz + a.yz * b.wx - a.wy * b.xz - a.xz * b.wy)
+        .i = ((a.wx * b.yz + a.wz * b.xy) + (a.xy * b.wz + a.yz * b.wx) - (a.wy * b.xz + a.xz * b.wy))
     }; }
     [[nodiscard]] constexpr PseudoScalar meet(const Bivector& a, const Bivector& b) noexcept { return wedge(a, b); }
     constexpr PseudoScalar Bivector::wedge(const Bivector& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -499,7 +499,7 @@ namespace pga3d {
     constexpr ProjectivePoint ProjectivePoint::meet(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr PseudoScalar wedge(const ProjectivePoint& a, const Plane& b) noexcept { return {
-        .i = (-a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z)
+        .i = (-(a.w * b.w + a.x * b.x) - (a.y * b.y + a.z * b.z))
     }; }
     [[nodiscard]] constexpr PseudoScalar meet(const ProjectivePoint& a, const Plane& b) noexcept { return wedge(a, b); }
     constexpr PseudoScalar ProjectivePoint::wedge(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -551,7 +551,7 @@ namespace pga3d {
         .xy = (a.s * b.xy + a.xy * b.s),
         .xz = (a.s * b.xz + a.xz * b.s),
         .yz = (a.s * b.yz + a.yz * b.s),
-        .i = (a.s * b.i + a.xy * b.wz + a.yz * b.wx - a.xz * b.wy)
+        .i = ((a.s * b.i + a.xy * b.wz) + (a.yz * b.wx - a.xz * b.wy))
     }; }
     [[nodiscard]] constexpr Motor meet(const Rotor& a, const Motor& b) noexcept { return wedge(a, b); }
     constexpr Motor Rotor::wedge(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -731,7 +731,7 @@ namespace pga3d {
         .xy = a.s * b.xy,
         .xz = a.s * b.xz,
         .yz = a.s * b.yz,
-        .i = (a.s * b.i + a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
+        .i = ((a.s * b.i + a.wx * b.yz) + (a.wz * b.xy - a.wy * b.xz))
     }; }
     [[nodiscard]] constexpr Motor meet(const ProjectiveTranslator& a, const Motor& b) noexcept { return wedge(a, b); }
     constexpr Motor ProjectiveTranslator::wedge(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -907,7 +907,7 @@ namespace pga3d {
         .xy = b.xy,
         .xz = b.xz,
         .yz = b.yz,
-        .i = (b.i + a.wx * b.yz + a.wz * b.xy - a.wy * b.xz)
+        .i = ((b.i + a.wx * b.yz) + (a.wz * b.xy - a.wy * b.xz))
     }; }
     [[nodiscard]] constexpr Motor meet(const Translator& a, const Motor& b) noexcept { return wedge(a, b); }
     constexpr Motor Translator::wedge(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
@@ -1130,7 +1130,7 @@ namespace pga3d {
     constexpr ProjectivePoint Point::meet(const Motor& b) const noexcept { return pga3d::wedge(*this, b); }
 
     [[nodiscard]] constexpr PseudoScalar wedge(const Point& a, const Plane& b) noexcept { return {
-        .i = (-b.w - a.x * b.x - a.y * b.y - a.z * b.z)
+        .i = (-(b.w + a.x * b.x) - (a.y * b.y + a.z * b.z))
     }; }
     [[nodiscard]] constexpr PseudoScalar meet(const Point& a, const Plane& b) noexcept { return wedge(a, b); }
     constexpr PseudoScalar Point::wedge(const Plane& b) const noexcept { return pga3d::wedge(*this, b); }

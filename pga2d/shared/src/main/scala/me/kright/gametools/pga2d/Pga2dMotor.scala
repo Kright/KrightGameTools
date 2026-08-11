@@ -117,7 +117,7 @@ final case class Pga2dMotor(s: Double = 0.0,
     this / weightNorm
 
   def normSquare: Double =
-    (s * s + wx * wx + wy * wy + xy * xy)
+    ((s * s + wx * wx) + (wy * wy + xy * xy))
 
   def norm: Double =
     Math.sqrt(normSquare)
@@ -293,8 +293,8 @@ final case class Pga2dMotor(s: Double = 0.0,
   infix def geometric(r: Pga2dMotor): Pga2dMotor =
     Pga2dMotor(
       s = (r.s * s - r.xy * xy),
-      wx = (r.s * wx + r.wx * s + r.wy * xy - r.xy * wy),
-      wy = (r.s * wy + r.wy * s + r.xy * wx - r.wx * xy),
+      wx = ((r.s * wx + r.wx * s) + (r.wy * xy - r.xy * wy)),
+      wy = ((r.s * wy + r.wy * s) + (r.xy * wx - r.wx * xy)),
       xy = (r.s * xy + r.xy * s),
     )
 
@@ -609,8 +609,8 @@ final case class Pga2dMotor(s: Double = 0.0,
     Pga2dMultivector(
       s = 0.0,
       w = (r.wy * wx - r.wx * wy),
-      x = (r.xy * wx - r.s * wy - r.wx * xy - r.wy * s),
-      y = (r.s * wx + r.wx * s + r.xy * wy - r.wy * xy),
+      x = ((r.xy * wx - r.s * wy) - (r.wx * xy + r.wy * s)),
+      y = ((r.s * wx + r.wx * s) + (r.xy * wy - r.wy * xy)),
       wx = 0.0,
       wy = 0.0,
       xy = 0.0,

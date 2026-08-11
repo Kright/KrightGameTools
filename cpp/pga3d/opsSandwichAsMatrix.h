@@ -11,75 +11,75 @@
 namespace pga3d {
     constexpr std::array<double, 16> Motor::sandwichAsMatrixForProjectivePoint() const noexcept {
         return {
-            (s * s + yz * yz - xy * xy - xz * xz), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), (-2.0 * i * yz - 2.0 * s * wx - 2.0 * wy * xy - 2.0 * wz * xz),
-            (-2.0 * s * xy - 2.0 * xz * yz), (s * s + xz * xz - xy * xy - yz * yz), (-2.0 * xy * xz + 2.0 * s * yz), (-2.0 * s * wy - 2.0 * wz * yz + 2.0 * i * xz + 2.0 * wx * xy),
-            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), (s * s + xy * xy - xz * xz - yz * yz), (-2.0 * i * xy - 2.0 * s * wz + 2.0 * wx * xz + 2.0 * wy * yz),
-            0.0, 0.0, 0.0, (s * s + xy * xy + xz * xz + yz * yz)
+            ((s * s + yz * yz) - (xy * xy + xz * xz)), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), (-(2.0 * i * yz + 2.0 * s * wx) - (2.0 * wy * xy + 2.0 * wz * xz)),
+            (-2.0 * s * xy - 2.0 * xz * yz), ((s * s + xz * xz) - (xy * xy + yz * yz)), (-2.0 * xy * xz + 2.0 * s * yz), (-(2.0 * s * wy + 2.0 * wz * yz) + (2.0 * i * xz + 2.0 * wx * xy)),
+            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), ((s * s + xy * xy) - (xz * xz + yz * yz)), (-(2.0 * i * xy + 2.0 * s * wz) + (2.0 * wx * xz + 2.0 * wy * yz)),
+            0.0, 0.0, 0.0, ((s * s + xy * xy) + (xz * xz + yz * yz))
         };
     }
 
     constexpr std::array<double, 9> Motor::sandwichAsMatrixForVector() const noexcept {
         return {
-            (s * s + yz * yz - xy * xy - xz * xz), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz),
-            (-2.0 * s * xy - 2.0 * xz * yz), (s * s + xz * xz - xy * xy - yz * yz), (-2.0 * xy * xz + 2.0 * s * yz),
-            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), (s * s + xy * xy - xz * xz - yz * yz)
+            ((s * s + yz * yz) - (xy * xy + xz * xz)), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz),
+            (-2.0 * s * xy - 2.0 * xz * yz), ((s * s + xz * xz) - (xy * xy + yz * yz)), (-2.0 * xy * xz + 2.0 * s * yz),
+            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), ((s * s + xy * xy) - (xz * xz + yz * yz))
         };
     }
 
     constexpr std::array<double, 36> Motor::sandwichAsMatrixForBivector() const noexcept {
         return {
-            (s * s + yz * yz - xy * xy - xz * xz), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), (-2.0 * i * xz - 2.0 * s * wy + 2.0 * wx * xy + 2.0 * wz * yz), (-2.0 * s * wz - 2.0 * wy * yz + 2.0 * i * xy + 2.0 * wx * xz), (-2.0 * i * s - 2.0 * wz * xy + 2.0 * wx * yz + 2.0 * wy * xz),
-            (-2.0 * s * xy - 2.0 * xz * yz), (s * s + xz * xz - xy * xy - yz * yz), (-2.0 * xy * xz + 2.0 * s * yz), (-2.0 * i * yz - 2.0 * wz * xz + 2.0 * s * wx + 2.0 * wy * xy), (2.0 * i * s + 2.0 * wx * yz + 2.0 * wy * xz + 2.0 * wz * xy), (-2.0 * s * wz - 2.0 * wx * xz + 2.0 * i * xy + 2.0 * wy * yz),
-            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), (s * s + xy * xy - xz * xz - yz * yz), (-2.0 * i * s - 2.0 * wx * yz + 2.0 * wy * xz + 2.0 * wz * xy), (-2.0 * i * yz - 2.0 * wy * xy + 2.0 * s * wx + 2.0 * wz * xz), (2.0 * i * xz + 2.0 * s * wy + 2.0 * wx * xy + 2.0 * wz * yz),
-            0.0, 0.0, 0.0, (s * s + xy * xy - xz * xz - yz * yz), (2.0 * s * yz + 2.0 * xy * xz), (-2.0 * s * xz + 2.0 * xy * yz),
-            0.0, 0.0, 0.0, (-2.0 * s * yz + 2.0 * xy * xz), (s * s + xz * xz - xy * xy - yz * yz), (2.0 * s * xy + 2.0 * xz * yz),
-            0.0, 0.0, 0.0, (2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * xy + 2.0 * xz * yz), (s * s + yz * yz - xy * xy - xz * xz)
+            ((s * s + yz * yz) - (xy * xy + xz * xz)), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), (-(2.0 * i * xz + 2.0 * s * wy) + (2.0 * wx * xy + 2.0 * wz * yz)), (-(2.0 * s * wz + 2.0 * wy * yz) + (2.0 * i * xy + 2.0 * wx * xz)), (-(2.0 * i * s + 2.0 * wz * xy) + (2.0 * wx * yz + 2.0 * wy * xz)),
+            (-2.0 * s * xy - 2.0 * xz * yz), ((s * s + xz * xz) - (xy * xy + yz * yz)), (-2.0 * xy * xz + 2.0 * s * yz), (-(2.0 * i * yz + 2.0 * wz * xz) + (2.0 * s * wx + 2.0 * wy * xy)), ((2.0 * i * s + 2.0 * wx * yz) + (2.0 * wy * xz + 2.0 * wz * xy)), (-(2.0 * s * wz + 2.0 * wx * xz) + (2.0 * i * xy + 2.0 * wy * yz)),
+            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), ((s * s + xy * xy) - (xz * xz + yz * yz)), (-(2.0 * i * s + 2.0 * wx * yz) + (2.0 * wy * xz + 2.0 * wz * xy)), (-(2.0 * i * yz + 2.0 * wy * xy) + (2.0 * s * wx + 2.0 * wz * xz)), ((2.0 * i * xz + 2.0 * s * wy) + (2.0 * wx * xy + 2.0 * wz * yz)),
+            0.0, 0.0, 0.0, ((s * s + xy * xy) - (xz * xz + yz * yz)), (2.0 * s * yz + 2.0 * xy * xz), (-2.0 * s * xz + 2.0 * xy * yz),
+            0.0, 0.0, 0.0, (-2.0 * s * yz + 2.0 * xy * xz), ((s * s + xz * xz) - (xy * xy + yz * yz)), (2.0 * s * xy + 2.0 * xz * yz),
+            0.0, 0.0, 0.0, (2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * xy + 2.0 * xz * yz), ((s * s + yz * yz) - (xy * xy + xz * xz))
         };
     }
 
     constexpr std::array<double, 16> Motor::sandwichAsMatrixForPlane() const noexcept {
         return {
-            (s * s + yz * yz - xy * xy - xz * xz), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), 0.0,
-            (-2.0 * s * xy - 2.0 * xz * yz), (s * s + xz * xz - xy * xy - yz * yz), (-2.0 * xy * xz + 2.0 * s * yz), 0.0,
-            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), (s * s + xy * xy - xz * xz - yz * yz), 0.0,
-            (-2.0 * wy * xy - 2.0 * wz * xz + 2.0 * i * yz + 2.0 * s * wx), (-2.0 * i * xz - 2.0 * wz * yz + 2.0 * s * wy + 2.0 * wx * xy), (2.0 * i * xy + 2.0 * s * wz + 2.0 * wx * xz + 2.0 * wy * yz), (s * s + xy * xy + xz * xz + yz * yz)
+            ((s * s + yz * yz) - (xy * xy + xz * xz)), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), 0.0,
+            (-2.0 * s * xy - 2.0 * xz * yz), ((s * s + xz * xz) - (xy * xy + yz * yz)), (-2.0 * xy * xz + 2.0 * s * yz), 0.0,
+            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), ((s * s + xy * xy) - (xz * xz + yz * yz)), 0.0,
+            (-(2.0 * wy * xy + 2.0 * wz * xz) + (2.0 * i * yz + 2.0 * s * wx)), (-(2.0 * i * xz + 2.0 * wz * yz) + (2.0 * s * wy + 2.0 * wx * xy)), ((2.0 * i * xy + 2.0 * s * wz) + (2.0 * wx * xz + 2.0 * wy * yz)), ((s * s + xy * xy) + (xz * xz + yz * yz))
         };
     }
 
     constexpr std::array<double, 16> Rotor::sandwichAsMatrixForProjectivePoint() const noexcept {
         return {
-            (s * s + yz * yz - xy * xy - xz * xz), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), 0.0,
-            (-2.0 * s * xy - 2.0 * xz * yz), (s * s + xz * xz - xy * xy - yz * yz), (-2.0 * xy * xz + 2.0 * s * yz), 0.0,
-            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), (s * s + xy * xy - xz * xz - yz * yz), 0.0,
-            0.0, 0.0, 0.0, (s * s + xy * xy + xz * xz + yz * yz)
+            ((s * s + yz * yz) - (xy * xy + xz * xz)), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), 0.0,
+            (-2.0 * s * xy - 2.0 * xz * yz), ((s * s + xz * xz) - (xy * xy + yz * yz)), (-2.0 * xy * xz + 2.0 * s * yz), 0.0,
+            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), ((s * s + xy * xy) - (xz * xz + yz * yz)), 0.0,
+            0.0, 0.0, 0.0, ((s * s + xy * xy) + (xz * xz + yz * yz))
         };
     }
 
     constexpr std::array<double, 9> Rotor::sandwichAsMatrixForVector() const noexcept {
         return {
-            (s * s + yz * yz - xy * xy - xz * xz), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz),
-            (-2.0 * s * xy - 2.0 * xz * yz), (s * s + xz * xz - xy * xy - yz * yz), (-2.0 * xy * xz + 2.0 * s * yz),
-            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), (s * s + xy * xy - xz * xz - yz * yz)
+            ((s * s + yz * yz) - (xy * xy + xz * xz)), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz),
+            (-2.0 * s * xy - 2.0 * xz * yz), ((s * s + xz * xz) - (xy * xy + yz * yz)), (-2.0 * xy * xz + 2.0 * s * yz),
+            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), ((s * s + xy * xy) - (xz * xz + yz * yz))
         };
     }
 
     constexpr std::array<double, 36> Rotor::sandwichAsMatrixForBivector() const noexcept {
         return {
-            (s * s + yz * yz - xy * xy - xz * xz), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), 0.0, 0.0, 0.0,
-            (-2.0 * s * xy - 2.0 * xz * yz), (s * s + xz * xz - xy * xy - yz * yz), (-2.0 * xy * xz + 2.0 * s * yz), 0.0, 0.0, 0.0,
-            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), (s * s + xy * xy - xz * xz - yz * yz), 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0, (s * s + xy * xy - xz * xz - yz * yz), (2.0 * s * yz + 2.0 * xy * xz), (-2.0 * s * xz + 2.0 * xy * yz),
-            0.0, 0.0, 0.0, (-2.0 * s * yz + 2.0 * xy * xz), (s * s + xz * xz - xy * xy - yz * yz), (2.0 * s * xy + 2.0 * xz * yz),
-            0.0, 0.0, 0.0, (2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * xy + 2.0 * xz * yz), (s * s + yz * yz - xy * xy - xz * xz)
+            ((s * s + yz * yz) - (xy * xy + xz * xz)), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), 0.0, 0.0, 0.0,
+            (-2.0 * s * xy - 2.0 * xz * yz), ((s * s + xz * xz) - (xy * xy + yz * yz)), (-2.0 * xy * xz + 2.0 * s * yz), 0.0, 0.0, 0.0,
+            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), ((s * s + xy * xy) - (xz * xz + yz * yz)), 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, ((s * s + xy * xy) - (xz * xz + yz * yz)), (2.0 * s * yz + 2.0 * xy * xz), (-2.0 * s * xz + 2.0 * xy * yz),
+            0.0, 0.0, 0.0, (-2.0 * s * yz + 2.0 * xy * xz), ((s * s + xz * xz) - (xy * xy + yz * yz)), (2.0 * s * xy + 2.0 * xz * yz),
+            0.0, 0.0, 0.0, (2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * xy + 2.0 * xz * yz), ((s * s + yz * yz) - (xy * xy + xz * xz))
         };
     }
 
     constexpr std::array<double, 16> Rotor::sandwichAsMatrixForPlane() const noexcept {
         return {
-            (s * s + yz * yz - xy * xy - xz * xz), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), 0.0,
-            (-2.0 * s * xy - 2.0 * xz * yz), (s * s + xz * xz - xy * xy - yz * yz), (-2.0 * xy * xz + 2.0 * s * yz), 0.0,
-            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), (s * s + xy * xy - xz * xz - yz * yz), 0.0,
-            0.0, 0.0, 0.0, (s * s + xy * xy + xz * xz + yz * yz)
+            ((s * s + yz * yz) - (xy * xy + xz * xz)), (-2.0 * xz * yz + 2.0 * s * xy), (2.0 * s * xz + 2.0 * xy * yz), 0.0,
+            (-2.0 * s * xy - 2.0 * xz * yz), ((s * s + xz * xz) - (xy * xy + yz * yz)), (-2.0 * xy * xz + 2.0 * s * yz), 0.0,
+            (-2.0 * s * xz + 2.0 * xy * yz), (-2.0 * s * yz - 2.0 * xy * xz), ((s * s + xy * xy) - (xz * xz + yz * yz)), 0.0,
+            0.0, 0.0, 0.0, ((s * s + xy * xy) + (xz * xz + yz * yz))
         };
     }
 }

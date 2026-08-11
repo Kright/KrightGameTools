@@ -122,22 +122,22 @@ namespace pga3d {
         const double xyzMxyz = a.xyz * a.xyz;
         const double xyzMi = a.i * a.xyz;
         return {
-            .s = (2.0 * (b.x * (sMx + yzMxyz - yMxy - zMxz) + b.y * (sMy + xMxy - xzMxyz - zMyz) + b.z * (sMz + xMxz + xyMxyz + yMyz)) + b.s * (sMs + xMx + xyMxy + xyzMxyz + xzMxz + yMy + yzMyz + zMz)),
-            .w = (2.0 * (b.i * (sMxyz + yMxz - xMyz - zMxy) + b.s * (sMw + xMwx + xyMwxy + xyzMi + xzMwxz + yMwy + yzMwyz + zMwz) + b.x * (sMwx + wMx + wyzMxyz + yzMi - wyMxy - wzMxz - yMwxy - zMwxz) + b.y * (sMwy + wMy + wxMxy + xMwxy - wxzMxyz - wzMyz - xzMi - zMwyz) + b.z * (sMwz + wMz + wxMxz + wxyMxyz + wyMyz + xMwxz + xyMi + yMwyz)) + b.w * (sMs + xyMxy + xzMxz + yzMyz - xMx - xyzMxyz - yMy - zMz)),
-            .x = (2.0 * (b.s * (sMx + yMxy + yzMxyz + zMxz) + b.y * (sMxy + xMy - xzMyz - zMxyz) + b.z * (sMxz + xMz + xyMyz + yMxyz)) + b.x * (sMs + xMx + xyzMxyz + yzMyz - xyMxy - xzMxz - yMy - zMz)),
-            .y = (2.0 * (b.s * (sMy + zMyz - xMxy - xzMxyz) + b.x * (xMy + zMxyz - sMxy - xzMyz) + b.z * (sMyz + yMz - xMxyz - xyMxz)) + b.y * (sMs + xyzMxyz + xzMxz + yMy - xMx - xyMxy - yzMyz - zMz)),
-            .z = (2.0 * (b.s * (sMz + xyMxyz - xMxz - yMyz) + b.x * (xMz + xyMyz - sMxz - yMxyz) + b.y * (xMxyz + yMz - sMyz - xyMxz)) + b.z * (sMs + xyMxy + xyzMxyz + zMz - xMx - xzMxz - yMy - yzMyz)),
-            .wx = (2.0 * (b.wxy * (sMy + xzMxyz - xMxy - zMyz) + b.wxz * (sMz + yMyz - xMxz - xyMxyz) + b.wy * (sMxy + zMxyz - xMy - xzMyz) + b.wyz * (sMxyz + zMxy - xMyz - yMxz) + b.wz * (sMxz + xyMyz - xMz - yMxyz) + b.xy * (wMy + wxMxy + wxzMxyz + wzMyz - sMwy - xMwxy - xzMi - zMwyz) + b.xyz * (wMyz + wxMxyz + xyMwxz + yMwz - sMwyz - xMi - xzMwxy - zMwy) + b.xz * (wMz + wxMxz + xyMi + yMwyz - sMwz - wxyMxyz - wyMyz - xMwxz) + b.yz * (wMxyz + wxMyz + wyMxz + zMwxy - sMi - wzMxy - xMwyz - yMwxz)) + b.wx * (sMs + yMy + yzMyz + zMz - xMx - xyMxy - xyzMxyz - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xMy - xzMyz - zMxyz) + b.wxy * (yzMxyz + zMxz - sMx - yMxy) + b.wxz * (-sMxyz - xMyz - yMxz - zMxy) + b.wyz * (sMz + xMxz - xyMxyz - yMyz) + b.wz * (sMyz + xMxyz - xyMxz - yMz) + b.xy * (sMwx + wyMxy + wyzMxyz + zMwxz - wMx - wzMxz - yMwxy - yzMi) + b.xyz * (sMwxz + wyMxyz + xyMwyz + zMwx - wMxz - xMwz - yMi - yzMwxy) + b.xz * (sMi + wxMyz + wyMxz + wzMxy - wMxyz - xMwyz - yMwxz - zMwxy) + b.yz * (wMz + wyMyz + xMwxz + xyMi - sMwz - wxMxz - wxyMxyz - yMwyz)) + b.wy * (sMs + xMx + xzMxz + zMz - xyMxy - xyzMxyz - yMy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz + yMxyz - sMxz - xMz) + b.wxy * (sMxyz + xMyz - yMxz - zMxy) + b.wxz * (yMxy + yzMxyz - sMx - zMxz) + b.wy * (-sMyz - xMxyz - xyMxz - yMz) + b.wyz * (-sMy - xMxy - xzMxyz - zMyz) + b.xy * (wMxyz + wyMxz + wzMxy + xMwyz - sMi - wxMyz - yMwxz - zMwxy) + b.xyz * (wMxy + wzMxyz + xMwy + xzMwyz - sMwxy - yMwx - yzMwxz - zMi) + b.xz * (sMwx + wyzMxyz + wzMxz + yMwxy - wMx - wyMxy - yzMi - zMwxz) + b.yz * (sMwy + wxMxy + wzMyz + xzMi - wMy - wxzMxyz - xMwxy - zMwyz)) + b.wz * (sMs + xMx + xyMxy + yMy - xyzMxyz - xzMxz - yzMyz - zMz)),
-            .xy = (2.0 * (b.xyz * (sMz + xyMxyz - xMxz - yMyz) + b.xz * (sMyz + xyMxz - xMxyz - yMz) + b.yz * (xMz + xyMyz - sMxz - yMxyz)) + b.xy * (sMs + xyMxy + xyzMxyz + zMz - xMx - xzMxz - yMy - yzMyz)),
-            .xz = (2.0 * (b.xy * (xMxyz + xyMxz - sMyz - yMz) + b.xyz * (xMxy + xzMxyz - sMy - zMyz) + b.yz * (sMxy + xzMyz - xMy - zMxyz)) + b.xz * (sMs + xyzMxyz + xzMxz + yMy - xMx - xyMxy - yzMyz - zMz)),
-            .yz = (2.0 * (b.xy * (sMxz + xMz + xyMyz + yMxyz) + b.xyz * (sMx + yMxy + yzMxyz + zMxz) + b.xz * (xzMyz + zMxyz - sMxy - xMy)) + b.yz * (sMs + xMx + xyzMxyz + yzMyz - xyMxy - xzMxz - yMy - zMz)),
-            .wxy = (2.0 * (b.wx * (sMy + xMxy + xzMxyz + zMyz) + b.wxz * (sMyz + xMxyz + xyMxz + yMz) + b.wy * (yMxy + yzMxyz - sMx - zMxz) + b.wyz * (xyMyz + yMxyz - sMxz - xMz) + b.wz * (yMxz + zMxy - sMxyz - xMyz) + b.xy * (sMw + xyMwxy + xyzMi + zMwz - xMwx - xzMwxz - yMwy - yzMwyz) + b.xyz * (sMwz + wMz + wxyMxyz + xyMi - wxMxz - wyMyz - xMwxz - yMwyz) + b.xz * (sMwyz + wMyz + xyMwxz + xzMwxy - wxMxyz - xMi - yMwz - zMwy) + b.yz * (xMwz + xyMwyz + yzMwxy + zMwx - sMwxz - wMxz - wyMxyz - yMi)) + b.wxy * (sMs + xMx + xyMxy + yMy - xyzMxyz - xzMxz - yzMyz - zMz)),
-            .wxz = (2.0 * (b.wx * (sMz + xMxz - xyMxyz - yMyz) + b.wxy * (xyMxz + yMz - sMyz - xMxyz) + b.wy * (sMxyz + xMyz + yMxz + zMxy) + b.wyz * (sMxy + xMy + xzMyz + zMxyz) + b.wz * (yzMxyz + zMxz - sMx - yMxy) + b.xy * (wxMxyz + xMi + xyMwxz + xzMwxy - sMwyz - wMyz - yMwz - zMwy) + b.xyz * (wxMxy + wxzMxyz + xMwxy + xzMi - sMwy - wMy - wzMyz - zMwyz) + b.xz * (sMw + xyzMi + xzMwxz + yMwy - xMwx - xyMwxy - yzMwyz - zMwz) + b.yz * (sMwxy + wMxy + xzMwyz + yzMwxz - wzMxyz - xMwy - yMwx - zMi)) + b.wxz * (sMs + xMx + xzMxz + zMz - xyMxy - xyzMxyz - yMy - yzMyz)),
-            .wyz = (2.0 * (b.wx * (xMyz + yMxz - sMxyz - zMxy) + b.wxy * (sMxz + xyMyz - xMz - yMxyz) + b.wxz * (xMy + xzMyz - sMxy - zMxyz) + b.wy * (sMz + yMyz - xMxz - xyMxyz) + b.wz * (xMxy + zMyz - sMy - xzMxyz) + b.xy * (sMwxz + wMxz + wyMxyz + xMwz + xyMwyz + yMi + yzMwxy + zMwx) + b.xyz * (sMwx + wMx + wyMxy + wyzMxyz + wzMxz + yMwxy + yzMi + zMwxz) + b.xz * (wzMxyz + xzMwyz + yzMwxz + zMi - sMwxy - wMxy - xMwy - yMwx) + b.yz * (sMw + xMwx + xyzMi + yzMwyz - xyMwxy - xzMwxz - yMwy - zMwz)) + b.wyz * (sMs + yMy + yzMyz + zMz - xMx - xyMxy - xyzMxyz - xzMxz)),
-            .xyz = (2.0 * (b.xy * (sMz + xMxz + xyMxyz + yMyz) + b.xz * (xzMxyz + zMyz - sMy - xMxy) + b.yz * (sMx + yzMxyz - yMxy - zMxz)) + b.xyz * (sMs + xMx + xyMxy + xyzMxyz + xzMxz + yMy + yzMyz + zMz)),
-            .i = (2.0 * (b.s * (sMi + wyMxz + xMwyz + zMwxy - wMxyz - wxMyz - wzMxy - yMwxz) + b.w * (xMyz + zMxy - sMxyz - yMxz) + b.x * (sMwyz + xMi + xyMwxz + yMwz - wMyz - wxMxyz - xzMwxy - zMwy) + b.y * (wMxz + xyMwyz + yMi + zMwx - sMwxz - wyMxyz - xMwz - yzMwxy) + b.z * (sMwxy + xMwy + xzMwyz + zMi - wMxy - wzMxyz - yMwx - yzMwxz)) + b.i * (sMs + xyMxy + xzMxz + yzMyz - xMx - xyzMxyz - yMy - zMz))
+            .s = (2.0 * (b.x * ((sMx + yzMxyz) - (yMxy + zMxz)) + b.y * ((sMy + xMxy) - (xzMxyz + zMyz)) + b.z * ((sMz + xMxz) + (xyMxyz + yMyz))) + b.s * (((sMs + xMx) + (xyMxy + xyzMxyz)) + ((xzMxz + yMy) + (yzMyz + zMz)))),
+            .w = (2.0 * ((b.i * ((sMxyz + yMxz) - (xMyz + zMxy)) + b.s * (((sMw + xMwx) + (xyMwxy + xyzMi)) + ((xzMwxz + yMwy) + (yzMwyz + zMwz)))) + (b.x * (((sMwx + wMx) + (wyzMxyz + yzMi)) - ((wyMxy + wzMxz) + (yMwxy + zMwxz))) + b.y * (((sMwy + wMy) + (wxMxy + xMwxy)) - ((wxzMxyz + wzMyz) + (xzMi + zMwyz)))) + b.z * (((sMwz + wMz) + (wxMxz + wxyMxyz)) + ((wyMyz + xMwxz) + (xyMi + yMwyz)))) + b.w * (((sMs + xyMxy) + (xzMxz + yzMyz)) - ((xMx + xyzMxyz) + (yMy + zMz)))),
+            .x = (2.0 * (b.s * ((sMx + yMxy) + (yzMxyz + zMxz)) + b.y * ((sMxy + xMy) - (xzMyz + zMxyz)) + b.z * ((sMxz + xMz) + (xyMyz + yMxyz))) + b.x * (((sMs + xMx) + (xyzMxyz + yzMyz)) - ((xyMxy + xzMxz) + (yMy + zMz)))),
+            .y = (2.0 * (b.s * ((sMy + zMyz) - (xMxy + xzMxyz)) + b.x * ((xMy + zMxyz) - (sMxy + xzMyz)) + b.z * ((sMyz + yMz) - (xMxyz + xyMxz))) + b.y * (((sMs + xyzMxyz) + (xzMxz + yMy)) - ((xMx + xyMxy) + (yzMyz + zMz)))),
+            .z = (2.0 * (b.s * ((sMz + xyMxyz) - (xMxz + yMyz)) + b.x * ((xMz + xyMyz) - (sMxz + yMxyz)) + b.y * ((xMxyz + yMz) - (sMyz + xyMxz))) + b.z * (((sMs + xyMxy) + (xyzMxyz + zMz)) - ((xMx + xzMxz) + (yMy + yzMyz)))),
+            .wx = (2.0 * (((b.wxy * ((sMy + xzMxyz) - (xMxy + zMyz)) + b.wxz * ((sMz + yMyz) - (xMxz + xyMxyz))) + (b.wy * ((sMxy + zMxyz) - (xMy + xzMyz)) + b.wyz * ((sMxyz + zMxy) - (xMyz + yMxz)))) + ((b.wz * ((sMxz + xyMyz) - (xMz + yMxyz)) + b.xy * (((wMy + wxMxy) + (wxzMxyz + wzMyz)) - ((sMwy + xMwxy) + (xzMi + zMwyz)))) + (b.xyz * (((wMyz + wxMxyz) + (xyMwxz + yMwz)) - ((sMwyz + xMi) + (xzMwxy + zMwy))) + b.xz * (((wMz + wxMxz) + (xyMi + yMwyz)) - ((sMwz + wxyMxyz) + (wyMyz + xMwxz))))) + b.yz * (((wMxyz + wxMyz) + (wyMxz + zMwxy)) - ((sMi + wzMxy) + (xMwyz + yMwxz)))) + b.wx * (((sMs + yMy) + (yzMyz + zMz)) - ((xMx + xyMxy) + (xyzMxyz + xzMxz)))),
+            .wy = (2.0 * (((b.wx * (-(sMxy + xMy) - (xzMyz + zMxyz)) + b.wxy * ((yzMxyz + zMxz) - (sMx + yMxy))) + (b.wxz * (-(sMxyz + xMyz) - (yMxz + zMxy)) + b.wyz * ((sMz + xMxz) - (xyMxyz + yMyz)))) + ((b.wz * ((sMyz + xMxyz) - (xyMxz + yMz)) + b.xy * (((sMwx + wyMxy) + (wyzMxyz + zMwxz)) - ((wMx + wzMxz) + (yMwxy + yzMi)))) + (b.xyz * (((sMwxz + wyMxyz) + (xyMwyz + zMwx)) - ((wMxz + xMwz) + (yMi + yzMwxy))) + b.xz * (((sMi + wxMyz) + (wyMxz + wzMxy)) - ((wMxyz + xMwyz) + (yMwxz + zMwxy))))) + b.yz * (((wMz + wyMyz) + (xMwxz + xyMi)) - ((sMwz + wxMxz) + (wxyMxyz + yMwyz)))) + b.wy * (((sMs + xMx) + (xzMxz + zMz)) - ((xyMxy + xyzMxyz) + (yMy + yzMyz)))),
+            .wz = (2.0 * (((b.wx * ((xyMyz + yMxyz) - (sMxz + xMz)) + b.wxy * ((sMxyz + xMyz) - (yMxz + zMxy))) + (b.wxz * ((yMxy + yzMxyz) - (sMx + zMxz)) + b.wy * (-(sMyz + xMxyz) - (xyMxz + yMz)))) + ((b.wyz * (-(sMy + xMxy) - (xzMxyz + zMyz)) + b.xy * (((wMxyz + wyMxz) + (wzMxy + xMwyz)) - ((sMi + wxMyz) + (yMwxz + zMwxy)))) + (b.xyz * (((wMxy + wzMxyz) + (xMwy + xzMwyz)) - ((sMwxy + yMwx) + (yzMwxz + zMi))) + b.xz * (((sMwx + wyzMxyz) + (wzMxz + yMwxy)) - ((wMx + wyMxy) + (yzMi + zMwxz))))) + b.yz * (((sMwy + wxMxy) + (wzMyz + xzMi)) - ((wMy + wxzMxyz) + (xMwxy + zMwyz)))) + b.wz * (((sMs + xMx) + (xyMxy + yMy)) - ((xyzMxyz + xzMxz) + (yzMyz + zMz)))),
+            .xy = (2.0 * (b.xyz * ((sMz + xyMxyz) - (xMxz + yMyz)) + b.xz * ((sMyz + xyMxz) - (xMxyz + yMz)) + b.yz * ((xMz + xyMyz) - (sMxz + yMxyz))) + b.xy * (((sMs + xyMxy) + (xyzMxyz + zMz)) - ((xMx + xzMxz) + (yMy + yzMyz)))),
+            .xz = (2.0 * (b.xy * ((xMxyz + xyMxz) - (sMyz + yMz)) + b.xyz * ((xMxy + xzMxyz) - (sMy + zMyz)) + b.yz * ((sMxy + xzMyz) - (xMy + zMxyz))) + b.xz * (((sMs + xyzMxyz) + (xzMxz + yMy)) - ((xMx + xyMxy) + (yzMyz + zMz)))),
+            .yz = (2.0 * (b.xy * ((sMxz + xMz) + (xyMyz + yMxyz)) + b.xyz * ((sMx + yMxy) + (yzMxyz + zMxz)) + b.xz * ((xzMyz + zMxyz) - (sMxy + xMy))) + b.yz * (((sMs + xMx) + (xyzMxyz + yzMyz)) - ((xyMxy + xzMxz) + (yMy + zMz)))),
+            .wxy = (2.0 * (((b.wx * ((sMy + xMxy) + (xzMxyz + zMyz)) + b.wxz * ((sMyz + xMxyz) + (xyMxz + yMz))) + (b.wy * ((yMxy + yzMxyz) - (sMx + zMxz)) + b.wyz * ((xyMyz + yMxyz) - (sMxz + xMz)))) + ((b.wz * ((yMxz + zMxy) - (sMxyz + xMyz)) + b.xy * (((sMw + xyMwxy) + (xyzMi + zMwz)) - ((xMwx + xzMwxz) + (yMwy + yzMwyz)))) + (b.xyz * (((sMwz + wMz) + (wxyMxyz + xyMi)) - ((wxMxz + wyMyz) + (xMwxz + yMwyz))) + b.xz * (((sMwyz + wMyz) + (xyMwxz + xzMwxy)) - ((wxMxyz + xMi) + (yMwz + zMwy))))) + b.yz * (((xMwz + xyMwyz) + (yzMwxy + zMwx)) - ((sMwxz + wMxz) + (wyMxyz + yMi)))) + b.wxy * (((sMs + xMx) + (xyMxy + yMy)) - ((xyzMxyz + xzMxz) + (yzMyz + zMz)))),
+            .wxz = (2.0 * (((b.wx * ((sMz + xMxz) - (xyMxyz + yMyz)) + b.wxy * ((xyMxz + yMz) - (sMyz + xMxyz))) + (b.wy * ((sMxyz + xMyz) + (yMxz + zMxy)) + b.wyz * ((sMxy + xMy) + (xzMyz + zMxyz)))) + ((b.wz * ((yzMxyz + zMxz) - (sMx + yMxy)) + b.xy * (((wxMxyz + xMi) + (xyMwxz + xzMwxy)) - ((sMwyz + wMyz) + (yMwz + zMwy)))) + (b.xyz * (((wxMxy + wxzMxyz) + (xMwxy + xzMi)) - ((sMwy + wMy) + (wzMyz + zMwyz))) + b.xz * (((sMw + xyzMi) + (xzMwxz + yMwy)) - ((xMwx + xyMwxy) + (yzMwyz + zMwz))))) + b.yz * (((sMwxy + wMxy) + (xzMwyz + yzMwxz)) - ((wzMxyz + xMwy) + (yMwx + zMi)))) + b.wxz * (((sMs + xMx) + (xzMxz + zMz)) - ((xyMxy + xyzMxyz) + (yMy + yzMyz)))),
+            .wyz = (2.0 * (((b.wx * ((xMyz + yMxz) - (sMxyz + zMxy)) + b.wxy * ((sMxz + xyMyz) - (xMz + yMxyz))) + (b.wxz * ((xMy + xzMyz) - (sMxy + zMxyz)) + b.wy * ((sMz + yMyz) - (xMxz + xyMxyz)))) + ((b.wz * ((xMxy + zMyz) - (sMy + xzMxyz)) + b.xy * (((sMwxz + wMxz) + (wyMxyz + xMwz)) + ((xyMwyz + yMi) + (yzMwxy + zMwx)))) + (b.xyz * (((sMwx + wMx) + (wyMxy + wyzMxyz)) + ((wzMxz + yMwxy) + (yzMi + zMwxz))) + b.xz * (((wzMxyz + xzMwyz) + (yzMwxz + zMi)) - ((sMwxy + wMxy) + (xMwy + yMwx))))) + b.yz * (((sMw + xMwx) + (xyzMi + yzMwyz)) - ((xyMwxy + xzMwxz) + (yMwy + zMwz)))) + b.wyz * (((sMs + yMy) + (yzMyz + zMz)) - ((xMx + xyMxy) + (xyzMxyz + xzMxz)))),
+            .xyz = (2.0 * (b.xy * ((sMz + xMxz) + (xyMxyz + yMyz)) + b.xz * ((xzMxyz + zMyz) - (sMy + xMxy)) + b.yz * ((sMx + yzMxyz) - (yMxy + zMxz))) + b.xyz * (((sMs + xMx) + (xyMxy + xyzMxyz)) + ((xzMxz + yMy) + (yzMyz + zMz)))),
+            .i = (2.0 * ((b.s * (((sMi + wyMxz) + (xMwyz + zMwxy)) - ((wMxyz + wxMyz) + (wzMxy + yMwxz))) + b.w * ((xMyz + zMxy) - (sMxyz + yMxz))) + (b.x * (((sMwyz + xMi) + (xyMwxz + yMwz)) - ((wMyz + wxMxyz) + (xzMwxy + zMwy))) + b.y * (((wMxz + xyMwyz) + (yMi + zMwx)) - ((sMwxz + wyMxyz) + (xMwz + yzMwxy)))) + b.z * (((sMwxy + xMwy) + (xzMwyz + zMi)) - ((wMxy + wzMxyz) + (yMwx + yzMwxz)))) + b.i * (((sMs + xyMxy) + (xzMxz + yzMyz)) - ((xMx + xyzMxyz) + (yMy + zMz))))
         };
     }
     constexpr Multivector Multivector::sandwich(const Multivector& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -171,14 +171,14 @@ namespace pga3d {
         const double yzMyz = a.yz * a.yz;
         const double yzMi = a.i * a.yz;
         return {
-            .s = b.s * (sMs + xyMxy + xzMxz + yzMyz),
-            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz) + b.xy * (wxMxy + wzMyz - sMwy - xzMi) + b.xz * (wxMxz + xyMi - sMwz - wyMyz) + b.yz * (wxMyz + wyMxz - sMi - wzMxy)) + b.wx * (sMs + yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz) + b.xy * (sMwx + wyMxy - wzMxz - yzMi) + b.xz * (sMi + wxMyz + wyMxz + wzMxy) + b.yz * (wyMyz + xyMi - sMwz - wxMxz)) + b.wy * (sMs + xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz) + b.xy * (wyMxz + wzMxy - sMi - wxMyz) + b.xz * (sMwx + wzMxz - wyMxy - yzMi) + b.yz * (sMwy + wxMxy + wzMyz + xzMi)) + b.wz * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * (sMs + xzMxz - xyMxy - yzMyz)),
-            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * (sMs + yzMyz - xyMxy - xzMxz)),
-            .i = (b.i * (sMs + xyMxy + xzMxz + yzMyz) + 2.0 * b.s * (sMi + wyMxz - wxMyz - wzMxy))
+            .s = b.s * ((sMs + xyMxy) + (xzMxz + yzMyz)),
+            .wx = (2.0 * ((b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + (b.xy * ((wxMxy + wzMyz) - (sMwy + xzMi)) + b.xz * ((wxMxz + xyMi) - (sMwz + wyMyz))) + b.yz * ((wxMyz + wyMxz) - (sMi + wzMxy))) + b.wx * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .wy = (2.0 * ((b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + (b.xy * ((sMwx + wyMxy) - (wzMxz + yzMi)) + b.xz * ((sMi + wxMyz) + (wyMxz + wzMxy))) + b.yz * ((wyMyz + xyMi) - (sMwz + wxMxz))) + b.wy * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .wz = (2.0 * ((b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + (b.xy * ((wyMxz + wzMxy) - (sMi + wxMyz)) + b.xz * ((sMwx + wzMxz) - (wyMxy + yzMi))) + b.yz * ((sMwy + wxMxy) + (wzMyz + xzMi))) + b.wz * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .i = (b.i * ((sMs + xyMxy) + (xzMxz + yzMyz)) + 2.0 * b.s * ((sMi + wyMxz) - (wxMyz + wzMxy)))
         };
     }
     constexpr Motor Motor::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -195,10 +195,10 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * (sMs + yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * (sMs + xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * (sMs + xyMxy - xzMxz - yzMyz)),
-            .w = (2.0 * (b.x * (a.i * a.yz + a.s * a.wx - a.wy * a.xy - a.wz * a.xz) + b.y * (a.s * a.wy + a.wx * a.xy - a.i * a.xz - a.wz * a.yz) + b.z * (a.i * a.xy + a.s * a.wz + a.wx * a.xz + a.wy * a.yz)) + b.w * (sMs + xyMxy + xzMxz + yzMyz))
+            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .w = (2.0 * (b.x * ((a.i * a.yz + a.s * a.wx) - (a.wy * a.xy + a.wz * a.xz)) + b.y * ((a.s * a.wy + a.wx * a.xy) - (a.i * a.xz + a.wz * a.yz)) + b.z * ((a.i * a.xy + a.s * a.wz) + (a.wx * a.xz + a.wy * a.yz))) + b.w * ((sMs + xyMxy) + (xzMxz + yzMyz)))
         };
     }
     constexpr Plane Motor::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -231,12 +231,12 @@ namespace pga3d {
         const double yzMyz = a.yz * a.yz;
         const double yzMi = a.i * a.yz;
         return {
-            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz) + b.xy * (wxMxy + wzMyz - sMwy - xzMi) + b.xz * (wxMxz + xyMi - sMwz - wyMyz) + b.yz * (wxMyz + wyMxz - sMi - wzMxy)) + b.wx * (sMs + yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz) + b.xy * (sMwx + wyMxy - wzMxz - yzMi) + b.xz * (sMi + wxMyz + wyMxz + wzMxy) + b.yz * (wyMyz + xyMi - sMwz - wxMxz)) + b.wy * (sMs + xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz) + b.xy * (wyMxz + wzMxy - sMi - wxMyz) + b.xz * (sMwx + wzMxz - wyMxy - yzMi) + b.yz * (sMwy + wxMxy + wzMyz + xzMi)) + b.wz * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * (sMs + xzMxz - xyMxy - yzMyz)),
-            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * (sMs + yzMyz - xyMxy - xzMxz))
+            .wx = (2.0 * ((b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + (b.xy * ((wxMxy + wzMyz) - (sMwy + xzMi)) + b.xz * ((wxMxz + xyMi) - (sMwz + wyMyz))) + b.yz * ((wxMyz + wyMxz) - (sMi + wzMxy))) + b.wx * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .wy = (2.0 * ((b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + (b.xy * ((sMwx + wyMxy) - (wzMxz + yzMi)) + b.xz * ((sMi + wxMyz) + (wyMxz + wzMxy))) + b.yz * ((wyMyz + xyMi) - (sMwz + wxMxz))) + b.wy * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .wz = (2.0 * ((b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + (b.xy * ((wyMxz + wzMxy) - (sMi + wxMyz)) + b.xz * ((sMwx + wzMxz) - (wyMxy + yzMi))) + b.yz * ((sMwy + wxMxy) + (wzMyz + xzMi))) + b.wz * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * ((sMs + yzMyz) - (xyMxy + xzMxz)))
         };
     }
     constexpr Bivector Motor::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -253,10 +253,10 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.w * (-a.i * a.yz - a.s * a.wx - a.wy * a.xy - a.wz * a.xz) + b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * (sMs + yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (b.w * (a.i * a.xz + a.wx * a.xy - a.s * a.wy - a.wz * a.yz) + b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * (sMs + xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (b.w * (a.wx * a.xz + a.wy * a.yz - a.i * a.xy - a.s * a.wz) + b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * (sMs + xyMxy - xzMxz - yzMyz)),
-            .w = b.w * (sMs + xyMxy + xzMxz + yzMyz)
+            .x = (2.0 * (b.w * (-(a.i * a.yz + a.s * a.wx) - (a.wy * a.xy + a.wz * a.xz)) + b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .y = (2.0 * (b.w * ((a.i * a.xz + a.wx * a.xy) - (a.s * a.wy + a.wz * a.yz)) + b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .z = (2.0 * (b.w * ((a.wx * a.xz + a.wy * a.yz) - (a.i * a.xy + a.s * a.wz)) + b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .w = b.w * ((sMs + xyMxy) + (xzMxz + yzMyz))
         };
     }
     constexpr ProjectivePoint Motor::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -289,14 +289,14 @@ namespace pga3d {
         const double yzMyz = a.yz * a.yz;
         const double yzMi = a.i * a.yz;
         return {
-            .s = b.s * (sMs + xyMxy + xzMxz + yzMyz),
-            .wx = 2.0 * (b.xy * (wxMxy + wzMyz - sMwy - xzMi) + b.xz * (wxMxz + xyMi - sMwz - wyMyz) + b.yz * (wxMyz + wyMxz - sMi - wzMxy)),
-            .wy = 2.0 * (b.xy * (sMwx + wyMxy - wzMxz - yzMi) + b.xz * (sMi + wxMyz + wyMxz + wzMxy) + b.yz * (wyMyz + xyMi - sMwz - wxMxz)),
-            .wz = 2.0 * (b.xy * (wyMxz + wzMxy - sMi - wxMyz) + b.xz * (sMwx + wzMxz - wyMxy - yzMi) + b.yz * (sMwy + wxMxy + wzMyz + xzMi)),
-            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * (sMs + xzMxz - xyMxy - yzMyz)),
-            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * (sMs + yzMyz - xyMxy - xzMxz)),
-            .i = 2.0 * b.s * (sMi + wyMxz - wxMyz - wzMxy)
+            .s = b.s * ((sMs + xyMxy) + (xzMxz + yzMyz)),
+            .wx = 2.0 * (b.xy * ((wxMxy + wzMyz) - (sMwy + xzMi)) + b.xz * ((wxMxz + xyMi) - (sMwz + wyMyz)) + b.yz * ((wxMyz + wyMxz) - (sMi + wzMxy))),
+            .wy = 2.0 * (b.xy * ((sMwx + wyMxy) - (wzMxz + yzMi)) + b.xz * ((sMi + wxMyz) + (wyMxz + wzMxy)) + b.yz * ((wyMyz + xyMi) - (sMwz + wxMxz))),
+            .wz = 2.0 * (b.xy * ((wyMxz + wzMxy) - (sMi + wxMyz)) + b.xz * ((sMwx + wzMxz) - (wyMxy + yzMi)) + b.yz * ((sMwy + wxMxy) + (wzMyz + xzMi))),
+            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .i = 2.0 * b.s * ((sMi + wyMxz) - (wxMyz + wzMxy))
         };
     }
     constexpr Motor Motor::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -313,14 +313,14 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .s = b.s * (sMs + xyMxy + xzMxz + yzMyz),
-            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * (sMs + yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * (sMs + xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * (sMs + xyMxy - xzMxz - yzMyz)),
+            .s = b.s * ((sMs + xyMxy) + (xzMxz + yzMyz)),
+            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * ((sMs + xyMxy) - (xzMxz + yzMyz))),
             .xy = 0.0,
             .xz = 0.0,
             .yz = 0.0,
-            .i = 2.0 * b.s * (a.i * a.s + a.wy * a.xz - a.wx * a.yz - a.wz * a.xy)
+            .i = 2.0 * b.s * ((a.i * a.s + a.wy * a.xz) - (a.wx * a.yz + a.wz * a.xy))
         };
     }
     constexpr Motor Motor::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -337,14 +337,14 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .s = (sMs + xyMxy + xzMxz + yzMyz),
-            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * (sMs + yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * (sMs + xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * (sMs + xyMxy - xzMxz - yzMyz)),
+            .s = ((sMs + xyMxy) + (xzMxz + yzMyz)),
+            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * ((sMs + xyMxy) - (xzMxz + yzMyz))),
             .xy = 0.0,
             .xz = 0.0,
             .yz = 0.0,
-            .i = 2.0 * (a.i * a.s + a.wy * a.xz - a.wx * a.yz - a.wz * a.xy)
+            .i = 2.0 * ((a.i * a.s + a.wy * a.xz) - (a.wx * a.yz + a.wz * a.xy))
         };
     }
     constexpr Motor Motor::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -361,9 +361,9 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * (sMs + yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * (sMs + xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * (sMs + xyMxy - xzMxz - yzMyz))
+            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * ((sMs + xyMxy) - (xzMxz + yzMyz)))
         };
     }
     constexpr Vector Motor::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -380,10 +380,10 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz) - a.i * a.yz - a.s * a.wx - a.wy * a.xy - a.wz * a.xz) + b.x * (sMs + yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (a.i * a.xz + a.wx * a.xy + b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz) - a.s * a.wy - a.wz * a.yz) + b.y * (sMs + xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (a.wx * a.xz + a.wy * a.yz + b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz) - a.i * a.xy - a.s * a.wz) + b.z * (sMs + xyMxy - xzMxz - yzMyz)),
-            .w = (sMs + xyMxy + xzMxz + yzMyz)
+            .x = (2.0 * ((b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) - (a.i * a.yz + a.s * a.wx) - (a.wy * a.xy + a.wz * a.xz)) + b.x * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .y = (2.0 * ((a.i * a.xz + a.wx * a.xy) + (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) - (a.s * a.wy + a.wz * a.yz)) + b.y * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .z = (2.0 * ((a.wx * a.xz + a.wy * a.yz) + (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) - (a.i * a.xy + a.s * a.wz)) + b.z * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .w = ((sMs + xyMxy) + (xzMxz + yzMyz))
         };
     }
     constexpr ProjectivePoint Motor::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -400,10 +400,10 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * (sMs + yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * (sMs + xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * (sMs + xyMxy - xzMxz - yzMyz)),
-            .w = 2.0 * (b.x * (a.i * a.yz + a.s * a.wx - a.wy * a.xy - a.wz * a.xz) + b.y * (a.s * a.wy + a.wx * a.xy - a.i * a.xz - a.wz * a.yz) + b.z * (a.i * a.xy + a.s * a.wz + a.wx * a.xz + a.wy * a.yz))
+            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .w = 2.0 * (b.x * ((a.i * a.yz + a.s * a.wx) - (a.wy * a.xy + a.wz * a.xz)) + b.y * ((a.s * a.wy + a.wx * a.xy) - (a.i * a.xz + a.wz * a.yz)) + b.z * ((a.i * a.xy + a.s * a.wz) + (a.wx * a.xz + a.wy * a.yz)))
         };
     }
     constexpr Plane Motor::sandwich(const PlaneCentral& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -436,12 +436,12 @@ namespace pga3d {
         const double yzMyz = a.yz * a.yz;
         const double yzMi = a.i * a.yz;
         return {
-            .wx = 2.0 * (b.xy * (wxMxy + wzMyz - sMwy - xzMi) + b.xz * (wxMxz + xyMi - sMwz - wyMyz) + b.yz * (wxMyz + wyMxz - sMi - wzMxy)),
-            .wy = 2.0 * (b.xy * (sMwx + wyMxy - wzMxz - yzMi) + b.xz * (sMi + wxMyz + wyMxz + wzMxy) + b.yz * (wyMyz + xyMi - sMwz - wxMxz)),
-            .wz = 2.0 * (b.xy * (wyMxz + wzMxy - sMi - wxMyz) + b.xz * (sMwx + wzMxz - wyMxy - yzMi) + b.yz * (sMwy + wxMxy + wzMyz + xzMi)),
-            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * (sMs + xzMxz - xyMxy - yzMyz)),
-            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * (sMs + yzMyz - xyMxy - xzMxz))
+            .wx = 2.0 * (b.xy * ((wxMxy + wzMyz) - (sMwy + xzMi)) + b.xz * ((wxMxz + xyMi) - (sMwz + wyMyz)) + b.yz * ((wxMyz + wyMxz) - (sMi + wzMxy))),
+            .wy = 2.0 * (b.xy * ((sMwx + wyMxy) - (wzMxz + yzMi)) + b.xz * ((sMi + wxMyz) + (wyMxz + wzMxy)) + b.yz * ((wyMyz + xyMi) - (sMwz + wxMxz))),
+            .wz = 2.0 * (b.xy * ((wyMxz + wzMxy) - (sMi + wxMyz)) + b.xz * ((sMwx + wzMxz) - (wyMxy + yzMi)) + b.yz * ((sMwy + wxMxy) + (wzMyz + xzMi))),
+            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * ((sMs + yzMyz) - (xyMxy + xzMxz)))
         };
     }
     constexpr Bivector Motor::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -458,26 +458,26 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * (sMs + yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * (sMs + xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * (sMs + xyMxy - xzMxz - yzMyz))
+            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * ((sMs + xyMxy) - (xzMxz + yzMyz)))
         };
     }
     constexpr BivectorWeight Motor::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
     [[nodiscard]] constexpr PseudoScalar sandwich(const Motor& a, const PseudoScalar& b) noexcept {
         return {
-            .i = b.i * (a.s * a.s + a.xy * a.xy + a.xz * a.xz + a.yz * a.yz)
+            .i = b.i * ((a.s * a.s + a.xy * a.xy) + (a.xz * a.xz + a.yz * a.yz))
         };
     }
     constexpr PseudoScalar Motor::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
 
     [[nodiscard]] constexpr ProjectivePoint sandwich(const Motor& a, const PointCenter& b) noexcept {
         return {
-            .x = 2.0 * (-a.i * a.yz - a.s * a.wx - a.wy * a.xy - a.wz * a.xz),
-            .y = 2.0 * (a.i * a.xz + a.wx * a.xy - a.s * a.wy - a.wz * a.yz),
-            .z = 2.0 * (a.wx * a.xz + a.wy * a.yz - a.i * a.xy - a.s * a.wz),
-            .w = (a.s * a.s + a.xy * a.xy + a.xz * a.xz + a.yz * a.yz)
+            .x = 2.0 * (-(a.i * a.yz + a.s * a.wx) - (a.wy * a.xy + a.wz * a.xz)),
+            .y = 2.0 * ((a.i * a.xz + a.wx * a.xy) - (a.s * a.wy + a.wz * a.yz)),
+            .z = 2.0 * ((a.wx * a.xz + a.wy * a.yz) - (a.i * a.xy + a.s * a.wz)),
+            .w = ((a.s * a.s + a.xy * a.xy) + (a.xz * a.xz + a.yz * a.yz))
         };
     }
     constexpr ProjectivePoint Motor::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -495,9 +495,9 @@ namespace pga3d {
         const double zMw = a.w * a.z;
         return {
             .s = b.s * (xMx + yMy + zMz),
-            .wx = (2.0 * (b.xy * yMw + b.xz * zMw - b.wy * xMy - b.wz * xMz) + b.wx * (yMy + zMz - xMx)),
-            .wy = (2.0 * (b.yz * zMw - b.wx * xMy - b.wz * yMz - b.xy * xMw) + b.wy * (xMx + zMz - yMy)),
-            .wz = (2.0 * (-b.wx * xMz - b.wy * yMz - b.xz * xMw - b.yz * yMw) + b.wz * (xMx + yMy - zMz)),
+            .wx = (2.0 * ((b.xy * yMw + b.xz * zMw) - (b.wy * xMy + b.wz * xMz)) + b.wx * (yMy + zMz - xMx)),
+            .wy = (2.0 * ((b.yz * zMw - b.wx * xMy) - (b.wz * yMz + b.xy * xMw)) + b.wy * (xMx + zMz - yMy)),
+            .wz = (2.0 * (-(b.wx * xMz + b.wy * yMz) - (b.xz * xMw + b.yz * yMw)) + b.wz * (xMx + yMy - zMz)),
             .xy = (2.0 * (b.yz * xMz - b.xz * yMz) + b.xy * (zMz - xMx - yMy)),
             .xz = (2.0 * (-b.xy * yMz - b.yz * xMy) + b.xz * (yMy - xMx - zMz)),
             .yz = (2.0 * (b.xy * xMz - b.xz * xMy) + b.yz * (xMx - yMy - zMz)),
@@ -533,9 +533,9 @@ namespace pga3d {
         const double zMz = a.z * a.z;
         const double zMw = a.w * a.z;
         return {
-            .wx = (2.0 * (b.xy * yMw + b.xz * zMw - b.wy * xMy - b.wz * xMz) + b.wx * (yMy + zMz - xMx)),
-            .wy = (2.0 * (b.yz * zMw - b.wx * xMy - b.wz * yMz - b.xy * xMw) + b.wy * (xMx + zMz - yMy)),
-            .wz = (2.0 * (-b.wx * xMz - b.wy * yMz - b.xz * xMw - b.yz * yMw) + b.wz * (xMx + yMy - zMz)),
+            .wx = (2.0 * ((b.xy * yMw + b.xz * zMw) - (b.wy * xMy + b.wz * xMz)) + b.wx * (yMy + zMz - xMx)),
+            .wy = (2.0 * ((b.yz * zMw - b.wx * xMy) - (b.wz * yMz + b.xy * xMw)) + b.wy * (xMx + zMz - yMy)),
+            .wz = (2.0 * (-(b.wx * xMz + b.wy * yMz) - (b.xz * xMw + b.yz * yMw)) + b.wz * (xMx + yMy - zMz)),
             .xy = (2.0 * (b.yz * xMz - b.xz * yMz) + b.xy * (zMz - xMx - yMy)),
             .xz = (2.0 * (-b.xy * yMz - b.yz * xMy) + b.xz * (yMy - xMx - zMz)),
             .yz = (2.0 * (b.xy * xMz - b.xz * xMy) + b.yz * (xMx - yMy - zMz))
@@ -733,9 +733,9 @@ namespace pga3d {
         const double yzMyz = a.yz * a.yz;
         return {
             .s = b.s * (xyMxy + xzMxz + yzMyz),
-            .wx = (2.0 * (b.wz * xyMyz + b.xy * (wxMxy + wzMyz) + b.xz * (wxMxz - wyMyz) + b.yz * (wxMyz + wyMxz - wzMxy) - b.wy * xzMyz) + b.wx * (yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.xy * (wyMxy - wzMxz) + b.xz * (wxMyz + wyMxz + wzMxy) + b.yz * (wyMyz - wxMxz) - b.wx * xzMyz - b.wz * xyMxz) + b.wy * (xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * xyMyz + b.xy * (wyMxz + wzMxy - wxMyz) + b.xz * (wzMxz - wyMxy) + b.yz * (wxMxy + wzMyz) - b.wy * xyMxz) + b.wz * (xyMxy - xzMxz - yzMyz)),
+            .wx = (2.0 * ((b.wz * xyMyz + b.xy * (wxMxy + wzMyz)) + (b.xz * (wxMxz - wyMyz) + b.yz * (wxMyz + wyMxz - wzMxy)) - b.wy * xzMyz) + b.wx * (yzMyz - xyMxy - xzMxz)),
+            .wy = (2.0 * ((b.xy * (wyMxy - wzMxz) + b.xz * (wxMyz + wyMxz + wzMxy)) + (b.yz * (wyMyz - wxMxz) - b.wx * xzMyz) - b.wz * xyMxz) + b.wy * (xzMxz - xyMxy - yzMyz)),
+            .wz = (2.0 * ((b.wx * xyMyz + b.xy * (wyMxz + wzMxy - wxMyz)) + (b.xz * (wzMxz - wyMxy) + b.yz * (wxMxy + wzMyz)) - b.wy * xyMxz) + b.wz * (xyMxy - xzMxz - yzMyz)),
             .xy = (2.0 * (b.xz * xyMxz + b.yz * xyMyz) + b.xy * (xyMxy - xzMxz - yzMyz)),
             .xz = (2.0 * (b.xy * xyMxz + b.yz * xzMyz) + b.xz * (xzMxz - xyMxy - yzMyz)),
             .yz = (2.0 * (b.xy * xyMyz + b.xz * xzMyz) + b.yz * (yzMyz - xyMxy - xzMxz)),
@@ -777,9 +777,9 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .wx = (2.0 * (b.wz * xyMyz + b.xy * (wxMxy + wzMyz) + b.xz * (wxMxz - wyMyz) + b.yz * (wxMyz + wyMxz - wzMxy) - b.wy * xzMyz) + b.wx * (yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.xy * (wyMxy - wzMxz) + b.xz * (wxMyz + wyMxz + wzMxy) + b.yz * (wyMyz - wxMxz) - b.wx * xzMyz - b.wz * xyMxz) + b.wy * (xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * xyMyz + b.xy * (wyMxz + wzMxy - wxMyz) + b.xz * (wzMxz - wyMxy) + b.yz * (wxMxy + wzMyz) - b.wy * xyMxz) + b.wz * (xyMxy - xzMxz - yzMyz)),
+            .wx = (2.0 * ((b.wz * xyMyz + b.xy * (wxMxy + wzMyz)) + (b.xz * (wxMxz - wyMyz) + b.yz * (wxMyz + wyMxz - wzMxy)) - b.wy * xzMyz) + b.wx * (yzMyz - xyMxy - xzMxz)),
+            .wy = (2.0 * ((b.xy * (wyMxy - wzMxz) + b.xz * (wxMyz + wyMxz + wzMxy)) + (b.yz * (wyMyz - wxMxz) - b.wx * xzMyz) - b.wz * xyMxz) + b.wy * (xzMxz - xyMxy - yzMyz)),
+            .wz = (2.0 * ((b.wx * xyMyz + b.xy * (wyMxz + wzMxy - wxMyz)) + (b.xz * (wzMxz - wyMxy) + b.yz * (wxMxy + wzMyz)) - b.wy * xyMxz) + b.wz * (xyMxy - xzMxz - yzMyz)),
             .xy = (2.0 * (b.xz * xyMxz + b.yz * xyMyz) + b.xy * (xyMxy - xzMxz - yzMyz)),
             .xz = (2.0 * (b.xy * xyMxz + b.yz * xzMyz) + b.xz * (xzMxz - xyMxy - yzMyz)),
             .yz = (2.0 * (b.xy * xyMyz + b.xz * xzMyz) + b.yz * (yzMyz - xyMxy - xzMxz))
@@ -895,9 +895,9 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.z * xyMyz - a.wy * a.xy - a.wz * a.xz - b.y * xzMyz) + b.x * (yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (a.wx * a.xy - a.wz * a.yz - b.x * xzMyz - b.z * xyMxz) + b.y * (xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (a.wx * a.xz + a.wy * a.yz + b.x * xyMyz - b.y * xyMxz) + b.z * (xyMxy - xzMxz - yzMyz)),
+            .x = (2.0 * ((b.z * xyMyz - a.wy * a.xy) - (a.wz * a.xz + b.y * xzMyz)) + b.x * (yzMyz - xyMxy - xzMxz)),
+            .y = (2.0 * ((a.wx * a.xy - a.wz * a.yz) - (b.x * xzMyz + b.z * xyMxz)) + b.y * (xzMxz - xyMxy - yzMyz)),
+            .z = (2.0 * ((a.wx * a.xz + a.wy * a.yz) + (b.x * xyMyz - b.y * xyMxz)) + b.z * (xyMxy - xzMxz - yzMyz)),
             .w = (xyMxy + xzMxz + yzMyz)
         };
     }
@@ -1163,14 +1163,14 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .s = b.s * (sMs + xyMxy + xzMxz + yzMyz),
-            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * (sMs + yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * (sMs + xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * (sMs + xzMxz - xyMxy - yzMyz)),
-            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * (sMs + yzMyz - xyMxy - xzMxz)),
-            .i = b.i * (sMs + xyMxy + xzMxz + yzMyz)
+            .s = b.s * ((sMs + xyMxy) + (xzMxz + yzMyz)),
+            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .i = b.i * ((sMs + xyMxy) + (xzMxz + yzMyz))
         };
     }
     constexpr Motor Rotor::sandwich(const Motor& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1187,10 +1187,10 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * (sMs + yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * (sMs + xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * (sMs + xyMxy - xzMxz - yzMyz)),
-            .w = b.w * (sMs + xyMxy + xzMxz + yzMyz)
+            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .w = b.w * ((sMs + xyMxy) + (xzMxz + yzMyz))
         };
     }
     constexpr Plane Rotor::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1207,12 +1207,12 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * (sMs + yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * (sMs + xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * (sMs + xzMxz - xyMxy - yzMyz)),
-            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * (sMs + yzMyz - xyMxy - xzMxz))
+            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * ((sMs + yzMyz) - (xyMxy + xzMxz)))
         };
     }
     constexpr Bivector Rotor::sandwich(const Bivector& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1229,10 +1229,10 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * (sMs + yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * (sMs + xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * (sMs + xyMxy - xzMxz - yzMyz)),
-            .w = b.w * (sMs + xyMxy + xzMxz + yzMyz)
+            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .w = b.w * ((sMs + xyMxy) + (xzMxz + yzMyz))
         };
     }
     constexpr ProjectivePoint Rotor::sandwich(const ProjectivePoint& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1249,10 +1249,10 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .s = b.s * (sMs + xyMxy + xzMxz + yzMyz),
-            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * (sMs + xzMxz - xyMxy - yzMyz)),
-            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * (sMs + yzMyz - xyMxy - xzMxz))
+            .s = b.s * ((sMs + xyMxy) + (xzMxz + yzMyz)),
+            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * ((sMs + yzMyz) - (xyMxy + xzMxz)))
         };
     }
     constexpr Rotor Rotor::sandwich(const Rotor& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1269,10 +1269,10 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .s = b.s * (sMs + xyMxy + xzMxz + yzMyz),
-            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * (sMs + yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * (sMs + xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * (sMs + xyMxy - xzMxz - yzMyz))
+            .s = b.s * ((sMs + xyMxy) + (xzMxz + yzMyz)),
+            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * ((sMs + xyMxy) - (xzMxz + yzMyz)))
         };
     }
     constexpr ProjectiveTranslator Rotor::sandwich(const ProjectiveTranslator& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1289,10 +1289,10 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .s = (sMs + xyMxy + xzMxz + yzMyz),
-            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * (sMs + yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * (sMs + xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * (sMs + xyMxy - xzMxz - yzMyz))
+            .s = ((sMs + xyMxy) + (xzMxz + yzMyz)),
+            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * ((sMs + xyMxy) - (xzMxz + yzMyz)))
         };
     }
     constexpr ProjectiveTranslator Rotor::sandwich(const Translator& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1309,9 +1309,9 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * (sMs + yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * (sMs + xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * (sMs + xyMxy - xzMxz - yzMyz))
+            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * ((sMs + xyMxy) - (xzMxz + yzMyz)))
         };
     }
     constexpr Vector Rotor::sandwich(const Vector& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1328,10 +1328,10 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * (sMs + yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * (sMs + xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * (sMs + xyMxy - xzMxz - yzMyz)),
-            .w = (sMs + xyMxy + xzMxz + yzMyz)
+            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .w = ((sMs + xyMxy) + (xzMxz + yzMyz))
         };
     }
     constexpr ProjectivePoint Rotor::sandwich(const Point& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1348,9 +1348,9 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * (sMs + yzMyz - xyMxy - xzMxz)),
-            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * (sMs + xzMxz - xyMxy - yzMyz)),
-            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * (sMs + xyMxy - xzMxz - yzMyz))
+            .x = (2.0 * (b.y * (sMxy - xzMyz) + b.z * (sMxz + xyMyz)) + b.x * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .y = (2.0 * (b.x * (-sMxy - xzMyz) + b.z * (sMyz - xyMxz)) + b.y * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .z = (2.0 * (b.x * (xyMyz - sMxz) + b.y * (-sMyz - xyMxz)) + b.z * ((sMs + xyMxy) - (xzMxz + yzMyz)))
         };
     }
     constexpr PlaneCentral Rotor::sandwich(const PlaneCentral& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1367,9 +1367,9 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * (sMs + xyMxy - xzMxz - yzMyz)),
-            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * (sMs + xzMxz - xyMxy - yzMyz)),
-            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * (sMs + yzMyz - xyMxy - xzMxz))
+            .xy = (2.0 * (b.xz * (sMyz + xyMxz) + b.yz * (xyMyz - sMxz)) + b.xy * ((sMs + xyMxy) - (xzMxz + yzMyz))),
+            .xz = (2.0 * (b.xy * (xyMxz - sMyz) + b.yz * (sMxy + xzMyz)) + b.xz * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .yz = (2.0 * (b.xy * (sMxz + xyMyz) + b.xz * (xzMyz - sMxy)) + b.yz * ((sMs + yzMyz) - (xyMxy + xzMxz)))
         };
     }
     constexpr BivectorBulk Rotor::sandwich(const BivectorBulk& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1386,16 +1386,16 @@ namespace pga3d {
         const double xzMyz = a.xz * a.yz;
         const double yzMyz = a.yz * a.yz;
         return {
-            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * (sMs + yzMyz - xyMxy - xzMxz)),
-            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * (sMs + xzMxz - xyMxy - yzMyz)),
-            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * (sMs + xyMxy - xzMxz - yzMyz))
+            .wx = (2.0 * (b.wy * (sMxy - xzMyz) + b.wz * (sMxz + xyMyz)) + b.wx * ((sMs + yzMyz) - (xyMxy + xzMxz))),
+            .wy = (2.0 * (b.wx * (-sMxy - xzMyz) + b.wz * (sMyz - xyMxz)) + b.wy * ((sMs + xzMxz) - (xyMxy + yzMyz))),
+            .wz = (2.0 * (b.wx * (xyMyz - sMxz) + b.wy * (-sMyz - xyMxz)) + b.wz * ((sMs + xyMxy) - (xzMxz + yzMyz)))
         };
     }
     constexpr BivectorWeight Rotor::sandwich(const BivectorWeight& b) const noexcept { return pga3d::sandwich(*this, b); }
 
     [[nodiscard]] constexpr PseudoScalar sandwich(const Rotor& a, const PseudoScalar& b) noexcept {
         return {
-            .i = b.i * (a.s * a.s + a.xy * a.xy + a.xz * a.xz + a.yz * a.yz)
+            .i = b.i * ((a.s * a.s + a.xy * a.xy) + (a.xz * a.xz + a.yz * a.yz))
         };
     }
     constexpr PseudoScalar Rotor::sandwich(const PseudoScalar& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1405,7 +1405,7 @@ namespace pga3d {
             .x = 0.0,
             .y = 0.0,
             .z = 0.0,
-            .w = (a.s * a.s + a.xy * a.xy + a.xz * a.xz + a.yz * a.yz)
+            .w = ((a.s * a.s + a.xy * a.xy) + (a.xz * a.xz + a.yz * a.yz))
         };
     }
     constexpr ProjectivePoint Rotor::sandwich(const PointCenter& b) const noexcept { return pga3d::sandwich(*this, b); }
@@ -1602,7 +1602,7 @@ namespace pga3d {
             .x = b.x,
             .y = b.y,
             .z = b.z,
-            .w = (b.w + 2.0 * a.wx * b.x + 2.0 * a.wy * b.y + 2.0 * a.wz * b.z)
+            .w = ((b.w + 2.0 * a.wx * b.x) + (2.0 * a.wy * b.y + 2.0 * a.wz * b.z))
         };
     }
     constexpr Plane Translator::sandwich(const Plane& b) const noexcept { return pga3d::sandwich(*this, b); }

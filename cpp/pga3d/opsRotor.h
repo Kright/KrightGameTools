@@ -112,7 +112,7 @@ namespace pga3d {
     [[nodiscard]] inline double Rotor::restoreRotationInPlaneY() const noexcept { return restoreRotationInPlane(PlaneCentral(0, 1, 0)); }
     [[nodiscard]] inline double Rotor::restoreRotationInPlaneZ() const noexcept { return restoreRotationInPlane(PlaneCentral(0, 0, 1)); }
 
-    [[nodiscard]] constexpr Vector Rotor::axisX() const noexcept { return {.x = (s * s + yz * yz - xy * xy - xz * xz), .y = 2.0 * (-s * xy - xz * yz), .z = 2.0 * (xy * yz - s * xz)}; }
-    [[nodiscard]] constexpr Vector Rotor::axisY() const noexcept { return {.x = 2.0 * (s * xy - xz * yz), .y = (s * s + xz * xz - xy * xy - yz * yz), .z = 2.0 * (-s * yz - xy * xz)}; }
-    [[nodiscard]] constexpr Vector Rotor::axisZ() const noexcept { return {.x = 2.0 * (s * xz + xy * yz), .y = 2.0 * (s * yz - xy * xz), .z = (s * s + xy * xy - xz * xz - yz * yz)}; }
+    [[nodiscard]] constexpr Vector Rotor::axisX() const noexcept { return {.x = ((s * s + yz * yz) - (xy * xy + xz * xz)), .y = 2.0 * (-s * xy - xz * yz), .z = 2.0 * (xy * yz - s * xz)}; }
+    [[nodiscard]] constexpr Vector Rotor::axisY() const noexcept { return {.x = 2.0 * (s * xy - xz * yz), .y = ((s * s + xz * xz) - (xy * xy + yz * yz)), .z = 2.0 * (-s * yz - xy * xz)}; }
+    [[nodiscard]] constexpr Vector Rotor::axisZ() const noexcept { return {.x = 2.0 * (s * xz + xy * yz), .y = 2.0 * (s * yz - xy * xz), .z = ((s * s + xy * xy) - (xz * xz + yz * yz))}; }
 }

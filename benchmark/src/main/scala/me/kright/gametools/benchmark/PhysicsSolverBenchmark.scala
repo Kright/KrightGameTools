@@ -20,17 +20,18 @@ import scala.compiletime.uninitialized
  *
  * Measured (8 bodies per step, ns per step / per body; the bodies use Pga3dInertiaMovedLocal,
  * which stores its pose as a Pga3dTransform - that alone made every solver 1.2-1.3x faster
- * than the motor-based inertia):
- *   euler          735 /  92
- *   midPoint      1426 / 178
- *   heun          1446 / 181
- *   rk4           2882 / 360
- *   verlet        4706 / 588   (one derivative pass, but the displacement solve dominates the
+ * than the motor-based inertia; the pair-grouped sums of the generated code shaved a further
+ * 0-5% off):
+ *   euler          698 /  87
+ *   midPoint      1409 / 176
+ *   heun          1412 / 177
+ *   rk4           2797 / 350
+ *   verlet        4715 / 589   (one derivative pass, but the displacement solve dominates the
  *                               step - per fixed-point iteration: bivector exp + motor product +
  *                               reverseSandwich + inertia.invert)
- *   rkmk4         5181 / 648
- *   gaussLegendre3 6907 / 863
- *   rkf45         6945 / 868
+ *   rkmk4         5183 / 648
+ *   gaussLegendre3 6547 / 818
+ *   rkf45         7048 / 881
  *
  * Run with: sbt "benchmark/Jmh/run -f1 .*PhysicsSolverBenchmark.*"
  */

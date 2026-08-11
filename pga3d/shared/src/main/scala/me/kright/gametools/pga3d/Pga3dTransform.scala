@@ -50,9 +50,9 @@ final case class Pga3dTransform(motor: Pga3dMotor,
   infix def sandwich(r: Pga3dMotor): Pga3dMotor =
     Pga3dMotor(
       s = normSquare * r.s,
-      wx = (d00 * r.xy + d01 * r.xz + d02 * r.yz + r.wx * r00 + r.wy * r01 + r.wz * r02),
-      wy = (d10 * r.xy + d11 * r.xz + d12 * r.yz + r.wx * r10 + r.wy * r11 + r.wz * r12),
-      wz = (d20 * r.xy + d21 * r.xz + d22 * r.yz + r.wx * r20 + r.wy * r21 + r.wz * r22),
+      wx = ((d00 * r.xy + d01 * r.xz) + (d02 * r.yz + r.wx * r00) + (r.wy * r01 + r.wz * r02)),
+      wy = ((d10 * r.xy + d11 * r.xz) + (d12 * r.yz + r.wx * r10) + (r.wy * r11 + r.wz * r12)),
+      wz = ((d20 * r.xy + d21 * r.xz) + (d22 * r.yz + r.wx * r20) + (r.wy * r21 + r.wz * r22)),
       xy = (r.xy * r22 + r.yz * r20 - r.xz * r21),
       xz = (r.xz * r11 - r.xy * r12 - r.yz * r10),
       yz = (r.xy * r02 + r.yz * r00 - r.xz * r01),
@@ -62,9 +62,9 @@ final case class Pga3dTransform(motor: Pga3dMotor,
   infix def reverseSandwich(r: Pga3dMotor): Pga3dMotor =
     Pga3dMotor(
       s = normSquare * r.s,
-      wx = (d02 * r.yz + d22 * r.xy + r.wx * r00 + r.wy * r10 + r.wz * r20 - d12 * r.xz),
-      wy = (d11 * r.xz + r.wx * r01 + r.wy * r11 + r.wz * r21 - d01 * r.yz - d21 * r.xy),
-      wz = (d00 * r.yz + d20 * r.xy + r.wx * r02 + r.wy * r12 + r.wz * r22 - d10 * r.xz),
+      wx = ((d02 * r.yz + d22 * r.xy) + (r.wx * r00 + r.wy * r10) + (r.wz * r20 - d12 * r.xz)),
+      wy = ((d11 * r.xz + r.wx * r01) + (r.wy * r11 + r.wz * r21) - (d01 * r.yz + d21 * r.xy)),
+      wz = ((d00 * r.yz + d20 * r.xy) + (r.wx * r02 + r.wy * r12) + (r.wz * r22 - d10 * r.xz)),
       xy = (r.xy * r22 + r.yz * r02 - r.xz * r12),
       xz = (r.xz * r11 - r.xy * r21 - r.yz * r01),
       yz = (r.xy * r20 + r.yz * r00 - r.xz * r10),
@@ -76,7 +76,7 @@ final case class Pga3dTransform(motor: Pga3dMotor,
       x = (r.x * r00 + r.y * r01 + r.z * r02),
       y = (r.x * r10 + r.y * r11 + r.z * r12),
       z = (r.x * r20 + r.y * r21 + r.z * r22),
-      w = (normSquare * r.w + r.x * txRev + r.y * tyRev + r.z * tzRev),
+      w = ((normSquare * r.w + r.x * txRev) + (r.y * tyRev + r.z * tzRev)),
     )
 
   infix def reverseSandwich(r: Pga3dPlane): Pga3dPlane =
@@ -84,14 +84,14 @@ final case class Pga3dTransform(motor: Pga3dMotor,
       x = (r.x * r00 + r.y * r10 + r.z * r20),
       y = (r.x * r01 + r.y * r11 + r.z * r21),
       z = (r.x * r02 + r.y * r12 + r.z * r22),
-      w = (normSquare * r.w + r.x * tx + r.y * ty + r.z * tz),
+      w = ((normSquare * r.w + r.x * tx) + (r.y * ty + r.z * tz)),
     )
 
   infix def sandwich(r: Pga3dBivector): Pga3dBivector =
     Pga3dBivector(
-      wx = (d00 * r.xy + d01 * r.xz + d02 * r.yz + r.wx * r00 + r.wy * r01 + r.wz * r02),
-      wy = (d10 * r.xy + d11 * r.xz + d12 * r.yz + r.wx * r10 + r.wy * r11 + r.wz * r12),
-      wz = (d20 * r.xy + d21 * r.xz + d22 * r.yz + r.wx * r20 + r.wy * r21 + r.wz * r22),
+      wx = ((d00 * r.xy + d01 * r.xz) + (d02 * r.yz + r.wx * r00) + (r.wy * r01 + r.wz * r02)),
+      wy = ((d10 * r.xy + d11 * r.xz) + (d12 * r.yz + r.wx * r10) + (r.wy * r11 + r.wz * r12)),
+      wz = ((d20 * r.xy + d21 * r.xz) + (d22 * r.yz + r.wx * r20) + (r.wy * r21 + r.wz * r22)),
       xy = (r.xy * r22 + r.yz * r20 - r.xz * r21),
       xz = (r.xz * r11 - r.xy * r12 - r.yz * r10),
       yz = (r.xy * r02 + r.yz * r00 - r.xz * r01),
@@ -99,9 +99,9 @@ final case class Pga3dTransform(motor: Pga3dMotor,
 
   infix def reverseSandwich(r: Pga3dBivector): Pga3dBivector =
     Pga3dBivector(
-      wx = (d02 * r.yz + d22 * r.xy + r.wx * r00 + r.wy * r10 + r.wz * r20 - d12 * r.xz),
-      wy = (d11 * r.xz + r.wx * r01 + r.wy * r11 + r.wz * r21 - d01 * r.yz - d21 * r.xy),
-      wz = (d00 * r.yz + d20 * r.xy + r.wx * r02 + r.wy * r12 + r.wz * r22 - d10 * r.xz),
+      wx = ((d02 * r.yz + d22 * r.xy) + (r.wx * r00 + r.wy * r10) + (r.wz * r20 - d12 * r.xz)),
+      wy = ((d11 * r.xz + r.wx * r01) + (r.wy * r11 + r.wz * r21) - (d01 * r.yz + d21 * r.xy)),
+      wz = ((d00 * r.yz + d20 * r.xy) + (r.wx * r02 + r.wy * r12) + (r.wz * r22 - d10 * r.xz)),
       xy = (r.xy * r22 + r.yz * r02 - r.xz * r12),
       xz = (r.xz * r11 - r.xy * r21 - r.yz * r01),
       yz = (r.xy * r20 + r.yz * r00 - r.xz * r10),
@@ -109,17 +109,17 @@ final case class Pga3dTransform(motor: Pga3dMotor,
 
   infix def sandwich(r: Pga3dProjectivePoint): Pga3dProjectivePoint =
     Pga3dProjectivePoint(
-      x = (r.w * tx + r.x * r00 + r.y * r01 + r.z * r02),
-      y = (r.w * ty + r.x * r10 + r.y * r11 + r.z * r12),
-      z = (r.w * tz + r.x * r20 + r.y * r21 + r.z * r22),
+      x = ((r.w * tx + r.x * r00) + (r.y * r01 + r.z * r02)),
+      y = ((r.w * ty + r.x * r10) + (r.y * r11 + r.z * r12)),
+      z = ((r.w * tz + r.x * r20) + (r.y * r21 + r.z * r22)),
       w = normSquare * r.w,
     )
 
   infix def reverseSandwich(r: Pga3dProjectivePoint): Pga3dProjectivePoint =
     Pga3dProjectivePoint(
-      x = (r.w * txRev + r.x * r00 + r.y * r10 + r.z * r20),
-      y = (r.w * tyRev + r.x * r01 + r.y * r11 + r.z * r21),
-      z = (r.w * tzRev + r.x * r02 + r.y * r12 + r.z * r22),
+      x = ((r.w * txRev + r.x * r00) + (r.y * r10 + r.z * r20)),
+      y = ((r.w * tyRev + r.x * r01) + (r.y * r11 + r.z * r21)),
+      z = ((r.w * tzRev + r.x * r02) + (r.y * r12 + r.z * r22)),
       w = normSquare * r.w,
     )
 
@@ -211,17 +211,17 @@ final case class Pga3dTransform(motor: Pga3dMotor,
 
   infix def sandwich(r: Pga3dPoint): Pga3dProjectivePoint =
     Pga3dProjectivePoint(
-      x = (tx + r.x * r00 + r.y * r01 + r.z * r02),
-      y = (ty + r.x * r10 + r.y * r11 + r.z * r12),
-      z = (tz + r.x * r20 + r.y * r21 + r.z * r22),
+      x = ((tx + r.x * r00) + (r.y * r01 + r.z * r02)),
+      y = ((ty + r.x * r10) + (r.y * r11 + r.z * r12)),
+      z = ((tz + r.x * r20) + (r.y * r21 + r.z * r22)),
       w = normSquare,
     )
 
   infix def reverseSandwich(r: Pga3dPoint): Pga3dProjectivePoint =
     Pga3dProjectivePoint(
-      x = (txRev + r.x * r00 + r.y * r10 + r.z * r20),
-      y = (tyRev + r.x * r01 + r.y * r11 + r.z * r21),
-      z = (tzRev + r.x * r02 + r.y * r12 + r.z * r22),
+      x = ((txRev + r.x * r00) + (r.y * r10 + r.z * r20)),
+      y = ((tyRev + r.x * r01) + (r.y * r11 + r.z * r21)),
+      z = ((tzRev + r.x * r02) + (r.y * r12 + r.z * r22)),
       w = normSquare,
     )
 
@@ -344,33 +344,33 @@ object Pga3dTransform:
 
     new Pga3dTransform(
       motor,
-      r00 = (sMs + yzMyz - xyMxy - xzMxz),
+      r00 = ((sMs + yzMyz) - (xyMxy + xzMxz)),
       r01 = 2.0 * (sMxy - xzMyz),
       r02 = 2.0 * (sMxz + xyMyz),
       r10 = 2.0 * (-sMxy - xzMyz),
-      r11 = (sMs + xzMxz - xyMxy - yzMyz),
+      r11 = ((sMs + xzMxz) - (xyMxy + yzMyz)),
       r12 = 2.0 * (sMyz - xyMxz),
       r20 = 2.0 * (xyMyz - sMxz),
       r21 = 2.0 * (-sMyz - xyMxz),
-      r22 = (sMs + xyMxy - xzMxz - yzMyz),
+      r22 = ((sMs + xyMxy) - (xzMxz + yzMyz)),
 
-      d00 = 2.0 * (wxMxy + wzMyz - sMwy - xzMi),
-      d01 = 2.0 * (wxMxz + xyMi - sMwz - wyMyz),
-      d02 = 2.0 * (wxMyz + wyMxz - sMi - wzMxy),
-      d10 = 2.0 * (sMwx + wyMxy - wzMxz - yzMi),
-      d11 = 2.0 * (sMi + wxMyz + wyMxz + wzMxy),
-      d12 = 2.0 * (wyMyz + xyMi - sMwz - wxMxz),
-      d20 = 2.0 * (wyMxz + wzMxy - sMi - wxMyz),
-      d21 = 2.0 * (sMwx + wzMxz - wyMxy - yzMi),
-      d22 = 2.0 * (sMwy + wxMxy + wzMyz + xzMi),
+      d00 = 2.0 * ((wxMxy + wzMyz) - (sMwy + xzMi)),
+      d01 = 2.0 * ((wxMxz + xyMi) - (sMwz + wyMyz)),
+      d02 = 2.0 * ((wxMyz + wyMxz) - (sMi + wzMxy)),
+      d10 = 2.0 * ((sMwx + wyMxy) - (wzMxz + yzMi)),
+      d11 = 2.0 * ((sMi + wxMyz) + (wyMxz + wzMxy)),
+      d12 = 2.0 * ((wyMyz + xyMi) - (sMwz + wxMxz)),
+      d20 = 2.0 * ((wyMxz + wzMxy) - (sMi + wxMyz)),
+      d21 = 2.0 * ((sMwx + wzMxz) - (wyMxy + yzMi)),
+      d22 = 2.0 * ((sMwy + wxMxy) + (wzMyz + xzMi)),
 
-      normSquare = (sMs + xyMxy + xzMxz + yzMyz),
-      normSquareI = 2.0 * (sMi + wyMxz - wxMyz - wzMxy),
+      normSquare = ((sMs + xyMxy) + (xzMxz + yzMyz)),
+      normSquareI = 2.0 * ((sMi + wyMxz) - (wxMyz + wzMxy)),
 
-      tx = 2.0 * (-sMwx - wyMxy - wzMxz - yzMi),
-      ty = 2.0 * (wxMxy + xzMi - sMwy - wzMyz),
-      tz = 2.0 * (wxMxz + wyMyz - sMwz - xyMi),
-      txRev = 2.0 * (sMwx + yzMi - wyMxy - wzMxz),
-      tyRev = 2.0 * (sMwy + wxMxy - wzMyz - xzMi),
-      tzRev = 2.0 * (sMwz + wxMxz + wyMyz + xyMi),
+      tx = 2.0 * (-(sMwx + wyMxy) - (wzMxz + yzMi)),
+      ty = 2.0 * ((wxMxy + xzMi) - (sMwy + wzMyz)),
+      tz = 2.0 * ((wxMxz + wyMyz) - (sMwz + xyMi)),
+      txRev = 2.0 * ((sMwx + yzMi) - (wyMxy + wzMxz)),
+      tyRev = 2.0 * ((sMwy + wxMxy) - (wzMyz + xzMi)),
+      tzRev = 2.0 * ((sMwz + wxMxz) + (wyMyz + xyMi)),
     )

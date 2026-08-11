@@ -78,6 +78,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The generated code emits sums of 4 or more terms with the summands grouped in parenthesized
+  pairs, recursively: `a + b - c + d + e + f` becomes `(a + b) - (c - d) + (e + f)` (a pair
+  starting with a negative term is subtracted as a whole, so no group opens with a minus).
+  The JVM must not reassociate floating point additions, so a flat sum is a sequential
+  left-to-right chain; the grouping halves the dependency chain and lets the CPU add the pairs
+  in parallel. Results may differ from the previous code in the last bits (the association
+  order changed); all precision tests pass unchanged. Measured effect: ~10% on the 6-term rows
+  of `Pga3dTransform.sandwich(bivector)`, 0-5% on the physics solvers.
 - `Pga3dPhysicsSolverRKMK4` uses the closed-form `(-u).dexpInv(omega)` from pga3d instead of
   its own Bernoulli-series truncation (which preserved the 4th order but was approximate).
   The honest form pays a sqrt + sin + cos per stage: ~15% more pure per-step solver overhead

@@ -9,44 +9,44 @@
 
 namespace pga3d {
     [[nodiscard]] constexpr Multivector antiGeometric(const Multivector& a, const Multivector& b) noexcept { return {
-        .s = (a.i * b.s + a.s * b.i + a.wx * b.yz + a.wxz * b.y + a.wz * b.xy + a.x * b.wyz + a.xy * b.wz + a.xyz * b.w + a.yz * b.wx + a.z * b.wxy - a.w * b.xyz - a.wxy * b.z - a.wy * b.xz - a.wyz * b.x - a.xz * b.wy - a.y * b.wxz),
-        .w = (a.i * b.w + a.w * b.i + a.wxz * b.wy + a.wy * b.wxz - a.wx * b.wyz - a.wxy * b.wz - a.wyz * b.wx - a.wz * b.wxy),
-        .x = (a.i * b.x + a.s * b.wyz + a.w * b.yz + a.wxz * b.xy + a.wz * b.y + a.x * b.i + a.xy * b.wxz + a.z * b.wy - a.wx * b.xyz - a.wxy * b.xz - a.wy * b.z - a.wyz * b.s - a.xyz * b.wx - a.xz * b.wxy - a.y * b.wz - a.yz * b.w),
-        .y = (a.i * b.y + a.wx * b.z + a.wxz * b.s + a.wyz * b.xy + a.x * b.wz + a.xy * b.wyz + a.xz * b.w + a.y * b.i - a.s * b.wxz - a.w * b.xz - a.wxy * b.yz - a.wy * b.xyz - a.wz * b.x - a.xyz * b.wy - a.yz * b.wxy - a.z * b.wx),
-        .z = (a.i * b.z + a.s * b.wxy + a.w * b.xy + a.wy * b.x + a.wyz * b.xz + a.xz * b.wyz + a.y * b.wx + a.z * b.i - a.wx * b.y - a.wxy * b.s - a.wxz * b.yz - a.wz * b.xyz - a.x * b.wy - a.xy * b.w - a.xyz * b.wz - a.yz * b.wxz),
-        .wx = (a.i * b.wx + a.wx * b.i + a.wxy * b.wxz + a.wz * b.wy - a.w * b.wyz - a.wxz * b.wxy - a.wy * b.wz - a.wyz * b.w),
-        .wy = (a.i * b.wy + a.w * b.wxz + a.wx * b.wz + a.wxy * b.wyz + a.wxz * b.w + a.wy * b.i - a.wyz * b.wxy - a.wz * b.wx),
-        .wz = (a.i * b.wz + a.wxz * b.wyz + a.wy * b.wx + a.wz * b.i - a.w * b.wxy - a.wx * b.wy - a.wxy * b.w - a.wyz * b.wxz),
-        .xy = (a.i * b.xy + a.wx * b.xz + a.wxy * b.xyz + a.wxz * b.x + a.wy * b.yz + a.wyz * b.y + a.x * b.wxz + a.xy * b.i + a.y * b.wyz + a.z * b.w - a.s * b.wz - a.w * b.z - a.wz * b.s - a.xyz * b.wxy - a.xz * b.wx - a.yz * b.wy),
-        .xz = (a.i * b.xz + a.s * b.wy + a.w * b.y + a.wxz * b.xyz + a.wy * b.s + a.wyz * b.z + a.wz * b.yz + a.xy * b.wx + a.xz * b.i + a.z * b.wyz - a.wx * b.xy - a.wxy * b.x - a.x * b.wxy - a.xyz * b.wxz - a.y * b.w - a.yz * b.wz),
-        .yz = (a.i * b.yz + a.wyz * b.xyz + a.x * b.w + a.xy * b.wy + a.xz * b.wz + a.yz * b.i - a.s * b.wx - a.w * b.x - a.wx * b.s - a.wxy * b.y - a.wxz * b.z - a.wy * b.xy - a.wz * b.xz - a.xyz * b.wyz - a.y * b.wxy - a.z * b.wxz),
-        .wxy = (a.i * b.wxy + a.w * b.wz + a.wx * b.wxz + a.wxy * b.i + a.wy * b.wyz + a.wz * b.w - a.wxz * b.wx - a.wyz * b.wy),
-        .wxz = (a.i * b.wxz + a.wxy * b.wx + a.wxz * b.i + a.wz * b.wyz - a.w * b.wy - a.wx * b.wxy - a.wy * b.w - a.wyz * b.wz),
-        .wyz = (a.i * b.wyz + a.w * b.wx + a.wx * b.w + a.wxy * b.wy + a.wxz * b.wz + a.wyz * b.i - a.wy * b.wxy - a.wz * b.wxz),
-        .xyz = (a.i * b.xyz + a.w * b.s + a.wx * b.x + a.wxy * b.xy + a.wxz * b.xz + a.wy * b.y + a.wyz * b.yz + a.wz * b.z + a.x * b.wx + a.xyz * b.i + a.y * b.wy + a.z * b.wz - a.s * b.w - a.xy * b.wxy - a.xz * b.wxz - a.yz * b.wyz),
-        .i = (a.i * b.i + a.wxy * b.wxy + a.wxz * b.wxz + a.wyz * b.wyz - a.w * b.w - a.wx * b.wx - a.wy * b.wy - a.wz * b.wz)
+        .s = ((((a.i * b.s + a.s * b.i) + (a.wx * b.yz + a.wxz * b.y)) + ((a.wz * b.xy + a.x * b.wyz) + (a.xy * b.wz + a.xyz * b.w))) + (((a.yz * b.wx + a.z * b.wxy) - (a.w * b.xyz + a.wxy * b.z)) - ((a.wy * b.xz + a.wyz * b.x) + (a.xz * b.wy + a.y * b.wxz)))),
+        .w = (((a.i * b.w + a.w * b.i) + (a.wxz * b.wy + a.wy * b.wxz)) - ((a.wx * b.wyz + a.wxy * b.wz) + (a.wyz * b.wx + a.wz * b.wxy))),
+        .x = ((((a.i * b.x + a.s * b.wyz) + (a.w * b.yz + a.wxz * b.xy)) + ((a.wz * b.y + a.x * b.i) + (a.xy * b.wxz + a.z * b.wy))) - (((a.wx * b.xyz + a.wxy * b.xz) + (a.wy * b.z + a.wyz * b.s)) + ((a.xyz * b.wx + a.xz * b.wxy) + (a.y * b.wz + a.yz * b.w)))),
+        .y = ((((a.i * b.y + a.wx * b.z) + (a.wxz * b.s + a.wyz * b.xy)) + ((a.x * b.wz + a.xy * b.wyz) + (a.xz * b.w + a.y * b.i))) - (((a.s * b.wxz + a.w * b.xz) + (a.wxy * b.yz + a.wy * b.xyz)) + ((a.wz * b.x + a.xyz * b.wy) + (a.yz * b.wxy + a.z * b.wx)))),
+        .z = ((((a.i * b.z + a.s * b.wxy) + (a.w * b.xy + a.wy * b.x)) + ((a.wyz * b.xz + a.xz * b.wyz) + (a.y * b.wx + a.z * b.i))) - (((a.wx * b.y + a.wxy * b.s) + (a.wxz * b.yz + a.wz * b.xyz)) + ((a.x * b.wy + a.xy * b.w) + (a.xyz * b.wz + a.yz * b.wxz)))),
+        .wx = (((a.i * b.wx + a.wx * b.i) + (a.wxy * b.wxz + a.wz * b.wy)) - ((a.w * b.wyz + a.wxz * b.wxy) + (a.wy * b.wz + a.wyz * b.w))),
+        .wy = (((a.i * b.wy + a.w * b.wxz) + (a.wx * b.wz + a.wxy * b.wyz)) + ((a.wxz * b.w + a.wy * b.i) - (a.wyz * b.wxy + a.wz * b.wx))),
+        .wz = (((a.i * b.wz + a.wxz * b.wyz) + (a.wy * b.wx + a.wz * b.i)) - ((a.w * b.wxy + a.wx * b.wy) + (a.wxy * b.w + a.wyz * b.wxz))),
+        .xy = ((((a.i * b.xy + a.wx * b.xz) + (a.wxy * b.xyz + a.wxz * b.x)) + ((a.wy * b.yz + a.wyz * b.y) + (a.x * b.wxz + a.xy * b.i))) + (((a.y * b.wyz + a.z * b.w) - (a.s * b.wz + a.w * b.z)) - ((a.wz * b.s + a.xyz * b.wxy) + (a.xz * b.wx + a.yz * b.wy)))),
+        .xz = ((((a.i * b.xz + a.s * b.wy) + (a.w * b.y + a.wxz * b.xyz)) + ((a.wy * b.s + a.wyz * b.z) + (a.wz * b.yz + a.xy * b.wx))) + (((a.xz * b.i + a.z * b.wyz) - (a.wx * b.xy + a.wxy * b.x)) - ((a.x * b.wxy + a.xyz * b.wxz) + (a.y * b.w + a.yz * b.wz)))),
+        .yz = ((((a.i * b.yz + a.wyz * b.xyz) + (a.x * b.w + a.xy * b.wy)) + ((a.xz * b.wz + a.yz * b.i) - (a.s * b.wx + a.w * b.x))) - (((a.wx * b.s + a.wxy * b.y) + (a.wxz * b.z + a.wy * b.xy)) + ((a.wz * b.xz + a.xyz * b.wyz) + (a.y * b.wxy + a.z * b.wxz)))),
+        .wxy = (((a.i * b.wxy + a.w * b.wz) + (a.wx * b.wxz + a.wxy * b.i)) + ((a.wy * b.wyz + a.wz * b.w) - (a.wxz * b.wx + a.wyz * b.wy))),
+        .wxz = (((a.i * b.wxz + a.wxy * b.wx) + (a.wxz * b.i + a.wz * b.wyz)) - ((a.w * b.wy + a.wx * b.wxy) + (a.wy * b.w + a.wyz * b.wz))),
+        .wyz = (((a.i * b.wyz + a.w * b.wx) + (a.wx * b.w + a.wxy * b.wy)) + ((a.wxz * b.wz + a.wyz * b.i) - (a.wy * b.wxy + a.wz * b.wxz))),
+        .xyz = ((((a.i * b.xyz + a.w * b.s) + (a.wx * b.x + a.wxy * b.xy)) + ((a.wxz * b.xz + a.wy * b.y) + (a.wyz * b.yz + a.wz * b.z))) + (((a.x * b.wx + a.xyz * b.i) + (a.y * b.wy + a.z * b.wz)) - ((a.s * b.w + a.xy * b.wxy) + (a.xz * b.wxz + a.yz * b.wyz)))),
+        .i = (((a.i * b.i + a.wxy * b.wxy) + (a.wxz * b.wxz + a.wyz * b.wyz)) - ((a.w * b.w + a.wx * b.wx) + (a.wy * b.wy + a.wz * b.wz)))
     }; }
     constexpr Multivector Multivector::antiGeometric(const Multivector& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
 
     [[nodiscard]] constexpr Motor antiGeometric(const Motor& a, const Motor& b) noexcept { return {
-        .s = (a.i * b.s + a.s * b.i + a.wx * b.yz + a.wz * b.xy + a.xy * b.wz + a.yz * b.wx - a.wy * b.xz - a.xz * b.wy),
-        .wx = (a.i * b.wx + a.wx * b.i + a.wz * b.wy - a.wy * b.wz),
-        .wy = (a.i * b.wy + a.wx * b.wz + a.wy * b.i - a.wz * b.wx),
-        .wz = (a.i * b.wz + a.wy * b.wx + a.wz * b.i - a.wx * b.wy),
-        .xy = (a.i * b.xy + a.wx * b.xz + a.wy * b.yz + a.xy * b.i - a.s * b.wz - a.wz * b.s - a.xz * b.wx - a.yz * b.wy),
-        .xz = (a.i * b.xz + a.s * b.wy + a.wy * b.s + a.wz * b.yz + a.xy * b.wx + a.xz * b.i - a.wx * b.xy - a.yz * b.wz),
-        .yz = (a.i * b.yz + a.xy * b.wy + a.xz * b.wz + a.yz * b.i - a.s * b.wx - a.wx * b.s - a.wy * b.xy - a.wz * b.xz),
-        .i = (a.i * b.i - a.wx * b.wx - a.wy * b.wy - a.wz * b.wz)
+        .s = (((a.i * b.s + a.s * b.i) + (a.wx * b.yz + a.wz * b.xy)) + ((a.xy * b.wz + a.yz * b.wx) - (a.wy * b.xz + a.xz * b.wy))),
+        .wx = ((a.i * b.wx + a.wx * b.i) + (a.wz * b.wy - a.wy * b.wz)),
+        .wy = ((a.i * b.wy + a.wx * b.wz) + (a.wy * b.i - a.wz * b.wx)),
+        .wz = ((a.i * b.wz + a.wy * b.wx) + (a.wz * b.i - a.wx * b.wy)),
+        .xy = (((a.i * b.xy + a.wx * b.xz) + (a.wy * b.yz + a.xy * b.i)) - ((a.s * b.wz + a.wz * b.s) + (a.xz * b.wx + a.yz * b.wy))),
+        .xz = (((a.i * b.xz + a.s * b.wy) + (a.wy * b.s + a.wz * b.yz)) + ((a.xy * b.wx + a.xz * b.i) - (a.wx * b.xy + a.yz * b.wz))),
+        .yz = (((a.i * b.yz + a.xy * b.wy) + (a.xz * b.wz + a.yz * b.i)) - ((a.s * b.wx + a.wx * b.s) + (a.wy * b.xy + a.wz * b.xz))),
+        .i = ((a.i * b.i - a.wx * b.wx) - (a.wy * b.wy + a.wz * b.wz))
     }; }
     constexpr Motor Motor::antiGeometric(const Motor& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
     [[nodiscard]] constexpr Multivector antiGeometric(const Motor& a, const Plane& b) noexcept { return {
         .s = 0.0,
         .w = a.i * b.w,
-        .x = (a.i * b.x + a.wz * b.y - a.wy * b.z - a.yz * b.w),
-        .y = (a.i * b.y + a.wx * b.z + a.xz * b.w - a.wz * b.x),
-        .z = (a.i * b.z + a.wy * b.x - a.wx * b.y - a.xy * b.w),
+        .x = ((a.i * b.x + a.wz * b.y) - (a.wy * b.z + a.yz * b.w)),
+        .y = ((a.i * b.y + a.wx * b.z) + (a.xz * b.w - a.wz * b.x)),
+        .z = ((a.i * b.z + a.wy * b.x) - (a.wx * b.y + a.xy * b.w)),
         .wx = 0.0,
         .wy = 0.0,
         .wz = 0.0,
@@ -56,19 +56,19 @@ namespace pga3d {
         .wxy = a.wz * b.w,
         .wxz = -a.wy * b.w,
         .wyz = a.wx * b.w,
-        .xyz = (a.wx * b.x + a.wy * b.y + a.wz * b.z - a.s * b.w),
+        .xyz = ((a.wx * b.x + a.wy * b.y) + (a.wz * b.z - a.s * b.w)),
         .i = 0.0
     }; }
     constexpr Multivector Motor::antiGeometric(const Plane& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
     [[nodiscard]] constexpr Motor antiGeometric(const Motor& a, const Bivector& b) noexcept { return {
-        .s = (a.wx * b.yz + a.wz * b.xy + a.xy * b.wz + a.yz * b.wx - a.wy * b.xz - a.xz * b.wy),
+        .s = ((a.wx * b.yz + a.wz * b.xy) + (a.xy * b.wz + a.yz * b.wx) - (a.wy * b.xz + a.xz * b.wy)),
         .wx = (a.i * b.wx + a.wz * b.wy - a.wy * b.wz),
         .wy = (a.i * b.wy + a.wx * b.wz - a.wz * b.wx),
         .wz = (a.i * b.wz + a.wy * b.wx - a.wx * b.wy),
-        .xy = (a.i * b.xy + a.wx * b.xz + a.wy * b.yz - a.s * b.wz - a.xz * b.wx - a.yz * b.wy),
-        .xz = (a.i * b.xz + a.s * b.wy + a.wz * b.yz + a.xy * b.wx - a.wx * b.xy - a.yz * b.wz),
-        .yz = (a.i * b.yz + a.xy * b.wy + a.xz * b.wz - a.s * b.wx - a.wy * b.xy - a.wz * b.xz),
+        .xy = ((a.i * b.xy + a.wx * b.xz) + (a.wy * b.yz - a.s * b.wz) - (a.xz * b.wx + a.yz * b.wy)),
+        .xz = ((a.i * b.xz + a.s * b.wy) + (a.wz * b.yz + a.xy * b.wx) - (a.wx * b.xy + a.yz * b.wz)),
+        .yz = ((a.i * b.yz + a.xy * b.wy) + (a.xz * b.wz - a.s * b.wx) - (a.wy * b.xy + a.wz * b.xz)),
         .i = (-a.wx * b.wx - a.wy * b.wy - a.wz * b.wz)
     }; }
     constexpr Motor Motor::antiGeometric(const Bivector& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -76,9 +76,9 @@ namespace pga3d {
     [[nodiscard]] constexpr Multivector antiGeometric(const Motor& a, const ProjectivePoint& b) noexcept { return {
         .s = 0.0,
         .w = (a.wx * b.x + a.wy * b.y + a.wz * b.z),
-        .x = (a.xy * b.y + a.xz * b.z - a.s * b.x - a.wx * b.w),
-        .y = (a.yz * b.z - a.s * b.y - a.wy * b.w - a.xy * b.x),
-        .z = (-a.s * b.z - a.wz * b.w - a.xz * b.x - a.yz * b.y),
+        .x = ((a.xy * b.y + a.xz * b.z) - (a.s * b.x + a.wx * b.w)),
+        .y = ((a.yz * b.z - a.s * b.y) - (a.wy * b.w + a.xy * b.x)),
+        .z = (-(a.s * b.z + a.wz * b.w) - (a.xz * b.x + a.yz * b.y)),
         .wx = 0.0,
         .wy = 0.0,
         .wz = 0.0,
@@ -88,39 +88,39 @@ namespace pga3d {
         .wxy = (a.wx * b.y - a.i * b.z - a.wy * b.x),
         .wxz = (a.i * b.y + a.wx * b.z - a.wz * b.x),
         .wyz = (a.wy * b.z - a.i * b.x - a.wz * b.y),
-        .xyz = (a.i * b.w + a.xy * b.z + a.yz * b.x - a.xz * b.y),
+        .xyz = ((a.i * b.w + a.xy * b.z) + (a.yz * b.x - a.xz * b.y)),
         .i = 0.0
     }; }
     constexpr Multivector Motor::antiGeometric(const ProjectivePoint& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
     [[nodiscard]] constexpr Rotor antiGeometric(const Motor& a, const Rotor& b) noexcept { return {
-        .s = (a.i * b.s + a.wx * b.yz + a.wz * b.xy - a.wy * b.xz),
-        .xy = (a.i * b.xy + a.wx * b.xz + a.wy * b.yz - a.wz * b.s),
-        .xz = (a.i * b.xz + a.wy * b.s + a.wz * b.yz - a.wx * b.xy),
-        .yz = (a.i * b.yz - a.wx * b.s - a.wy * b.xy - a.wz * b.xz)
+        .s = ((a.i * b.s + a.wx * b.yz) + (a.wz * b.xy - a.wy * b.xz)),
+        .xy = ((a.i * b.xy + a.wx * b.xz) + (a.wy * b.yz - a.wz * b.s)),
+        .xz = ((a.i * b.xz + a.wy * b.s) + (a.wz * b.yz - a.wx * b.xy)),
+        .yz = ((a.i * b.yz - a.wx * b.s) - (a.wy * b.xy + a.wz * b.xz))
     }; }
     constexpr Rotor Motor::antiGeometric(const Rotor& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
     [[nodiscard]] constexpr Motor antiGeometric(const Motor& a, const ProjectiveTranslator& b) noexcept { return {
-        .s = (a.i * b.s + a.xy * b.wz + a.yz * b.wx - a.xz * b.wy),
+        .s = ((a.i * b.s + a.xy * b.wz) + (a.yz * b.wx - a.xz * b.wy)),
         .wx = (a.i * b.wx + a.wz * b.wy - a.wy * b.wz),
         .wy = (a.i * b.wy + a.wx * b.wz - a.wz * b.wx),
         .wz = (a.i * b.wz + a.wy * b.wx - a.wx * b.wy),
-        .xy = (-a.s * b.wz - a.wz * b.s - a.xz * b.wx - a.yz * b.wy),
-        .xz = (a.s * b.wy + a.wy * b.s + a.xy * b.wx - a.yz * b.wz),
-        .yz = (a.xy * b.wy + a.xz * b.wz - a.s * b.wx - a.wx * b.s),
+        .xy = (-(a.s * b.wz + a.wz * b.s) - (a.xz * b.wx + a.yz * b.wy)),
+        .xz = ((a.s * b.wy + a.wy * b.s) + (a.xy * b.wx - a.yz * b.wz)),
+        .yz = ((a.xy * b.wy + a.xz * b.wz) - (a.s * b.wx + a.wx * b.s)),
         .i = (-a.wx * b.wx - a.wy * b.wy - a.wz * b.wz)
     }; }
     constexpr Motor Motor::antiGeometric(const ProjectiveTranslator& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
     [[nodiscard]] constexpr Motor antiGeometric(const Motor& a, const Translator& b) noexcept { return {
-        .s = (a.i + a.xy * b.wz + a.yz * b.wx - a.xz * b.wy),
+        .s = ((a.i + a.xy * b.wz) + (a.yz * b.wx - a.xz * b.wy)),
         .wx = (a.i * b.wx + a.wz * b.wy - a.wy * b.wz),
         .wy = (a.i * b.wy + a.wx * b.wz - a.wz * b.wx),
         .wz = (a.i * b.wz + a.wy * b.wx - a.wx * b.wy),
-        .xy = (-a.wz - a.s * b.wz - a.xz * b.wx - a.yz * b.wy),
-        .xz = (a.wy + a.s * b.wy + a.xy * b.wx - a.yz * b.wz),
-        .yz = (-a.wx + a.xy * b.wy + a.xz * b.wz - a.s * b.wx),
+        .xy = (-(a.wz + a.s * b.wz) - (a.xz * b.wx + a.yz * b.wy)),
+        .xz = ((a.wy + a.s * b.wy) + (a.xy * b.wx - a.yz * b.wz)),
+        .yz = (-(a.wx - a.xy * b.wy) + (a.xz * b.wz - a.s * b.wx)),
         .i = (-a.wx * b.wx - a.wy * b.wy - a.wz * b.wz)
     }; }
     constexpr Motor Motor::antiGeometric(const Translator& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -148,9 +148,9 @@ namespace pga3d {
     [[nodiscard]] constexpr Multivector antiGeometric(const Motor& a, const Point& b) noexcept { return {
         .s = 0.0,
         .w = (a.wx * b.x + a.wy * b.y + a.wz * b.z),
-        .x = (-a.wx + a.xy * b.y + a.xz * b.z - a.s * b.x),
-        .y = (-a.wy + a.yz * b.z - a.s * b.y - a.xy * b.x),
-        .z = (-a.wz - a.s * b.z - a.xz * b.x - a.yz * b.y),
+        .x = (-(a.wx - a.xy * b.y) + (a.xz * b.z - a.s * b.x)),
+        .y = (-(a.wy - a.yz * b.z) - (a.s * b.y + a.xy * b.x)),
+        .z = (-(a.wz + a.s * b.z) - (a.xz * b.x + a.yz * b.y)),
         .wx = 0.0,
         .wy = 0.0,
         .wz = 0.0,
@@ -160,7 +160,7 @@ namespace pga3d {
         .wxy = (a.wx * b.y - a.i * b.z - a.wy * b.x),
         .wxz = (a.i * b.y + a.wx * b.z - a.wz * b.x),
         .wyz = (a.wy * b.z - a.i * b.x - a.wz * b.y),
-        .xyz = (a.i + a.xy * b.z + a.yz * b.x - a.xz * b.y),
+        .xyz = ((a.i + a.xy * b.z) + (a.yz * b.x - a.xz * b.y)),
         .i = 0.0
     }; }
     constexpr Multivector Motor::antiGeometric(const Point& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -241,9 +241,9 @@ namespace pga3d {
     [[nodiscard]] constexpr Multivector antiGeometric(const Plane& a, const Motor& b) noexcept { return {
         .s = 0.0,
         .w = a.w * b.i,
-        .x = (a.w * b.yz + a.x * b.i + a.z * b.wy - a.y * b.wz),
-        .y = (a.x * b.wz + a.y * b.i - a.w * b.xz - a.z * b.wx),
-        .z = (a.w * b.xy + a.y * b.wx + a.z * b.i - a.x * b.wy),
+        .x = ((a.w * b.yz + a.x * b.i) + (a.z * b.wy - a.y * b.wz)),
+        .y = ((a.x * b.wz + a.y * b.i) - (a.w * b.xz + a.z * b.wx)),
+        .z = ((a.w * b.xy + a.y * b.wx) + (a.z * b.i - a.x * b.wy)),
         .wx = 0.0,
         .wy = 0.0,
         .wz = 0.0,
@@ -253,7 +253,7 @@ namespace pga3d {
         .wxy = a.w * b.wz,
         .wxz = -a.w * b.wy,
         .wyz = a.w * b.wx,
-        .xyz = (a.w * b.s + a.x * b.wx + a.y * b.wy + a.z * b.wz),
+        .xyz = ((a.w * b.s + a.x * b.wx) + (a.y * b.wy + a.z * b.wz)),
         .i = 0.0
     }; }
     constexpr Multivector Plane::antiGeometric(const Motor& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -291,7 +291,7 @@ namespace pga3d {
     constexpr Multivector Plane::antiGeometric(const Bivector& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
     [[nodiscard]] constexpr Motor antiGeometric(const Plane& a, const ProjectivePoint& b) noexcept { return {
-        .s = (-a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z),
+        .s = (-(a.w * b.w + a.x * b.x) - (a.y * b.y + a.z * b.z)),
         .wx = a.w * b.x,
         .wy = a.w * b.y,
         .wz = a.w * b.z,
@@ -337,7 +337,7 @@ namespace pga3d {
         .wxy = a.w * b.wz,
         .wxz = -a.w * b.wy,
         .wyz = a.w * b.wx,
-        .xyz = (a.w * b.s + a.x * b.wx + a.y * b.wy + a.z * b.wz),
+        .xyz = ((a.w * b.s + a.x * b.wx) + (a.y * b.wy + a.z * b.wz)),
         .i = 0.0
     }; }
     constexpr Multivector Plane::antiGeometric(const ProjectiveTranslator& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -357,7 +357,7 @@ namespace pga3d {
         .wxy = a.w * b.wz,
         .wxz = -a.w * b.wy,
         .wyz = a.w * b.wx,
-        .xyz = (a.w + a.x * b.wx + a.y * b.wy + a.z * b.wz),
+        .xyz = ((a.w + a.x * b.wx) + (a.y * b.wy + a.z * b.wz)),
         .i = 0.0
     }; }
     constexpr Multivector Plane::antiGeometric(const Translator& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -375,7 +375,7 @@ namespace pga3d {
     constexpr Motor Plane::antiGeometric(const Vector& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
     [[nodiscard]] constexpr Motor antiGeometric(const Plane& a, const Point& b) noexcept { return {
-        .s = (-a.w - a.x * b.x - a.y * b.y - a.z * b.z),
+        .s = (-(a.w + a.x * b.x) - (a.y * b.y + a.z * b.z)),
         .wx = a.w * b.x,
         .wy = a.w * b.y,
         .wz = a.w * b.z,
@@ -433,13 +433,13 @@ namespace pga3d {
 
 
     [[nodiscard]] constexpr Motor antiGeometric(const Bivector& a, const Motor& b) noexcept { return {
-        .s = (a.wx * b.yz + a.wz * b.xy + a.xy * b.wz + a.yz * b.wx - a.wy * b.xz - a.xz * b.wy),
+        .s = ((a.wx * b.yz + a.wz * b.xy) + (a.xy * b.wz + a.yz * b.wx) - (a.wy * b.xz + a.xz * b.wy)),
         .wx = (a.wx * b.i + a.wz * b.wy - a.wy * b.wz),
         .wy = (a.wx * b.wz + a.wy * b.i - a.wz * b.wx),
         .wz = (a.wy * b.wx + a.wz * b.i - a.wx * b.wy),
-        .xy = (a.wx * b.xz + a.wy * b.yz + a.xy * b.i - a.wz * b.s - a.xz * b.wx - a.yz * b.wy),
-        .xz = (a.wy * b.s + a.wz * b.yz + a.xy * b.wx + a.xz * b.i - a.wx * b.xy - a.yz * b.wz),
-        .yz = (a.xy * b.wy + a.xz * b.wz + a.yz * b.i - a.wx * b.s - a.wy * b.xy - a.wz * b.xz),
+        .xy = ((a.wx * b.xz + a.wy * b.yz) + (a.xy * b.i - a.wz * b.s) - (a.xz * b.wx + a.yz * b.wy)),
+        .xz = ((a.wy * b.s + a.wz * b.yz) + (a.xy * b.wx + a.xz * b.i) - (a.wx * b.xy + a.yz * b.wz)),
+        .yz = ((a.xy * b.wy + a.xz * b.wz) + (a.yz * b.i - a.wx * b.s) - (a.wy * b.xy + a.wz * b.xz)),
         .i = (-a.wx * b.wx - a.wy * b.wy - a.wz * b.wz)
     }; }
     constexpr Motor Bivector::antiGeometric(const Motor& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -465,13 +465,13 @@ namespace pga3d {
     constexpr Multivector Bivector::antiGeometric(const Plane& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
     [[nodiscard]] constexpr Motor antiGeometric(const Bivector& a, const Bivector& b) noexcept { return {
-        .s = (a.wx * b.yz + a.wz * b.xy + a.xy * b.wz + a.yz * b.wx - a.wy * b.xz - a.xz * b.wy),
+        .s = ((a.wx * b.yz + a.wz * b.xy) + (a.xy * b.wz + a.yz * b.wx) - (a.wy * b.xz + a.xz * b.wy)),
         .wx = (a.wz * b.wy - a.wy * b.wz),
         .wy = (a.wx * b.wz - a.wz * b.wx),
         .wz = (a.wy * b.wx - a.wx * b.wy),
-        .xy = (a.wx * b.xz + a.wy * b.yz - a.xz * b.wx - a.yz * b.wy),
-        .xz = (a.wz * b.yz + a.xy * b.wx - a.wx * b.xy - a.yz * b.wz),
-        .yz = (a.xy * b.wy + a.xz * b.wz - a.wy * b.xy - a.wz * b.xz),
+        .xy = ((a.wx * b.xz + a.wy * b.yz) - (a.xz * b.wx + a.yz * b.wy)),
+        .xz = ((a.wz * b.yz + a.xy * b.wx) - (a.wx * b.xy + a.yz * b.wz)),
+        .yz = ((a.xy * b.wy + a.xz * b.wz) - (a.wy * b.xy + a.wz * b.xz)),
         .i = (-a.wx * b.wx - a.wy * b.wy - a.wz * b.wz)
     }; }
     constexpr Motor Bivector::antiGeometric(const Bivector& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -629,9 +629,9 @@ namespace pga3d {
     [[nodiscard]] constexpr Multivector antiGeometric(const ProjectivePoint& a, const Motor& b) noexcept { return {
         .s = 0.0,
         .w = (a.x * b.wx + a.y * b.wy + a.z * b.wz),
-        .x = (a.x * b.s + a.y * b.xy + a.z * b.xz - a.w * b.wx),
-        .y = (a.y * b.s + a.z * b.yz - a.w * b.wy - a.x * b.xy),
-        .z = (a.z * b.s - a.w * b.wz - a.x * b.xz - a.y * b.yz),
+        .x = ((a.x * b.s + a.y * b.xy) + (a.z * b.xz - a.w * b.wx)),
+        .y = ((a.y * b.s + a.z * b.yz) - (a.w * b.wy + a.x * b.xy)),
+        .z = ((a.z * b.s - a.w * b.wz) - (a.x * b.xz + a.y * b.yz)),
         .wx = 0.0,
         .wy = 0.0,
         .wz = 0.0,
@@ -641,13 +641,13 @@ namespace pga3d {
         .wxy = (a.x * b.wy - a.y * b.wx - a.z * b.i),
         .wxz = (a.x * b.wz + a.y * b.i - a.z * b.wx),
         .wyz = (a.y * b.wz - a.x * b.i - a.z * b.wy),
-        .xyz = (a.w * b.i + a.y * b.xz - a.x * b.yz - a.z * b.xy),
+        .xyz = ((a.w * b.i + a.y * b.xz) - (a.x * b.yz + a.z * b.xy)),
         .i = 0.0
     }; }
     constexpr Multivector ProjectivePoint::antiGeometric(const Motor& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
     [[nodiscard]] constexpr Motor antiGeometric(const ProjectivePoint& a, const Plane& b) noexcept { return {
-        .s = (a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z),
+        .s = ((a.w * b.w + a.x * b.x) + (a.y * b.y + a.z * b.z)),
         .wx = a.x * b.w,
         .wy = a.y * b.w,
         .wz = a.z * b.w,
@@ -839,10 +839,10 @@ namespace pga3d {
 
 
     [[nodiscard]] constexpr Rotor antiGeometric(const Rotor& a, const Motor& b) noexcept { return {
-        .s = (a.s * b.i + a.xy * b.wz + a.yz * b.wx - a.xz * b.wy),
-        .xy = (a.xy * b.i - a.s * b.wz - a.xz * b.wx - a.yz * b.wy),
-        .xz = (a.s * b.wy + a.xy * b.wx + a.xz * b.i - a.yz * b.wz),
-        .yz = (a.xy * b.wy + a.xz * b.wz + a.yz * b.i - a.s * b.wx)
+        .s = ((a.s * b.i + a.xy * b.wz) + (a.yz * b.wx - a.xz * b.wy)),
+        .xy = ((a.xy * b.i - a.s * b.wz) - (a.xz * b.wx + a.yz * b.wy)),
+        .xz = ((a.s * b.wy + a.xy * b.wx) + (a.xz * b.i - a.yz * b.wz)),
+        .yz = ((a.xy * b.wy + a.xz * b.wz) + (a.yz * b.i - a.s * b.wx))
     }; }
     constexpr Rotor Rotor::antiGeometric(const Motor& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
@@ -968,13 +968,13 @@ namespace pga3d {
 
 
     [[nodiscard]] constexpr Motor antiGeometric(const ProjectiveTranslator& a, const Motor& b) noexcept { return {
-        .s = (a.s * b.i + a.wx * b.yz + a.wz * b.xy - a.wy * b.xz),
+        .s = ((a.s * b.i + a.wx * b.yz) + (a.wz * b.xy - a.wy * b.xz)),
         .wx = (a.wx * b.i + a.wz * b.wy - a.wy * b.wz),
         .wy = (a.wx * b.wz + a.wy * b.i - a.wz * b.wx),
         .wz = (a.wy * b.wx + a.wz * b.i - a.wx * b.wy),
-        .xy = (a.wx * b.xz + a.wy * b.yz - a.s * b.wz - a.wz * b.s),
-        .xz = (a.s * b.wy + a.wy * b.s + a.wz * b.yz - a.wx * b.xy),
-        .yz = (-a.s * b.wx - a.wx * b.s - a.wy * b.xy - a.wz * b.xz),
+        .xy = ((a.wx * b.xz + a.wy * b.yz) - (a.s * b.wz + a.wz * b.s)),
+        .xz = ((a.s * b.wy + a.wy * b.s) + (a.wz * b.yz - a.wx * b.xy)),
+        .yz = (-(a.s * b.wx + a.wx * b.s) - (a.wy * b.xy + a.wz * b.xz)),
         .i = (-a.wx * b.wx - a.wy * b.wy - a.wz * b.wz)
     }; }
     constexpr Motor ProjectiveTranslator::antiGeometric(const Motor& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -994,7 +994,7 @@ namespace pga3d {
         .wxy = a.wz * b.w,
         .wxz = -a.wy * b.w,
         .wyz = a.wx * b.w,
-        .xyz = (a.wx * b.x + a.wy * b.y + a.wz * b.z - a.s * b.w),
+        .xyz = ((a.wx * b.x + a.wy * b.y) + (a.wz * b.z - a.s * b.w)),
         .i = 0.0
     }; }
     constexpr Multivector ProjectiveTranslator::antiGeometric(const Plane& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -1160,13 +1160,13 @@ namespace pga3d {
 
 
     [[nodiscard]] constexpr Motor antiGeometric(const Translator& a, const Motor& b) noexcept { return {
-        .s = (b.i + a.wx * b.yz + a.wz * b.xy - a.wy * b.xz),
+        .s = ((b.i + a.wx * b.yz) + (a.wz * b.xy - a.wy * b.xz)),
         .wx = (a.wx * b.i + a.wz * b.wy - a.wy * b.wz),
         .wy = (a.wx * b.wz + a.wy * b.i - a.wz * b.wx),
         .wz = (a.wy * b.wx + a.wz * b.i - a.wx * b.wy),
-        .xy = (-b.wz + a.wx * b.xz + a.wy * b.yz - a.wz * b.s),
-        .xz = (b.wy + a.wy * b.s + a.wz * b.yz - a.wx * b.xy),
-        .yz = (-b.wx - a.wx * b.s - a.wy * b.xy - a.wz * b.xz),
+        .xy = (-(b.wz - a.wx * b.xz) + (a.wy * b.yz - a.wz * b.s)),
+        .xz = ((b.wy + a.wy * b.s) + (a.wz * b.yz - a.wx * b.xy)),
+        .yz = (-(b.wx + a.wx * b.s) - (a.wy * b.xy + a.wz * b.xz)),
         .i = (-a.wx * b.wx - a.wy * b.wy - a.wz * b.wz)
     }; }
     constexpr Motor Translator::antiGeometric(const Motor& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -1186,7 +1186,7 @@ namespace pga3d {
         .wxy = a.wz * b.w,
         .wxz = -a.wy * b.w,
         .wyz = a.wx * b.w,
-        .xyz = (-b.w + a.wx * b.x + a.wy * b.y + a.wz * b.z),
+        .xyz = (-(b.w - a.wx * b.x) + (a.wy * b.y + a.wz * b.z)),
         .i = 0.0
     }; }
     constexpr Multivector Translator::antiGeometric(const Plane& b) const noexcept { return pga3d::antiGeometric(*this, b); }
@@ -1565,9 +1565,9 @@ namespace pga3d {
     [[nodiscard]] constexpr Multivector antiGeometric(const Point& a, const Motor& b) noexcept { return {
         .s = 0.0,
         .w = (a.x * b.wx + a.y * b.wy + a.z * b.wz),
-        .x = (-b.wx + a.x * b.s + a.y * b.xy + a.z * b.xz),
-        .y = (-b.wy + a.y * b.s + a.z * b.yz - a.x * b.xy),
-        .z = (-b.wz + a.z * b.s - a.x * b.xz - a.y * b.yz),
+        .x = (-(b.wx - a.x * b.s) + (a.y * b.xy + a.z * b.xz)),
+        .y = (-(b.wy - a.y * b.s) + (a.z * b.yz - a.x * b.xy)),
+        .z = (-(b.wz - a.z * b.s) - (a.x * b.xz + a.y * b.yz)),
         .wx = 0.0,
         .wy = 0.0,
         .wz = 0.0,
@@ -1577,13 +1577,13 @@ namespace pga3d {
         .wxy = (a.x * b.wy - a.y * b.wx - a.z * b.i),
         .wxz = (a.x * b.wz + a.y * b.i - a.z * b.wx),
         .wyz = (a.y * b.wz - a.x * b.i - a.z * b.wy),
-        .xyz = (b.i + a.y * b.xz - a.x * b.yz - a.z * b.xy),
+        .xyz = ((b.i + a.y * b.xz) - (a.x * b.yz + a.z * b.xy)),
         .i = 0.0
     }; }
     constexpr Multivector Point::antiGeometric(const Motor& b) const noexcept { return pga3d::antiGeometric(*this, b); }
 
     [[nodiscard]] constexpr Motor antiGeometric(const Point& a, const Plane& b) noexcept { return {
-        .s = (b.w + a.x * b.x + a.y * b.y + a.z * b.z),
+        .s = ((b.w + a.x * b.x) + (a.y * b.y + a.z * b.z)),
         .wx = a.x * b.w,
         .wy = a.y * b.w,
         .wz = a.z * b.w,

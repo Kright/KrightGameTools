@@ -99,7 +99,7 @@ final case class Pga2dMultivector(s: Double = 0.0,
     )
 
   def bulkNormSquare: Double =
-    (s * s + x * x + xy * xy + y * y)
+    ((s * s + x * x) + (xy * xy + y * y))
 
   def bulkNorm: Double =
     Math.sqrt(bulkNormSquare)
@@ -108,7 +108,7 @@ final case class Pga2dMultivector(s: Double = 0.0,
     this / bulkNorm
 
   def weightNormSquare: Double =
-    (i * i + w * w + wx * wx + wy * wy)
+    ((i * i + w * w) + (wx * wx + wy * wy))
 
   def weightNorm: Double =
     Math.sqrt(weightNormSquare)
@@ -117,7 +117,7 @@ final case class Pga2dMultivector(s: Double = 0.0,
     this / weightNorm
 
   def normSquare: Double =
-    (i * i + s * s + w * w + wx * wx + wy * wy + x * x + xy * xy + y * y)
+    (((i * i + s * s) + (w * w + wx * wx)) + ((wy * wy + x * x) + (xy * xy + y * y)))
 
   def norm: Double =
     Math.sqrt(normSquare)
@@ -268,24 +268,24 @@ final case class Pga2dMultivector(s: Double = 0.0,
 
   infix def geometric(r: Pga2dMultivector): Pga2dMultivector =
     Pga2dMultivector(
-      s = (r.s * s + r.x * x + r.y * y - r.xy * xy),
-      w = (r.s * w + r.w * s + r.x * wx + r.y * wy - i * r.xy - r.i * xy - r.wx * x - r.wy * y),
-      x = (r.s * x + r.x * s + r.y * xy - r.xy * y),
-      y = (r.s * y + r.xy * x + r.y * s - r.x * xy),
-      wx = (i * r.y + r.i * y + r.s * wx + r.wx * s + r.wy * xy + r.x * w - r.w * x - r.xy * wy),
-      wy = (r.s * wy + r.wy * s + r.xy * wx + r.y * w - i * r.x - r.i * x - r.w * y - r.wx * xy),
-      xy = (r.s * xy + r.xy * s + r.y * x - r.x * y),
-      i = (i * r.s + r.i * s + r.w * xy + r.wx * y + r.xy * w + r.y * wx - r.wy * x - r.x * wy),
+      s = ((r.s * s + r.x * x) + (r.y * y - r.xy * xy)),
+      w = (((r.s * w + r.w * s) + (r.x * wx + r.y * wy)) - ((i * r.xy + r.i * xy) + (r.wx * x + r.wy * y))),
+      x = ((r.s * x + r.x * s) + (r.y * xy - r.xy * y)),
+      y = ((r.s * y + r.xy * x) + (r.y * s - r.x * xy)),
+      wx = (((i * r.y + r.i * y) + (r.s * wx + r.wx * s)) + ((r.wy * xy + r.x * w) - (r.w * x + r.xy * wy))),
+      wy = (((r.s * wy + r.wy * s) + (r.xy * wx + r.y * w)) - ((i * r.x + r.i * x) + (r.w * y + r.wx * xy))),
+      xy = ((r.s * xy + r.xy * s) + (r.y * x - r.x * y)),
+      i = (((i * r.s + r.i * s) + (r.w * xy + r.wx * y)) + ((r.xy * w + r.y * wx) - (r.wy * x + r.x * wy))),
     )
 
   infix def dot(r: Pga2dMultivector): Pga2dMultivector =
     Pga2dMultivector(
-      s = (r.s * s + r.x * x + r.y * y - r.xy * xy),
-      w = (r.s * w + r.w * s + r.x * wx + r.y * wy - i * r.xy - r.i * xy - r.wx * x - r.wy * y),
-      x = (r.s * x + r.x * s + r.y * xy - r.xy * y),
-      y = (r.s * y + r.xy * x + r.y * s - r.x * xy),
-      wx = (i * r.y + r.i * y + r.s * wx + r.wx * s),
-      wy = (r.s * wy + r.wy * s - i * r.x - r.i * x),
+      s = ((r.s * s + r.x * x) + (r.y * y - r.xy * xy)),
+      w = (((r.s * w + r.w * s) + (r.x * wx + r.y * wy)) - ((i * r.xy + r.i * xy) + (r.wx * x + r.wy * y))),
+      x = ((r.s * x + r.x * s) + (r.y * xy - r.xy * y)),
+      y = ((r.s * y + r.xy * x) + (r.y * s - r.x * xy)),
+      wx = ((i * r.y + r.i * y) + (r.s * wx + r.wx * s)),
+      wy = ((r.s * wy + r.wy * s) - (i * r.x + r.i * x)),
       xy = (r.s * xy + r.xy * s),
       i = (i * r.s + r.i * s),
     )
@@ -296,10 +296,10 @@ final case class Pga2dMultivector(s: Double = 0.0,
       w = (r.s * w + r.w * s),
       x = (r.s * x + r.x * s),
       y = (r.s * y + r.y * s),
-      wx = (r.s * wx + r.wx * s + r.x * w - r.w * x),
-      wy = (r.s * wy + r.wy * s + r.y * w - r.w * y),
-      xy = (r.s * xy + r.xy * s + r.y * x - r.x * y),
-      i = (i * r.s + r.i * s + r.w * xy + r.wx * y + r.xy * w + r.y * wx - r.wy * x - r.x * wy),
+      wx = ((r.s * wx + r.wx * s) + (r.x * w - r.w * x)),
+      wy = ((r.s * wy + r.wy * s) + (r.y * w - r.w * y)),
+      xy = ((r.s * xy + r.xy * s) + (r.y * x - r.x * y)),
+      i = (((i * r.s + r.i * s) + (r.w * xy + r.wx * y)) + ((r.xy * w + r.y * wx) - (r.wy * x + r.x * wy))),
     )
 
   inline infix def ^(r: Pga2dMultivector): Pga2dMultivector = wedge(r)
@@ -308,34 +308,34 @@ final case class Pga2dMultivector(s: Double = 0.0,
 
   infix def antiGeometric(r: Pga2dMultivector): Pga2dMultivector =
     Pga2dMultivector(
-      s = (i * r.s + r.i * s + r.w * xy + r.wx * y + r.xy * w + r.y * wx - r.wy * x - r.x * wy),
-      w = (i * r.w + r.i * w + r.wy * wx - r.wx * wy),
-      x = (i * r.x + r.i * x + r.xy * wx + r.y * w - r.s * wy - r.w * y - r.wx * xy - r.wy * s),
-      y = (i * r.y + r.i * y + r.s * wx + r.w * x + r.wx * s + r.xy * wy - r.wy * xy - r.x * w),
-      wx = (i * r.wx + r.i * wx + r.wy * w - r.w * wy),
-      wy = (i * r.wy + r.i * wy + r.w * wx - r.wx * w),
-      xy = (i * r.xy + r.i * xy + r.x * wx + r.y * wy - r.s * w - r.w * s - r.wx * x - r.wy * y),
-      i = (i * r.i + r.wx * wx + r.wy * wy - r.w * w),
+      s = (((i * r.s + r.i * s) + (r.w * xy + r.wx * y)) + ((r.xy * w + r.y * wx) - (r.wy * x + r.x * wy))),
+      w = ((i * r.w + r.i * w) + (r.wy * wx - r.wx * wy)),
+      x = (((i * r.x + r.i * x) + (r.xy * wx + r.y * w)) - ((r.s * wy + r.w * y) + (r.wx * xy + r.wy * s))),
+      y = (((i * r.y + r.i * y) + (r.s * wx + r.w * x)) + ((r.wx * s + r.xy * wy) - (r.wy * xy + r.x * w))),
+      wx = ((i * r.wx + r.i * wx) + (r.wy * w - r.w * wy)),
+      wy = ((i * r.wy + r.i * wy) + (r.w * wx - r.wx * w)),
+      xy = (((i * r.xy + r.i * xy) + (r.x * wx + r.y * wy)) - ((r.s * w + r.w * s) + (r.wx * x + r.wy * y))),
+      i = ((i * r.i + r.wx * wx) + (r.wy * wy - r.w * w)),
     )
 
   infix def antiDot(r: Pga2dMultivector): Pga2dMultivector =
     Pga2dMultivector(
       s = (i * r.s + r.i * s),
       w = (i * r.w + r.i * w),
-      x = (i * r.x + r.i * x - r.s * wy - r.wy * s),
-      y = (i * r.y + r.i * y + r.s * wx + r.wx * s),
-      wx = (i * r.wx + r.i * wx + r.wy * w - r.w * wy),
-      wy = (i * r.wy + r.i * wy + r.w * wx - r.wx * w),
-      xy = (i * r.xy + r.i * xy + r.x * wx + r.y * wy - r.s * w - r.w * s - r.wx * x - r.wy * y),
-      i = (i * r.i + r.wx * wx + r.wy * wy - r.w * w),
+      x = ((i * r.x + r.i * x) - (r.s * wy + r.wy * s)),
+      y = ((i * r.y + r.i * y) + (r.s * wx + r.wx * s)),
+      wx = ((i * r.wx + r.i * wx) + (r.wy * w - r.w * wy)),
+      wy = ((i * r.wy + r.i * wy) + (r.w * wx - r.wx * w)),
+      xy = (((i * r.xy + r.i * xy) + (r.x * wx + r.y * wy)) - ((r.s * w + r.w * s) + (r.wx * x + r.wy * y))),
+      i = ((i * r.i + r.wx * wx) + (r.wy * wy - r.w * w)),
     )
 
   infix def antiWedge(r: Pga2dMultivector): Pga2dMultivector =
     Pga2dMultivector(
-      s = (i * r.s + r.i * s + r.w * xy + r.wx * y + r.xy * w + r.y * wx - r.wy * x - r.x * wy),
-      w = (i * r.w + r.i * w + r.wy * wx - r.wx * wy),
-      x = (i * r.x + r.i * x + r.xy * wx - r.wx * xy),
-      y = (i * r.y + r.i * y + r.xy * wy - r.wy * xy),
+      s = (((i * r.s + r.i * s) + (r.w * xy + r.wx * y)) + ((r.xy * w + r.y * wx) - (r.wy * x + r.x * wy))),
+      w = ((i * r.w + r.i * w) + (r.wy * wx - r.wx * wy)),
+      x = ((i * r.x + r.i * x) + (r.xy * wx - r.wx * xy)),
+      y = ((i * r.y + r.i * y) + (r.xy * wy - r.wy * xy)),
       wx = (i * r.wx + r.i * wx),
       wy = (i * r.wy + r.i * wy),
       xy = (i * r.xy + r.i * xy),
@@ -370,14 +370,14 @@ final case class Pga2dMultivector(s: Double = 0.0,
     val xyMxy = xy * xy
     val xyMi = i * xy
     Pga2dMultivector(
-      s = (2.0 * (r.x * (sMx - yMxy) + r.y * (sMy + xMxy)) + r.s * (sMs + xMx + xyMxy + yMy)),
-      w = (2.0 * (r.s * (sMw + xMwx + xyMi + yMwy) + r.x * (sMwx + wMx - wyMxy - yMi) + r.y * (sMwy + wMy + wxMxy + xMi)) + r.w * (sMs + xyMxy - xMx - yMy)),
-      x = (2.0 * (r.s * (sMx + yMxy) + r.y * (sMxy + xMy)) + r.x * (sMs + xMx - xyMxy - yMy)),
-      y = (2.0 * (r.s * (sMy - xMxy) + r.x * (xMy - sMxy)) + r.y * (sMs + yMy - xMx - xyMxy)),
-      wx = (2.0 * (r.i * (sMy - xMxy) + r.wy * (sMxy - xMy) + r.xy * (wMy + wxMxy - sMwy - xMi)) + r.wx * (sMs + yMy - xMx - xyMxy)),
-      wy = (2.0 * (r.i * (-sMx - yMxy) + r.wx * (-sMxy - xMy) + r.xy * (sMwx + wyMxy - wMx - yMi)) + r.wy * (sMs + xMx - xyMxy - yMy)),
-      xy = r.xy * (sMs + xyMxy - xMx - yMy),
-      i = (2.0 * (r.wx * (sMy + xMxy) + r.wy * (yMxy - sMx) + r.xy * (sMw + xyMi - xMwx - yMwy)) + r.i * (sMs + xMx + xyMxy + yMy)),
+      s = (2.0 * (r.x * (sMx - yMxy) + r.y * (sMy + xMxy)) + r.s * ((sMs + xMx) + (xyMxy + yMy))),
+      w = (2.0 * (r.s * ((sMw + xMwx) + (xyMi + yMwy)) + r.x * ((sMwx + wMx) - (wyMxy + yMi)) + r.y * ((sMwy + wMy) + (wxMxy + xMi))) + r.w * ((sMs + xyMxy) - (xMx + yMy))),
+      x = (2.0 * (r.s * (sMx + yMxy) + r.y * (sMxy + xMy)) + r.x * ((sMs + xMx) - (xyMxy + yMy))),
+      y = (2.0 * (r.s * (sMy - xMxy) + r.x * (xMy - sMxy)) + r.y * ((sMs + yMy) - (xMx + xyMxy))),
+      wx = (2.0 * (r.i * (sMy - xMxy) + r.wy * (sMxy - xMy) + r.xy * ((wMy + wxMxy) - (sMwy + xMi))) + r.wx * ((sMs + yMy) - (xMx + xyMxy))),
+      wy = (2.0 * (r.i * (-sMx - yMxy) + r.wx * (-sMxy - xMy) + r.xy * ((sMwx + wyMxy) - (wMx + yMi))) + r.wy * ((sMs + xMx) - (xyMxy + yMy))),
+      xy = r.xy * ((sMs + xyMxy) - (xMx + yMy)),
+      i = (2.0 * (r.wx * (sMy + xMxy) + r.wy * (yMxy - sMx) + r.xy * ((sMw + xyMi) - (xMwx + yMwy))) + r.i * ((sMs + xMx) + (xyMxy + yMy))),
     )
 
   infix def reverseSandwich(r: Pga2dMultivector): Pga2dMultivector =
@@ -404,14 +404,14 @@ final case class Pga2dMultivector(s: Double = 0.0,
     val xyMxy = xy * xy
     val xyMi = i * xy
     Pga2dMultivector(
-      s = (2.0 * (r.x * (sMx + yMxy) + r.y * (sMy - xMxy)) + r.s * (sMs + xMx + xyMxy + yMy)),
-      w = (2.0 * (r.s * (sMw + xyMi - xMwx - yMwy) + r.x * (wMx + yMi - sMwx - wyMxy) + r.y * (wMy + wxMxy - sMwy - xMi)) + r.w * (sMs + xyMxy - xMx - yMy)),
-      x = (2.0 * (r.s * (sMx - yMxy) + r.y * (xMy - sMxy)) + r.x * (sMs + xMx - xyMxy - yMy)),
-      y = (2.0 * (r.s * (sMy + xMxy) + r.x * (sMxy + xMy)) + r.y * (sMs + yMy - xMx - xyMxy)),
-      wx = (2.0 * (r.i * (sMy + xMxy) + r.wy * (-sMxy - xMy) + r.xy * (sMwy + wMy + wxMxy + xMi)) + r.wx * (sMs + yMy - xMx - xyMxy)),
-      wy = (2.0 * (r.i * (yMxy - sMx) + r.wx * (sMxy - xMy) + r.xy * (wyMxy + yMi - sMwx - wMx)) + r.wy * (sMs + xMx - xyMxy - yMy)),
-      xy = r.xy * (sMs + xyMxy - xMx - yMy),
-      i = (2.0 * (r.wx * (sMy - xMxy) + r.wy * (-sMx - yMxy) + r.xy * (sMw + xMwx + xyMi + yMwy)) + r.i * (sMs + xMx + xyMxy + yMy)),
+      s = (2.0 * (r.x * (sMx + yMxy) + r.y * (sMy - xMxy)) + r.s * ((sMs + xMx) + (xyMxy + yMy))),
+      w = (2.0 * (r.s * ((sMw + xyMi) - (xMwx + yMwy)) + r.x * ((wMx + yMi) - (sMwx + wyMxy)) + r.y * ((wMy + wxMxy) - (sMwy + xMi))) + r.w * ((sMs + xyMxy) - (xMx + yMy))),
+      x = (2.0 * (r.s * (sMx - yMxy) + r.y * (xMy - sMxy)) + r.x * ((sMs + xMx) - (xyMxy + yMy))),
+      y = (2.0 * (r.s * (sMy + xMxy) + r.x * (sMxy + xMy)) + r.y * ((sMs + yMy) - (xMx + xyMxy))),
+      wx = (2.0 * (r.i * (sMy + xMxy) + r.wy * (-sMxy - xMy) + r.xy * ((sMwy + wMy) + (wxMxy + xMi))) + r.wx * ((sMs + yMy) - (xMx + xyMxy))),
+      wy = (2.0 * (r.i * (yMxy - sMx) + r.wx * (sMxy - xMy) + r.xy * ((wyMxy + yMi) - (sMwx + wMx))) + r.wy * ((sMs + xMx) - (xyMxy + yMy))),
+      xy = r.xy * ((sMs + xyMxy) - (xMx + yMy)),
+      i = (2.0 * (r.wx * (sMy - xMxy) + r.wy * (-sMx - yMxy) + r.xy * ((sMw + xMwx) + (xyMi + yMwy))) + r.i * ((sMs + xMx) + (xyMxy + yMy))),
     )
 
   infix def cross(r: Pga2dMultivector): Pga2dMultivector =
