@@ -18,14 +18,14 @@ strategies over arrays of inertias and motors (see the Verlet bullet below).
 
 | solver                                  | order            | force evaluations per step | ns / body / step | notes                                    |
 |-----------------------------------------|------------------|----------------------------|------------------|------------------------------------------|
-| `Pga3dPhysicsSolverEuler`               | 1                | 1                          | 117              | very imprecise, for reference only       |
-| `Pga3dPhysicsSolverMidPoint`            | 2                | 2                          | 230              |                                          |
-| `Pga3dPhysicsSolverHeun`                | 2                | 2                          | 239              |                                          |
-| `Pga3dPhysicsSolverVerlet`              | 2                | 1                          | 406              | exact momentum, bounded energy error     |
-| `Pga3dPhysicsSolverRK4`                 | 4                | 4                          | 472              | the default workhorse                    |
-| `Pga3dPhysicsSolverRKMK4`               | 4                | 4                          | 657              | Lie-group (Munthe-Kaas) variant of RK4   |
-| `Pga3dPhysicsSolverRKF45`               | 4 (+ embedded 5) | 6                          | 1056             | free per-step local-error estimate       |
-| `Pga3dPhysicsSolverGaussLegendre(iter)` | 4 (implicit)     | 3 + 2·iter                 | 1079 (iter = 3)  | far better energy behavior on stiff forces |
+| `Pga3dPhysicsSolverEuler`               | 1                | 1                          | 92               | very imprecise, for reference only       |
+| `Pga3dPhysicsSolverMidPoint`            | 2                | 2                          | 178              |                                          |
+| `Pga3dPhysicsSolverHeun`                | 2                | 2                          | 181              |                                          |
+| `Pga3dPhysicsSolverRK4`                 | 4                | 4                          | 360              | the default workhorse                    |
+| `Pga3dPhysicsSolverVerlet`              | 2                | 1                          | 588              | exact momentum, bounded energy error     |
+| `Pga3dPhysicsSolverRKMK4`               | 4                | 4                          | 648              | Lie-group (Munthe-Kaas) variant of RK4   |
+| `Pga3dPhysicsSolverGaussLegendre(iter)` | 4 (implicit)     | 3 + 2·iter                 | 863 (iter = 3)   | far better energy behavior on stiff forces |
+| `Pga3dPhysicsSolverRKF45`               | 4 (+ embedded 5) | 6                          | 868              | free per-step local-error estimate       |
 
 The timing column is the pure solver overhead with an empty force callback
 (`benchmark/PhysicsSolverBenchmark`, free rotating bodies); with real forces the cost of the

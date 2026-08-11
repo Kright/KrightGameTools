@@ -7,6 +7,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed (breaking)
 
+- `Pga3dInertiaMovedLocal.localToGlobal` is a `Pga3dTransform` (was a `Pga3dMotor`): every
+  operation converts the argument to the local frame and back, and with the transform those
+  conversions are plain matrix multiplications. A companion `apply(motor, localInertia)` overload
+  keeps motor-based construction working (`Pga3dInertia.moved`, `movedBy` are unchanged). The pure
+  solver overhead of every integrator dropped 1.2-1.3x (see `PhysicsSolverBenchmark` and the
+  updated table in Solvers.md); the serialized layout grew to the transform's 34 doubles plus the
+  local inertia.
 - `Pga3dPhysicsBody` stores its pose as a `Pga3dTransform` (`var transform`), and the primary
   constructor takes the transform; an auxiliary constructor from a `Pga3dMotor` is kept, and the
   `body.motor` accessors are derived from the transform (assigning a motor rebuilds it). The internal

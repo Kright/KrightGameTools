@@ -13,7 +13,7 @@ class FlatDoubleSerializerPga3dPhysicsTest extends AnyFunSuiteLike with ScalaChe
     assert(FlatDoubleSerializer.getSize[Pga3dInertiaSummable] == Pga3dInertiaSummable.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dInertiaSimple] == Pga3dInertiaSimple.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dBodyState] == Pga3dMotor.componentsCount + Pga3dBivector.componentsCount)
-    assert(FlatDoubleSerializer.getSize[Pga3dInertiaMovedLocal] == Pga3dMotor.componentsCount + Pga3dInertiaLocal.componentsCount)
+    assert(FlatDoubleSerializer.getSize[Pga3dInertiaMovedLocal] == FlatDoubleSerializer.getSize[Pga3dTransform] + Pga3dInertiaLocal.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dInertiaMovedSimple] == Pga3dTranslator.componentsCount + Pga3dInertiaSimple.componentsCount)
     assert(FlatDoubleSerializer.getSize[Pga3dPoint] == Pga3dPoint.componentsCount)
   }

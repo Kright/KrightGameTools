@@ -18,21 +18,19 @@ import scala.compiletime.uninitialized
  * The bodies rotate without translating, so the state stays bounded over any number of
  * benchmark invocations.
  *
- * Measured (8 bodies per step, ns per step / per body):
- *   euler          933 / 117
- *   midPoint      1843 / 230
- *   heun          1910 / 239
- *   verlet        3246 / 406   (cheaper than rk4: one derivative pass, the log/exp/sandwich
- *                               of the momentum transport cost less than three more stages;
- *                               the displacement solve dominates the step at ~100 ns/body per
- *                               fixed-point iteration - bivector exp + motor product +
- *                               reverseSandwich + inertia.invert. Measured with the older
- *                               stateful implementation; the stateless one does the same math
- *                               on caller-owned arrays)
- *   rk4           3776 / 472
- *   rkmk4         5258 / 657
- *   rkf45         8448 / 1056
- *   gaussLegendre3 8630 / 1079
+ * Measured (8 bodies per step, ns per step / per body; the bodies use Pga3dInertiaMovedLocal,
+ * which stores its pose as a Pga3dTransform - that alone made every solver 1.2-1.3x faster
+ * than the motor-based inertia):
+ *   euler          735 /  92
+ *   midPoint      1426 / 178
+ *   heun          1446 / 181
+ *   rk4           2882 / 360
+ *   verlet        4706 / 588   (one derivative pass, but the displacement solve dominates the
+ *                               step - per fixed-point iteration: bivector exp + motor product +
+ *                               reverseSandwich + inertia.invert)
+ *   rkmk4         5181 / 648
+ *   gaussLegendre3 6907 / 863
+ *   rkf45         6945 / 868
  *
  * Run with: sbt "benchmark/Jmh/run -f1 .*PhysicsSolverBenchmark.*"
  */

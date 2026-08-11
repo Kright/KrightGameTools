@@ -5,12 +5,16 @@ import me.kright.gametools.mathutil.CanEqualWithEps
 import me.kright.gametools.pga3d.*
 
 
-final case class Pga3dInertiaMovedLocal(localToGlobal: Pga3dMotor,
+/**
+ * Every operation converts the argument to the local frame and back, so the pose is stored
+ * as a [[Pga3dTransform]] and those conversions are plain matrix multiplications.
+ */
+final case class Pga3dInertiaMovedLocal(localToGlobal: Pga3dTransform,
                                         localInertia: Pga3dInertiaLocal) extends Pga3dInertia derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
   override def toString: String =
-    s"Pga3dInertiaMovedLocal(localToGlobal = $localToGlobal, localInertia = $localInertia)"
-  
+    s"Pga3dInertiaMovedLocal(localToGlobal = ${localToGlobal.motor}, localInertia = $localInertia)"
+
   override def mass: Double =
     localInertia.mass
 
@@ -47,7 +51,7 @@ final case class Pga3dInertiaMovedLocal(localToGlobal: Pga3dMotor,
     localInertia.getKineticEnergy(localB)
 
   override def toSummable: Pga3dInertiaSummable =
-    localToGlobal.sandwich(localInertia.toSummable)
+    localToGlobal.motor.sandwich(localInertia.toSummable)
 
   override def toPrecomputed: Pga3dInertiaPrecomputed =
     Pga3dInertiaPrecomputed(this)
@@ -56,10 +60,15 @@ final case class Pga3dInertiaMovedLocal(localToGlobal: Pga3dMotor,
     this
 
   override def movedBy(rotor: Pga3dRotor) =
-    Pga3dInertiaMovedLocal(rotor.geometric(localToGlobal), localInertia)
+    Pga3dInertiaMovedLocal(rotor.geometric(localToGlobal.motor), localInertia)
 
   override def movedBy(motor: Pga3dMotor) =
-    Pga3dInertiaMovedLocal(motor.geometric(localToGlobal), localInertia)
+    Pga3dInertiaMovedLocal(motor.geometric(localToGlobal.motor), localInertia)
 
   override def movedBy(translator: Pga3dTranslator) =
-    Pga3dInertiaMovedLocal(translator.geometric(localToGlobal), localInertia)
+    Pga3dInertiaMovedLocal(translator.geometric(localToGlobal.motor), localInertia)
+
+
+object Pga3dInertiaMovedLocal:
+  def apply(localToGlobal: Pga3dMotor, localInertia: Pga3dInertiaLocal): Pga3dInertiaMovedLocal =
+    Pga3dInertiaMovedLocal(Pga3dTransform(localToGlobal), localInertia)
