@@ -63,5 +63,11 @@ measured accuracies, a selection guide and the constraint resolver details.
   body.
 * **Pga3dInertiaPrecomputed**: class caching two 6x6 matrices (application and inverse of application) and some properties.
   Suits for speed up computation when one intertia is used in computations a lot of times.
+  Precision caveat: the matrices bake in the parallel-axis terms (~ mass * R^2 for a center of mass at
+  distance R from the origin), and their near-cancellation costs the kinetic energy and the acceleration
+  ~1e-16 * R^2 of relative precision (about 6 lost digits at R = 1e4), while `Pga3dInertiaMovedLocal`
+  and plain apply/invert lose only ~1e-16 * R. Numbers: `Pga3dInertiaPrecisionTest`. Keep the center
+  of mass reasonably close to the origin, or prefer the moved form when the energy or the acceleration
+  precision matters.
 * **Pga3dInertiaSummable**: summable representation of inertia. Helpful when you want to find inertia of a combined
   connected bodies.

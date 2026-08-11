@@ -1,7 +1,7 @@
 package me.kright.gametools.matrix
 
 import me.kright.arrayview.ArrayView2d
-import me.kright.gametools.mathutil.{CanEqualWithEps, FastRange}
+import me.kright.gametools.mathutil.{CanEqualWithEps, ExactArith, FastRange}
 
 import scala.annotation.targetName
 
@@ -80,7 +80,7 @@ class Matrix(val h: Int,
          x <- FastRange(result.w)) {
       var sum = 0.0
       for (k <- FastRange(this.w)) {
-        sum = Math.fma(this (y, k), right(k, x), sum)
+        sum = ExactArith.fma(this (y, k), right(k, x), sum)
       }
       result(y, x) = sum
     }
@@ -127,7 +127,7 @@ class Matrix(val h: Int,
   def frobeniusNormSquare: Double =
     var sum = 0.0
     for (elem <- data) {
-      sum = Math.fma(elem, elem, sum)
+      sum = ExactArith.fma(elem, elem, sum)
     }
     sum
 

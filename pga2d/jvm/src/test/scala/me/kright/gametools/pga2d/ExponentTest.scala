@@ -53,3 +53,23 @@ class ExponentTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       assert((tr.pow(2.0) - tr.geometric(tr)).norm < 1e-13 * (1.0 + tr.norm), s"tr = $tr")
     }
   }
+
+  test("split of a generator with w != 0 is the whole rotation, with a zero shift") {
+    forAll(Pga2dGenerators.projectivePoints.filter(p => Math.abs(p.w) > 1e-6)) { p =>
+      val (rotation, shift) = p.split
+      assert(rotation == p)
+      assert(shift == Pga2dVector(0.0, 0.0))
+      assert((rotation + shift.toProjectivePoint - p).norm == 0.0)
+      assert((rotation.exp.geometric(shift.exp) - p.exp).norm < 1e-14)
+    }
+  }
+
+  test("split of an ideal generator (w == 0) is a pure translation") {
+    forAll(Pga2dGenerators.vectors) { v =>
+      val p = v.toProjectivePoint
+      val (rotation, shift) = p.split
+      assert(shift == Pga2dVector(v.x, v.y))
+      assert((rotation + shift.toProjectivePoint - p).norm == 0.0)
+      assert((rotation.exp.geometric(shift.exp) - p.exp).norm < 1e-14)
+    }
+  }

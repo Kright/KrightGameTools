@@ -19,39 +19,39 @@ with each other, but not with `Pga2dMultivector`.
 
 The geometric product.
 
-| geometric | Multivector | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| geometric | Multivector | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Motor | Multivector | Motor | Motor | Motor | Motor | Vector | Motor | Multivector | Multivector | Motor |
 | **Line** |  | Multivector | Motor | Multivector | Multivector | Multivector | Multivector | Multivector | Multivector | Motor | Vector | Multivector |
-| **ProjectivePoint** |  | Motor | Multivector | ProjectiveTranslator | Motor | ProjectivePoint | ProjectivePoint | Vector | ProjectiveTranslator | Multivector | Line | ProjectiveTranslator |
-| **Rotor** |  | Motor | Multivector | Motor | Rotor | Motor | Motor | Vector | Motor | LineCentral | Multivector | Rotor |
-| **ProjectiveTranslator** |  | Motor | Multivector | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Multivector | PseudoScalar | ProjectivePoint |
-| **Translator** |  | Motor | Multivector | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Multivector | PseudoScalar | Point |
+| **Rotor** |  | Motor | Multivector | Rotor | Motor | Motor | Motor | Vector | Motor | LineCentral | Multivector | Rotor |
+| **ProjectivePoint** |  | Motor | Multivector | Motor | ProjectiveTranslator | ProjectivePoint | ProjectivePoint | Vector | ProjectiveTranslator | Multivector | Line | ProjectiveTranslator |
+| **ProjectiveTranslator** |  | Motor | Multivector | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Multivector | PseudoScalar | ProjectivePoint |
+| **Translator** |  | Motor | Multivector | Motor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | Multivector | PseudoScalar | Point |
 | **Vector** |  | Vector | Multivector | Vector | Vector | Vector | Vector |  | Vector | Multivector |  | Vector |
-| **Point** |  | Motor | Multivector | ProjectiveTranslator | Motor | ProjectivePoint | Point | Vector | ProjectiveTranslator | Multivector | Line | ProjectiveTranslator |
-| **LineCentral** |  | Multivector | Motor | Multivector | LineCentral | Multivector | Multivector | Multivector | Multivector | Rotor | Vector | LineCentral |
-| **PseudoScalar** |  | Multivector | Vector | Line | Multivector | PseudoScalar | PseudoScalar |  | Line | Vector |  | Line |
-| **PointCenter** |  | Motor | Multivector | ProjectiveTranslator | Rotor | ProjectivePoint | Point | Vector | ProjectiveTranslator | LineCentral | Line | Double |
+| **Point** |  | Motor | Multivector | Motor | ProjectiveTranslator | ProjectivePoint | Point | Vector | ProjectiveTranslator | Multivector | Line | ProjectiveTranslator |
+| **LineCentral** |  | Multivector | Motor | LineCentral | Multivector | Multivector | Multivector | Multivector | Multivector | Rotor | Vector | LineCentral |
+| **PseudoScalar** |  | Multivector | Vector | Multivector | Line | PseudoScalar | PseudoScalar |  | Line | Vector |  | Line |
+| **PointCenter** |  | Motor | Multivector | Rotor | ProjectiveTranslator | ProjectivePoint | Point | Vector | ProjectiveTranslator | LineCentral | Line | Double |
 
 ### dot
 
 The dot (inner) product.
 
-| dot | Multivector | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| dot | Multivector | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Motor | Line | Motor | Motor | Motor | Motor | Vector | Motor | Line | Multivector | Rotor |
 | **Line** |  | Line | Double | Line | Line | Line | Line | Line | Line | Double | Vector | LineCentral |
-| **ProjectivePoint** |  | Motor | Line | Double | Motor | ProjectivePoint | ProjectivePoint |  | Double | Line | Line | Double |
-| **Rotor** |  | Motor | Line | Motor | Rotor | Motor | Motor | Vector | Motor | LineCentral | Multivector | Rotor |
-| **ProjectiveTranslator** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | Rotor |
-| **Translator** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Line | PseudoScalar | PointCenter |
-| **Vector** |  | Vector | Line |  | Vector | Vector | Vector |  |  | Line |  |  |
-| **Point** |  | Motor | Line | Double | Motor | ProjectivePoint | Point |  | Double | Line | Line | Double |
-| **LineCentral** |  | Line | Double | Line | LineCentral | Line | Line | Line | Line | Double | Vector | LineCentral |
-| **PseudoScalar** |  | Multivector | Vector | Line | Multivector | PseudoScalar | PseudoScalar |  | Line | Vector |  | Line |
-| **PointCenter** |  | Rotor | LineCentral | Double | Rotor | Rotor | PointCenter |  | Double | LineCentral | Line | Double |
+| **Rotor** |  | Motor | Line | Rotor | Motor | Motor | Motor | Vector | Motor | LineCentral | Multivector | Rotor |
+| **ProjectivePoint** |  | Motor | Line | Motor | Double | ProjectivePoint | ProjectivePoint |  | Double | Line | Line | Double |
+| **ProjectiveTranslator** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
+| **Translator** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | Line | PseudoScalar | PointCenter |
+| **Vector** |  | Vector | Line | Vector |  | Vector | Vector |  |  | Line |  |  |
+| **Point** |  | Motor | Line | Motor | Double | ProjectivePoint | Point |  | Double | Line | Line | Double |
+| **LineCentral** |  | Line | Double | LineCentral | Line | Line | Line | Line | Line | Double | Vector | LineCentral |
+| **PseudoScalar** |  | Multivector | Vector | Multivector | Line | PseudoScalar | PseudoScalar |  | Line | Vector |  | Line |
+| **PointCenter** |  | Rotor | LineCentral | Rotor | Double | ProjectivePoint | PointCenter |  | Double | LineCentral | Line | Double |
 
 ### wedge
 
@@ -59,74 +59,74 @@ Aliases: `^`, `meet`.
 
 The wedge (outer) product, also known as `meet`: the intersection of geometric elements.
 
-| wedge | Multivector | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| wedge | Multivector | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |
-| **Motor** |  | Motor | Multivector | ProjectivePoint | Motor | Motor | Motor | Vector | ProjectivePoint | Multivector | PseudoScalar | Rotor |
-| **Line** |  | Multivector | ProjectivePoint | PseudoScalar | Multivector | Multivector | Multivector | PseudoScalar | PseudoScalar | ProjectivePoint |  | PseudoScalar |
-| **ProjectivePoint** |  | ProjectivePoint | PseudoScalar |  | ProjectivePoint | ProjectivePoint | ProjectivePoint |  |  | PseudoScalar |  |  |
-| **Rotor** |  | Motor | Multivector | ProjectivePoint | Rotor | Motor | Motor | Vector | ProjectivePoint | LineCentral | PseudoScalar | Rotor |
-| **ProjectiveTranslator** |  | Motor | Multivector | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Multivector | PseudoScalar | Rotor |
-| **Translator** |  | Motor | Multivector | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Multivector | PseudoScalar | PointCenter |
-| **Vector** |  | Vector | PseudoScalar |  | Vector | Vector | Vector |  |  | PseudoScalar |  |  |
-| **Point** |  | ProjectivePoint | PseudoScalar |  | ProjectivePoint | ProjectivePoint | Point |  |  | PseudoScalar |  |  |
-| **LineCentral** |  | Multivector | ProjectivePoint | PseudoScalar | LineCentral | Multivector | Multivector | PseudoScalar | PseudoScalar | Rotor |  |  |
-| **PseudoScalar** |  | PseudoScalar |  |  | PseudoScalar | PseudoScalar | PseudoScalar |  |  |  |  |  |
-| **PointCenter** |  | Rotor | PseudoScalar |  | Rotor | Rotor | PointCenter |  |  |  |  |  |
+| **Motor** |  | Motor | Multivector | Motor | ProjectivePoint | Motor | Motor | Vector | ProjectivePoint | Multivector | PseudoScalar | ProjectivePoint |
+| **Line** |  | Multivector | ProjectivePoint | Multivector | PseudoScalar | Multivector | Multivector | PseudoScalar | PseudoScalar | ProjectivePoint |  | PseudoScalar |
+| **Rotor** |  | Motor | Multivector | Rotor | ProjectivePoint | Motor | Motor | Vector | ProjectivePoint | LineCentral | PseudoScalar | ProjectivePoint |
+| **ProjectivePoint** |  | ProjectivePoint | PseudoScalar | ProjectivePoint |  | ProjectivePoint | ProjectivePoint |  |  | PseudoScalar |  |  |
+| **ProjectiveTranslator** |  | Motor | Multivector | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Multivector | PseudoScalar | ProjectivePoint |
+| **Translator** |  | Motor | Multivector | Motor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | Multivector | PseudoScalar | PointCenter |
+| **Vector** |  | Vector | PseudoScalar | Vector |  | Vector | Vector |  |  | PseudoScalar |  |  |
+| **Point** |  | ProjectivePoint | PseudoScalar | ProjectivePoint |  | ProjectivePoint | Point |  |  | PseudoScalar |  |  |
+| **LineCentral** |  | Multivector | ProjectivePoint | LineCentral | PseudoScalar | Multivector | Multivector | PseudoScalar | PseudoScalar | ProjectivePoint |  |  |
+| **PseudoScalar** |  | PseudoScalar |  | PseudoScalar |  | PseudoScalar | PseudoScalar |  |  |  |  |  |
+| **PointCenter** |  | ProjectivePoint | PseudoScalar | ProjectivePoint |  | ProjectivePoint | PointCenter |  |  |  |  |  |
 
 ### antiGeometric
 
 The dual of the geometric product.
 
-| antiGeometric | Multivector | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| antiGeometric | Multivector | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |
-| **Motor** |  | Multivector | Motor | Multivector | LineCentral | Multivector | Multivector | Multivector | Multivector | Rotor | Motor | LineCentral |
-| **Line** |  | Motor | Multivector | Motor | Rotor | Motor | Motor | Motor | Motor | LineCentral | Line | Double |
-| **ProjectivePoint** |  | Multivector | Motor | Multivector | LineCentral | Multivector | Multivector | Multivector | Multivector | Rotor | ProjectivePoint | LineCentral |
-| **Rotor** |  | LineCentral | Rotor | LineCentral |  | LineCentral | LineCentral | LineCentral | LineCentral |  | Rotor |  |
-| **ProjectiveTranslator** |  | Multivector | Motor | Multivector | LineCentral | Multivector | Multivector | Multivector | Multivector | Rotor | ProjectiveTranslator | LineCentral |
-| **Translator** |  | Multivector | Motor | Multivector | LineCentral | Multivector | Multivector | Multivector | Multivector | Rotor | ProjectiveTranslator | LineCentral |
-| **Vector** |  | Multivector | Motor | Multivector | LineCentral | Multivector | Multivector | Multivector | Multivector | Rotor | Vector | LineCentral |
-| **Point** |  | Multivector | Motor | Multivector | LineCentral | Multivector | Multivector | Multivector | Multivector | Rotor | ProjectivePoint | LineCentral |
-| **LineCentral** |  | Rotor | LineCentral | Rotor |  | Rotor | Rotor | Rotor | Rotor |  | LineCentral |  |
-| **PseudoScalar** |  | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | Rotor |
-| **PointCenter** |  | LineCentral | Double | LineCentral |  | LineCentral | LineCentral | LineCentral | LineCentral |  | Rotor |  |
+| **Motor** |  | Multivector | Motor | LineCentral | Multivector | Multivector | Multivector | Multivector | Multivector | Rotor | Motor | LineCentral |
+| **Line** |  | Motor | Multivector | Rotor | Motor | Motor | Motor | Motor | Motor | LineCentral | Line | Double |
+| **Rotor** |  | LineCentral | Rotor |  | LineCentral | LineCentral | LineCentral | LineCentral | LineCentral |  | Rotor |  |
+| **ProjectivePoint** |  | Multivector | Motor | LineCentral | Multivector | Multivector | Multivector | Multivector | Multivector | Rotor | ProjectivePoint | LineCentral |
+| **ProjectiveTranslator** |  | Multivector | Motor | LineCentral | Multivector | Multivector | Multivector | Multivector | Multivector | Rotor | ProjectiveTranslator | LineCentral |
+| **Translator** |  | Multivector | Motor | LineCentral | Multivector | Multivector | Multivector | Multivector | Multivector | Rotor | ProjectiveTranslator | LineCentral |
+| **Vector** |  | Multivector | Motor | LineCentral | Multivector | Multivector | Multivector | Multivector | Multivector | Rotor | Vector | LineCentral |
+| **Point** |  | Multivector | Motor | LineCentral | Multivector | Multivector | Multivector | Multivector | Multivector | Rotor | ProjectivePoint | LineCentral |
+| **LineCentral** |  | Rotor | LineCentral |  | Rotor | Rotor | Rotor | Rotor | Rotor |  | LineCentral |  |
+| **PseudoScalar** |  | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | ProjectivePoint |
+| **PointCenter** |  | LineCentral | Double |  | LineCentral | LineCentral | LineCentral | LineCentral | LineCentral |  | ProjectivePoint |  |
 
 ### antiDot
 
 The dual of the dot product.
 
-| antiDot | Multivector | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| antiDot | Multivector | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |
-| **Motor** |  | Multivector | ProjectivePoint | Multivector | LineCentral | Multivector | Multivector | Multivector | Multivector | Rotor | Motor |  |
-| **Line** |  | ProjectivePoint | PseudoScalar | ProjectivePoint | Rotor | ProjectivePoint | ProjectivePoint | ProjectivePoint | ProjectivePoint |  | Line |  |
-| **ProjectivePoint** |  | Multivector | ProjectivePoint | PseudoScalar | LineCentral | Multivector | Multivector | PseudoScalar | PseudoScalar | Rotor | ProjectivePoint |  |
-| **Rotor** |  | LineCentral | Rotor | LineCentral |  | LineCentral | LineCentral | LineCentral | LineCentral |  | Rotor |  |
-| **ProjectiveTranslator** |  | Multivector | ProjectivePoint | Multivector | LineCentral | Multivector | Multivector | Multivector | Multivector | Rotor | ProjectiveTranslator |  |
-| **Translator** |  | Multivector | ProjectivePoint | Multivector | LineCentral | Multivector | Multivector | Multivector | Multivector | Rotor | ProjectiveTranslator |  |
-| **Vector** |  | Multivector | ProjectivePoint | PseudoScalar | LineCentral | Multivector | Multivector | PseudoScalar | PseudoScalar | Rotor | Vector |  |
-| **Point** |  | Multivector | ProjectivePoint | PseudoScalar | LineCentral | Multivector | Multivector | PseudoScalar | PseudoScalar | Rotor | ProjectivePoint |  |
-| **LineCentral** |  | Rotor |  | Rotor |  | Rotor | Rotor | Rotor | Rotor |  | LineCentral |  |
-| **PseudoScalar** |  | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | Rotor |
-| **PointCenter** |  |  |  |  |  |  |  |  |  |  | Rotor |  |
+| **Motor** |  | Multivector | ProjectivePoint | LineCentral | Multivector | Multivector | Multivector | Multivector | Multivector | ProjectivePoint | Motor |  |
+| **Line** |  | ProjectivePoint | PseudoScalar | ProjectivePoint | ProjectivePoint | ProjectivePoint | ProjectivePoint | ProjectivePoint | ProjectivePoint |  | Line |  |
+| **Rotor** |  | LineCentral | ProjectivePoint |  | LineCentral | LineCentral | LineCentral | LineCentral | LineCentral |  | Rotor |  |
+| **ProjectivePoint** |  | Multivector | ProjectivePoint | LineCentral | PseudoScalar | Multivector | Multivector | PseudoScalar | PseudoScalar | ProjectivePoint | ProjectivePoint |  |
+| **ProjectiveTranslator** |  | Multivector | ProjectivePoint | LineCentral | Multivector | Multivector | Multivector | Multivector | Multivector | ProjectivePoint | ProjectiveTranslator |  |
+| **Translator** |  | Multivector | ProjectivePoint | LineCentral | Multivector | Multivector | Multivector | Multivector | Multivector | ProjectivePoint | ProjectiveTranslator |  |
+| **Vector** |  | Multivector | ProjectivePoint | LineCentral | PseudoScalar | Multivector | Multivector | PseudoScalar | PseudoScalar | ProjectivePoint | Vector |  |
+| **Point** |  | Multivector | ProjectivePoint | LineCentral | PseudoScalar | Multivector | Multivector | PseudoScalar | PseudoScalar | ProjectivePoint | ProjectivePoint |  |
+| **LineCentral** |  | ProjectivePoint |  |  | ProjectivePoint | ProjectivePoint | ProjectivePoint | ProjectivePoint | ProjectivePoint |  | LineCentral |  |
+| **PseudoScalar** |  | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | ProjectivePoint |
+| **PointCenter** |  |  |  |  |  |  |  |  |  |  | ProjectivePoint |  |
 
 ### antiDotI
 
 The pseudoscalar component of `antiDot`, returned as a `Double`.
 
-| antiDotI | Multivector | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| antiDotI | Multivector | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Line** |  |  | Double |  |  |  |  |  |  |  |  |  |
-| **ProjectivePoint** |  |  |  | Double |  |  |  | Double | Double |  |  |  |
 | **Rotor** |  |  |  |  |  |  |  |  |  |  |  |  |
+| **ProjectivePoint** |  |  |  |  | Double |  |  | Double | Double |  |  |  |
 | **ProjectiveTranslator** |  |  |  |  |  |  |  |  |  |  |  |  |
 | **Translator** |  |  |  |  |  |  |  |  |  |  |  |  |
-| **Vector** |  |  |  | Double |  |  |  | Double | Double |  |  |  |
-| **Point** |  |  |  | Double |  |  |  | Double | Double |  |  |  |
+| **Vector** |  |  |  |  | Double |  |  | Double | Double |  |  |  |
+| **Point** |  |  |  |  | Double |  |  | Double | Double |  |  |  |
 | **LineCentral** |  |  |  |  |  |  |  |  |  |  |  |  |
 | **PseudoScalar** |  |  |  |  |  |  |  |  |  |  | Double |  |
 | **PointCenter** |  |  |  |  |  |  |  |  |  |  |  |  |
@@ -137,77 +137,77 @@ Aliases: `v`, `join`.
 
 The dual of the wedge product, also known as `join`: the element spanned by the arguments (e.g. the line through two points).
 
-| antiWedge | Multivector | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| antiWedge | Multivector | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |
-| **Motor** |  | Line | Double | Line | LineCentral | Line | Line | Line | Line | Double | Motor | LineCentral |
+| **Motor** |  | Line | Double | LineCentral | Line | Line | Line | Line | Line | Double | Motor | LineCentral |
 | **Line** |  | Double |  | Double | Double | Double | Double | Double | Double |  | Line | Double |
-| **ProjectivePoint** |  | Line | Double | Line | LineCentral | Line | Line | Line | Line | Double | ProjectivePoint | LineCentral |
-| **Rotor** |  | LineCentral | Double | LineCentral |  | LineCentral | LineCentral | LineCentral | LineCentral |  | Rotor |  |
-| **ProjectiveTranslator** |  | Line | Double | Line | LineCentral | Line | Line | Line | Line | Double | ProjectiveTranslator | LineCentral |
-| **Translator** |  | Line | Double | Line | LineCentral | Line | Line | Line | Line | Double | ProjectiveTranslator | LineCentral |
-| **Vector** |  | Line | Double | Line | LineCentral | Line | Line | Line | Line | Double | Vector | LineCentral |
-| **Point** |  | Line | Double | Line | LineCentral | Line | Line | Line | Line | Double | ProjectivePoint | LineCentral |
-| **LineCentral** |  | Double |  | Double |  | Double | Double | Double | Double |  | LineCentral |  |
-| **PseudoScalar** |  | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | Rotor |
-| **PointCenter** |  | LineCentral | Double | LineCentral |  | LineCentral | LineCentral | LineCentral | LineCentral |  | Rotor |  |
+| **Rotor** |  | LineCentral | Double |  | LineCentral | LineCentral | LineCentral | LineCentral | LineCentral |  | Rotor |  |
+| **ProjectivePoint** |  | Line | Double | LineCentral | Line | Line | Line | Line | Line | Double | ProjectivePoint | LineCentral |
+| **ProjectiveTranslator** |  | Line | Double | LineCentral | Line | Line | Line | Line | Line | Double | ProjectiveTranslator | LineCentral |
+| **Translator** |  | Line | Double | LineCentral | Line | Line | Line | Line | Line | Double | ProjectiveTranslator | LineCentral |
+| **Vector** |  | Line | Double | LineCentral | Line | Line | Line | Line | Line | Double | Vector | LineCentral |
+| **Point** |  | Line | Double | LineCentral | Line | Line | Line | Line | Line | Double | ProjectivePoint | LineCentral |
+| **LineCentral** |  | Double |  |  | Double | Double | Double | Double | Double |  | LineCentral |  |
+| **PseudoScalar** |  | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | ProjectivePoint |
+| **PointCenter** |  | LineCentral | Double |  | LineCentral | LineCentral | LineCentral | LineCentral | LineCentral |  | ProjectivePoint |  |
 
 ### sandwich
 
 `a.sandwich(b)` transforms `b` by `a`: rotation for a rotor, translation for a translator, rigid motion for a motor, reflection for a line.
 
-| sandwich | Multivector | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| sandwich | Multivector | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |
-| **Motor** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
-| **Line** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
-| **ProjectivePoint** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
-| **Rotor** |  | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | Rotor |
-| **ProjectiveTranslator** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
-| **Translator** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Line | PseudoScalar | Point |
+| **Motor** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
+| **Line** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
+| **Rotor** |  | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | ProjectivePoint |
+| **ProjectivePoint** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
+| **ProjectiveTranslator** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
+| **Translator** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | Line | PseudoScalar | Point |
 | **Vector** |  |  |  |  |  |  |  |  |  |  |  |  |
-| **Point** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Line | PseudoScalar | Point |
-| **LineCentral** |  | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | Rotor |
+| **Point** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | Line | PseudoScalar | Point |
+| **LineCentral** |  | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | ProjectivePoint |
 | **PseudoScalar** |  |  |  |  |  |  |  |  |  |  |  |  |
-| **PointCenter** |  | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| **PointCenter** |  | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 
 ### reverseSandwich
 
 `a.reverseSandwich(b)` equals `a.reverse.sandwich(b)`: the inverse transformation of `sandwich`.
 
-| reverseSandwich | Multivector | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| reverseSandwich | Multivector | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |
-| **Motor** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
-| **Line** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
-| **ProjectivePoint** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
-| **Rotor** |  | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | Rotor |
-| **ProjectiveTranslator** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
-| **Translator** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Line | PseudoScalar | Point |
+| **Motor** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
+| **Line** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
+| **Rotor** |  | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | ProjectivePoint |
+| **ProjectivePoint** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
+| **ProjectiveTranslator** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | Line | PseudoScalar | ProjectivePoint |
+| **Translator** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | Line | PseudoScalar | Point |
 | **Vector** |  |  |  |  |  |  |  |  |  |  |  |  |
-| **Point** |  | Motor | Line | ProjectivePoint | Motor | ProjectiveTranslator | Translator | Vector | Point | Line | PseudoScalar | Point |
-| **LineCentral** |  | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | Rotor |
+| **Point** |  | Motor | Line | Motor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | Line | PseudoScalar | Point |
+| **LineCentral** |  | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | ProjectiveTranslator | Vector | ProjectivePoint | LineCentral | PseudoScalar | ProjectivePoint |
 | **PseudoScalar** |  |  |  |  |  |  |  |  |  |  |  |  |
-| **PointCenter** |  | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| **PointCenter** |  | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 
 ### cross
 
 The commutator product `(a * b - b * a) / 2`.
 
-| cross | Multivector | Motor | Line | ProjectivePoint | Rotor | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
+| cross | Multivector | Motor | Line | Rotor | ProjectivePoint | ProjectiveTranslator | Translator | Vector | Point | LineCentral | PseudoScalar | PointCenter |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **Multivector** | Multivector |  |  |  |  |  |  |  |  |  |  |  |
 | **Motor** |  | Vector | Line | Vector | Vector | Vector | Vector | Vector | Vector | Line |  | Vector |
-| **Line** |  | Line | ProjectivePoint | Line | LineCentral | Line | Line | Line | Line | ProjectivePoint |  | LineCentral |
+| **Line** |  | Line | ProjectivePoint | LineCentral | Line | Line | Line | Line | Line | ProjectivePoint |  | LineCentral |
+| **Rotor** |  | Vector | LineCentral |  | Vector | Vector | Vector | Vector | Vector | LineCentral |  |  |
 | **ProjectivePoint** |  | Vector | Line | Vector | Vector | Vector | Vector | Vector | Vector | Line |  | Vector |
-| **Rotor** |  | Vector | LineCentral | Vector |  | Vector | Vector | Vector | Vector | LineCentral |  |  |
 | **ProjectiveTranslator** |  | Vector | Line | Vector | Vector |  |  |  | Vector | Line |  | Vector |
 | **Translator** |  | Vector | Line | Vector | Vector |  |  |  | Vector | Line |  | Vector |
 | **Vector** |  | Vector | Line | Vector | Vector |  |  |  | Vector | Line |  | Vector |
 | **Point** |  | Vector | Line | Vector | Vector | Vector | Vector | Vector | Vector | Line |  | Vector |
-| **LineCentral** |  | Line | ProjectivePoint | Line | LineCentral | Line | Line | Line | Line | Rotor |  | LineCentral |
+| **LineCentral** |  | Line | ProjectivePoint | LineCentral | Line | Line | Line | Line | Line | ProjectivePoint |  | LineCentral |
 | **PseudoScalar** |  |  |  |  |  |  |  |  |  |  |  |  |
-| **PointCenter** |  | Vector | LineCentral | Vector |  | Vector | Vector | Vector | Vector | LineCentral |  |  |
+| **PointCenter** |  | Vector | LineCentral |  | Vector | Vector | Vector | Vector | Vector | LineCentral |  |  |
 
 ## Per-class methods
 
@@ -241,8 +241,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `reciprocal: Pga2dMultivector`
 - `toMotorUnsafe: Pga2dMotor`
 - `toLineUnsafe: Pga2dLine`
-- `toProjectivePointUnsafe: Pga2dProjectivePoint`
 - `toRotorUnsafe: Pga2dRotor`
+- `toProjectivePointUnsafe: Pga2dProjectivePoint`
 - `toProjectiveTranslatorUnsafe: Pga2dProjectiveTranslator`
 - `toTranslatorUnsafe: Pga2dTranslator`
 - `toVectorUnsafe: Pga2dVector`
@@ -279,8 +279,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `slerp(b: Pga2dMotor, t: Double): Pga2dMotor`
 - `nlerp(b: Pga2dMotor, t: Double): Pga2dMotor`
 - `toMultivector: Pga2dMultivector`
-- `toProjectivePointUnsafe: Pga2dProjectivePoint`
 - `toRotorUnsafe: Pga2dRotor`
+- `toProjectivePointUnsafe: Pga2dProjectivePoint`
 - `toProjectiveTranslatorUnsafe: Pga2dProjectiveTranslator`
 - `toTranslatorUnsafe: Pga2dTranslator`
 - `toVectorUnsafe: Pga2dVector`
@@ -315,51 +315,6 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `toMultivector: Pga2dMultivector`
 - `toLineCentralUnsafe: Pga2dLineCentral`
 
-### Pga2dProjectivePoint
-
-- `dual: Pga2dLine`
-- `weight: Pga2dVector`
-- `bulk: Pga2dRotor`
-- `unary_- : Pga2dProjectivePoint`
-- `reverse: Pga2dProjectivePoint`
-- `antiReverse: Pga2dProjectivePoint`
-- `bulkNormSquare: Double`
-- `bulkNorm: Double`
-- `normalizedByBulk`
-- `weightNormSquare: Double`
-- `weightNorm: Double`
-- `normalizedByWeight`
-- `normSquare: Double`
-- `norm: Double`
-- `normalizedByNorm`
-- `*(r: Double): Pga2dProjectivePoint`
-- `/(r: Double): Pga2dProjectivePoint`
-- `+(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `-(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `madd(r: Pga2dProjectivePoint, mult: Double): Pga2dProjectivePoint`
-- `+(r: Pga2dPoint): Pga2dProjectivePoint`
-- `-(r: Pga2dPoint): Pga2dProjectivePoint`
-- `madd(r: Pga2dPoint, mult: Double): Pga2dProjectivePoint`
-- `+(r: Pga2dVector): Pga2dProjectivePoint`
-- `-(r: Pga2dVector): Pga2dProjectivePoint`
-- `madd(r: Pga2dVector, mult: Double): Pga2dProjectivePoint`
-- `scale(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `reciprocal: Pga2dProjectivePoint`
-- `exp: Pga2dMotor`
-- `exp(t: Double): Pga2dMotor`
-- `dexp(b: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `dexpInv(b: Pga2dProjectivePoint): Pga2dProjectivePoint`
-- `toMultivector: Pga2dMultivector`
-- `toMotor: Pga2dMotor`
-- `toRotorUnsafe: Pga2dRotor`
-- `toProjectiveTranslatorUnsafe: Pga2dProjectiveTranslator`
-- `toTranslatorUnsafe: Pga2dTranslator`
-- `toVectorUnsafe: Pga2dVector`
-- `toPointUnsafe: Pga2dPoint`
-- `toPoint: Pga2dPoint`
-- `projectOntoLine(line: Pga2dLine): Pga2dProjectivePoint`
-- `projectOntoLine(line: Pga2dLineCentral): Pga2dProjectivePoint`
-
 ### Pga2dRotor
 
 - `dual: Pga2dMultivector`
@@ -391,6 +346,52 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `axisX: Pga2dVector`
 - `axisY: Pga2dVector`
 
+### Pga2dProjectivePoint
+
+- `dual: Pga2dLine`
+- `weight: Pga2dVector`
+- `bulk: Pga2dProjectivePoint`
+- `unary_- : Pga2dProjectivePoint`
+- `reverse: Pga2dProjectivePoint`
+- `antiReverse: Pga2dProjectivePoint`
+- `bulkNormSquare: Double`
+- `bulkNorm: Double`
+- `normalizedByBulk`
+- `weightNormSquare: Double`
+- `weightNorm: Double`
+- `normalizedByWeight`
+- `normSquare: Double`
+- `norm: Double`
+- `normalizedByNorm`
+- `*(r: Double): Pga2dProjectivePoint`
+- `/(r: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `-(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `madd(r: Pga2dProjectivePoint, mult: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dPoint): Pga2dProjectivePoint`
+- `-(r: Pga2dPoint): Pga2dProjectivePoint`
+- `madd(r: Pga2dPoint, mult: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dVector): Pga2dProjectivePoint`
+- `-(r: Pga2dVector): Pga2dProjectivePoint`
+- `madd(r: Pga2dVector, mult: Double): Pga2dProjectivePoint`
+- `scale(r: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `reciprocal: Pga2dProjectivePoint`
+- `exp: Pga2dMotor`
+- `exp(t: Double): Pga2dMotor`
+- `split: (Pga2dProjectivePoint, Pga2dVector)`
+- `dexp(b: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `dexpInv(b: Pga2dProjectivePoint): Pga2dProjectivePoint`
+- `toMultivector: Pga2dMultivector`
+- `toMotor: Pga2dMotor`
+- `toRotorUnsafe: Pga2dRotor`
+- `toProjectiveTranslatorUnsafe: Pga2dProjectiveTranslator`
+- `toTranslatorUnsafe: Pga2dTranslator`
+- `toVectorUnsafe: Pga2dVector`
+- `toPointUnsafe: Pga2dPoint`
+- `toPoint: Pga2dPoint`
+- `projectOntoLine(line: Pga2dLine): Pga2dProjectivePoint`
+- `projectOntoLine(line: Pga2dLineCentral): Pga2dProjectivePoint`
+
 ### Pga2dProjectiveTranslator
 
 - `dual: Pga2dMultivector`
@@ -417,8 +418,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `reciprocal: Pga2dProjectiveTranslator`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
-- `toProjectivePointUnsafe: Pga2dProjectivePoint`
 - `toRotorUnsafe: Pga2dRotor`
+- `toProjectivePointUnsafe: Pga2dProjectivePoint`
 - `toTranslatorUnsafe: Pga2dTranslator`
 - `toVectorUnsafe: Pga2dVector`
 - `toPointUnsafe: Pga2dPoint`
@@ -449,8 +450,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `pow(t: Double): Pga2dTranslator`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
-- `toProjectivePointUnsafe: Pga2dProjectivePoint`
 - `toRotorUnsafe: Pga2dRotor`
+- `toProjectivePointUnsafe: Pga2dProjectivePoint`
 - `toProjectiveTranslator: Pga2dProjectiveTranslator`
 - `toVectorUnsafe: Pga2dVector`
 - `toPointUnsafe: Pga2dPoint`
@@ -522,8 +523,8 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 - `reciprocal: Pga2dPoint`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
-- `toProjectivePoint: Pga2dProjectivePoint`
 - `toRotorUnsafe: Pga2dRotor`
+- `toProjectivePoint: Pga2dProjectivePoint`
 - `toProjectiveTranslatorUnsafe: Pga2dProjectiveTranslator`
 - `toTranslatorUnsafe: Pga2dTranslator`
 - `toVectorUnsafe: Pga2dVector`
@@ -579,20 +580,20 @@ by a `Double`. Companion-object helpers (e.g. `Pga2dRotor.rotation`) are not lis
 
 - `dual: Pga2dLine`
 - `bulk: Pga2dPointCenter.type`
-- `unary_- : Pga2dRotor`
-- `reverse: Pga2dRotor`
+- `unary_- : Pga2dProjectivePoint`
+- `reverse: Pga2dProjectivePoint`
 - `antiReverse: Pga2dPointCenter.type`
-- `*(r: Double): Pga2dRotor`
-- `/(r: Double): Pga2dRotor`
-- `+(r: Pga2dPointCenter.type): Pga2dRotor`
-- `madd(r: Pga2dPointCenter.type, mult: Double): Pga2dRotor`
+- `*(r: Double): Pga2dProjectivePoint`
+- `/(r: Double): Pga2dProjectivePoint`
+- `+(r: Pga2dPointCenter.type): Pga2dProjectivePoint`
+- `madd(r: Pga2dPointCenter.type, mult: Double): Pga2dProjectivePoint`
 - `toMultivector: Pga2dMultivector`
 - `toMotor: Pga2dMotor`
-- `toProjectivePoint: Pga2dProjectivePoint`
 - `toRotor: Pga2dRotor`
+- `toProjectivePoint: Pga2dProjectivePoint`
 - `toProjectiveTranslatorUnsafe: Pga2dProjectiveTranslator`
 - `toTranslatorUnsafe: Pga2dTranslator`
 - `toVectorUnsafe: Pga2dVector`
 - `toPoint: Pga2dPoint`
 - `projectOntoLine(line: Pga2dLine): Pga2dProjectivePoint`
-- `projectOntoLine(line: Pga2dLineCentral): Pga2dRotor`
+- `projectOntoLine(line: Pga2dLineCentral): Pga2dProjectivePoint`

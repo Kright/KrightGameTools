@@ -14,9 +14,13 @@ jobs:
           distribution: 'temurin'
           cache: 'sbt'
       - uses: sbt/setup-sbt@v1
-      - name: Run JVM tests
+      # the root aggregate includes every JS module: their test code is compiled, but only the
+      # JVM halves execute tests (see jsTestsCompileNotRun in build.sbt), so no Node is needed
+      - name: Run tests
         run: sbt test
+      # linking needs no JS runtime and catches references to methods missing from the
+      # Scala.js javalib (e.g. java.lang.Math.fma) in all code reachable from the test suites
+      - name: Link JS test code
+        run: sbt matrixJS/Test/fastLinkJS
       - name: Check generated code is in sync with pgaNdCodeGen
         run: sbt "pgaNdCodeGen/runMain me.kright.gametools.pga.codegen.runCodeGenCheck"
-      - name: Compile JS tests
-        run: sbt "mathutilJS/Test/compile; vectorJS/Test/compile; matrixJS/Test/compile; pga3dJS/Test/compile; pga2dJS/Test/compile; pga3dgeomJS/Test/compile; pga3dphysicsJS/Test/compile"

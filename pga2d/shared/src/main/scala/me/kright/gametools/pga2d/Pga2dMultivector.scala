@@ -222,17 +222,17 @@ final case class Pga2dMultivector(s: Double = 0.0,
       w = w,
     )
 
+  def toRotorUnsafe: Pga2dRotor =
+    Pga2dRotor(
+      s = s,
+      xy = xy,
+    )
+
   def toProjectivePointUnsafe: Pga2dProjectivePoint =
     Pga2dProjectivePoint(
       x = -wy,
       y = wx,
       w = xy,
-    )
-
-  def toRotorUnsafe: Pga2dRotor =
-    Pga2dRotor(
-      s = s,
-      xy = xy,
     )
 
   def toProjectiveTranslatorUnsafe: Pga2dProjectiveTranslator =

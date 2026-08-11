@@ -10,7 +10,8 @@ import scala.util.chaining.scalaUtilChainingOps
  *
  * The pose is stored as a [[Pga3dTransform]], so applying it to points, vectors and bivectors many
  * times per step is a plain matrix multiplication. The motor accessors are derived from it: reading
- * `motor` is free, assigning `motor = m` rebuilds the transform (about the cost of one sandwich).
+ * `motor` is free, assigning `motor = m` renormalizes m and rebuilds the transform (about the cost
+ * of one sandwich).
  */
 class Pga3dPhysicsBody(var inertia: Pga3dInertia,
                        var transform: Pga3dTransform,
@@ -27,13 +28,13 @@ class Pga3dPhysicsBody(var inertia: Pga3dInertia,
     transform = Pga3dTransform(m)
 
   def motorSandwich(point: Pga3dPoint): Pga3dPoint =
-    transform.sandwich(point).toPointUnsafe
+    transform.sandwich(point)
 
   def motorSandwich(vector: Pga3dVector): Pga3dVector =
     transform.sandwich(vector)
 
   def globalCenter: Pga3dPoint =
-    transform.sandwich(Pga3dPointCenter).toPointUnsafe
+    transform.sandwich(Pga3dPointCenter)
 
   def deepCopy: Pga3dPhysicsBody =
     Pga3dPhysicsBody(inertia, transform, localB).tap { b =>

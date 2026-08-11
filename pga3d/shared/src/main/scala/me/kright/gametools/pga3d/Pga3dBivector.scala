@@ -464,6 +464,12 @@ final case class Pga3dBivector(wx: Double = 0.0,
       yz = (b.yz - ub.yz + k3 * uub.yz),
     )
 
+  /** the commuting (line, shiftAlongLine) decomposition of a motor generator - the screw
+   * decomposition: this == line + shiftAlongLine, exp == line.exp.geometric(shift.exp),
+   * where the line part exponentiates to a rotation around its axis and the weight part
+   * to the translation along that axis. A pure-weight generator (bulk below 1e-50 in norm)
+   * is returned as (bulk-only line, the whole weight). The 2d sibling is
+   * Pga2dProjectivePoint.split. */
   def split: (Pga3dBivector, Pga3dBivectorWeight) =
     val div = bulkNormSquare
     if (div < 1e-100) {

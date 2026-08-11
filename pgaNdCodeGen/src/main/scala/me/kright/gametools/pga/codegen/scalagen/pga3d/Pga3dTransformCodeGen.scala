@@ -3,11 +3,12 @@ package me.kright.gametools.pga.codegen.scalagen.pga3d
 import me.kright.gametools.pga.codegen.scalagen.common.ScalaTransformCodeGen
 
 /**
- * The 3d Pga3dTransform generator: the generic [[ScalaTransformCodeGen]] machinery plus the moment
- * (dual) 3x3 block of the bivector sandwich, which does not exist in 2d (there the grade-2 elements
- * are the point family and their translation column is already cached as t).
+ * The 3d transform generator (Pga3dProjectiveTransform for normalized = false, Pga3dTransform for
+ * normalized = true): the generic [[ScalaTransformCodeGen]] machinery plus the moment (dual) 3x3 block
+ * of the bivector sandwich, which does not exist in 2d (there the grade-2 elements are the point family
+ * and their translation column is already cached as t).
  */
-class Pga3dTransformCodeGen extends ScalaTransformCodeGen(using Pga3dScalaAlgebra):
+class Pga3dTransformCodeGen(normalized: Boolean) extends ScalaTransformCodeGen(normalized)(using Pga3dScalaAlgebra):
 
   override protected def registerMomentBlock(): Unit =
     import Pga3dScalaAlgebra.{bivectorBulk, bivectorWeight}

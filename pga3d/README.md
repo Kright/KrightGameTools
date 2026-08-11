@@ -88,9 +88,14 @@ val (line, shift) = bivector.split
 * [**Pga3dTranslator**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dTranslator.scala): represents linear movement, 3 fields (wx, wy, wz). It is the exponent of Pga3dBivectorWeight
 * [**Pga3dMotor**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dMotor.scala): combination of rotation and linear movement. Has 8 fields (scalar, all bivector fields and pseudoscalar),
   exponent of Pga3dBivector
-* [**Pga3dTransform**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dTransform.scala): a cached form of a motor with the sandwich products precomputed as flat matrix
-  coefficients. Prefer it over `motor.sandwich` when the same motor is applied to many objects: building it costs
-  about one sandwich, and every application after that is several times cheaper.
+* [**Pga3dTransform**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dTransform.scala): a cached form of a normalized motor with the sandwich products precomputed as flat
+  matrix coefficients. Prefer it over `motor.sandwich` when the same motor is applied to many objects: building it
+  costs about one sandwich, and every application after that is several times cheaper. `Pga3dTransform(motor)`
+  renormalizes its argument, `Pga3dTransform.fromNormalized(motor)` trusts the caller; the normalization narrows
+  the result types - `transform.sandwich(point)` is a `Pga3dPoint`, no `toPointUnsafe` needed.
+* [**Pga3dProjectiveTransform**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dProjectiveTransform.scala): the same cache for an arbitrary (not necessarily normalized)
+  motor: it additionally stores the Study number `normSquare`/`normSquareI` and returns projective results scaled
+  by `normSquare`, matching `motor.sandwich` exactly.
 
 To move everything with these classes, you need to call `motor.sandwich(obj)`
 
@@ -133,9 +138,10 @@ val motor = translator.geometric(rotor)
 val transformedPoint = motor.sandwich(point).toPointUnsafe
 
 // When the same motor is applied to many objects, cache it as a transform:
-// the sandwich products become plain matrix multiplications
+// the sandwich products become plain matrix multiplications, and for the
+// normalized transform a point maps straight to a Pga3dPoint
 val transform = Pga3dTransform(motor)
-val movedPoints = points.map(p => transform.sandwich(p).toPointUnsafe)
+val movedPoints = points.map(p => transform.sandwich(p))
 
 // Computing the logarithm of a motor 
 val bivector = motor.log

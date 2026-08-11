@@ -22,7 +22,8 @@ def runScala2dCodeGen(fs: GeneratedFileSystem): Unit = {
 
   ScalaMatrixCodeGen(Pga2dScalaAlgebra.projectivePoint)(using Pga2dScalaAlgebra).writeToFile(packageDir, fs)
 
-  Pga2dTransformCodeGen().writeToFile(packageDir, fs)
+  Pga2dTransformCodeGen(normalized = false).writeToFile(packageDir, fs)
+  Pga2dTransformCodeGen(normalized = true).writeToFile(packageDir, fs)
 
   OperationsReference.writeToFile(Path.of("pga2d/operations.md"), fs)(using Pga2dScalaAlgebra)
 }

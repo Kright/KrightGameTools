@@ -7,18 +7,27 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed (breaking)
 
-- `Pga3dInertiaMovedLocal.localToGlobal` is a `Pga3dTransform` (was a `Pga3dMotor`): every
-  operation converts the argument to the local frame and back, and with the transform those
-  conversions are plain matrix multiplications. A companion `apply(motor, localInertia)` overload
-  keeps motor-based construction working (`Pga3dInertia.moved`, `movedBy` are unchanged). The pure
-  solver overhead of every integrator dropped 1.2-1.3x (see `PhysicsSolverBenchmark` and the
-  updated table in Solvers.md); the serialized layout grew to the transform's 34 doubles plus the
-  local inertia.
+- `Pga3dInertiaMovedLocal` caches its pose as a `Pga3dTransform` (the `transform` val, rebuilt
+  on construction including deserialization): every operation converts the argument to the local
+  frame and back, and with the transform those conversions are plain matrix multiplications. The
+  case fields stay `(localToGlobal: Pga3dMotor, localInertia)`, so the serialized layout is still
+  the 12 doubles of motor + inertia, and `copy`/equality work on the motor. The pure solver
+  overhead of every integrator dropped 1.2-1.3x (see `PhysicsSolverBenchmark` and the updated
+  table in Solvers.md).
 - `Pga3dPhysicsBody` stores its pose as a `Pga3dTransform` (`var transform`), and the primary
   constructor takes the transform; an auxiliary constructor from a `Pga3dMotor` is kept, and the
-  `body.motor` accessors are derived from the transform (assigning a motor rebuilds it). The internal
+  `body.motor` accessors are derived from the transform (assigning a motor renormalizes it and
+  rebuilds the transform). The internal
   matrix cache classes `Pga3dMotorWithMatrix` and `Pga3dMatrixForPoints` are removed - the transform
   replaces them; `motorSandwich` and `globalCenter` on the body keep working on top of it.
+- pga2d point-valued results are typed as points, not rotors: the `xy` blade of 2d PGA lives in
+  both `Pga2dRotor` and the point family, and the class-selection tie-break used to hand a value
+  with a structurally zero scalar part to the rotor. 39 generated methods change their result
+  type from `Pga2dRotor` to `Pga2dProjectivePoint`: rotor sandwiches of the point family
+  (`rotor.sandwich(point)` now agrees with `motor.sandwich(point)`), `Pga2dPointCenter * scalar`
+  / `+` / `madd`, point projections onto central lines, the `bulk` of the point family. A genuine
+  rotor always carries its scalar part, which a point cannot hold, so rotor-valued results keep
+  resolving to `Pga2dRotor`.
 - `Pga3dQuaternion` alias is removed: the class is `Pga3dRotor`. The C++ `Quaternion` is renamed
   to `Rotor` as well (`TranslatorWithRotor` / `RotorWithTranslator`, `toRotorUnsafe`).
 - `Pga3dPlaneIdeal` / `Pga2dLineIdeal` are renamed to `Pga3dPlaneCentral` / `Pga2dLineCentral`
@@ -78,6 +87,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `Pga3dPhysicsSolverVerletConstrained` caches the consumed poses as `Pga3dTransform`s for the
+  whole step (they are fixed until the new poses are accepted): the momenta reconstruction, the
+  first half kick, the constraint gradients and every velocity-projection sweep now apply
+  precomputed matrices instead of re-expanding `motor.sandwich`/`reverseSandwich` per call
+  (up to `projectionIterations` sweeps over all constraints). The SHAKE stage keeps plain motors
+  for `nextMotors` - those mutate after every accepted impulse, a cache would never amortize.
+  Results are unchanged up to floating-point rounding.
+- `motor.sandwich(summable: Pga3dInertiaSummable)` builds one `Pga3dProjectiveTransform` and
+  applies it to the 8 projective points of the two-sided conjugation instead of 8 full motor
+  sandwiches (the projective transform matches `motor.sandwich` for any motor, normalized or not).
 - The generated code emits sums of 4 or more terms with the summands grouped in parenthesized
   pairs, recursively: `a + b - c + d + e + f` becomes `(a + b) - (c - d) + (e + f)` (a pair
   starting with a negative term is subtracted as a whole, so no group opens with a minus).
@@ -146,23 +165,42 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- `Pga3dTransform`: a cached, immutable form of a motor for repeated applications. Built once with
-  `Pga3dTransform(motor)`, it stores the sandwich operator as flat public matrix coefficients
-  (rotation 3x3, the moment block for bivectors, the two translations, and the Study number
-  `normSquare` / `normSquareI`) - a case class deriving `CanEqual`, `CanEqualWithEps` and
-  `FlatDoubleSerializer` (34 doubles: the motor plus 26 coefficients), like the other pga3d
-  classes - so `sandwich` / `reverseSandwich` become plain matrix
-  multiplications (a bivector costs 36 multiplications instead of ~63, a point costs 9) with results
-  matching the motor up to rounding for any motor, normalized or not. Supports every argument class
-  the motor sandwich supports, including motor-like arguments (`Motor`, `Rotor`, the translators) -
-  for those the sandwich is not a composition but the change of coordinates of the transformation
-  itself. Generated symbolically by `Pga3dTransformCodeGen`: each coefficient is derived as a column
-  of the linear sandwich operator and registered once (26 cached fields), then the cached names are
-  substituted back into the full symbolic sandwich expression of every method, so the emitted code is
-  provably that expression with the coefficient groups named; a leftover motor field fails generation.
-  The 2d twin `Pga2dTransform` is generated by the same (shared) generator: 7 cached values - `cos`
-  and `sin` of the rotation angle (the only two independent entries of a 2d rotation matrix),
-  `normSquare` and the two translations; there is no moment block and no `normSquareI` in 2d.
+- `Pga3dTransform` / `Pga3dProjectiveTransform`: cached, immutable forms of a motor for repeated
+  applications - the sandwich operator stored as flat public matrix coefficients (rotation 3x3, the
+  moment block for bivectors, the two translations), case classes deriving `CanEqual`,
+  `CanEqualWithEps` and `FlatDoubleSerializer` like the other pga3d classes - so `sandwich` /
+  `reverseSandwich` become plain matrix multiplications (a bivector costs 36 multiplications instead
+  of ~63, a point costs 9). Both support every argument class the motor sandwich supports, including
+  motor-like arguments (`Motor`, `Rotor`, the translators) - for those the sandwich is not a
+  composition but the change of coordinates of the transformation itself.
+  - `Pga3dTransform` requires a normalized motor - built with `Pga3dTransform(motor)`, which
+    renormalizes its argument, or `Pga3dTransform.fromNormalized(motor)`, which trusts the caller
+    and skips the `sqrt`. The assumption drops the Study-number corrections from the formulas
+    (32 doubles: the motor plus 24 coefficients) and narrows the result types: `sandwich(point)`
+    is a `Pga3dPoint` (not a projective point, no `toPointUnsafe` at the call sites),
+    `sandwich(translator)` is a `Pga3dTranslator`, `Pga3dPointCenter` maps to a `Pga3dPoint`.
+  - `Pga3dProjectiveTransform` works for any motor, normalized or not: it additionally caches the
+    Study number `normSquare` / `normSquareI` (34 doubles) and returns projective results scaled
+    by `normSquare` (a point maps to `Pga3dProjectivePoint` with `w = normSquare`), matching
+    `motor.sandwich` up to rounding.
+  Generated symbolically by `Pga3dTransformCodeGen` (one generator, a `normalized` flag): each
+  coefficient is derived as a column of the linear sandwich operator and registered once, then the
+  cached names are substituted back into the full symbolic sandwich expression of every method, so
+  the emitted code is provably that expression with the coefficient groups named; a leftover motor
+  field fails generation. In the normalized variant `normSquare` / `normSquareI` are then replaced
+  by 1 and 0 and the result class is looked up on the simplified expression - that is where the
+  narrower result types come from.
+  The 2d twins come from the same shared generator; there is no moment block and no `normSquareI`
+  in 2d, and a 2d rotation matrix has only two independent entries. In `Pga2dTransform`
+  (6 cached values) they are the honest `cos` and `sin` of the rotation angle and are named so;
+  in `Pga2dProjectiveTransform` (7 values, with `normSquare`) they are scaled by `normSquare`,
+  so they keep the matrix-entry names `r00` and `r01`.
+- `Pga2dProjectivePoint.split`: the 2d sibling of `Pga3dBivector.split`, the commuting
+  (rotation, translation) decomposition of a motor generator with `this == first + second` and
+  `exp == first.exp.geometric(second.exp)`. There are no screw motions in 2d, so the split is
+  all-or-nothing: a generator with `w != 0` is entirely a rotation around the point `(x/w, y/w)`
+  with a zero shift, an ideal generator (`w == 0`) is entirely a translation. The 3d `split`
+  gained the scaladoc it was missing.
 - `dexp` / `dexpInv` on the generator (grade-2) classes: `Pga3dBivector`, `Pga3dBivectorBulk`,
   `Pga3dBivectorWeight`, `Pga2dProjectivePoint`, `Pga2dVector` - the differential of `exp`
   and its inverse in closed form (the left Jacobian of SE(3)/SE(2) and its inverse; the right
@@ -339,6 +377,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- The published Scala.js `gametools-matrix` could not link: `Matrix.*` and `frobeniusNormSquare`
+  called `Math.fma`, which does not exist in the Scala.js javalib. The Scala.js compiler checks
+  calls against the JDK signatures and only the linker reports missing methods for reached code,
+  so this surfaced only in a downstream app's link step. Both call sites now use
+  `ExactArith.fma` (the same `Math.fma` intrinsic on the JVM, the portable emulation on JS) -
+  JS results change accordingly.
+- scalatest is wired with `%%%` instead of `%%`, so the JS halves of the cross projects get the
+  sjs test artifacts (with the JVM ones the JS test code compiled against TASTy but could never
+  be linked or executed). The JVM stays the primary platform: `sbt test` compiles the JS test
+  code but does not execute it (`jsTestsCompileNotRun`), so the tests run without Node
+  installed; a JS suite can be run explicitly with `<module>JS/testOnly *SuiteName`. CI gained a
+  `matrixJS/Test/fastLinkJS` step: the linker needs no JS runtime and catches references to
+  methods missing from the Scala.js javalib - exactly the `Math.fma` failure mode - in all code
+  reachable from the test suites.
 - Zero-length (degenerate) edges no longer produce NaN: `Pga3dEdge.getNearestPoint` /
   `Pga2dEdge.getNearestPoint` had 0/0 in the interpolation factor, `getNearestPoints` divided
   0/0 for a pair of zero-length edges. A degenerate edge now behaves as a single point in all
@@ -361,6 +413,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Internal
 
+- `Pga3dInertiaPrecisionTest` measures the accuracy of `Pga3dInertiaMovedLocal` and
+  `Pga3dInertiaPrecomputed` against a BigDecimal reference as a function of the center of mass
+  offset R, on physically bounded local twists. The moved form loses relative precision as
+  ~1e-16 * R on every operation, and so do apply/invert of the precomputed form; the kinetic
+  energy and the acceleration of the precomputed form go through the near-cancellation of the
+  parallel-axis terms baked into its 6x6 matrices and lose ~1e-16 * R^2 (2.2e-6 at R = 1e5 vs
+  9.8e-12 for the moved form) - the documented price of the fast matrix path (see the README).
+  The test pins both bounds.
 - Scala is updated to 3.8.4.
 - `pgaNdCodeGen` joined the root aggregate, so `sbt test` covers its tests too. It stays
   unpublished and depends only on `ga`/`symbolic` - broken generated code cannot break the

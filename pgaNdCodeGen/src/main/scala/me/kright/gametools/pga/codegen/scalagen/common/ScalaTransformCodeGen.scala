@@ -10,8 +10,9 @@ import scala.collection.mutable
 import scala.math.Numeric.Implicits.infixNumericOps
 
 /**
- * Generates the ${prefix}Transform class: a cached form of a motor where the sandwich and reverseSandwich
- * products are precomputed into flat matrix coefficients, so each application is a plain matrix multiplication.
+ * Generates the ${prefix}ProjectiveTransform class (normalized = false) or the ${prefix}Transform
+ * class (normalized = true): a cached form of a motor where the sandwich and reverseSandwich products
+ * are precomputed into flat matrix coefficients, so each application is a plain matrix multiplication.
  *
  * The coefficients are derived symbolically: sandwich is linear in its argument, so applying the symbolic
  * motor sandwich to each basis element of the argument class yields one column of the operator matrix.
@@ -24,8 +25,14 @@ import scala.math.Numeric.Implicits.infixNumericOps
  * fails to substitute - e.g. a newly added argument class needs a coefficient that is not in the registry -
  * motor fields remain in the expression and generation fails with an error instead of silently caching
  * more fields.
+ *
+ * In the normalized variant the motor is assumed to be normalized: after the coefficient substitution
+ * normSquare is replaced by 1 and normSquareI by 0, the expressions are re-simplified, and the result
+ * class is looked up on the simplified expression - so the Study-number corrections disappear from the
+ * formulas, normSquare/normSquareI are not cached at all, and the result types narrow (the sandwich of
+ * a point is a point rather than a projective point, of a translator - a translator).
  */
-class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extends ScalaCodeGenClass:
+class ScalaTransformCodeGen(protected val normalized: Boolean)(using protected val algebra: ScalaPgaAlgebra) extends ScalaCodeGenClass:
   protected val num: Numeric[Sym] = summon[Numeric[Sym]]
 
   private val motor = algebra.motor
@@ -59,6 +66,7 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
   protected def addLine(names: Seq[String]): Unit = fieldGroups.last += names
 
   private val normSquareName = "normSquare"
+  private val normSquareIName = s"${normSquareName}I"
   private var hasNormSquareI = false
   protected var rotationNames: Seq[String] = Seq.empty
   protected var rotationIsComplete = true
@@ -116,8 +124,9 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
   protected def rotationDocLines: Seq[String] =
     val n = algebra.vector.variableFields.size
     val rNamesText = if (rotationIsComplete) s"${rotationFieldName(0, 0)}..${rotationFieldName(n - 1, n - 1)}" else rotationNames.mkString(", ")
+    val scaledNote = if (normalized) "" else " (scaled by motor.normSquare for non-normalized motors)"
     Seq(
-      s" *  - $rNamesText: the ${n}x$n rotation matrix of the motor (scaled by motor.normSquare for non-normalized motors),",
+      s" *  - $rNamesText: the ${n}x$n rotation matrix of the motor$scaledNote,",
       " *    used for the euclidean part of any object; the reverse transformation uses its transpose.",
     ) ++ Option.when(!rotationIsComplete)(
       " *    The remaining entries equal the stored ones up to sign and are not cached.")
@@ -147,16 +156,18 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
     // normSquare, from the pseudoscalar sandwich, and normSquareI: the pseudoscalar part
     // of motor * motor.reverse (the dual part of the Study number, zero for normalized motors),
     // from the scalar column of the motor sandwich. 2d motors have no pseudoscalar part,
-    // so normSquareI exists only in 3d.
-    newGroup()
+    // so normSquareI exists only in 3d. In the normalized variant both are registered so the
+    // coefficient substitution can name them, but they are not cached fields - after the
+    // substitution they are replaced by the constants 1 and 0.
+    if (!normalized) newGroup()
     val psField = algebra.pseudoScalar.variableFields.head
     register(normSquareName, outputExpr(forwardOp.apply(basisInput(psField)), psField))
-    addLine(Seq(normSquareName))
+    if (!normalized) addLine(Seq(normSquareName))
     val motorScalarField = motor.variableFields.find(_.basisBlade == algebra.pga.scalarBlade).get
     val normSquareIExpr = outputExpr(forwardOp.apply(basisInput(motorScalarField)), psField)
     if (!isZero(normSquareIExpr)) {
-      register(s"${normSquareName}I", normSquareIExpr)
-      addLine(Seq(s"${normSquareName}I"))
+      register(normSquareIName, normSquareIExpr)
+      if (!normalized) addLine(Seq(normSquareIName))
       hasNormSquareI = true
     }
 
@@ -178,7 +189,9 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
 
   buildRegistry()
 
-  override def name: String = s"${algebra.typeNamePrefix}Transform"
+  override def name: String =
+    if (normalized) s"${algebra.typeNamePrefix}Transform"
+    else s"${algebra.typeNamePrefix}ProjectiveTransform"
 
   override def isObject: Boolean = false
 
@@ -196,7 +209,9 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
     val tLine = Seq(
       s" *  - ${translationLines.map(_.mkString(", ")).mkString(" and ")}: translation for points, forward and reverse.")
     val normSquareLines =
-      if (hasNormSquareI)
+      if (normalized)
+        Seq.empty
+      else if (hasNormSquareI)
         Seq(
           " *  - normSquare and normSquareI: the Study number motor * motor.reverse (normSquareI = 0",
           " *    for normalized motors).",
@@ -206,8 +221,30 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
 
     val cachedValues = (rLine ++ momentBlockDocLines ++ tLine ++ normSquareLines).mkString("\n")
 
+    val headLine =
+      if (normalized)
+        " * A cached form of a normalized motor: the sandwich and reverseSandwich products expressed as precomputed matrices."
+      else
+        " * A cached form of a motor: the sandwich and reverseSandwich products expressed as precomputed matrices."
+
+    val contractLines =
+      if (normalized)
+        s""" * The motor must be normalized (motor.normSquare == 1): build the transform with ${name}(motor),
+           | * which renormalizes its argument, or with ${name}.fromNormalized(motor), which trusts the caller
+           | * and skips the renormalization. The assumption pays off in the result types: the sandwich of a
+           | * point is a point (not a projective point), of a translator - a translator, and the Study-number
+           | * corrections disappear from the formulas. For a transform over an arbitrary motor see
+           | * [[${algebra.typeNamePrefix}ProjectiveTransform]].
+           | *
+           | * For a normalized motor the results are equivalent to motor.sandwich(r) / motor.reverseSandwich(r)
+           | * up to floating point rounding.""".stripMargin
+      else
+        s""" * The results are equivalent to motor.sandwich(r) / motor.reverseSandwich(r) up to floating point
+           | * rounding for any motor, normalized or not. See [[${algebra.typeNamePrefix}Transform]] for the
+           | * normalized-motor variant with narrower result types.""".stripMargin
+
     s"""/**
-       | * A cached form of a motor: the sandwich and reverseSandwich products expressed as precomputed matrices.
+       |$headLine
        | *
        | * Prefer this class over motor.sandwich whenever the same motor is applied to many objects -
        | * moving all the points of a body, transforming forces and velocities in a physics solver step, etc.
@@ -220,8 +257,7 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
        | * Cached values:
        |$cachedValues
        | *
-       | * The results are equivalent to motor.sandwich(r) / motor.reverseSandwich(r) up to floating point
-       | * rounding for any motor, normalized or not.
+       |$contractLines
        | *
        | * Generated by pgaNdCodeGen (${algebra.generatorMainFqcn}).
        | * Do not edit by hand: change the generator and re-run it.
@@ -232,10 +268,17 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
     case Symbolic.Symbol(_) => Set.empty
     case Symbolic.Func(_, args) => args.iterator.flatMap(collectStringSymbols).toSet
 
+  /** in the normalized variant, replaces the named normSquare/normSquareI coefficients with 1 and 0
+   * and re-simplifies; identity otherwise */
+  private def substituteUnitNorm(e: Sym): Sym =
+    Sym(e.symbol.flatMapSymbols {
+      case s: String if s == normSquareName => SymbolicStr.one
+      case s: String if s == normSquareIName => SymbolicStr.zero
+      case other => SymbolicStr(other)
+    })
+
   private def generateMethod(code: ScalaCodeBuilder, op: SandwichOp, cls: ScalaMultivectorSubClass): Unit =
     val fullResult = op.apply(cls.makeSymbolic("r"))
-    val resultCls = algebra.findMatchingClass(fullResult)
-    require(resultCls != algebra.zeroCls, s"${op.name}(${cls.name}) is zero")
 
     // every cached coefficient, standing alone (the constant fields of the argument) and multiplied
     // by each argument field, in both signs
@@ -257,10 +300,17 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
         case _ => mv
     }
 
+    // the result class is looked up after the normalization substitution: with normSquare = 1 and
+    // normSquareI = 0 constant blades become genuine constants, so e.g. a point sandwich (w = 1)
+    // matches the point class rather than the projective point
+    val result = if (normalized) substituted.mapValues(substituteUnitNorm) else substituted
+    val resultCls = algebra.findMatchingClass(result)
+    require(resultCls != algebra.zeroCls, s"${op.name}(${cls.name}) is zero")
+
     // everything must have been replaced by the cached coefficients: a remaining motor field means
     // the registry does not cover this class
     val motorFieldNames = motor.variableFields.map(_.name).toSet
-    for ((blade, e) <- substituted.values) {
+    for ((blade, e) <- result.values) {
       val leftover = collectStringSymbols(e.symbol).intersect(motorFieldNames)
       require(leftover.isEmpty,
         s"${op.name}(${cls.name}): motor fields $leftover are not covered by the cached coefficients in $e")
@@ -268,18 +318,32 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
 
     code(s"\ninfix def ${op.name}(r: ${cls.typeName}): ${resultCls.typeName} =")
     code.block {
-      code(resultCls.makeConstructor(substituted))
+      code(resultCls.makeConstructor(result))
     }
 
   private def generateApply(code: ScalaCodeBuilder): Unit =
-    code(s"\ndef apply(motor: ${motor.name}): ${name} =")
+    if (normalized) {
+      code(s"\n/** the transform of motor.renormalized - safe for any input;")
+      code(s" * see [[fromNormalized]] to skip the renormalization when the motor is known to be normalized */")
+      code(s"def apply(motor: ${motor.name}): ${name} =")
+      code.block {
+        code("fromNormalized(motor.renormalized)")
+      }
+      code(s"\n/** trusts the caller that motor.normSquare == 1 and skips the renormalization;")
+      code(s" * for a non-normalized motor the results are silently scaled - prefer [[apply]] when unsure */")
+      code(s"def fromNormalized(motor: ${motor.name}): ${name} =")
+    } else {
+      code(s"\ndef apply(motor: ${motor.name}): ${name} =")
+    }
     code.block {
       for (f <- motor.variableFields) {
         code(s"val ${f.name} = motor.${f.name}")
       }
       code("")
 
-      // the same pairwise-product extraction as in ScalaMultivectorSubClass.makeConstructorOptimized
+      // the same pairwise-product extraction as in ScalaMultivectorSubClass.makeConstructorOptimized;
+      // only the emitted fields participate - in the normalized variant the registered
+      // normSquare/normSquareI expressions are not fields and must not attract extractions
       val simplifications: Seq[(Sym, Sym)] =
         for ((fx, i) <- motor.variableFields.zipWithIndex;
              (fy, j) <- motor.variableFields.zipWithIndex if i <= j)
@@ -287,7 +351,8 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
 
       def totalSize(exprs: Seq[(String, Sym)]): Int = exprs.map((_, e) => e.size).sum
 
-      var exprs: Seq[(String, Sym)] = cachedFields.toSeq
+      val emittedFieldNames = fieldGroups.iterator.flatten.flatten.toSet
+      var exprs: Seq[(String, Sym)] = cachedFields.toSeq.filter((n, _) => emittedFieldNames(n))
       for ((simple, product) <- simplifications) {
         val replacer = ReplaceSumOrProduct(product.symbol, simple.symbol)
         val newExprs = exprs.map((n, e) => (n, e.map(replacer)))
@@ -303,7 +368,7 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
         code("motor,")
         val exprByName = exprs.toMap
         for ((group, groupIndex) <- fieldGroups.zipWithIndex) {
-          if (groupIndex > 0) code("")
+          code("")
           for (fieldName <- group.flatten) {
             code(s"$fieldName = ${exprByName(fieldName).groupMultipliers()},")
           }
@@ -318,7 +383,7 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
     code(s"final case class ${name}(motor: ${motor.name},")
     val pad = " ".repeat(s"final case class ${name}(".length)
     for ((group, groupIndex) <- fieldGroups.zipWithIndex) {
-      if (groupIndex > 0) code("")
+      code("")
       for ((line, lineIndex) <- group.zipWithIndex) {
         val isLast = groupIndex == fieldGroups.size - 1 && lineIndex == group.size - 1
         val params = line.map(n => s"$n: Double").mkString(", ")
@@ -343,7 +408,10 @@ class ScalaTransformCodeGen(using protected val algebra: ScalaPgaAlgebra) extend
             |
             |object ${name}:""".stripMargin)
     code.block {
-      code(s"val id: ${name} = ${name}(${motor.name}.id)")
+      if (normalized)
+        code(s"val id: ${name} = fromNormalized(${motor.name}.id)")
+      else
+        code(s"val id: ${name} = ${name}(${motor.name}.id)")
       generateApply(code)
     }
 

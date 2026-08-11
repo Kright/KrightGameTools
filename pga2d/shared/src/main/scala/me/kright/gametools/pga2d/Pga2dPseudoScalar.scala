@@ -124,13 +124,6 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
       y = i * r.y,
     )
 
-  infix def geometric(r: Pga2dProjectivePoint): Pga2dLine =
-    Pga2dLine(
-      x = 0.0,
-      y = 0.0,
-      w = -i * r.w,
-    )
-
   infix def geometric(r: Pga2dRotor): Pga2dMultivector =
     Pga2dMultivector(
       s = 0.0,
@@ -141,6 +134,13 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
       wy = 0.0,
       xy = 0.0,
       i = i * r.s,
+    )
+
+  infix def geometric(r: Pga2dProjectivePoint): Pga2dLine =
+    Pga2dLine(
+      x = 0.0,
+      y = 0.0,
+      w = -i * r.w,
     )
 
   infix def geometric(r: Pga2dProjectiveTranslator): Pga2dPseudoScalar =
@@ -189,13 +189,6 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
       y = i * r.y,
     )
 
-  infix def dot(r: Pga2dProjectivePoint): Pga2dLine =
-    Pga2dLine(
-      x = 0.0,
-      y = 0.0,
-      w = -i * r.w,
-    )
-
   infix def dot(r: Pga2dRotor): Pga2dMultivector =
     Pga2dMultivector(
       s = 0.0,
@@ -206,6 +199,13 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
       wy = 0.0,
       xy = 0.0,
       i = i * r.s,
+    )
+
+  infix def dot(r: Pga2dProjectivePoint): Pga2dLine =
+    Pga2dLine(
+      x = 0.0,
+      y = 0.0,
+      w = -i * r.w,
     )
 
   infix def dot(r: Pga2dProjectiveTranslator): Pga2dPseudoScalar =
@@ -285,17 +285,17 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
       w = i * r.w,
     )
 
+  infix def antiGeometric(r: Pga2dRotor): Pga2dRotor =
+    Pga2dRotor(
+      s = i * r.s,
+      xy = i * r.xy,
+    )
+
   infix def antiGeometric(r: Pga2dProjectivePoint): Pga2dProjectivePoint =
     Pga2dProjectivePoint(
       x = i * r.x,
       y = i * r.y,
       w = i * r.w,
-    )
-
-  infix def antiGeometric(r: Pga2dRotor): Pga2dRotor =
-    Pga2dRotor(
-      s = i * r.s,
-      xy = i * r.xy,
     )
 
   infix def antiGeometric(r: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator =
@@ -336,10 +336,11 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
       i = i * r.i,
     )
 
-  infix def antiGeometric(r: Pga2dPointCenter.type): Pga2dRotor =
-    Pga2dRotor(
-      s = 0.0,
-      xy = i,
+  infix def antiGeometric(r: Pga2dPointCenter.type): Pga2dProjectivePoint =
+    Pga2dProjectivePoint(
+      x = 0.0,
+      y = 0.0,
+      w = i,
     )
 
   infix def antiDot(r: Pga2dMotor): Pga2dMotor =
@@ -357,17 +358,17 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
       w = i * r.w,
     )
 
+  infix def antiDot(r: Pga2dRotor): Pga2dRotor =
+    Pga2dRotor(
+      s = i * r.s,
+      xy = i * r.xy,
+    )
+
   infix def antiDot(r: Pga2dProjectivePoint): Pga2dProjectivePoint =
     Pga2dProjectivePoint(
       x = i * r.x,
       y = i * r.y,
       w = i * r.w,
-    )
-
-  infix def antiDot(r: Pga2dRotor): Pga2dRotor =
-    Pga2dRotor(
-      s = i * r.s,
-      xy = i * r.xy,
     )
 
   infix def antiDot(r: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator =
@@ -408,10 +409,11 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
       i = i * r.i,
     )
 
-  infix def antiDot(r: Pga2dPointCenter.type): Pga2dRotor =
-    Pga2dRotor(
-      s = 0.0,
-      xy = i,
+  infix def antiDot(r: Pga2dPointCenter.type): Pga2dProjectivePoint =
+    Pga2dProjectivePoint(
+      x = 0.0,
+      y = 0.0,
+      w = i,
     )
 
   infix def antiDotI(r: Pga2dPseudoScalar): Double =
@@ -440,6 +442,16 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
 
   inline infix def join(r: Pga2dLine): Pga2dLine = antiWedge(r)
 
+  infix def antiWedge(r: Pga2dRotor): Pga2dRotor =
+    Pga2dRotor(
+      s = i * r.s,
+      xy = i * r.xy,
+    )
+
+  inline infix def v(r: Pga2dRotor): Pga2dRotor = antiWedge(r)
+
+  inline infix def join(r: Pga2dRotor): Pga2dRotor = antiWedge(r)
+
   infix def antiWedge(r: Pga2dProjectivePoint): Pga2dProjectivePoint =
     Pga2dProjectivePoint(
       x = i * r.x,
@@ -450,16 +462,6 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
   inline infix def v(r: Pga2dProjectivePoint): Pga2dProjectivePoint = antiWedge(r)
 
   inline infix def join(r: Pga2dProjectivePoint): Pga2dProjectivePoint = antiWedge(r)
-
-  infix def antiWedge(r: Pga2dRotor): Pga2dRotor =
-    Pga2dRotor(
-      s = i * r.s,
-      xy = i * r.xy,
-    )
-
-  inline infix def v(r: Pga2dRotor): Pga2dRotor = antiWedge(r)
-
-  inline infix def join(r: Pga2dRotor): Pga2dRotor = antiWedge(r)
 
   infix def antiWedge(r: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator =
     Pga2dProjectiveTranslator(
@@ -523,15 +525,16 @@ final case class Pga2dPseudoScalar(i: Double = 0.0) derives CanEqual, CanEqualWi
 
   inline infix def join(r: Pga2dPseudoScalar): Pga2dPseudoScalar = antiWedge(r)
 
-  infix def antiWedge(r: Pga2dPointCenter.type): Pga2dRotor =
-    Pga2dRotor(
-      s = 0.0,
-      xy = i,
+  infix def antiWedge(r: Pga2dPointCenter.type): Pga2dProjectivePoint =
+    Pga2dProjectivePoint(
+      x = 0.0,
+      y = 0.0,
+      w = i,
     )
 
-  inline infix def v(r: Pga2dPointCenter.type): Pga2dRotor = antiWedge(r)
+  inline infix def v(r: Pga2dPointCenter.type): Pga2dProjectivePoint = antiWedge(r)
 
-  inline infix def join(r: Pga2dPointCenter.type): Pga2dRotor = antiWedge(r)
+  inline infix def join(r: Pga2dPointCenter.type): Pga2dProjectivePoint = antiWedge(r)
 
 
 object Pga2dPseudoScalar:

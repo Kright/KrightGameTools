@@ -52,11 +52,22 @@ lazy val strictEquality =
 lazy val strictSettings = Seq(explicitNulls, wError, strictEquality)
 
 lazy val scalatestSettings = Seq(
+  // %%% (not %%) so the JS halves of the cross projects get the sjs artifacts; with the JVM
+  // artifacts the JS test code compiles anyway (against TASTy), but cannot be linked or run
   libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "3.2.19" % "test",
-    "org.scalatestplus" %% "scalacheck-1-18" % "3.2.19.0" % "test"
+    "org.scalatest" %%% "scalatest" % "3.2.19" % "test",
+    "org.scalatestplus" %%% "scalacheck-1-18" % "3.2.19.0" % "test"
   ),
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-S", "42"),
+)
+
+// the JVM is the primary platform: the JS halves compile their test code, but `sbt test` does
+// not execute it, so the tests run without Node installed (suites in shared/src/test run on the
+// JVM half). CI additionally links the JS test code (matrixJS/Test/fastLinkJS) - the linker
+// needs no JS runtime and catches references to methods missing from the Scala.js javalib,
+// like the Math.fma incident. To actually run a JS suite: `<module>JS/testOnly *SuiteName`.
+lazy val jsTestsCompileNotRun = Seq(
+  Test / test := { val _ = (Test / compile).value }
 )
 
 lazy val root = (project in file("."))
@@ -82,12 +93,14 @@ lazy val root = (project in file("."))
 lazy val mathutil = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("mathutil"))
+  .jsSettings(jsTestsCompileNotRun)
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-mathutil")
 
 lazy val flatarray = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("flatarray"))
+  .jsSettings(jsTestsCompileNotRun)
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-flatarray")
   .dependsOn(mathutil)
@@ -95,6 +108,7 @@ lazy val flatarray = crossProject(JSPlatform, JVMPlatform)
 lazy val vector = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("vector"))
+  .jsSettings(jsTestsCompileNotRun)
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-vector")
   .dependsOn(mathutil)
@@ -102,6 +116,7 @@ lazy val vector = crossProject(JSPlatform, JVMPlatform)
 lazy val matrix = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("matrix"))
+  .jsSettings(jsTestsCompileNotRun)
   .settings(strictSettings)
   .settings(
     libraryDependencies += "me.kright" %%% "arrayview" % "0.3.2",
@@ -134,6 +149,7 @@ lazy val pgaNdCodeGen = (project in file("pgaNdCodeGen"))
 lazy val pga3d = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga3d"))
+  .jsSettings(jsTestsCompileNotRun)
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-pga3d")
   .dependsOn(
@@ -147,6 +163,7 @@ lazy val pga3d = crossProject(JSPlatform, JVMPlatform)
 lazy val pga2d = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga2d"))
+  .jsSettings(jsTestsCompileNotRun)
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-pga2d")
   .dependsOn(
@@ -160,6 +177,7 @@ lazy val pga2d = crossProject(JSPlatform, JVMPlatform)
 lazy val pga3dgeom = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga3dgeom"))
+  .jsSettings(jsTestsCompileNotRun)
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-pga3dgeom")
   .dependsOn(
@@ -171,6 +189,7 @@ lazy val pga3dgeom = crossProject(JSPlatform, JVMPlatform)
 lazy val pga2dgeom = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga2dgeom"))
+  .jsSettings(jsTestsCompileNotRun)
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-pga2dgeom")
   .dependsOn(
@@ -183,6 +202,7 @@ lazy val pga2dgeom = crossProject(JSPlatform, JVMPlatform)
 lazy val pga3dphysics = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga3dphysics"))
+  .jsSettings(jsTestsCompileNotRun)
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-pga3dphysics")
   .dependsOn(

@@ -266,16 +266,16 @@ final case class Pga2dVector(x: Double = 0.0,
       i = (r.x * x + r.y * y),
     )
 
-  infix def geometric(r: Pga2dProjectivePoint): Pga2dVector =
-    Pga2dVector(
-      x = -r.w * y,
-      y = r.w * x,
-    )
-
   infix def geometric(r: Pga2dRotor): Pga2dVector =
     Pga2dVector(
       x = (r.s * x - r.xy * y),
       y = (r.s * y + r.xy * x),
+    )
+
+  infix def geometric(r: Pga2dProjectivePoint): Pga2dVector =
+    Pga2dVector(
+      x = -r.w * y,
+      y = r.w * x,
     )
 
   infix def geometric(r: Pga2dProjectiveTranslator): Pga2dVector =
@@ -421,6 +421,12 @@ final case class Pga2dVector(x: Double = 0.0,
       xy = (r.x * y - r.y * x),
     )
 
+  infix def antiGeometric(r: Pga2dRotor): Pga2dLineCentral =
+    Pga2dLineCentral(
+      x = (r.s * x + r.xy * y),
+      y = (r.s * y - r.xy * x),
+    )
+
   infix def antiGeometric(r: Pga2dProjectivePoint): Pga2dMultivector =
     Pga2dMultivector(
       s = 0.0,
@@ -431,12 +437,6 @@ final case class Pga2dVector(x: Double = 0.0,
       wy = 0.0,
       xy = 0.0,
       i = (r.x * x + r.y * y),
-    )
-
-  infix def antiGeometric(r: Pga2dRotor): Pga2dLineCentral =
-    Pga2dLineCentral(
-      x = (r.s * x + r.xy * y),
-      y = (r.s * y - r.xy * x),
     )
 
   infix def antiGeometric(r: Pga2dProjectiveTranslator): Pga2dMultivector =
@@ -524,15 +524,15 @@ final case class Pga2dVector(x: Double = 0.0,
       w = (r.x * y - r.y * x),
     )
 
-  infix def antiDot(r: Pga2dProjectivePoint): Pga2dPseudoScalar =
-    Pga2dPseudoScalar(
-      i = (r.x * x + r.y * y),
-    )
-
   infix def antiDot(r: Pga2dRotor): Pga2dLineCentral =
     Pga2dLineCentral(
       x = r.s * x,
       y = r.s * y,
+    )
+
+  infix def antiDot(r: Pga2dProjectivePoint): Pga2dPseudoScalar =
+    Pga2dPseudoScalar(
+      i = (r.x * x + r.y * y),
     )
 
   infix def antiDot(r: Pga2dProjectiveTranslator): Pga2dMultivector =
@@ -569,10 +569,11 @@ final case class Pga2dVector(x: Double = 0.0,
       i = (r.x * x + r.y * y),
     )
 
-  infix def antiDot(r: Pga2dLineCentral): Pga2dRotor =
-    Pga2dRotor(
-      s = 0.0,
-      xy = (r.x * y - r.y * x),
+  infix def antiDot(r: Pga2dLineCentral): Pga2dProjectivePoint =
+    Pga2dProjectivePoint(
+      x = 0.0,
+      y = 0.0,
+      w = (r.x * y - r.y * x),
     )
 
   infix def antiDot(r: Pga2dPseudoScalar): Pga2dVector =
@@ -608,6 +609,16 @@ final case class Pga2dVector(x: Double = 0.0,
 
   inline infix def join(r: Pga2dLine): Double = antiWedge(r)
 
+  infix def antiWedge(r: Pga2dRotor): Pga2dLineCentral =
+    Pga2dLineCentral(
+      x = r.xy * y,
+      y = -r.xy * x,
+    )
+
+  inline infix def v(r: Pga2dRotor): Pga2dLineCentral = antiWedge(r)
+
+  inline infix def join(r: Pga2dRotor): Pga2dLineCentral = antiWedge(r)
+
   infix def antiWedge(r: Pga2dProjectivePoint): Pga2dLine =
     Pga2dLine(
       x = r.w * y,
@@ -618,16 +629,6 @@ final case class Pga2dVector(x: Double = 0.0,
   inline infix def v(r: Pga2dProjectivePoint): Pga2dLine = antiWedge(r)
 
   inline infix def join(r: Pga2dProjectivePoint): Pga2dLine = antiWedge(r)
-
-  infix def antiWedge(r: Pga2dRotor): Pga2dLineCentral =
-    Pga2dLineCentral(
-      x = r.xy * y,
-      y = -r.xy * x,
-    )
-
-  inline infix def v(r: Pga2dRotor): Pga2dLineCentral = antiWedge(r)
-
-  inline infix def join(r: Pga2dRotor): Pga2dLineCentral = antiWedge(r)
 
   infix def antiWedge(r: Pga2dProjectiveTranslator): Pga2dLine =
     Pga2dLine(
@@ -713,16 +714,16 @@ final case class Pga2dVector(x: Double = 0.0,
       w = (r.x * y - r.y * x),
     )
 
-  infix def cross(r: Pga2dProjectivePoint): Pga2dVector =
-    Pga2dVector(
-      x = -r.w * y,
-      y = r.w * x,
-    )
-
   infix def cross(r: Pga2dRotor): Pga2dVector =
     Pga2dVector(
       x = -r.xy * y,
       y = r.xy * x,
+    )
+
+  infix def cross(r: Pga2dProjectivePoint): Pga2dVector =
+    Pga2dVector(
+      x = -r.w * y,
+      y = r.w * x,
     )
 
   infix def cross(r: Pga2dPoint): Pga2dVector =

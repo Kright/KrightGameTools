@@ -22,7 +22,8 @@ def runScala3dCodeGen(fs: GeneratedFileSystem): Unit = {
 
   ScalaMatrixCodeGen(Pga3dScalaAlgebra.bivector)(using Pga3dScalaAlgebra).writeToFile(packageDir, fs)
 
-  Pga3dTransformCodeGen().writeToFile(packageDir, fs)
+  Pga3dTransformCodeGen(normalized = false).writeToFile(packageDir, fs)
+  Pga3dTransformCodeGen(normalized = true).writeToFile(packageDir, fs)
 
   OperationsReference.writeToFile(Path.of("pga3d/operations.md"), fs)(using Pga3dScalaAlgebra)
 }

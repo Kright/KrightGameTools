@@ -13,7 +13,14 @@ object DefBivectorSplit:
         val self = cls.self
         val prefix = Pga3dScalaAlgebra.typeNamePrefix
 
-        code(s"\ndef split: (${bivector.name}, ${bivectorWeight.name}) =")
+        code("")
+        code("/** the commuting (line, shiftAlongLine) decomposition of a motor generator - the screw")
+        code(" * decomposition: this == line + shiftAlongLine, exp == line.exp.geometric(shift.exp),")
+        code(" * where the line part exponentiates to a rotation around its axis and the weight part")
+        code(" * to the translation along that axis. A pure-weight generator (bulk below 1e-50 in norm)")
+        code(" * is returned as (bulk-only line, the whole weight). The 2d sibling is")
+        code(" * Pga2dProjectivePoint.split. */")
+        code(s"def split: (${bivector.name}, ${bivectorWeight.name}) =")
         code.block {
           code(FormulaTemplate.renderScala(SharedFormulas.bivectorSplitGuard, prefix))
           code.block {

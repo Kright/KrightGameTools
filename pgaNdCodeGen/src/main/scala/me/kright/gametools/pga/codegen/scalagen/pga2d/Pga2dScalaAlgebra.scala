@@ -66,10 +66,17 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
     description = "The center of coordinates as a singleton object: a Pga2dPoint with x = y = 0 and w = 1.")
   override val zeroCls = ScalaMultivectorSubClass("Pga2dZero", ArraySeq(), shouldBeGenerated = false)
 
+  // the order is the priority of findMatchingClass (the last matching class wins). The rotor is
+  // deliberately BEFORE projectivePoint: their blades overlap on xy, and a value with only the
+  // xy blade (a structurally zero scalar part) is point-valued - the weighted center of
+  // coordinates (a rotor sandwich of a point, pointCenter * 2.0, a projection of a point, the
+  // bulk of a point) or the generator of a rotation around the origin, which in 2d PGA is that
+  // same weighted point (projectivePoint.exp). A genuine rotor always carries its scalar part,
+  // which projectivePoint cannot hold, so rotor-valued results still resolve to Pga2dRotor.
   override val pgaClasses = ArraySeq(
     multivector, motor,
-    line, projectivePoint,
-    rotor, projectiveTranslator, translator,
+    line, rotor,
+    projectivePoint, projectiveTranslator, translator,
     vector, point, lineCentral,
     scalar, pseudoScalar,
     pointCenter, zeroCls,
@@ -100,6 +107,7 @@ object Pga2dScalaAlgebra extends ScalaPgaAlgebra:
     DefPlusMinusMadd(),
     DefExpForBivector(),
     DefLogForMotor(),
+    DefSplitForProjectivePoint(),
     DefDexpForBivector(),
     DefInterpolation(),
     DefConvertTo(),

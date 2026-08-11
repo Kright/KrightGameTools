@@ -217,18 +217,18 @@ final case class Pga2dRotor(s: Double = 0.0,
       i = r.w * xy,
     )
 
+  infix def geometric(r: Pga2dRotor): Pga2dRotor =
+    Pga2dRotor(
+      s = (r.s * s - r.xy * xy),
+      xy = (r.s * xy + r.xy * s),
+    )
+
   infix def geometric(r: Pga2dProjectivePoint): Pga2dMotor =
     Pga2dMotor(
       s = -r.w * xy,
       wx = (r.y * s - r.x * xy),
       wy = (-r.x * s - r.y * xy),
       xy = r.w * s,
-    )
-
-  infix def geometric(r: Pga2dRotor): Pga2dRotor =
-    Pga2dRotor(
-      s = (r.s * s - r.xy * xy),
-      xy = (r.s * xy + r.xy * s),
     )
 
   infix def geometric(r: Pga2dProjectiveTranslator): Pga2dMotor =
@@ -300,18 +300,18 @@ final case class Pga2dRotor(s: Double = 0.0,
       w = r.w * s,
     )
 
+  infix def dot(r: Pga2dRotor): Pga2dRotor =
+    Pga2dRotor(
+      s = (r.s * s - r.xy * xy),
+      xy = (r.s * xy + r.xy * s),
+    )
+
   infix def dot(r: Pga2dProjectivePoint): Pga2dMotor =
     Pga2dMotor(
       s = -r.w * xy,
       wx = r.y * s,
       wy = -r.x * s,
       xy = r.w * s,
-    )
-
-  infix def dot(r: Pga2dRotor): Pga2dRotor =
-    Pga2dRotor(
-      s = (r.s * s - r.xy * xy),
-      xy = (r.s * xy + r.xy * s),
     )
 
   infix def dot(r: Pga2dProjectiveTranslator): Pga2dMotor =
@@ -396,6 +396,16 @@ final case class Pga2dRotor(s: Double = 0.0,
 
   inline infix def meet(r: Pga2dLine): Pga2dMultivector = wedge(r)
 
+  infix def wedge(r: Pga2dRotor): Pga2dRotor =
+    Pga2dRotor(
+      s = r.s * s,
+      xy = (r.s * xy + r.xy * s),
+    )
+
+  inline infix def ^(r: Pga2dRotor): Pga2dRotor = wedge(r)
+
+  inline infix def meet(r: Pga2dRotor): Pga2dRotor = wedge(r)
+
   infix def wedge(r: Pga2dProjectivePoint): Pga2dProjectivePoint =
     Pga2dProjectivePoint(
       x = r.x * s,
@@ -406,16 +416,6 @@ final case class Pga2dRotor(s: Double = 0.0,
   inline infix def ^(r: Pga2dProjectivePoint): Pga2dProjectivePoint = wedge(r)
 
   inline infix def meet(r: Pga2dProjectivePoint): Pga2dProjectivePoint = wedge(r)
-
-  infix def wedge(r: Pga2dRotor): Pga2dRotor =
-    Pga2dRotor(
-      s = r.s * s,
-      xy = (r.s * xy + r.xy * s),
-    )
-
-  inline infix def ^(r: Pga2dRotor): Pga2dRotor = wedge(r)
-
-  inline infix def meet(r: Pga2dRotor): Pga2dRotor = wedge(r)
 
   infix def wedge(r: Pga2dProjectiveTranslator): Pga2dMotor =
     Pga2dMotor(
@@ -481,15 +481,16 @@ final case class Pga2dRotor(s: Double = 0.0,
 
   inline infix def meet(r: Pga2dPseudoScalar): Pga2dPseudoScalar = wedge(r)
 
-  infix def wedge(r: Pga2dPointCenter.type): Pga2dRotor =
-    Pga2dRotor(
-      s = 0.0,
-      xy = s,
+  infix def wedge(r: Pga2dPointCenter.type): Pga2dProjectivePoint =
+    Pga2dProjectivePoint(
+      x = 0.0,
+      y = 0.0,
+      w = s,
     )
 
-  inline infix def ^(r: Pga2dPointCenter.type): Pga2dRotor = wedge(r)
+  inline infix def ^(r: Pga2dPointCenter.type): Pga2dProjectivePoint = wedge(r)
 
-  inline infix def meet(r: Pga2dPointCenter.type): Pga2dRotor = wedge(r)
+  inline infix def meet(r: Pga2dPointCenter.type): Pga2dProjectivePoint = wedge(r)
 
   infix def antiGeometric(r: Pga2dMotor): Pga2dLineCentral =
     Pga2dLineCentral(
@@ -545,10 +546,11 @@ final case class Pga2dRotor(s: Double = 0.0,
       y = r.wx * s,
     )
 
-  infix def antiDot(r: Pga2dLine): Pga2dRotor =
-    Pga2dRotor(
-      s = 0.0,
-      xy = -r.w * s,
+  infix def antiDot(r: Pga2dLine): Pga2dProjectivePoint =
+    Pga2dProjectivePoint(
+      x = 0.0,
+      y = 0.0,
+      w = -r.w * s,
     )
 
   infix def antiDot(r: Pga2dProjectivePoint): Pga2dLineCentral =
@@ -685,6 +687,14 @@ final case class Pga2dRotor(s: Double = 0.0,
       w = r.w * (sMs + xyMxy),
     )
 
+  infix def sandwich(r: Pga2dRotor): Pga2dRotor =
+    val sMs = s * s
+    val xyMxy = xy * xy
+    Pga2dRotor(
+      s = r.s * (sMs + xyMxy),
+      xy = r.xy * (sMs + xyMxy),
+    )
+
   infix def sandwich(r: Pga2dProjectivePoint): Pga2dProjectivePoint =
     val sMs = s * s
     val sMxy = s * xy
@@ -693,14 +703,6 @@ final case class Pga2dRotor(s: Double = 0.0,
       x = (r.x * (sMs - xyMxy) + 2.0 * r.y * sMxy),
       y = (r.y * (sMs - xyMxy) - 2.0 * r.x * sMxy),
       w = r.w * (sMs + xyMxy),
-    )
-
-  infix def sandwich(r: Pga2dRotor): Pga2dRotor =
-    val sMs = s * s
-    val xyMxy = xy * xy
-    Pga2dRotor(
-      s = r.s * (sMs + xyMxy),
-      xy = r.xy * (sMs + xyMxy),
     )
 
   infix def sandwich(r: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator =
@@ -756,10 +758,11 @@ final case class Pga2dRotor(s: Double = 0.0,
       i = r.i * (s * s + xy * xy),
     )
 
-  infix def sandwich(r: Pga2dPointCenter.type): Pga2dRotor =
-    Pga2dRotor(
-      s = 0.0,
-      xy = (s * s + xy * xy),
+  infix def sandwich(r: Pga2dPointCenter.type): Pga2dProjectivePoint =
+    Pga2dProjectivePoint(
+      x = 0.0,
+      y = 0.0,
+      w = (s * s + xy * xy),
     )
 
   infix def reverseSandwich(r: Pga2dMotor): Pga2dMotor =
@@ -783,6 +786,14 @@ final case class Pga2dRotor(s: Double = 0.0,
       w = r.w * (sMs + xyMxy),
     )
 
+  infix def reverseSandwich(r: Pga2dRotor): Pga2dRotor =
+    val sMs = s * s
+    val xyMxy = xy * xy
+    Pga2dRotor(
+      s = r.s * (sMs + xyMxy),
+      xy = r.xy * (sMs + xyMxy),
+    )
+
   infix def reverseSandwich(r: Pga2dProjectivePoint): Pga2dProjectivePoint =
     val sMs = s * s
     val sMxy = s * xy
@@ -791,14 +802,6 @@ final case class Pga2dRotor(s: Double = 0.0,
       x = (r.x * (sMs - xyMxy) - 2.0 * r.y * sMxy),
       y = (r.y * (sMs - xyMxy) + 2.0 * r.x * sMxy),
       w = r.w * (sMs + xyMxy),
-    )
-
-  infix def reverseSandwich(r: Pga2dRotor): Pga2dRotor =
-    val sMs = s * s
-    val xyMxy = xy * xy
-    Pga2dRotor(
-      s = r.s * (sMs + xyMxy),
-      xy = r.xy * (sMs + xyMxy),
     )
 
   infix def reverseSandwich(r: Pga2dProjectiveTranslator): Pga2dProjectiveTranslator =
@@ -854,10 +857,11 @@ final case class Pga2dRotor(s: Double = 0.0,
       i = r.i * (s * s + xy * xy),
     )
 
-  infix def reverseSandwich(r: Pga2dPointCenter.type): Pga2dRotor =
-    Pga2dRotor(
-      s = 0.0,
-      xy = (s * s + xy * xy),
+  infix def reverseSandwich(r: Pga2dPointCenter.type): Pga2dProjectivePoint =
+    Pga2dProjectivePoint(
+      x = 0.0,
+      y = 0.0,
+      w = (s * s + xy * xy),
     )
 
   infix def cross(r: Pga2dMotor): Pga2dVector =

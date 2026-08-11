@@ -231,7 +231,9 @@ object Pga3dInertiaSummable:
 
   extension (motor: Pga3dMotor)
     def sandwich(b: Pga3dInertiaSummable): Pga3dInertiaSummable =
-      sandwichImpl(b, motor.sandwich)
+      // 8 point sandwiches per call: caching the operator once beats motor.sandwich per point;
+      // the projective transform matches motor.sandwich for any motor, normalized or not
+      sandwichImpl(b, Pga3dProjectiveTransform(motor).sandwich)
 
   extension (t: Pga3dTranslator)
     def sandwich(b: Pga3dInertiaSummable): Pga3dInertiaSummable =

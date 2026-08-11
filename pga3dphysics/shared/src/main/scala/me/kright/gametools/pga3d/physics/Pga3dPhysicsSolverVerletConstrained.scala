@@ -1,7 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.mathutil.FastRange
-import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor, Pga3dPoint, Pga3dVector}
+import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor, Pga3dPoint, Pga3dTransform, Pga3dVector}
 
 /**
  * a RATTLE-style constrained Verlet on the motor group: 2nd order of precision with hard
@@ -58,20 +58,24 @@ object Pga3dPhysicsSolverVerletConstrained:
            shakeIterations: Int = 100,
            projectionIterations: Int = 100): Unit = {
     val n = motors.length
+    // the poses this step consumes are fixed for the whole step and are applied many times
+    // (the reconstruction, the gradients, up to `projectionIterations` velocity sweeps) -
+    // cache them as transforms; the motors are normalized (this very step renormalizes its output)
+    val transforms = buildTransforms(motors)
     val nodeLocalBs: Array[Pga3dBivector] = if (localBs eq null) new Array[Pga3dBivector](n) else localBs
     val forques =
-      reconstructNode(inertias, prevMotors, motors, constraints, addForques, prevDt, nodeLocalBs, projectionIterations)
+      reconstructNodeImpl(inertias, prevMotors, motors, transforms, constraints, addForques, prevDt, nodeLocalBs, projectionIterations)
 
     // the first half kick of this step
     val lHalf = new Array[Pga3dBivector](n)
     for (pos <- FastRange(n)) {
-      lHalf(pos) = motors(pos).sandwich(inertias(pos)(nodeLocalBs(pos))) + forques(pos) * (0.5 * dt)
+      lHalf(pos) = transforms(pos).sandwich(inertias(pos)(nodeLocalBs(pos))) + forques(pos) * (0.5 * dt)
     }
 
     // the constraint gradients at the old poses, then SHAKE: solve the position-stage
     // impulses so the drifted poses satisfy the constraints; Gauss-Seidel - after each
     // impulse the affected bodies are re-drifted immediately
-    val geometries = constraints.map(c => geometry(inertias, motors, nodeLocalBs, c)).toArray
+    val geometries = constraints.map(c => geometry(inertias, transforms, nodeLocalBs, c)).toArray
     for (pos <- FastRange(n)) {
       driftBody(inertias, motors, nodeLocalBs, lHalf, dt, nextMotors, pos)
     }
@@ -141,6 +145,21 @@ object Pga3dPhysicsSolverVerletConstrained:
                       prevDt: Double,
                       localBs: Array[Pga3dBivector] | Null = null,
                       projectionIterations: Int = 100): Array[Pga3dBivector] =
+    reconstructNodeImpl(inertias, prevMotors, motors, buildTransforms(motors), constraints,
+      addForques, prevDt, localBs, projectionIterations)
+
+  private def buildTransforms(motors: Array[Pga3dMotor]): Array[Pga3dTransform] =
+    motors.map(Pga3dTransform.fromNormalized)
+
+  private def reconstructNodeImpl(inertias: Array[Pga3dInertia],
+                                  prevMotors: Array[Pga3dMotor],
+                                  motors: Array[Pga3dMotor],
+                                  transforms: Array[Pga3dTransform],
+                                  constraints: Seq[Pga3dDistanceConstraint],
+                                  addForques: (Array[Pga3dMotor], Array[Pga3dBivector]) => Array[Pga3dBivector],
+                                  prevDt: Double,
+                                  localBs: Array[Pga3dBivector] | Null,
+                                  projectionIterations: Int): Array[Pga3dBivector] =
     val n = motors.length
     val twists: Array[Pga3dBivector] = if (localBs eq null) new Array[Pga3dBivector](n) else localBs
     val lSegments = new Array[Pga3dBivector](n)
@@ -149,17 +168,17 @@ object Pga3dPhysicsSolverVerletConstrained:
       val bHalf = d * (-2.0 / prevDt)
       val midFrame = prevMotors(pos).geometric((d * 0.5).exp)
       lSegments(pos) = midFrame.sandwich(inertias(pos)(bHalf))
-      twists(pos) = inertias(pos).invert(motors(pos).reverseSandwich(lSegments(pos)))
+      twists(pos) = inertias(pos).invert(transforms(pos).reverseSandwich(lSegments(pos)))
     }
 
     val forques = addForques(motors, twists)
 
     for (pos <- FastRange(n)) {
       twists(pos) = inertias(pos).invert(
-        motors(pos).reverseSandwich(lSegments(pos) + forques(pos) * (0.5 * prevDt)))
+        transforms(pos).reverseSandwich(lSegments(pos) + forques(pos) * (0.5 * prevDt)))
     }
 
-    projectVelocities(inertias, motors, twists, constraints, projectionIterations)
+    projectVelocities(inertias, transforms, twists, constraints, projectionIterations)
 
     forques
 
@@ -184,16 +203,16 @@ object Pga3dPhysicsSolverVerletConstrained:
 
   /** paired impulses driving the relative anchor velocities along the constraints to zero */
   private def projectVelocities(inertias: Array[Pga3dInertia],
-                                motors: Array[Pga3dMotor],
+                                transforms: Array[Pga3dTransform],
                                 localBs: Array[Pga3dBivector],
                                 constraints: Seq[Pga3dDistanceConstraint],
                                 projectionIterations: Int): Unit =
     Pga3dConstraintResolver.sweepToConvergence(projectionIterations) { () =>
       var sweepMax = 0.0
       for (c <- constraints) {
-        for (g <- geometry(inertias, motors, localBs, c)) {
-          val vn = (pointVelocity(motors, localBs, c.bodyA, g.pA) -
-            pointVelocity(motors, localBs, c.bodyB, g.pB)).antiDotI(g.n)
+        for (g <- geometry(inertias, transforms, localBs, c)) {
+          val vn = (pointVelocity(transforms, localBs, c.bodyA, g.pA) -
+            pointVelocity(transforms, localBs, c.bodyB, g.pB)).antiDotI(g.n)
           val lambda = c.clampLambda(g.dist, -vn / g.wSum)
           if (lambda != 0.0) {
             sweepMax = Math.max(sweepMax, Math.abs(lambda))
@@ -207,11 +226,11 @@ object Pga3dPhysicsSolverVerletConstrained:
 
   /** the array-based twin of [[Pga3dConstraintResolver.geometry]] */
   private def geometry(inertias: Array[Pga3dInertia],
-                       motors: Array[Pga3dMotor],
+                       transforms: Array[Pga3dTransform],
                        localBs: Array[Pga3dBivector],
                        c: Pga3dDistanceConstraint): Option[Pga3dConstraintGeometry] =
-    val pA = anchorWorld(motors, c.bodyA, c.anchorA)
-    val pB = anchorWorld(motors, c.bodyB, c.anchorB)
+    val pA = anchorWorld(transforms, c.bodyA, c.anchorA)
+    val pB = anchorWorld(transforms, c.bodyB, c.anchorB)
     val delta = pA - pB
     val dist = delta.norm
     if (dist < 1e-100) return None
@@ -219,29 +238,34 @@ object Pga3dPhysicsSolverVerletConstrained:
     val n = delta * (1.0 / dist)
     val j = Pga3dForque.force(pA, n)
 
-    val gA = responseTwist(inertias, motors, c.bodyA, j)
-    val gB = responseTwist(inertias, motors, c.bodyB, j)
-    val wA = responseAlongN(motors, c.bodyA, gA, pA, n)
-    val wB = responseAlongN(motors, c.bodyB, gB, pB, n)
+    val gA = responseTwist(inertias, transforms, c.bodyA, j)
+    val gB = responseTwist(inertias, transforms, c.bodyB, j)
+    val wA = responseAlongN(transforms, c.bodyA, gA, pA, n)
+    val wB = responseAlongN(transforms, c.bodyB, gB, pB, n)
     val wSum = wA + wB
     if (!(wSum > 0.0)) return None
 
     Some(Pga3dConstraintGeometry(pA, pB, dist, n, j, gA, gB, wSum))
 
+  private def anchorWorld(transforms: Array[Pga3dTransform], bodyIndex: Int, anchor: Pga3dPoint): Pga3dPoint =
+    if (bodyIndex >= 0) transforms(bodyIndex).sandwich(anchor) else anchor
+
+  /** the motor-based twin for the poses SHAKE mutates between sweeps (caching those as
+   * transforms would be rebuilt on every accepted impulse and never amortize) */
   private def anchorWorld(motors: Array[Pga3dMotor], bodyIndex: Int, anchor: Pga3dPoint): Pga3dPoint =
     if (bodyIndex >= 0) motors(bodyIndex).sandwich(anchor).toPointUnsafe else anchor
 
-  private def responseTwist(inertias: Array[Pga3dInertia], motors: Array[Pga3dMotor],
+  private def responseTwist(inertias: Array[Pga3dInertia], transforms: Array[Pga3dTransform],
                             bodyIndex: Int, j: Pga3dBivector): Pga3dBivector =
-    if (bodyIndex >= 0) inertias(bodyIndex).invert(motors(bodyIndex).reverseSandwich(j))
+    if (bodyIndex >= 0) inertias(bodyIndex).invert(transforms(bodyIndex).reverseSandwich(j))
     else Pga3dBivector.zero
 
-  private def responseAlongN(motors: Array[Pga3dMotor], bodyIndex: Int,
+  private def responseAlongN(transforms: Array[Pga3dTransform], bodyIndex: Int,
                              gLocal: Pga3dBivector, p: Pga3dPoint, n: Pga3dVector): Double =
-    if (bodyIndex >= 0) (-(motors(bodyIndex).sandwich(gLocal) cross p)).antiDotI(n)
+    if (bodyIndex >= 0) (-(transforms(bodyIndex).sandwich(gLocal) cross p)).antiDotI(n)
     else 0.0
 
-  private def pointVelocity(motors: Array[Pga3dMotor], localBs: Array[Pga3dBivector],
+  private def pointVelocity(transforms: Array[Pga3dTransform], localBs: Array[Pga3dBivector],
                             bodyIndex: Int, p: Pga3dPoint): Pga3dVector =
-    if (bodyIndex >= 0) -(motors(bodyIndex).sandwich(localBs(bodyIndex)) cross p)
+    if (bodyIndex >= 0) -(transforms(bodyIndex).sandwich(localBs(bodyIndex)) cross p)
     else Pga3dVector(0.0, 0.0, 0.0)
