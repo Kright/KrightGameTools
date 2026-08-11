@@ -203,3 +203,13 @@ class Pga3dRayTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
       }
     }
   }
+
+  test("copy with a new direction rebuilds the reciprocal") {
+    val ray = Pga3dRay(Pga3dPoint(0, 0, 0), Pga3dVector(1, 0, 0))
+    val turned = ray.copy(direction = Pga3dVector(0, 0, 2))
+    assert(turned.directionReciprocal == Pga3dVector(0, 0, 2).reciprocal)
+    // the turned ray behaves like a freshly constructed one
+    val box = Pga3dAABB(Pga3dPoint(-1, -1, 4), Pga3dPoint(1, 1, 6))
+    assert(turned.intersects(box))
+    assert(turned.intersectionT(box) == Pga3dRay(turned.origin, turned.direction).intersectionT(box))
+  }

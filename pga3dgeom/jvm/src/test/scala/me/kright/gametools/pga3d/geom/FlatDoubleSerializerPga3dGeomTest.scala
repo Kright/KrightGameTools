@@ -17,7 +17,7 @@ class FlatDoubleSerializerPga3dGeomTest extends AnyFunSuiteLike with ScalaCheckP
     assert(FlatDoubleSerializer.getSize[Pga3dAABB] == 6)
     assert(FlatDoubleSerializer.getSize[Pga3dSphere] == 4)
     assert(FlatDoubleSerializer.getSize[Pga3dCylinder] == 7)
-    assert(FlatDoubleSerializer.getSize[Pga3dRay] == 9)
+    assert(FlatDoubleSerializer.getSize[Pga3dRay] == 6)
     assert(FlatDoubleSerializer.getSize[Pga3dCapsule] == 7)
     assert(FlatDoubleSerializer.getSize[Pga3dContact] == 7)
   }

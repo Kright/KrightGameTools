@@ -6,11 +6,21 @@ import me.kright.gametools.mathutil.MathUtil.{maxNanSafe, minNanSafe}
 import me.kright.gametools.pga3d.{Pga3dPoint, Pga3dVector}
 
 /**
- * special class for efficient searching of intersections with multiple AABBs
+ * special class for efficient searching of intersections with multiple AABBs.
+ *
+ * direction is used as is: a point on the ray is origin + direction * t, so t is measured in
+ * units of the direction length; t is the euclidean distance only if direction is normalized
+ * (see [[Pga3dRay.normalized]]). Within a single ray t values are still consistent and
+ * comparable to each other.
  */
 final case class Pga3dRay(origin: Pga3dPoint,
-                          direction: Pga3dVector,
-                          directionReciprocal: Pga3dVector) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer {
+                          direction: Pga3dVector) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer {
+
+  /** the precomputed per-component reciprocal of the direction: a val in the body, not a case
+   * field, so it is rebuilt on every construction - copy(direction = ...) and deserialization
+   * cannot produce a ray with a stale reciprocal, and only origin + direction are serialized
+   * and compared */
+  val directionReciprocal: Pga3dVector = direction.reciprocal
 
   def intersects(aabb: Pga3dAABB): Boolean =
     intersectionT(aabb) < Double.PositiveInfinity
@@ -42,16 +52,6 @@ final case class Pga3dRay(origin: Pga3dPoint,
 }
 
 object Pga3dRay {
-  /**
-   * direction is used as is: a point on the ray is origin + direction * t,
-   * so t is measured in units of direction length. t is the euclidean distance
-   * to the point only if direction is normalized (see [[normalized]]).
-   * Within a single ray t values are still consistent and comparable to each other.
-   */
-  def apply(origin: Pga3dPoint, direction: Pga3dVector): Pga3dRay = {
-    Pga3dRay(origin, direction, direction.reciprocal)
-  }
-
   /**
    * normalizes direction, so t (for example, from [[Pga3dRay.intersectionT]])
    * is the euclidean distance from origin to the point on the ray

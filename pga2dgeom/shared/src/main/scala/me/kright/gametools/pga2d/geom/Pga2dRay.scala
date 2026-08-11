@@ -6,11 +6,21 @@ import me.kright.gametools.mathutil.MathUtil.{maxNanSafe, minNanSafe}
 import me.kright.gametools.pga2d.{Pga2dPoint, Pga2dVector}
 
 /**
- * special class for efficient searching of intersections with multiple AABBs
+ * special class for efficient searching of intersections with multiple AABBs.
+ *
+ * direction is used as is: a point on the ray is origin + direction * t, so t is measured in
+ * units of the direction length; t is the euclidean distance only if direction is normalized
+ * (see [[Pga2dRay.normalized]]). Within a single ray t values are still consistent and
+ * comparable to each other.
  */
 final case class Pga2dRay(origin: Pga2dPoint,
-                          direction: Pga2dVector,
-                          directionReciprocal: Pga2dVector) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer {
+                          direction: Pga2dVector) derives CanEqual, CanEqualWithEps, FlatDoubleSerializer {
+
+  /** the precomputed per-component reciprocal of the direction: a val in the body, not a case
+   * field, so it is rebuilt on every construction - copy(direction = ...) and deserialization
+   * cannot produce a ray with a stale reciprocal, and only origin + direction are serialized
+   * and compared */
+  val directionReciprocal: Pga2dVector = direction.reciprocal
 
   def intersects(aabb: Pga2dAABB): Boolean =
     intersectionT(aabb) < Double.PositiveInfinity
@@ -42,16 +52,6 @@ final case class Pga2dRay(origin: Pga2dPoint,
 }
 
 object Pga2dRay {
-  /**
-   * direction is used as is: a point on the ray is origin + direction * t,
-   * so t is measured in units of direction length. t is the euclidean distance
-   * to the point only if direction is normalized (see [[normalized]]).
-   * Within a single ray t values are still consistent and comparable to each other.
-   */
-  def apply(origin: Pga2dPoint, direction: Pga2dVector): Pga2dRay = {
-    Pga2dRay(origin, direction, direction.reciprocal)
-  }
-
   /**
    * normalizes direction, so t (for example, from [[Pga2dRay.intersectionT]])
    * is the euclidean distance from origin to the point on the ray
