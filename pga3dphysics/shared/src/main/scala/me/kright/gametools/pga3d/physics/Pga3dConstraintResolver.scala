@@ -171,7 +171,7 @@ class Pga3dConstraintResolver(val constraints: Seq[Pga3dDistanceConstraint],
   private def responseTwist(dynamicBodies: Array[Pga3dPhysicsBody], bodyIndex: Int, j: Pga3dBivector): Pga3dBivector =
     if (bodyIndex >= 0) {
       val body = dynamicBodies(bodyIndex)
-      body.inertia.invert(body.motor.reverseSandwich(j))
+      body.inertia.invert(body.transform.reverseSandwich(j))
     } else {
       Pga3dBivector.zero
     }
@@ -180,7 +180,7 @@ class Pga3dConstraintResolver(val constraints: Seq[Pga3dDistanceConstraint],
   private def responseAlongN(dynamicBodies: Array[Pga3dPhysicsBody], bodyIndex: Int,
                              gLocal: Pga3dBivector, p: Pga3dPoint, n: Pga3dVector): Double =
     if (bodyIndex >= 0) {
-      val gWorld = dynamicBodies(bodyIndex).motor.sandwich(gLocal)
+      val gWorld = dynamicBodies(bodyIndex).transform.sandwich(gLocal)
       (-(gWorld cross p)).antiDotI(n)
     } else {
       0.0
@@ -190,7 +190,7 @@ class Pga3dConstraintResolver(val constraints: Seq[Pga3dDistanceConstraint],
   private def pointVelocity(dynamicBodies: Array[Pga3dPhysicsBody], bodyIndex: Int, p: Pga3dPoint): Pga3dVector =
     if (bodyIndex >= 0) {
       val body = dynamicBodies(bodyIndex)
-      -(body.motor.sandwich(body.localB) cross p)
+      -(body.transform.sandwich(body.localB) cross p)
     } else {
       Pga3dVector(0.0, 0.0, 0.0)
     }
@@ -203,9 +203,9 @@ class Pga3dConstraintResolver(val constraints: Seq[Pga3dDistanceConstraint],
   private def pointAcceleration(dynamicBodies: Array[Pga3dPhysicsBody], bodyIndex: Int, p: Pga3dPoint): Pga3dVector =
     if (bodyIndex >= 0) {
       val body = dynamicBodies(bodyIndex)
-      val wWorld = body.motor.sandwich(body.localB)
+      val wWorld = body.transform.sandwich(body.localB)
       val v = -(wWorld cross p)
-      val dwWorld = body.motor.sandwich(body.inertia.getAcceleration(body.localB, body.localForque))
+      val dwWorld = body.transform.sandwich(body.inertia.getAcceleration(body.localB, body.localForque))
       -(dwWorld cross p) - (wWorld cross v)
     } else {
       Pga3dVector(0.0, 0.0, 0.0)

@@ -51,7 +51,7 @@ final case class Model(time: Double,
 
   private def clone(system: Pga3dPhysicsSystem): Pga3dPhysicsSystem =
     Pga3dPhysicsSystem(
-      system.state.map(body => Pga3dPhysicsBody(body.inertia, body.motor, body.localB)),
+      system.state.map(body => Pga3dPhysicsBody(body.inertia, body.transform, body.localB)),
       system.solver
     )
 
@@ -72,14 +72,14 @@ object Model:
       state = Array(
         Pga3dPhysicsBody(
           inertia = Pga3dInertiaSimple(1.0, 1.0),
-          _motor = Pga3dTranslator
+          motor = Pga3dTranslator
             .addVector(firstBodyConnectionPoint.toVectorUnsafe + Pga3dVector(y = -firstConnectionLength))
             .toMotor,
           localB = Pga3dBivector(wx = 3.0)
         ),
         Pga3dPhysicsBody(
           inertia = Pga3dInertiaSimple(1.0, 1.0),
-          _motor = Pga3dTranslator
+          motor = Pga3dTranslator
             .addVector(secondBodyConnectionPoint.toVectorUnsafe + Pga3dVector(y = -secondConnectionLength))
             .toMotor,
           localB = Pga3dBivector(wx = 0.0)

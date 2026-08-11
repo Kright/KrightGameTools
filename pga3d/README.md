@@ -88,6 +88,9 @@ val (line, shift) = bivector.split
 * [**Pga3dTranslator**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dTranslator.scala): represents linear movement, 3 fields (wx, wy, wz). It is the exponent of Pga3dBivectorWeight
 * [**Pga3dMotor**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dMotor.scala): combination of rotation and linear movement. Has 8 fields (scalar, all bivector fields and pseudoscalar),
   exponent of Pga3dBivector
+* [**Pga3dTransform**](shared/src/main/scala/me/kright/gametools/pga3d/Pga3dTransform.scala): a cached form of a motor with the sandwich products precomputed as flat matrix
+  coefficients. Prefer it over `motor.sandwich` when the same motor is applied to many objects: building it costs
+  about one sandwich, and every application after that is several times cheaper.
 
 To move everything with these classes, you need to call `motor.sandwich(obj)`
 
@@ -128,6 +131,11 @@ val motor = translator.geometric(rotor)
 // Applying a motor to a point (combined rotation and translation);
 // like the rotor case, the result is a Pga3dProjectivePoint
 val transformedPoint = motor.sandwich(point).toPointUnsafe
+
+// When the same motor is applied to many objects, cache it as a transform:
+// the sandwich products become plain matrix multiplications
+val transform = Pga3dTransform(motor)
+val movedPoints = points.map(p => transform.sandwich(p).toPointUnsafe)
 
 // Computing the logarithm of a motor 
 val bivector = motor.log

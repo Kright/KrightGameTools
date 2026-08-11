@@ -7,6 +7,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed (breaking)
 
+- `Pga3dPhysicsBody` stores its pose as a `Pga3dTransform` (`var transform`), and the primary
+  constructor takes the transform; an auxiliary constructor from a `Pga3dMotor` is kept, and the
+  `body.motor` accessors are derived from the transform (assigning a motor rebuilds it). The internal
+  matrix cache classes `Pga3dMotorWithMatrix` and `Pga3dMatrixForPoints` are removed - the transform
+  replaces them; `motorSandwich` and `globalCenter` on the body keep working on top of it.
 - `Pga3dQuaternion` alias is removed: the class is `Pga3dRotor`. The C++ `Quaternion` is renamed
   to `Rotor` as well (`TranslatorWithRotor` / `RotorWithTranslator`, `toRotorUnsafe`).
 - `Pga3dPlaneIdeal` / `Pga2dLineIdeal` are renamed to `Pga3dPlaneCentral` / `Pga2dLineCentral`

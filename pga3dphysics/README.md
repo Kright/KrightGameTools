@@ -3,7 +3,11 @@
 Reference implementation, I prefer simple and correct code. But I profiled the code and eliminated some bottlenecks, it
 is quite efficient now.
 
-Classes Pga3dMatrixForPoints and Pga3dBivectorMutable are made for performance reasons.
+`Pga3dPhysicsBody` stores its pose as a [`Pga3dTransform`](../pga3d/shared/src/main/scala/me/kright/gametools/pga3d/Pga3dTransform.scala) -
+the cached matrix form of a motor - so applying the pose to points, vectors and bivectors many times per step
+is a plain matrix multiplication. There is an auxiliary constructor from a plain `Pga3dMotor`, and the
+`body.motor` accessors are derived from the transform (assigning a motor rebuilds it).
+`Pga3dBivectorMutable` is made for performance reasons.
 
 ## Example of usage:
 

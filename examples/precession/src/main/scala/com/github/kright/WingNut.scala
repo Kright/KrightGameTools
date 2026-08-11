@@ -19,7 +19,12 @@ class WingNut:
     system.state(0).motor.toRotorUnsafe
 
   def setToMatrix(m: Matrix4): Unit =
-    val array = Pga3dMatrixForPoints(rotation.toMotor).asArray
+    val t = Pga3dTransform(rotation.toMotor)
+    val array = Array(
+      t.r00, t.r01, t.r02, t.tx,
+      t.r10, t.r11, t.r12, t.ty,
+      t.r20, t.r21, t.r22, t.tz,
+    )
 
     m.idt()
     for (i <- 0 until 12) {

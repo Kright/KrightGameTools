@@ -5,14 +5,38 @@ import me.kright.gametools.pga3d.*
 import scala.util.chaining.scalaUtilChainingOps
 
 
+/**
+ * A rigid body: inertia, pose and velocity.
+ *
+ * The pose is stored as a [[Pga3dTransform]], so applying it to points, vectors and bivectors many
+ * times per step is a plain matrix multiplication. The motor accessors are derived from it: reading
+ * `motor` is free, assigning `motor = m` rebuilds the transform (about the cost of one sandwich).
+ */
 class Pga3dPhysicsBody(var inertia: Pga3dInertia,
-                       _motor: Pga3dMotor,
-                       var localB: Pga3dBivector) extends Pga3dMotorWithMatrix(_motor):
+                       var transform: Pga3dTransform,
+                       var localB: Pga3dBivector):
+
+  def this(inertia: Pga3dInertia, motor: Pga3dMotor, localB: Pga3dBivector) =
+    this(inertia, Pga3dTransform(motor), localB)
 
   private val globalForqueAccumulator = Pga3dBivectorMutable()
 
+  def motor: Pga3dMotor = transform.motor
+
+  def motor_=(m: Pga3dMotor): Unit =
+    transform = Pga3dTransform(m)
+
+  def motorSandwich(point: Pga3dPoint): Pga3dPoint =
+    transform.sandwich(point).toPointUnsafe
+
+  def motorSandwich(vector: Pga3dVector): Pga3dVector =
+    transform.sandwich(vector)
+
+  def globalCenter: Pga3dPoint =
+    transform.sandwich(Pga3dPointCenter).toPointUnsafe
+
   def deepCopy: Pga3dPhysicsBody =
-    Pga3dPhysicsBody(inertia, motor, localB).tap { b =>
+    Pga3dPhysicsBody(inertia, transform, localB).tap { b =>
       b.globalForqueAccumulator := globalForqueAccumulator
     }
 
@@ -20,7 +44,7 @@ class Pga3dPhysicsBody(var inertia: Pga3dInertia,
     globalForqueAccumulator.toBivector
 
   def localForque: Pga3dBivector =
-    motor.reverseSandwich(globalForque)
+    transform.reverseSandwich(globalForque)
 
   def addGlobalForque(globalForque: Pga3dBivector): Unit =
     globalForqueAccumulator += globalForque
@@ -39,7 +63,7 @@ class Pga3dPhysicsBody(var inertia: Pga3dInertia,
 
   /** @return combination of linear and rotational momentum */
   def getL: Pga3dBivector =
-    motor.sandwich(inertia(localB))
+    transform.sandwich(inertia(localB))
 
   def globalCenterOfMass: Pga3dPoint =
     motorSandwich(inertia.centerOfMass)

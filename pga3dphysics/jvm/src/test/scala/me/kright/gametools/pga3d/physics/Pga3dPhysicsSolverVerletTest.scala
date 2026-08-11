@@ -112,7 +112,7 @@ class Pga3dPhysicsSolverVerletTest extends AnyFunSuiteLike:
       state.step(dt)
     }
 
-    val center = Pga3dMatrixForPoints(state.motors.head).getCenter
+    val center = state.motors.head.sandwich(Pga3dPointCenter).toPointUnsafe
     val expected = Pga3dPoint(10.0, -5.0, 2.5) // the localB translation part is the velocity
     assert((center - expected).norm < 1e-11, s"center = $center")
   }
