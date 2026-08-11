@@ -1,5 +1,8 @@
 package me.kright.gametools.matrix
 
+import me.kright.arrayview.ArrayView2d
+
+
 import scala.annotation.targetName
 
 case class MatrixPrinter(elemToStr: Double => String,
@@ -8,7 +11,7 @@ case class MatrixPrinter(elemToStr: Double => String,
                          useBrackets: Boolean) {
 
   @targetName("invoke")
-  def apply(m: Matrix): String =
+  def apply(m: ArrayView2d[Double]): String =
     val openBr = if (useBrackets) "[" else ""
     val closeBr = if (useBrackets) "]" else ""
 

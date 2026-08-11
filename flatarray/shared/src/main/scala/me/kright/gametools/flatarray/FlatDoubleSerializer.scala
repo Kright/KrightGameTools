@@ -6,6 +6,7 @@ import scala.reflect.ClassTag
 
 
 trait FlatDoubleSerializer[T]:
+  /** the number of doubles one serialized T occupies (flat containers use it as the element stride) */
   val size: Int
   def classTag: ClassTag[T]
 

@@ -203,6 +203,24 @@ object Pga3dAABB:
     )
   }
 
+  def apply(cylinder: Pga3dCylinder): Pga3dAABB = {
+    // the exact box: along a world axis the caps reach |halfAxis_i| from the center and the
+    // cap disk adds r * sqrt(1 - n_i^2), where n is the unit cylinder axis
+    val center = cylinder.center
+    val half = cylinder.halfAxis
+    val halfNormSquare = half.normSquare
+    val r = cylinder.r
+
+    def extent(halfI: Double): Double =
+      val capExtent =
+        if (halfNormSquare > 0.0) Math.sqrt(Math.max(0.0, 1.0 - halfI * halfI / halfNormSquare))
+        else 1.0 // a degenerate (a == b) cylinder: the disk orientation is undefined, take the full r
+      Math.abs(halfI) + r * capExtent
+
+    val extents = Pga3dVector(extent(half.x), extent(half.y), extent(half.z))
+    Pga3dAABB(center - extents, center + extents)
+  }
+
   @targetName("unionPoints")
   def apply(t: Iterable[Pga3dPoint]): Pga3dAABB =
     var result = Pga3dAABB(t.head)

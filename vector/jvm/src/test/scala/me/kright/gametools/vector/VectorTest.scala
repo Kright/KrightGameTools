@@ -16,7 +16,7 @@ class VectorTest extends AnyFunSuite with ScalaCheckPropertyChecks:
         assert((v1 / v2).equalsWithEps(Vector2d(v1.x / v2.x, v1.y / v2.y), eps))
       }
       assert((v1 * 2.0).equalsWithEps(Vector2d(v1.x * 2.0, v1.y * 2.0), eps))
-      assert((v1 ^ 2.0).equalsWithEps(Vector2d(v1.x * v1.x, v1.y * v1.y), eps))
+      assert((v1.pow(2.0)).equalsWithEps(Vector2d(v1.x * v1.x, v1.y * v1.y), eps))
     }
 
     forAll(vectors3InCube, vectors3InCube) { (v1, v2) =>
@@ -27,7 +27,7 @@ class VectorTest extends AnyFunSuite with ScalaCheckPropertyChecks:
         assert((v1 / v2).equalsWithEps(Vector3d(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z), eps))
       }
       assert((v1 * 2.0).equalsWithEps(Vector3d(v1.x * 2.0, v1.y * 2.0, v1.z * 2.0), eps))
-      assert((v1 ^ 2.0).equalsWithEps(Vector3d(v1.x * v1.x, v1.y * v1.y, v1.z * v1.z), eps))
+      assert((v1.pow(2.0)).equalsWithEps(Vector3d(v1.x * v1.x, v1.y * v1.y, v1.z * v1.z), eps))
     }
 
     forAll(vectors4InCube, vectors4InCube) { (v1, v2) =>
@@ -38,7 +38,7 @@ class VectorTest extends AnyFunSuite with ScalaCheckPropertyChecks:
         assert((v1 / v2).equalsWithEps(Vector4d(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z, v1.w / v2.w), eps))
       }
       assert((v1 * 2.0).equalsWithEps(Vector4d(v1.x * 2.0, v1.y * 2.0, v1.z * 2.0, v1.w * 2.0), eps))
-      assert((v1 ^ 2.0).equalsWithEps(Vector4d(v1.x * v1.x, v1.y * v1.y, v1.z * v1.z, v1.w * v1.w), eps))
+      assert((v1.pow(2.0)).equalsWithEps(Vector4d(v1.x * v1.x, v1.y * v1.y, v1.z * v1.z, v1.w * v1.w), eps))
     }
   }
 

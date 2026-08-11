@@ -1,5 +1,7 @@
 package me.kright.gametools.matrix
 
+import me.kright.arrayview.{ArrayView2d, ArrayView2dFlat}
+
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -7,24 +9,24 @@ import scala.collection.immutable.ArraySeq
 
 class SymmetricMatrixDiagonalizationTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
-  private def dist(a: Matrix, b: Matrix): Double =
+  private def dist(a: ArrayView2d[Double], b: ArrayView2d[Double]): Double =
     Math.sqrt((a - b).data.map(v => v * v).sum)
 
   test("test matrix 2x2 diagonalization corner cases") {
     val matrixSize = 2
     val rotationsMixed = 1
 
-    def makeDiagMatrics(i00: Double, i11: Double): Matrix = {
-      val m = Matrix(2, 2)
+    def makeDiagMatrics(i00: Double, i11: Double): ArrayView2dFlat[Double] = {
+      val m = ArrayView2dFlat[Double](2, 2)
       m(0, 0) = i00
       m(1, 1) = i11
       m
     }
 
-    def makeRotMatrics(angle: Double): Matrix = {
+    def makeRotMatrics(angle: Double): ArrayView2dFlat[Double] = {
       val cos = Math.cos(angle)
       val sin = Math.sin(angle)
-      val m = Matrix(2, 2)
+      val m = ArrayView2dFlat[Double](2, 2)
       m(0, 0) = cos
       m(0, 1) = -sin
       m(1, 0) = sin
@@ -32,8 +34,8 @@ class SymmetricMatrixDiagonalizationTest extends AnyFunSuiteLike with ScalaCheck
       m
     }
 
-    def rotateDiag(diag: Matrix, rot: Matrix): Matrix =
-      rot * diag * rot.transposedCopy()
+    def rotateDiag(diag: ArrayView2d[Double], rot: ArrayView2d[Double]): ArrayView2dFlat[Double] =
+      rot * diag * rot.transposed
 
     val diags = ArraySeq(
       makeDiagMatrics(1.0, 1.0),
@@ -41,16 +43,6 @@ class SymmetricMatrixDiagonalizationTest extends AnyFunSuiteLike with ScalaCheck
       makeDiagMatrics(1.0, 1.0 + 1e-6),
       makeDiagMatrics(1.0, 1.0 + 1e-12),
     )
-
-    def swap01(m: Matrix): Matrix = {
-      val r = Matrix(2, 2)
-      r(0, 0) = m(1, 1)
-      r(1, 1) = m(0, 0)
-
-      r(0, 1) = m(0, 1)
-      r(1, 0) = m(1, 0)
-      r
-    }
 
     val smallValues = ArraySeq(1e-1, 1e-3, 1e-6, 1e-9, 1e-12, 1e-15, 1e-50)
     val angles =
@@ -66,13 +58,12 @@ class SymmetricMatrixDiagonalizationTest extends AnyFunSuiteLike with ScalaCheck
 
       val rotated = rotateDiag(diag, rot)
 
-      val (diag2, eig2) = Matrix.symmetricMatrixToDiagonalAndEigenvectors(rotated)
+      val Eigen(values, eig2) = SymmetricMatrixDiagonalization.eigen(rotated)
 
       def errMsg: String =
         s"""
            |diag = $diag
-           |diag2 = $diag2
-           |wtf = ${Math.sqrt((diag - diag2).data.map(v => v * v).sum)}
+           |values = ${values.data.mkString(", ")}
            |
            |angle = $angle
            |rot = $rot
@@ -80,7 +71,11 @@ class SymmetricMatrixDiagonalizationTest extends AnyFunSuiteLike with ScalaCheck
            |eig2 = $eig2
            |""".stripMargin
 
-      val err = Math.min(dist(diag, diag2), dist(swap01(diag), diag2))
+      def valuesError(v0: Double, v1: Double): Double =
+        Math.hypot(values(0) - v0, values(1) - v1)
+
+      // the eigenvalues may come out in either order
+      val err = Math.min(valuesError(diag(0, 0), diag(1, 1)), valuesError(diag(1, 1), diag(0, 0)))
       assert(err < 1e-15, errMsg)
     }
   }
@@ -90,8 +85,8 @@ class SymmetricMatrixDiagonalizationTest extends AnyFunSuiteLike with ScalaCheck
     val rotationsMixed = 1
 
     forAll(MatrixGenerators.rotatedDiagonal(matrixSize, rotationsMixed, 0.01, 1.0)) { input =>
-      val (diagonal, eigenvectors) = Matrix.symmetricMatrixToDiagonalAndEigenvectors(input)
-      val recreated = eigenvectors * diagonal * eigenvectors.transposedCopy()
+      val Eigen(diagonal, eigenvectors) = SymmetricMatrixDiagonalization.eigen(input)
+      val recreated = eigenvectors * diagonalMatrix(diagonal) * eigenvectors.transposed
       assert(dist(input, recreated) < 1e-14)
     }
   }
@@ -101,16 +96,26 @@ class SymmetricMatrixDiagonalizationTest extends AnyFunSuiteLike with ScalaCheck
     val rotationsMixed = 6
 
     forAll(MatrixGenerators.rotatedDiagonal(matrixSize, rotationsMixed, 0.01, 1.0)) { input =>
-      val (diagonal, eigenvectors) = Matrix.symmetricMatrixToDiagonalAndEigenvectors(input)
-      val recreated = eigenvectors * diagonal * eigenvectors.transposedCopy()
+      val Eigen(diagonal, eigenvectors) = SymmetricMatrixDiagonalization.eigen(input)
+      val recreated = eigenvectors * diagonalMatrix(diagonal) * eigenvectors.transposed
       assert(dist(input, recreated) < 1e-14)
     }
 
     forAll(MatrixGenerators.rotatedDiagonal(matrixSize, rotationsMixed, 0.01, 1.0)) { input =>
-      val (diagonal, eigenvectors) = Matrix.symmetricMatrixToDiagonalAndEigenvectors(input)
-      val recreated = eigenvectors * diagonal * eigenvectors.transposedCopy()
+      val Eigen(diagonal, eigenvectors) = SymmetricMatrixDiagonalization.eigen(input)
+      val recreated = eigenvectors * diagonalMatrix(diagonal) * eigenvectors.transposed
       assert(dist(input, recreated) < 1e-14)
     }
+  }
+
+  test("a NaN input terminates with a best-effort result instead of hanging") {
+    val m = matrixFromValues(3, 3)(
+      1.0, 2.0, 3.0,
+      2.0, Double.NaN, 4.0,
+      3.0, 4.0, 5.0,
+    )
+    val Eigen(diagonal, _) = SymmetricMatrixDiagonalization.eigen(m)
+    assert(diagonal.data.exists(_.isNaN))
   }
 
   test("matrix multiplication is associative") {

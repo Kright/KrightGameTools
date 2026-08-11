@@ -1,6 +1,7 @@
 package me.kright.gametools.pga2d
 
-import me.kright.gametools.matrix.Matrix
+import me.kright.arrayview.{ArrayView2d, ArrayView2dFlat}
+import me.kright.gametools.matrix.*
 import me.kright.gametools.flatarray.FlatDoubleSerializer
 import scala.collection.immutable.ArraySeq
 
@@ -17,8 +18,9 @@ object Pga2dMatrix:
     Pga2dProjectivePoint(0, 0, 1),
   )
 
-  def multiply(matrix: Matrix, b: Pga2dProjectivePoint): Pga2dProjectivePoint =
-    val m = matrix.data
+  def multiply(matrix: ArrayView2d[Double], b: Pga2dProjectivePoint): Pga2dProjectivePoint =
+    // free for the flat matrices linearMapping builds; copies a lazy view once
+    val m = matrix.withSimpleLayout.data
 
     inline def dot(offset: Int): Double =
       b.x * m(offset) +
@@ -31,8 +33,8 @@ object Pga2dMatrix:
       w = dot(6),
     )
 
-  def linearMapping(map: Pga2dProjectivePoint => Pga2dProjectivePoint): Matrix =
-    val matrix = Matrix(3, 3)
+  def linearMapping(map: Pga2dProjectivePoint => Pga2dProjectivePoint): ArrayView2dFlat[Double] =
+    val matrix = ArrayView2dFlat[Double](3, 3)
     for ((b, i) <- basis.zipWithIndex) {
       val mappedB = map(b)
       FlatDoubleSerializer.write(mappedB, matrix.data, i * 3)

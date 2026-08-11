@@ -18,9 +18,9 @@ final case class Vector4d(x: Double,
 
   override def /(v: Vector4d): Vector4d = Vector4d(x / v.x, y / v.y, z / v.z, w / v.w)
 
-  override def ^(pow: Double): Vector4d = Vector4d(Math.pow(x, pow), Math.pow(y, pow), Math.pow(z, pow), Math.pow(w, pow))
+  override def pow(power: Double): Vector4d = Vector4d(Math.pow(x, power), Math.pow(y, power), Math.pow(z, power), Math.pow(w, power))
 
-  override def ^(v: Vector4d): Vector4d = Vector4d(Math.pow(x, v.x), Math.pow(y, v.y), Math.pow(z, v.z), Math.pow(w, v.w))
+  override def pow(v: Vector4d): Vector4d = Vector4d(Math.pow(x, v.x), Math.pow(y, v.y), Math.pow(z, v.z), Math.pow(w, v.w))
 
   override infix def dot(v: Vector4d): Double =
     x * v.x + y * v.y + z * v.z + w * v.w

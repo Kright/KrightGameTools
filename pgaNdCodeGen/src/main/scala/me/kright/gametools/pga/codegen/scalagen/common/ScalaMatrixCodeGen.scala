@@ -22,7 +22,8 @@ class ScalaMatrixCodeGen(cls: ScalaMultivectorSubClass)(using algebra: ScalaPgaA
   override def targetPackage: String = algebra.targetPackage
 
   override def generateImports(): String =
-    s"""import me.kright.gametools.matrix.Matrix
+    s"""import me.kright.arrayview.{ArrayView2d, ArrayView2dFlat}
+       |import me.kright.gametools.matrix.*
        |import me.kright.gametools.flatarray.FlatDoubleSerializer
        |import scala.collection.immutable.ArraySeq
        |""".stripMargin
@@ -53,8 +54,9 @@ class ScalaMatrixCodeGen(cls: ScalaMultivectorSubClass)(using algebra: ScalaPgaA
        |    $basisElements
        |  )
        |
-       |  def multiply(matrix: Matrix, b: ${cls.name}): ${cls.name} =
-       |    val m = matrix.data
+       |  def multiply(matrix: ArrayView2d[Double], b: ${cls.name}): ${cls.name} =
+       |    // free for the flat matrices linearMapping builds; copies a lazy view once
+       |    val m = matrix.withSimpleLayout.data
        |
        |    inline def dot(offset: Int): Double =
        |      $dotSum
@@ -63,8 +65,8 @@ class ScalaMatrixCodeGen(cls: ScalaMultivectorSubClass)(using algebra: ScalaPgaA
        |      $constructorArgs
        |    )
        |
-       |  def linearMapping(map: ${cls.name} => ${cls.name}): Matrix =
-       |    val matrix = Matrix($n, $n)
+       |  def linearMapping(map: ${cls.name} => ${cls.name}): ArrayView2dFlat[Double] =
+       |    val matrix = ArrayView2dFlat[Double]($n, $n)
        |    for ((b, i) <- basis.zipWithIndex) {
        |      val mappedB = map(b)
        |      FlatDoubleSerializer.write(mappedB, matrix.data, i * $n)

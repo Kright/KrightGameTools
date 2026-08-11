@@ -86,6 +86,9 @@ case class Pga3dEdge(a: Pga3dPoint,
   def distanceTo(other: Pga3dEdge): Double =
     Math.sqrt(distanceSquareTo(other))
 
+  def intersects(other: Pga3dEdge, eps: Double): Boolean =
+    eps >= 0.0 && distanceSquareTo(other) <= eps * eps
+
 
 object Pga3dEdge:
   extension (p: Pga3dMotor)

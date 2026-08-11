@@ -16,9 +16,9 @@ final case class Vector3d(x: Double,
 
   override def /(v: Vector3d): Vector3d = Vector3d(x / v.x, y / v.y, z / v.z)
 
-  override def ^(pow: Double): Vector3d = Vector3d(Math.pow(x, pow), Math.pow(y, pow), Math.pow(z, pow))
+  override def pow(power: Double): Vector3d = Vector3d(Math.pow(x, power), Math.pow(y, power), Math.pow(z, power))
 
-  override def ^(v: Vector3d): Vector3d = Vector3d(Math.pow(x, v.x), Math.pow(y, v.y), Math.pow(z, v.z))
+  override def pow(v: Vector3d): Vector3d = Vector3d(Math.pow(x, v.x), Math.pow(y, v.y), Math.pow(z, v.z))
 
   override infix def dot(v: Vector3d): Double =
     x * v.x + y * v.y + z * v.z

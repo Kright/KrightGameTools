@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d
 
-import me.kright.gametools.matrix.Matrix
+import me.kright.arrayview.{ArrayView2d, ArrayView2dFlat}
+import me.kright.gametools.matrix.*
 import me.kright.gametools.flatarray.FlatDoubleSerializer
 import scala.collection.immutable.ArraySeq
 
@@ -20,8 +21,9 @@ object Pga3dMatrix:
     Pga3dBivector(0, 0, 0, 0, 0, 1),
   )
 
-  def multiply(matrix: Matrix, b: Pga3dBivector): Pga3dBivector =
-    val m = matrix.data
+  def multiply(matrix: ArrayView2d[Double], b: Pga3dBivector): Pga3dBivector =
+    // free for the flat matrices linearMapping builds; copies a lazy view once
+    val m = matrix.withSimpleLayout.data
 
     inline def dot(offset: Int): Double =
       b.wx * m(offset) +
@@ -40,8 +42,8 @@ object Pga3dMatrix:
       yz = dot(30),
     )
 
-  def linearMapping(map: Pga3dBivector => Pga3dBivector): Matrix =
-    val matrix = Matrix(6, 6)
+  def linearMapping(map: Pga3dBivector => Pga3dBivector): ArrayView2dFlat[Double] =
+    val matrix = ArrayView2dFlat[Double](6, 6)
     for ((b, i) <- basis.zipWithIndex) {
       val mappedB = map(b)
       FlatDoubleSerializer.write(mappedB, matrix.data, i * 6)

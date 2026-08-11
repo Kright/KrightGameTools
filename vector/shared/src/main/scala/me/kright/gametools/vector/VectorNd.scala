@@ -15,9 +15,11 @@ trait VectorNd[Vec <: VectorNd[Vec]]:
 
   def /(d: Double): Vec = this * (1.0 / d)
 
-  def ^(pow: Double): Vec
+  /** the elementwise Math.pow */
+  def pow(power: Double): Vec
 
-  def ^(v: Vec): Vec
+  /** the elementwise Math.pow */
+  def pow(v: Vec): Vec
 
   def unary_- : Vec = this * (-1)
 

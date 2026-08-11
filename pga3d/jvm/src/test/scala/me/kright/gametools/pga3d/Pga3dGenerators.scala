@@ -1,6 +1,8 @@
 package me.kright.gametools.pga3d
 
-import me.kright.gametools.matrix.Matrix
+import me.kright.arrayview.ArrayView2dFlat
+
+import me.kright.gametools.matrix.*
 import me.kright.gametools.flatarray.FlatDoubleSerializer
 import org.scalacheck.Gen
 
@@ -117,5 +119,5 @@ object Pga3dGenerators:
   val multivectors: Gen[Pga3dMultivector] =
     makeGenT(16, FlatDoubleSerializer.read[Pga3dMultivector])
 
-  def matrices(h: Int, w: Int): Gen[Matrix] =
-    Gen.containerOfN[Array, Double](h * w, double1).map(arr => Matrix.fromValues(h, w)(arr *))
+  def matrices(h: Int, w: Int): Gen[ArrayView2dFlat[Double]] =
+    Gen.containerOfN[Array, Double](h * w, double1).map(arr => matrixFromValues(h, w)(arr *))

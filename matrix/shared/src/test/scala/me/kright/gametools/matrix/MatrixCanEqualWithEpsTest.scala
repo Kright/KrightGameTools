@@ -9,10 +9,10 @@ class MatrixCanEqualWithEpsTest extends AnyFunSuiteLike:
     a.equalsWithEps(b, eps)
 
   test("Matrix instance compares elementwise and rejects size mismatch") {
-    val m = Matrix.fromValues(2, 2)(1.0, 2.0, 3.0, 4.0)
-    val closeEnough = Matrix.fromValues(2, 2)(1.05, 2.0, 3.0, 4.0)
-    val tooFar = Matrix.fromValues(2, 2)(1.5, 2.0, 3.0, 4.0)
-    val otherShape = Matrix.fromValues(1, 4)(1.0, 2.0, 3.0, 4.0)
+    val m = matrixFromValues(2, 2)(1.0, 2.0, 3.0, 4.0)
+    val closeEnough = matrixFromValues(2, 2)(1.05, 2.0, 3.0, 4.0)
+    val tooFar = matrixFromValues(2, 2)(1.5, 2.0, 3.0, 4.0)
+    val otherShape = matrixFromValues(1, 4)(1.0, 2.0, 3.0, 4.0)
 
     assert(m.equalsWithEps(closeEnough, eps = 0.1))
     assert(!m.equalsWithEps(tooFar, eps = 0.1))

@@ -1,6 +1,8 @@
 package me.kright.gametools.pga3d
 
-import me.kright.gametools.matrix.Matrix
+import me.kright.arrayview.{ArrayView2d, ArrayView2dFlat}
+
+import me.kright.gametools.matrix.*
 import me.kright.gametools.flatarray.FlatDoubleSerializer
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -21,12 +23,12 @@ class Pga3dMatrixTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     }
   }
 
-  private def bivectorToMatrix(b: Pga3dBivector): Matrix =
-    val m = Matrix(6, 1)
+  private def bivectorToMatrix(b: Pga3dBivector): ArrayView2dFlat[Double] =
+    val m = ArrayView2dFlat[Double](6, 1)
     FlatDoubleSerializer.write(b, m.data, 0)
     m
 
-  private def matrixToBivector(m: Matrix): Pga3dBivector =
+  private def matrixToBivector(m: ArrayView2d[Double]): Pga3dBivector =
     require(m.h == 6, m.w == 1)
     FlatDoubleSerializer.read[Pga3dBivector](m.data, 0)
 

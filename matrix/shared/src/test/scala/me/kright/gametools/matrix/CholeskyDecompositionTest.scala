@@ -1,5 +1,9 @@
 package me.kright.gametools.matrix
 
+import me.kright.arrayview.ArrayView2dFlat
+
+import me.kright.arrayview.ArrayView2d
+
 import me.kright.gametools.mathutil.FastRange
 import org.scalactic.anyvals.PosInt
 import org.scalatest.funsuite.AnyFunSuiteLike
@@ -14,7 +18,7 @@ class CholeskyDecompositionTest extends AnyFunSuiteLike with ScalaCheckPropertyC
   test("decomposition") {
     forAll(MatrixGenerators.rotatedDiagonal(matrixSize, repeats = 10, 0.1, 10.0), MinSuccessful(100)) { matrix =>
       val L = CholeskyDecomposition(matrix)
-      val restoredMatrix = L * L.transposedCopy()
+      val restoredMatrix = L * L.transposed
       assert((matrix - restoredMatrix).frobeniusNorm < 1e-14)
     }
   }
@@ -26,20 +30,20 @@ class CholeskyDecompositionTest extends AnyFunSuiteLike with ScalaCheckPropertyC
 
       val mult = L * Linv
 
-      assert((mult - Matrix.idt(4)).frobeniusNorm < 2e-14)
+      assert((mult - identityMatrix(4)).frobeniusNorm < 2e-14)
     }
   }
 
   test("matrix inversion") {
     forAll(MatrixGenerators.rotatedDiagonal(matrixSize, repeats = 10, 0.1, 10.0), MinSuccessful(100)) { matrix =>
       val inverted = CholeskyDecomposition.inverted(matrix)
-      assert((matrix * inverted - Matrix.idt(matrixSize)).frobeniusNorm < 1e-14)
+      assert((matrix * inverted - identityMatrix(matrixSize)).frobeniusNorm < 1e-14)
     }
   }
 
   test("tiny decomposition text") {
-    val matrices = new ArrayBuffer[Matrix]()
-    val result = new ArrayBuffer[Matrix]()
+    val matrices = new ArrayBuffer[ArrayView2d[Double]]()
+    val result = new ArrayBuffer[ArrayView2d[Double]]()
     val repeats = 10000
 
     forAll(MatrixGenerators.rotatedDiagonal(matrixSize, repeats = 10, 0.1, 10.0), MinSuccessful(PosInt.from(repeats).get)) { matrix =>
@@ -62,8 +66,8 @@ class CholeskyDecompositionTest extends AnyFunSuiteLike with ScalaCheckPropertyC
   }
 
   test("tiny multiplication text") {
-    val matrices = new ArrayBuffer[Matrix]()
-    val result = new ArrayBuffer[Matrix]()
+    val matrices = new ArrayBuffer[ArrayView2d[Double]]()
+    val result = new ArrayBuffer[ArrayView2d[Double]]()
     val repeats = 10000
 
     forAll(MatrixGenerators.rotatedDiagonal(matrixSize, repeats = 10, 0.1, 10.0), MinSuccessful(PosInt.from(repeats).get)) { matrix =>

@@ -1,8 +1,10 @@
 package me.kright.gametools.pga3d.physics
 
+import me.kright.arrayview.{ArrayView2d, ArrayView2dFlat}
+
 import me.kright.gametools.flatarray.FlatDoubleSerializer
 import me.kright.gametools.mathutil.CanEqualWithEps
-import me.kright.gametools.matrix.{Matrix, SymmetricMatrixDiagonalization}
+import me.kright.gametools.matrix.*
 import me.kright.gametools.pga3d.*
 import me.kright.gametools.pga3d.physics.Pga3dInertiaSummable.sandwich
 import scala.collection.immutable.ArraySeq
@@ -105,7 +107,7 @@ final case class Pga3dInertiaSummable(ww: Double,
 
     val shifted = Pga3dTranslator.addVector(-shift).sandwich(this)
     val i = shifted.toMatrixXYZ
-    val rotor = Pga3dInertiaSummable.diagonalyzeSymmetricInplace(i)
+    val rotor = Pga3dInertiaSummable.diagonalizeSymmetricInplace(i)
     val ixx = i(0, 0)
     val iyy = i(1, 1)
     val izz = i(2, 2)
@@ -128,30 +130,30 @@ final case class Pga3dInertiaSummable(ww: Double,
   override def invert(localInertia: Pga3dBivector): Pga3dBivector =
     toInertiaMovedLocal.invert(localInertia)
 
-  def toMatrixXYZ: Matrix =
-    Matrix.fromValues(3, 3)(
+  def toMatrixXYZ: ArrayView2dFlat[Double] =
+    matrixFromValues(3, 3)(
       xx, xy, xz,
       xy, yy, yz,
       xz, yz, zz,
     )
 
-  def toMatrixXYZW: Matrix =
-    Matrix.fromValues(4, 4)(
+  def toMatrixXYZW: ArrayView2dFlat[Double] =
+    matrixFromValues(4, 4)(
       xx, xy, xz, wx,
       xy, yy, yz, wy,
       xz, yz, zz, wz,
       wx, wy, wz, ww,
     )
 
-  def toMatrixWXYZ: Matrix =
-    Matrix.fromValues(4, 4)(
+  def toMatrixWXYZ: ArrayView2dFlat[Double] =
+    matrixFromValues(4, 4)(
       ww, wx, wy, wz,
       wx, xx, xy, xz,
       wy, xy, yy, yz,
       wz, xz, yz, zz,
     )
 
-  def withXYZ(m: Matrix): Pga3dInertiaSummable = {
+  def withXYZ(m: ArrayView2d[Double]): Pga3dInertiaSummable = {
     copy(
       xx = m(0, 0),
       xy = m(0, 1),
@@ -249,23 +251,13 @@ object Pga3dInertiaSummable:
     Pga3dPlaneCentral(0, 0, 1),
   )
 
-  private def diagonalyzeSymmetricInplace(i: Matrix): Pga3dRotor = {
+  /** the shared Jacobi loop, accumulating the eigenvector basis as a rotor instead of a matrix */
+  private def diagonalizeSymmetricInplace(i: ArrayView2d[Double]): Pga3dRotor = {
     var rotor = Pga3dRotor.id
-
-    while (true) {
-      val (p, q) = SymmetricMatrixDiagonalization.findBiggestOffDiagonalElementByAbs(i)
-
-      if (Math.abs(i(p, q)) < 1e-100) {
-        return rotor
-      }
-      val (sin, cos) = SymmetricMatrixDiagonalization.findSinCosAtan(i(p, p), i(p, q), i(q, q))
-      SymmetricMatrixDiagonalization.sandwichRotSymmetricMatrix(i, p, q, sin, cos)
-
+    SymmetricMatrixDiagonalization.diagonalizeSymmetricInplace(i, (p, q, sin, cos) => {
       val planeP = planesByAxis(p)
       val planeQ = planesByAxis(q)
-      val dq = Pga3dRotor.rotation(planeP, planeP * cos + planeQ * sin)
-      rotor = rotor.geometric(dq)
-    }
-
+      rotor = rotor.geometric(Pga3dRotor.rotation(planeP, planeP * cos + planeQ * sin))
+    })
     rotor
   }

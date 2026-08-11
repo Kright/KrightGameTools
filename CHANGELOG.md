@@ -20,6 +20,34 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   rebuilds the transform). The internal
   matrix cache classes `Pga3dMotorWithMatrix` and `Pga3dMatrixForPoints` are removed - the transform
   replaces them; `motorSandwich` and `globalCenter` on the body keep working on top of it.
+- The `Matrix` class is removed - and so is the name: it was a field-for-field duplicate of
+  arrayview's `ArrayView2dFlat[Double]` that cut itself off from the view machinery (inherited
+  `copy` vs its own `copy()`, the lazy `transposed` view unusable with `Matrix`-typed
+  operations). Now any `ArrayView2d[Double]` is a matrix: the linear algebra lives in extension
+  methods on the interface (import `me.kright.gametools.matrix.*`), so every operation accepts
+  lazy views - `a * b.transposed` multiplies without materializing the copy - and operations
+  that produce a matrix return the concrete `ArrayView2dFlat[Double]`. The factories are
+  `matrixFromValues(h, w)(values*)` and `identityMatrix(n)`; plain zero matrices come straight
+  from `ArrayView2dFlat[Double](h, w)`. Renames on the way: `det()`/`inverted()` ->
+  parameterless `determinant`/`inverted`, `setIdt()` -> `setIdentity()`; dropped as duplicates
+  of the inherited view API: `copy()`, `transposedCopy()` (use `transposed`, copy if needed),
+  `setZero()` (use `fill(0.0)`), `isEquals` (use `equalsWithEps`; the `CanEqualWithEps`
+  instance covers any view of doubles). The dead `SquaredMatrix` trait and the unused
+  `Matrix2d/3d/4d.zero`/`id` are removed; `Matrix2d/3d/4d.determinant`/`inverted` accept any
+  view, and `Matrix2d.determinant` uses `ExactArith.diffOfProducts` (exact near-cancellation).
+- The symmetric eigendecomposition returns the named `Eigen(diagonal, vectors)` instead of a
+  `(Matrix, Matrix)` tuple whose components could be silently swapped at destructuring; the
+  eigenvalues come back as a 1d `ArrayView1dFlat[Double]` instead of an n x n matrix of mostly
+  zeros (`diagonalMatrix(values)` builds the square matrix back when needed). The entry point
+  is `SymmetricMatrixDiagonalization.eigen(m)` (the `Matrix.symmetricMatrixToDiagonalAndEigenvectors`
+  forwarder and the old `toDiagonalAndEigenvectors` name are removed). The Jacobi internals
+  (`findBiggestOffDiagonalElementByAbs`, `findSinCosTau`, `findSinCosAtan`,
+  `sandwichRotSymmetricMatrix`, `rotateEigenvectors`) are private now:
+  `Pga3dInertiaSummable` reuses the shared `diagonalizeSymmetricInplace` loop through its
+  callback (accumulating a rotor instead of a matrix), which also replaces its absolute
+  `1e-100` stop threshold and trigonometric angle formula with the shared relative threshold
+  and Rutishauser's trig-free rotation. The diagonal update inside the rotation uses the
+  cancellation-free form `a_pp + t * a_pq` (results may differ in the last bits).
 - pga2d point-valued results are typed as points, not rotors: the `xy` blade of 2d PGA lives in
   both `Pga2dRotor` and the point family, and the class-selection tie-break used to hand a value
   with a structurally zero scalar part to the rotor. 39 generated methods change their result
@@ -58,8 +86,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `Pga2dEdgeBinSearchReference`) as a near-perfect-precision reference.
 - `mathutil.IEqualsWithEps` and `mathutil.EqualityEps` are removed in favor of the
   `CanEqualWithEps` typeclass: the `===` operator with an implicit eps is gone - pass eps
-  explicitly (`a.equalsWithEps(b, eps)` via `CanEqualWithEps`, or the plain `isEquals(other, eps)`
-  methods that `Matrix` and `VectorNd` keep).
+  explicitly via `a.equalsWithEps(b, eps)`.
+- `Pga3dCylinder` joins the shape protocol of the capsule (it was added ad hoc for edge
+  intersection queries): `fromCenter`, `center` / `halfAxis` / `edge` accessors (replacing the
+  ad-hoc `ab` / `abNormalized` / `halfAb`), `map`, an exact `toAABB` +
+  `Pga3dAABB(cylinder)`, and the motor / translator / rotor `sandwich` extensions.
+  `expand(dr)` now grows the radius only, matching `Pga3dSphere.expand` and
+  `Pga3dCapsule.expand` (the old `expand` grew both the radius and the length, and its
+  parameter shadowed the method name); the lengthening is the separate `expandAxis(d)`
+  (replacing `expandAB` / `expandR`). `contains(point)` compares squared distances (one sqrt
+  less), `boundingSphere` is kept and finally has tests, as does the whole protocol.
+- `VectorNd`: the elementwise-power operator `^` is renamed to `pow` (`v.pow(2.0)`,
+  `v.pow(other)`): `^` means the wedge product everywhere else in the library, and its Scala
+  precedence is a trap (`a ^ 2 * b` parses as `a ^ (2 * b)`).
 - `hasIntersection` is renamed to `intersects` - the one name for every boolean overlap query:
   `Pga3dSphere` / `Pga2dCircle` (which briefly had both names) and `Pga3dRay` / `Pga2dRay`
   against an AABB.
@@ -165,6 +204,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `Pga3dEdge.intersects(other, eps)`: the missing 3d twin of `Pga2dEdge.intersects` - true when
+  the segments come within eps of each other (squared-distance comparison, NaN- and
+  negative-eps-safe), property-tested against the sqrt distance.
 - `Pga3dTransform` / `Pga3dProjectiveTransform`: cached, immutable forms of a motor for repeated
   applications - the sandwich operator stored as flat public matrix coefficients (rotation 3x3, the
   moment block for bivectors, the two translations), case classes deriving `CanEqual`,
@@ -393,6 +435,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   and releases through zero, matching the one-sided release logic; the constraint re-engages
   from the inactive state on a later sweep. Also covered: a swinging two-link pendulum whose
   slack link must stay inside its bounds, use the whole range and never create energy.
+- The Jacobi eigendecomposition (`SymmetricMatrixDiagonalization`) hung forever on a NaN input:
+  the only exit of the `while (true)` loop was a comparison that is always false for NaN. The
+  loop now has an internal rotation cap (30 sweeps - measured convergence on random matrices is
+  ~3-4 sweeps to the threshold and ~6-7 to an exactly zero off-diagonal, so the cap is a
+  backstop, not a tunable) and returns best-effort: a NaN input yields a visible NaN result.
+  Also fixed on the way: an all-zero submatrix (a point mass at the origin) hit `tau = 0/0`
+  because the exit test used a strict `<`.
 - `MathUtil.isEquals(arr1, arr2, eps)` compared `arr1.length` elements without checking the
   lengths: a longer `arr2` could compare equal, a shorter one threw
   `ArrayIndexOutOfBoundsException`. Now it requires equal lengths (and got a test).

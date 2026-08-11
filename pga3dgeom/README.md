@@ -116,6 +116,29 @@ val aabb = capsule.toAABB
 val wider = capsule.expand(dr)
 ```
 
+### `Pga3dCylinder`
+All points within `r` of the axis segment `[a, b]`, cut by the two flat cap planes (unlike the
+capsule there are no hemispherical caps); `a == b` degenerates to a flat disk. The same protocol
+as the capsule: `fromCenter`, `center`/`halfAxis`/`edge`, `map`, `toAABB` (exact), the motor /
+translator / rotor `sandwich` extensions.
+```scala
+val cylinder = Pga3dCylinder(a, b, r)
+// or engine-style, from the center and the half axis
+val fromCenter = Pga3dCylinder.fromCenter(center, halfAxis, r)
+
+// Containment and intersection queries
+val inside = cylinder.contains(point)
+val hits = cylinder.intersects(edge)
+
+// Widening (radius only, like the sphere and the capsule) and lengthening (both caps)
+val wider = cylinder.expand(dr)
+val longer = cylinder.expandAxis(d)
+
+// Bounds
+val aabb = cylinder.toAABB
+val sphere = cylinder.boundingSphere
+```
+
 ### `Pga3dRay`
 A ray with a precomputed reciprocal of the direction for efficient intersection tests
 against many AABBs, for example while traversing a BVH tree.

@@ -1,5 +1,7 @@
 package me.kright.gametools.matrix
 
+import me.kright.arrayview.{ArrayView2d, ArrayView2dFlat}
+
 import me.kright.gametools.mathutil.FastRange
 import scala.annotation.targetName
 
@@ -19,10 +21,10 @@ object CholeskyDecomposition:
    * @return low triangular matrix L, so L * L.transposed = m
    */
   @targetName("invoke")
-  def apply(m: Matrix): Matrix =
+  def apply(m: ArrayView2d[Double]): ArrayView2dFlat[Double] =
     require(m.isSquare)
 
-    val L = Matrix(m.h, m.w)
+    val L = ArrayView2dFlat[Double](m.h, m.w)
     val size = m.h
 
     for (i <- FastRange(size)) {
@@ -49,7 +51,7 @@ object CholeskyDecomposition:
 
   private def square(a: Double): Double = a * a
 
-  def inplaceInvertLowerTriangularMatrix(L: Matrix): Unit =
+  def inplaceInvertLowerTriangularMatrix(L: ArrayView2d[Double]): Unit =
     require(L.isSquare)
 
     val size = L.w
@@ -68,12 +70,12 @@ object CholeskyDecomposition:
       }
     }
 
-  def invertedLowerTriangularMatrix(L: Matrix): Matrix =
-    val result = L.copy()
+  def invertedLowerTriangularMatrix(L: ArrayView2d[Double]): ArrayView2dFlat[Double] =
+    val result = L.copy
     inplaceInvertLowerTriangularMatrix(result)
     result
 
-  def inverted(m: Matrix): Matrix =
+  def inverted(m: ArrayView2d[Double]): ArrayView2dFlat[Double] =
     val L = apply(m)
     inplaceInvertLowerTriangularMatrix(L)
-    L.transposedCopy() * L
+    L.transposed * L

@@ -15,9 +15,9 @@ final case class Vector2d(x: Double,
 
   override def /(v: Vector2d): Vector2d = Vector2d(x / v.x, y / v.y)
 
-  override def ^(pow: Double): Vector2d = Vector2d(Math.pow(x, pow), Math.pow(y, pow))
+  override def pow(power: Double): Vector2d = Vector2d(Math.pow(x, power), Math.pow(y, power))
 
-  override def ^(v: Vector2d): Vector2d = Vector2d(Math.pow(x, v.x), Math.pow(y, v.y))
+  override def pow(v: Vector2d): Vector2d = Vector2d(Math.pow(x, v.x), Math.pow(y, v.y))
 
   override infix def dot(v: Vector2d): Double =
     x * v.x + y * v.y

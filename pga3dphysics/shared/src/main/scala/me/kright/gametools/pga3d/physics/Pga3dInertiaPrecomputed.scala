@@ -1,6 +1,8 @@
 package me.kright.gametools.pga3d.physics
 
-import me.kright.gametools.matrix.Matrix
+import me.kright.arrayview.ArrayView2dFlat
+
+import me.kright.gametools.matrix.*
 import me.kright.gametools.pga3d.*
 
 /**
@@ -39,10 +41,10 @@ class Pga3dInertiaPrecomputed(val inertia: Pga3dInertia) extends Pga3dInertia:
   override val centerOfMassProjective: Pga3dProjectivePoint =
     centerOfMass * mass
 
-  private val matrixFwd: Matrix =
+  private val matrixFwd: ArrayView2dFlat[Double] =
     Pga3dMatrix.linearMapping(inertia.apply)
 
-  private val matrixInv: Matrix =
+  private val matrixInv: ArrayView2dFlat[Double] =
     Pga3dMatrix.linearMapping(inertia.invert)
 
   override def apply(globalB: Pga3dBivector): Pga3dBivector =

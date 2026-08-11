@@ -52,6 +52,25 @@ class Pga3dDistanceSquareTest extends AnyFunSuiteLike with ScalaCheckPropertyChe
     }
   }
 
+  test("edge-edge: intersects via squares agrees with the sqrt distance") {
+    forAll(edges, edges, epsGen, MinSuccessful(2000)) { (e1, e2, eps) =>
+      assert(e1.intersects(e2, eps) == (e1.distanceTo(e2) <= eps),
+        s"e1 = $e1, e2 = $e2, eps = $eps")
+    }
+  }
+
+  test("edge-edge: crossing and skew segments") {
+    // crossing segments touch: zero distance, intersects with any eps >= 0
+    val e1 = Pga3dEdge(Pga3dPoint(-1, 0, 0), Pga3dPoint(1, 0, 0))
+    val e2 = Pga3dEdge(Pga3dPoint(0, -1, 0), Pga3dPoint(0, 1, 0))
+    assert(e1.intersects(e2, 0.0))
+
+    // the same pair pulled apart along z: skew segments at distance 0.5
+    val skew = Pga3dEdge(Pga3dPoint(0, -1, 0.5), Pga3dPoint(0, 1, 0.5))
+    assert(!e1.intersects(skew, 0.4))
+    assert(e1.intersects(skew, 0.5))
+  }
+
   test("contains with negative or NaN eps is always false") {
     val triangle = Pga3dTriangle(Pga3dPoint(0, 0, 0), Pga3dPoint(1, 0, 0), Pga3dPoint(0, 1, 0))
     val edge = Pga3dEdge(Pga3dPoint(0, 0, 0), Pga3dPoint(1, 0, 0))
@@ -62,6 +81,8 @@ class Pga3dDistanceSquareTest extends AnyFunSuiteLike with ScalaCheckPropertyChe
     assert(!triangle.contains(triangle.a, Double.NaN))
     assert(!edge.contains(edge.a, -1.0))
     assert(!edge.contains(edge.a, Double.NaN))
+    assert(!edge.intersects(edge, -1.0))
+    assert(!edge.intersects(edge, Double.NaN))
   }
 
   test("distanceSquare scales quadratically with the scene up to 1e+-30") {

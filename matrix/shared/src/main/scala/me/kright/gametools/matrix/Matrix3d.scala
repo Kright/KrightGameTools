@@ -1,22 +1,19 @@
 package me.kright.gametools.matrix
 
+import me.kright.arrayview.{ArrayView2d, ArrayView2dFlat}
+
+
+/** the hardcoded formulas for 3x3 matrices; the arguments may be any views */
 object Matrix3d:
-  def zero: Matrix = Matrix(3, 3)
+  def apply(array: Array[Double]): ArrayView2dFlat[Double] =
+    ArrayView2dFlat(array, 3, 3)
 
-  def id: Matrix = Matrix3d(Array(
-    1.0, 0.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0)
-  )
-
-  def apply(array: Array[Double]): Matrix =
-    Matrix(3, 3, array)
-
-  def determinant(m: Matrix): Double = {
-    require(m.w == 3)
-    require(m.h == 3)
-    val f = m.data
-    Matrix3d.determinant(f(0), f(1), f(2), f(3), f(4), f(5), f(6), f(7), f(8))
+  def determinant(m: ArrayView2d[Double]): Double = {
+    require(m.w == 3 && m.h == 3)
+    Matrix3d.determinant(
+      m(0, 0), m(0, 1), m(0, 2),
+      m(1, 0), m(1, 1), m(1, 2),
+      m(2, 0), m(2, 1), m(2, 2))
   }
 
   inline def determinant(a00: Double, a01: Double, a02: Double,
@@ -26,14 +23,13 @@ object Matrix3d:
       a01 * (a12 * a20 - a10 * a22) +
       a02 * (a10 * a21 - a11 * a20)
 
-  def inverted(a: Matrix): Matrix =
+  def inverted(a: ArrayView2d[Double]): ArrayView2dFlat[Double] =
     val det = determinant(a) // this may be 0.0, check if necessary
     val d = 1.0 / det
-    val arr = a.data
 
-    inline def f(x: Int, y: Int) = arr(y * 3 + x)
+    inline def f(x: Int, y: Int) = a(y, x)
 
-    Matrix(3, 3,
+    ArrayView2dFlat(
       Array(
         d * (f(1, 1) * f(2, 2) - f(2, 1) * f(1, 2)),
         d * (f(2, 0) * f(1, 2) - f(1, 0) * f(2, 2)),
@@ -46,5 +42,4 @@ object Matrix3d:
         d * (f(0, 1) * f(1, 2) - f(1, 1) * f(0, 2)),
         d * (f(1, 0) * f(0, 2) - f(0, 0) * f(1, 2)),
         d * (f(0, 0) * f(1, 1) - f(1, 0) * f(0, 1)),
-      )
-    )
+      ), 3, 3)

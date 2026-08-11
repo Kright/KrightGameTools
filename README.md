@@ -102,8 +102,9 @@ the narrowest-result-type rule) are described in [pga-concepts.md](pga-concepts.
   pga2d/pga3d classes; used as the source of truth for the code generators.
 * [**vector**](vector/README.md): Vector2d, Vector3d, Vector4d - simple immutable vector classes with the usual
   operations.
-* [**matrix**](matrix/README.md): implementation of matrices and basic linear algebra - matrix operations,
-  transformation matrices for 3d graphics and physics.
+* [**matrix**](matrix/README.md): linear algebra over `arrayview` 2d views of doubles - there is no matrix
+  class, any view (including a lazy transposed one or a slice) is a matrix; multiplication, determinants,
+  the Jacobi eigendecomposition, Cholesky, projection matrices.
 * [**pga2d**](pga2d/README.md): efficient library for 2d PGA with generated code and some common cases—Pga2dLine,
   Pga2dPoint, Pga2dRotor, Pga2dMotor, etc. The 2d counterpart of pga3d with the same style and terminology, except
   that a grade-1 element is called a line instead of a plane, and the analog of Pga3dRotor is Pga2dRotor with just
