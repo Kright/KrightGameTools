@@ -70,6 +70,10 @@ val lineThroughPoints_ = point1 v point2
   `Pga2dRotor.id` is the identity rotation, `Pga2dRotor.zero` is the zero element (e.g. for derivatives)
 * [**Pga2dTranslator**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dTranslator.scala): represents linear movement, 2 fields (wx, wy). It is the exponent of Pga2dVector
 * [**Pga2dMotor**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dMotor.scala): combination of rotation and linear movement, 4 fields (scalar, wx, wy, xy) - the even subalgebra. Exponent of Pga2dProjectivePoint
+* [**Pga2dTransform**](shared/src/main/scala/me/kright/gametools/pga2d/Pga2dTransform.scala): a cached form of a motor with the sandwich products precomputed as flat matrix
+  coefficients (7 values in 2d: `cos` and `sin` of the rotation angle, the translations and `normSquare`).
+  Prefer it over `motor.sandwich` when the same motor is applied to many objects:
+  building it costs about one sandwich, and every application after that is cheaper.
 
 To move everything with these classes, you need to call `motor.sandwich(obj)`
 

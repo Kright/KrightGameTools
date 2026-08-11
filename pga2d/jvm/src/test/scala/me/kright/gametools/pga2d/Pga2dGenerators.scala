@@ -59,6 +59,9 @@ object Pga2dGenerators:
   val translators: Gen[Pga2dTranslator] =
     vectors.map(Pga2dTranslator.addVector)
 
+  val projectiveTranslators: Gen[Pga2dProjectiveTranslator] =
+    makeGenT(3, FlatDoubleSerializer.read[Pga2dProjectiveTranslator])
+
   val normalizedMotors: Gen[Pga2dMotor] =
     for (
       v <- vectors;
