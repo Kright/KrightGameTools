@@ -6,6 +6,7 @@ object MathUtil:
   inline val TauDiv = 1.0 / Tau
 
   def isEquals(arr1: Array[Double], arr2: Array[Double], eps: Double): Boolean =
+    require(arr1.length == arr2.length, s"arrays have different lengths: ${arr1.length} != ${arr2.length}")
     for (i <- FastRange(arr1.length)) {
       if (math.abs(arr1(i) - arr2(i)) > eps) return false
     }
@@ -62,11 +63,6 @@ object MathUtil:
       if (d < lower) lower
       else if (d > upper) upper
       else d
-
-    def sign: Double =
-      if (d > 0.0) 1.0
-      else if (d < 0.0) -1.0
-      else 0.0
 
     def square: Double =
       d * d

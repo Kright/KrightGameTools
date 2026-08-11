@@ -101,7 +101,7 @@ object Pga3dPhysicsSolverVerletConstrained:
           if (error != 0.0) {
             sweepMax = Math.max(sweepMax, Math.abs(error))
 
-            val total = clampTotal(c, lambdas(ci) - error / (dt * g.wSum))
+            val total = clampTotal(c, lambdas(ci), lambdas(ci) - error / (dt * g.wSum))
             val delta = total - lambdas(ci)
             lambdas(ci) = total
             if (delta != 0.0) {
@@ -194,12 +194,17 @@ object Pga3dPhysicsSolverVerletConstrained:
       Pga3dPhysicsSolverVerlet.solveDisplacement(inertias(pos), motors(pos), localBs(pos), lHalf(pos), dt)
     nextMotors(pos) = motors(pos).geometric(displacement.exp)
 
-  /** the accumulated lambda of a one-sided constraint keeps its admissible sign */
-  private def clampTotal(c: Pga3dDistanceConstraint, total: Double): Double =
-    if (c.minDistance >= c.maxDistance) total
+  /** the accumulated lambda of a one-sided constraint keeps its admissible sign; a two-sided
+   * constraint holds the bound it engaged (max for a negative lambda, min for a positive one)
+   * and releases through zero - the sign may not flip within a sweep, the constraint re-engages
+   * from the inactive state on a later sweep instead */
+  private def clampTotal(c: Pga3dDistanceConstraint, prevTotal: Double, total: Double): Double =
+    if (c.minDistance >= c.maxDistance) total // rod
     else if (c.maxDistance.isInfinity) Math.max(total, 0.0) // strut only pushes apart
     else if (c.minDistance <= 0.0) Math.min(total, 0.0) // rope only pulls together
-    else total
+    else if (prevTotal < 0.0) Math.min(total, 0.0) // two-sided engaged at the max bound
+    else if (prevTotal > 0.0) Math.max(total, 0.0) // two-sided engaged at the min bound
+    else total // two-sided just engaging: the sign of the first impulse picks the bound
 
   /** paired impulses driving the relative anchor velocities along the constraints to zero */
   private def projectVelocities(inertias: Array[Pga3dInertia],

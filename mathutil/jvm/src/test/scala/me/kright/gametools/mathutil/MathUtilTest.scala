@@ -34,10 +34,13 @@ class MathUtilTest extends AnyFunSuite:
     }
   }
 
-  test("sign") {
-    assert(0.0.sign == 0.0)
-    assert(5.0.sign == 1.0)
-    assert(-10.0.sign == -1.0)
+  test("isEquals") {
+    assert(MathUtil.isEquals(Array(1.0, 2.0), Array(1.0, 2.0), eps = 0.0))
+    assert(MathUtil.isEquals(Array(1.0, 2.0), Array(1.0, 2.5), eps = 0.5))
+    assert(!MathUtil.isEquals(Array(1.0, 2.0), Array(1.0, 2.6), eps = 0.5))
+    assertThrows[IllegalArgumentException] {
+      MathUtil.isEquals(Array(1.0, 2.0), Array(1.0, 2.0, 3.0), eps = 1.0)
+    }
   }
 
   test("pow") {

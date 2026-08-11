@@ -73,15 +73,21 @@ case class Pga3dCylinder(a: Pga3dPoint,
     if (ta < 0.0 && tb < 0.0) return false
     if (ta > 1.0 && tb > 1.0) return false
 
+    // the interpolation factors along the edge where it crosses the cap planes t = 0 and t = 1;
+    // an endpoint outside the axis range [0, 1] is replaced by the corresponding crossing, so the
+    // clamped sub-segment projects entirely into the axis range
+    val sAtT0 = -ta / (tb - ta)
+    val sAtT1 = (1.0 - ta) / (tb - ta)
+
     val edgeClampedTa =
-      if (ta < 0.0) edge.interpolatedPoint(-ta / (tb - ta))
-      else if (ta > 1.0) edge.interpolatedPoint((1.0 - tb) / (ta - tb))
+      if (ta < 0.0) edge.interpolatedPoint(sAtT0)
+      else if (ta > 1.0) edge.interpolatedPoint(sAtT1)
       else edge.a
 
     val edgeClampedTb =
-      if (tb < 0.0) edge.interpolatedPoint(-tb / (ta - tb))
-      else if (tb > 1.0) edge.interpolatedPoint((1.0 - ta) / (tb - ta))
+      if (tb < 0.0) edge.interpolatedPoint(sAtT0)
+      else if (tb > 1.0) edge.interpolatedPoint(sAtT1)
       else edge.b
 
-    Pga3dEdge(edgeClampedTa, edgeClampedTb).distanceTo(edge) <= r
+    Pga3dEdge(a, b).distanceTo(Pga3dEdge(edgeClampedTa, edgeClampedTb)) <= r
   }

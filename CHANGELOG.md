@@ -377,6 +377,28 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- `Pga3dCylinder.intersects(edge)` returned `true` for any edge whose axis projection partially
+  overlapped the axis range: the final branch measured the distance from a sub-segment of the
+  edge to the edge itself (identically zero) instead of to the axis. On top of that, two of the
+  four clamping formulas mixed up their interpolation factors - invisible while the final
+  comparison was vacuous. The edge is now clamped to the exact cap-plane crossings and compared
+  against the axis segment; both the separation and the cap-crossing cases are unit-tested.
+- The two-sided distance constraint (0 < min < max < infinity) in
+  `Pga3dPhysicsSolverVerletConstrained`: `clampTotal` did not clamp it at all, so within a SHAKE
+  step an engaged lambda could cross zero and flip to the opposite bound instead of releasing -
+  the sweeps then fought each other, burned the iteration limit and left a distorted pose (the
+  new test: a body pose-edited beyond the tether's max bound with a rod whose correction brings
+  it back deep inside the range; the buggy active-set ended the step with the rod violated by
+  1.8). A two-sided lambda now holds the bound it engaged (max for negative, min for positive)
+  and releases through zero, matching the one-sided release logic; the constraint re-engages
+  from the inactive state on a later sweep. Also covered: a swinging two-link pendulum whose
+  slack link must stay inside its bounds, use the whole range and never create energy.
+- `MathUtil.isEquals(arr1, arr2, eps)` compared `arr1.length` elements without checking the
+  lengths: a longer `arr2` could compare equal, a shorter one threw
+  `ArrayIndexOutOfBoundsException`. Now it requires equal lengths (and got a test).
+- The `MathUtil.sign` extension is removed: it silently shadowed the standard `Double.sign`
+  with different NaN semantics (`0.0` instead of `NaN`) wherever `import MathUtil.*` was in
+  scope, and had no callers.
 - The published Scala.js `gametools-matrix` could not link: `Matrix.*` and `frobeniusNormSquare`
   called `Math.fma`, which does not exist in the Scala.js javalib. The Scala.js compiler checks
   calls against the JDK signatures and only the linker reports missing methods for reached code,

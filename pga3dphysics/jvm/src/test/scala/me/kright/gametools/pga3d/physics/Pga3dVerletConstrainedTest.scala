@@ -217,6 +217,71 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
     }
   }
 
+  test("a two-sided constraint stays within its bounds and swings freely inside them") {
+    // world --rod-- A --two-sided [0.4, 0.6]-- B: a swinging two-link pendulum whose lower link
+    // has slack. The rod correction of every SHAKE sweep moves A and re-evaluates the engaged
+    // two-sided constraint, so a wrong two-sided active-set (an unclamped lambda that holds a
+    // bound like a rod or flips to the opposite bound instead of releasing through zero) breaks
+    // the energy balance and the slack behavior of the lower link.
+    val bodies = Array(
+      Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(1.0, 0.02, 0.02, 0.02),
+        Pga3dTranslator.addVector(Pga3dVector(0.5, 0, 0)).toMotor),
+      Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(1.0, 0.02, 0.02, 0.02),
+        Pga3dTranslator.addVector(Pga3dVector(1.0, 0, 0)).toMotor))
+    val constraints = ArraySeq(
+      Pga3dDistanceConstraint.rod(0, origin, Pga3dDistanceConstraint.world, origin, 0.5),
+      Pga3dDistanceConstraint(1, origin, 0, origin, 0.4, 0.6))
+    val state = State(bodies, constraints, useGravity = true, dt = 0.01)
+
+    val initialEnergy = state.energy
+    var minDist = Double.PositiveInfinity
+    var maxDist = 0.0
+    var maxEnergy = Double.NegativeInfinity
+    for (_ <- 0 until 20000) {
+      state.step(0.01)
+      val pA = state.motors(1).sandwich(origin).toPointUnsafe
+      val pB = state.motors(0).sandwich(origin).toPointUnsafe
+      val dist = (pA - pB).norm
+      minDist = Math.min(minDist, dist)
+      maxDist = Math.max(maxDist, dist)
+      maxEnergy = Math.max(maxEnergy, state.energy)
+    }
+    assert(minDist >= 0.4 - 1e-9, s"minDist = $minDist")
+    assert(maxDist <= 0.6 + 1e-9, s"maxDist = $maxDist")
+    // the slack link must actually use its range, not get pinned to one bound
+    assert(minDist < 0.55 && maxDist > 0.45, s"the link never moved inside [$minDist, $maxDist]")
+    // the taut catches of the slack link legitimately dissipate energy (no restitution), so
+    // apart from the small bounded RATTLE oscillation the energy may only go down from the
+    // initial level - it must never be created
+    assert(maxEnergy <= initialEnergy + 0.5, s"energy grew: $maxEnergy > $initialEnergy")
+  }
+
+  test("a two-sided constraint releases within a step instead of flipping to the opposite bound") {
+    // a two-sided [1, 2] tether to the origin plus a rod to an off-axis anchor, on one body.
+    // The starting pose (a caller-side pose edit) violates the tether's max bound, so the first
+    // sweep engages the tether; the rod correction then drags the body deep inside [1, 2], and
+    // the accumulated tether lambda must release through zero (the true active set of the step
+    // is "rod only"). A wrong active-set flips the lambda sign and pins the opposite bound -
+    // the sweeps then fight, burn the iteration limit and end at a distorted pose.
+    val rodAnchor = Pga3dPoint(0, -1.2, 0)
+    val bodies = Array(
+      Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(1.0, 0.1, 0.1, 0.1),
+        Pga3dTranslator.addVector(Pga3dVector(2.5, 0, 0)).toMotor))
+    val constraints = ArraySeq(
+      Pga3dDistanceConstraint(0, origin, Pga3dDistanceConstraint.world, origin, 1.0, 2.0),
+      Pga3dDistanceConstraint.rod(0, origin, Pga3dDistanceConstraint.world, rodAnchor, 1.0))
+    val state = State(bodies, constraints, useGravity = false, dt = 0.01)
+
+    for (stepIndex <- 0 until 20) {
+      state.step(0.01)
+      val p = state.motors(0).sandwich(origin).toPointUnsafe
+      val tetherDist = p.toVectorUnsafe.norm
+      val rodDist = (p - rodAnchor).norm
+      assert(Math.abs(rodDist - 1.0) < 1e-6, s"step $stepIndex: rodDist = $rodDist")
+      assert(tetherDist >= 1.0 - 1e-6 && tetherDist <= 2.0 + 1e-6, s"step $stepIndex: tetherDist = $tetherDist")
+    }
+  }
+
   test("rope: free fall until taut, never longer than the bound") {
     val bodies = Array(
       Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(1.0, 0.1, 0.1, 0.1),

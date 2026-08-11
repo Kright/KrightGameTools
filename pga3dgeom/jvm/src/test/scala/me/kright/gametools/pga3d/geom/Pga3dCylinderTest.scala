@@ -46,3 +46,27 @@ class Pga3dCylinderTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val edge4 = Pga3dEdge(Pga3dPoint(1, 0, 5), Pga3dPoint(5, 0, 5))
     assert(cylinder.intersects(edge4))
   }
+
+  test("intersects rejects a separated edge whose axis projection partially overlaps the axis range") {
+    val cylinder = Pga3dCylinder(Pga3dPoint(0, 0, 0), Pga3dPoint(0, 0, 10), r = 2.0)
+
+    // crosses the near cap plane far from the axis
+    assert(!cylinder.intersects(Pga3dEdge(Pga3dPoint(5, 0, -5), Pga3dPoint(5, 0, 5))))
+    // crosses the far cap plane far from the axis
+    assert(!cylinder.intersects(Pga3dEdge(Pga3dPoint(5, 0, 5), Pga3dPoint(5, 0, 15))))
+    // the near twins of the same edges do intersect
+    assert(cylinder.intersects(Pga3dEdge(Pga3dPoint(1, 0, -5), Pga3dPoint(1, 0, 5))))
+    assert(cylinder.intersects(Pga3dEdge(Pga3dPoint(1, 0, 5), Pga3dPoint(1, 0, 15))))
+  }
+
+  test("intersects clamps the edge exactly at the cap planes") {
+    val cylinder = Pga3dCylinder(Pga3dPoint(0, 0, 0), Pga3dPoint(0, 0, 10), r = 2.0)
+
+    // edge.a is beyond the far cap; the edge reaches radius ~1.93 < r exactly at the far cap plane
+    assert(cylinder.intersects(Pga3dEdge(Pga3dPoint(0.3, 0, 12), Pga3dPoint(6, 0, 5))))
+    // the mirrored case: edge.b is below the near cap
+    assert(cylinder.intersects(Pga3dEdge(Pga3dPoint(6, 0, 5), Pga3dPoint(0.3, 0, -2))))
+    // the same two edges shifted outwards (radius ~4 at the cap plane) do not intersect
+    assert(!cylinder.intersects(Pga3dEdge(Pga3dPoint(2.5, 0, 12), Pga3dPoint(8, 0, 5))))
+    assert(!cylinder.intersects(Pga3dEdge(Pga3dPoint(8, 0, 5), Pga3dPoint(2.5, 0, -2))))
+  }

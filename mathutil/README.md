@@ -51,7 +51,7 @@ Assorted numeric helpers:
 * `interpolate(a, b, t)` — linear interpolation;
 * `minNanSafe(a, b)`, `maxNanSafe(a, b)` (and the 3-argument overloads) — like `math.min`/`math.max`, but NaN
   arguments are ignored instead of being propagated; used by the ray/AABB slab tests in pga3dgeom and pga2dgeom;
-* `Double` extensions `clamp(lower, upper)`, `sign`, `square`;
+* `Double` extensions `clamp(lower, upper)`, `square`;
 * `Array[T].swap(i, j)`.
 
 ### Other
