@@ -78,12 +78,6 @@ final case class Pga3dInertiaSimple(mass: Double,
   override def toInertiaMovedLocal: Pga3dInertiaMovedLocal =
     toInertiaLocal.toInertiaMovedLocal
 
-  /**
-   * Pga3dInertiaSimple is much faster than Pga3dInertiaPrecomputed, so no much need in this conversion 
-   */
-  override def toPrecomputed: Pga3dInertiaPrecomputed =
-    toInertiaLocal.toPrecomputed
-
   def toMovedSimple: Pga3dInertiaMovedSimple =
     Pga3dInertiaMovedSimple(Pga3dTranslator.id, this)
 

@@ -52,9 +52,6 @@ final case class Pga3dInertiaMovedSimple(localToGlobal: Pga3dTranslator,
   override def toSummable: Pga3dInertiaSummable =
     localToGlobal.sandwich(localInertia.toSummable)
 
-  override def toPrecomputed: Pga3dInertiaPrecomputed =
-    toInertiaMovedLocal.toPrecomputed
-
   override def toInertiaMovedLocal: Pga3dInertiaMovedLocal =
     Pga3dInertiaMovedLocal(localToGlobal.toMotor, localInertia.toInertiaLocal)
 

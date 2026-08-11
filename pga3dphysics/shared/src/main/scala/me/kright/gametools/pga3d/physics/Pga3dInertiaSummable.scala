@@ -10,6 +10,16 @@ import me.kright.gametools.pga3d.physics.Pga3dInertiaSummable.sandwich
 import scala.collection.immutable.ArraySeq
 
 
+/**
+ * The inertia as the first and second moments of the mass distribution: inertias of separate
+ * bodies simply add up, and apply/invert are the fastest of the general representations
+ * (see InertiaBenchmark).
+ *
+ * Precision hint: the second moments carry parallel-axis terms ~ mass * R^2 for a center of
+ * mass at distance R from the origin, and their near-cancellation costs invert, getKineticEnergy
+ * and getAcceleration ~1e-16 * R^2 of relative error (apply loses only ~1e-16 * R). Far from
+ * the origin prefer [[Pga3dInertiaMovedLocal]]; numbers in Pga3dInertiaPrecisionTest.
+ */
 final case class Pga3dInertiaSummable(ww: Double,
                                       wx: Double,
                                       wy: Double,
@@ -21,8 +31,20 @@ final case class Pga3dInertiaSummable(ww: Double,
                                       yz: Double,
                                       xz: Double) extends Pga3dInertia derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
 
-  /** lazy cache for computing inversion */
+  /** lazy cache for the conversions */
   private var inertiaMovedLocalOrNull: Pga3dInertiaMovedLocal | Null = null
+
+  /** lazy cache for [[invert]] */
+  private var inverseOrNull: Pga3dInertiaSummableInverse | Null = null
+
+  /** the lazily cached inverse momentum map (see [[Pga3dInertiaSummableInverse]]) */
+  def inverse: Pga3dInertiaSummableInverse =
+    val cached = inverseOrNull
+    if (cached ne null) return cached
+
+    val computed = Pga3dInertiaSummableInverse(this)
+    inverseOrNull = computed
+    computed
 
   override def toInertiaMovedLocal: Pga3dInertiaMovedLocal =
     val inertiaOrNull = inertiaMovedLocalOrNull
@@ -127,8 +149,13 @@ final case class Pga3dInertiaSummable(ww: Double,
       yz = ww * b.wx - wy * b.xy - wz * b.xz,
     )
 
+  /**
+   * the inverse of [[apply]], solved in closed form on the 3x3 blocks of the momentum map by
+   * the lazily cached [[Pga3dInertiaSummableInverse]]: about as cheap as [[apply]] after the
+   * first call, and unlike the [[toInertiaMovedLocal]] route it needs no eigendecomposition
+   */
   override def invert(localInertia: Pga3dBivector): Pga3dBivector =
-    toInertiaMovedLocal.invert(localInertia)
+    inverse(localInertia)
 
   def toMatrixXYZ: ArrayView2dFlat[Double] =
     matrixFromValues(3, 3)(
@@ -178,9 +205,6 @@ final case class Pga3dInertiaSummable(ww: Double,
 
   override def toSummable: Pga3dInertiaSummable =
     this
-
-  override def toPrecomputed: Pga3dInertiaPrecomputed =
-    Pga3dInertiaPrecomputed(this)
 
 
 object Pga3dInertiaSummable:

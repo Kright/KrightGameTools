@@ -92,7 +92,6 @@ class Pga3dInertiaSimpleTest extends AnyFunSuiteLike with ScalaCheckPropertyChec
       val representations = ArraySeq[Pga3dInertia](
         inertia.toInertiaLocal,
         inertia.toInertiaMovedLocal,
-        inertia.toPrecomputed,
         inertia.toMovedSimple,
         inertia.toFastestRepresentation
       )

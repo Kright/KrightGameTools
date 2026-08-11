@@ -57,7 +57,6 @@ object Pga3dInertiaGenerators:
     ).flatMap { inertia =>
       Gen.oneOf(
         inertia,
-        inertia.toPrecomputed,
         inertia.toInertiaMovedLocal,
         inertia.toFastestRepresentation,
         inertia.toSummable,

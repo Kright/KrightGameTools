@@ -279,6 +279,39 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     }
   }
 
+  test("apply, invert, acceleration and energy of any representation agree with the moved-local one") {
+    forAll(Pga3dInertiaGenerators.anyInertia, Pga3dGenerators.bivectors, Pga3dGenerators.bivectors,
+      MinSuccessful(2000)) { (inertia, b, forque) =>
+      val movedLocal = inertia.toInertiaMovedLocal
+      val eps = 1e-9
+
+      val l = inertia(b)
+      assert((l - movedLocal(b)).norm < eps * (1.0 + l.norm))
+
+      val inverted = inertia.invert(b)
+      assert((inverted - movedLocal.invert(b)).norm < eps * (1.0 + inverted.norm))
+
+      val accel = inertia.getAcceleration(b, forque)
+      assert((accel - movedLocal.getAcceleration(b, forque)).norm < eps * (1.0 + accel.norm))
+
+      val energy = inertia.getKineticEnergy(b)
+      assert(Math.abs(energy - movedLocal.getKineticEnergy(b)) < eps * (1.0 + Math.abs(energy)))
+    }
+  }
+
+  test("summable invert is a tight round trip and agrees with the moved-local route") {
+    forAll(Pga3dInertiaGenerators.inertiaSummable, Pga3dGenerators.bivectors, MinSuccessful(1000)) { (summable, b) =>
+      val momentum = summable(b)
+      val direct = summable.invert(momentum)
+      val viaMovedLocal = summable.toInertiaMovedLocal.invert(momentum)
+
+      // the direct block inverse needs no eigendecomposition, so the round trip is tight
+      assert((direct - b).norm < 1e-12 * (1.0 + b.norm), s"direct = $direct, b = $b")
+      assert((viaMovedLocal - direct).norm < 1e-9 * (1.0 + b.norm),
+        s"viaMovedLocal = $viaMovedLocal, direct = $direct")
+    }
+  }
+
   test("any inertia reverse is equal to apply") {
     forAll(Pga3dInertiaGenerators.anyInertia, Pga3dGenerators.bivectors, MinSuccessful(1000)) { (inertia, b) =>
       val eps = 2e-12
@@ -304,7 +337,6 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
         else 2e-13
 
       assert((inertia.toSummable - inertia.toInertiaMovedLocal.toSummable).norm < eps)
-      assert((inertia.toSummable - inertia.toPrecomputed.toSummable).norm < eps)
       assert((inertia.toSummable - inertia.toFastestRepresentation.toSummable).norm < eps)
     }
   }

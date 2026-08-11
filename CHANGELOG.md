@@ -31,7 +31,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
     `Pga3dMatrixForPoints` are replaced by the transform;
   - `Pga3dPhysicsSolverVerletConstrained.step` takes an optional `localBs` output - the honest
     node twists of the consumed poses (observers no longer pay a second `reconstructNode` with
-    its force callback); `reconstructNode` writes into a caller array and returns the forques.
+    its force callback); `reconstructNode` writes into a caller array and returns the forques;
+  - `Pga3dInertiaPrecomputed` is removed (and `toPrecomputed` with it): the summable's
+    closed-form block apply and invert are ~3x faster than its 6x6 matrices and not less
+    precise, so `toFastestRepresentation` returns `toSummable` (the diagonal forms still
+    return themselves).
 - Geometry:
   - `Pga3dCylinder` joins the capsule's shape protocol: `fromCenter`, `center` / `halfAxis` /
     `edge` (replacing the ad-hoc `ab` / `abNormalized` / `halfAb`), `map`, an exact `toAABB` +
@@ -120,6 +124,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   (`Pga3dPhysicsBody`, `Pga3dInertiaMovedLocal`, the VerletConstrained sweeps,
   `motor.sandwich(summable)`) - the pure solver overhead dropped 1.2-1.3x;
   `RKMK4` uses the honest closed-form `dexpInv` instead of a truncated series.
+- `Pga3dInertiaSummable.invert` is solved in closed form on the 3x3 blocks of the spatial
+  inertia (the public `Pga3dInertiaSummableInverse`, cached lazily: transport the momentum to
+  the center of mass, apply the inverse of the inertia tensor about it, restore the velocity)
+  instead of the moved-local route with its eigendecomposition. After the first call it costs
+  the same as `apply`, and both are the fastest of all the representations
+  (`InertiaBenchmark`); the apply-invert round trip is tight (~1e-13 relative).
 - Numerics: the generated code groups long sums in parenthesized pairs (halves the dependency
   chains, ~10% on 6-term rows; results change in the last bits), `cross` groups mirrored
   summands (`u.cross(u)` is exactly zero, `a.cross(b) == -b.cross(a)` bit-exact), and the
@@ -159,7 +169,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   structure, norm/axis derivations, hand-written formulas); the package is `codegen.scalagen`;
   CI fails on generated-code drift. `pgaNdCodeGen` joined the root aggregate (still unpublished
   and independent of the generated modules).
-- `Pga3dInertiaPrecisionTest` pins the accuracy of the moved and the precomputed inertia as a
-  function of the center-of-mass offset against a BigDecimal reference.
+- `Pga3dInertiaPrecisionTest` pins the accuracy of the moved and the summable inertia as a
+  function of the center-of-mass offset against a BigDecimal reference (the moved form loses
+  ~1e-16 * R, the summable ~1e-16 * R^2 on invert, energy and acceleration).
 - `Seq(...)` literals are `ArraySeq(...)` across the codebase; `cpp/cmake-build-debug/` is
   git-ignored.

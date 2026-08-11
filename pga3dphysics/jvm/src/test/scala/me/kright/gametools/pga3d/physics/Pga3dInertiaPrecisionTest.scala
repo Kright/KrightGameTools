@@ -5,8 +5,8 @@ import me.kright.gametools.pga3d.*
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 /**
- * Measures how the accuracy of Pga3dInertiaMovedLocal and its Pga3dInertiaPrecomputed form
- * degrades as the center of mass moves away from the origin.
+ * Measures how the accuracy of Pga3dInertiaMovedLocal and Pga3dInertiaSummable degrades as
+ * the center of mass moves away from the origin.
  *
  * The reference is computed with BigDecimal (DECIMAL128, ~34 significant digits) through the
  * slow generic sandwich of the ga module and the exact diagonal formulas of Pga3dInertiaLocal,
@@ -19,11 +19,11 @@ import org.scalatest.funsuite.AnyFunSuiteLike
  * grows together with the absolute error), which hides the problem.
  *
  * The expected picture: the moved-local path loses digits linearly with the offset on every
- * operation. The precomputed 6x6 matrices bake the parallel-axis terms (~ mass * offset^2)
- * into their entries; on apply/invert the norm of the result grows together with the error and
- * the relative loss stays linear too, but the kinetic energy and the acceleration go through
- * the near-cancellation of the matrix terms and lose ~1e-16 * offset^2 - the price of the
- * fast matrix path, documented in the pga3dphysics README.
+ * operation. The summable bakes the parallel-axis terms (~ mass * offset^2) into its second
+ * moments; on apply/invert the norm of the result grows together with the error and the
+ * relative loss stays linear too, but the kinetic energy and the acceleration go through the
+ * near-cancellation of those terms and lose ~1e-16 * offset^2 - the price of the fastest
+ * apply/invert path (see InertiaBenchmark).
  */
 class Pga3dInertiaPrecisionTest extends AnyFunSuiteLike:
 
@@ -93,7 +93,7 @@ class Pga3dInertiaPrecisionTest extends AnyFunSuiteLike:
     val refD = ref.toDouble
     if (refD != 0.0) Math.abs((big(actual) - ref).toDouble / refD) else Math.abs(actual)
 
-  test("accuracy of the moved and the precomputed inertia vs the center of mass offset") {
+  test("accuracy of the moved and the summable inertia vs the center of mass offset") {
     val localInertia = Pga3dInertiaLocal(mass = 2.0, mryz = 3.0, mrxz = 2.0, mrxy = 1.5)
     val rotor = Pga3dBivectorBulk(0.3, -0.4, 0.5).exp
     val direction = Pga3dVector(0.6, -0.64, 0.48)
@@ -104,16 +104,16 @@ class Pga3dInertiaPrecisionTest extends AnyFunSuiteLike:
     val half = big(0.5)
 
     println("max relative error over random bounded local twists, by center of mass offset:")
-    println("    offset |    apply     |    invert    |    energy    | acceleration |   (moved | precomputed)")
+    println("    offset |    apply     |    invert    |    energy    | acceleration |   (moved | summable)")
 
     for (offset <- Seq(0.0, 1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6)) {
       val motor = Pga3dTranslator.addVector(direction * offset).geometric(rotor)
       val moved = Pga3dInertia.moved(motor, localInertia)
-      val precomputed = moved.toPrecomputed
+      val summable = moved.toSummable
       val mRef = toGa(motor)
 
-      var movedApply, preApply, movedInvert, preInvert = 0.0
-      var movedEnergy, preEnergy, movedAccel, preAccel = 0.0
+      var movedApply, sumApply, movedInvert, sumInvert = 0.0
+      var movedEnergy, sumEnergy, movedAccel, sumAccel = 0.0
 
       for (_ <- 0 until samples) {
         // a bounded twist and forque of the body, in the global frame (the solver regime)
@@ -127,32 +127,32 @@ class Pga3dInertiaPrecisionTest extends AnyFunSuiteLike:
 
         val applyRef = mRef.sandwich(localLRef)
         movedApply = Math.max(movedApply, relError(moved(globalB), applyRef))
-        preApply = Math.max(preApply, relError(precomputed(globalB), applyRef))
+        sumApply = Math.max(sumApply, relError(summable(globalB), applyRef))
 
         val invertRef = mRef.sandwich(invertLocalRef(localInertia, mRef.reverse.sandwich(toGa(globalB))))
         movedInvert = Math.max(movedInvert, relError(moved.invert(globalB), invertRef))
-        preInvert = Math.max(preInvert, relError(precomputed.invert(globalB), invertRef))
+        sumInvert = Math.max(sumInvert, relError(summable.invert(globalB), invertRef))
 
         val energyRef = localBRef.antiWedge(localLRef).scalar * half
         movedEnergy = Math.max(movedEnergy, relError(moved.getKineticEnergy(globalB), energyRef))
-        preEnergy = Math.max(preEnergy, relError(precomputed.getKineticEnergy(globalB), energyRef))
+        sumEnergy = Math.max(sumEnergy, relError(summable.getKineticEnergy(globalB), energyRef))
 
         // invert(localB cross apply(localB) + localForque), transformed to the global frame
         val crossRef = localBRef.crossX2(localLRef).mapValues(_ * half)
         val accelRef = mRef.sandwich(invertLocalRef(localInertia, crossRef + localFRef))
         movedAccel = Math.max(movedAccel, relError(moved.getAcceleration(globalB, globalForque), accelRef))
-        preAccel = Math.max(preAccel, relError(precomputed.getAcceleration(globalB, globalForque), accelRef))
+        sumAccel = Math.max(sumAccel, relError(summable.getAcceleration(globalB, globalForque), accelRef))
       }
 
-      println(f"$offset%10.0f | $movedApply%5.1e | $preApply%5.1e | $movedInvert%5.1e | $preInvert%5.1e | $movedEnergy%5.1e | $preEnergy%5.1e | $movedAccel%5.1e | $preAccel%5.1e")
+      println(f"$offset%10.0f | $movedApply%5.1e | $sumApply%5.1e | $movedInvert%5.1e | $sumInvert%5.1e | $movedEnergy%5.1e | $sumEnergy%5.1e | $movedAccel%5.1e | $sumAccel%5.1e")
 
       // the moved-local path loses digits ~linearly with the offset; the energy and the
-      // acceleration of the precomputed form go through the matrices and lose ~quadratically;
-      // the bounds are far above the observed errors so the test does not flake
+      // acceleration of the summable go through the parallel-axis cancellation and lose
+      // ~quadratically; the bounds are far above the observed errors so the test does not flake
       val linear = 1e-13 * (1.0 + offset)
       val quadratic = 1e-13 * (1.0 + offset) * (1.0 + offset)
       assert(movedApply < linear && movedInvert < linear && movedEnergy < linear && movedAccel < linear, s"offset = $offset")
-      assert(preApply < linear && preInvert < linear, s"offset = $offset")
-      assert(preEnergy < quadratic && preAccel < quadratic, s"offset = $offset")
+      assert(sumApply < quadratic && sumInvert < quadratic, s"offset = $offset")
+      assert(sumEnergy < quadratic && sumAccel < quadratic, s"offset = $offset")
     }
   }

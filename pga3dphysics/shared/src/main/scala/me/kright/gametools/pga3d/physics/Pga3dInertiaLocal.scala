@@ -77,9 +77,6 @@ final case class Pga3dInertiaLocal(mass: Double,
   override def toInertiaMovedLocal: Pga3dInertiaMovedLocal =
     Pga3dInertiaMovedLocal(Pga3dMotor.id, this)
 
-  override def toPrecomputed: Pga3dInertiaPrecomputed =
-    Pga3dInertiaPrecomputed(this)
-
   override def toFastestRepresentation: Pga3dInertiaLocal =
     this
 

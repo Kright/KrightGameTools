@@ -25,9 +25,10 @@ trait Pga3dInertia:
 
   def toSummable: Pga3dInertiaSummable
 
-  def toPrecomputed: Pga3dInertiaPrecomputed
-
-  def toFastestRepresentation: Pga3dInertia = toPrecomputed
+  /** the fastest general representation for repeated apply/invert: the summable - its
+   * closed-form block apply and invert beat both the moved-local route and a precomputed
+   * 6x6 matrix (see InertiaBenchmark). The diagonal forms override with themselves */
+  def toFastestRepresentation: Pga3dInertia = toSummable
 
 
   def movedBy(motor: Pga3dMotor): Pga3dInertia
