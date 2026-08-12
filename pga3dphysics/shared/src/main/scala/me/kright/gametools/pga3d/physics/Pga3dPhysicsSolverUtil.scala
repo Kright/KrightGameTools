@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.mathutil.FastRange
+import me.kright.gametools.pga3d.Pga3dTransform
 
 object Pga3dPhysicsSolverUtil:
   def getDerivative(dynamicBodies: Array[Pga3dPhysicsBody], currentDt: Double, addForquesToBodies: Double => Unit): Array[Pga3dBodyState] = {
@@ -17,7 +18,7 @@ object Pga3dPhysicsSolverUtil:
       val r = result(pos)
       val i = state(pos)
 
-      r.motor = i.motor
+      r.transform = Pga3dTransform.fromNormalized(i.motor)
       r.localB = i.localB
     }
 
@@ -27,7 +28,7 @@ object Pga3dPhysicsSolverUtil:
       val i = initial(pos)
       val d = derivative(pos)
 
-      r.motor = (i.motor + d.motor * dt).renormalized
+      r.transform = Pga3dTransform(i.motor + d.motor * dt)
       r.localB = i.localB + d.localB * dt
     }
 
@@ -40,10 +41,10 @@ object Pga3dPhysicsSolverUtil:
       val d0 = derivative0(pos)
       val d1 = derivative1(pos)
 
-      r.motor = (i.motor
+      r.transform = Pga3dTransform(i.motor
         + d0.motor * (dt * k0)
         + d1.motor * (dt * k1)
-        ).renormalized
+      )
 
       r.localB = i.localB
         + d0.localB * (dt * k0)
@@ -69,7 +70,7 @@ object Pga3dPhysicsSolverUtil:
           + d2.motor * (dt * k2)
           + d3.motor * (dt * k3)
 
-      r.motor = (i.motor + dMotor).renormalized
+      r.transform = Pga3dTransform(i.motor + dMotor)
 
       val dB =
         d0.localB * (dt * k0)

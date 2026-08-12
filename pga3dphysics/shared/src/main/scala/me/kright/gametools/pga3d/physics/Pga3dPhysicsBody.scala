@@ -24,6 +24,7 @@ class Pga3dPhysicsBody(var inertia: Pga3dInertia,
 
   def motor: Pga3dMotor = transform.motor
 
+  @Deprecated
   def motor_=(m: Pga3dMotor): Unit =
     transform = Pga3dTransform(m)
 

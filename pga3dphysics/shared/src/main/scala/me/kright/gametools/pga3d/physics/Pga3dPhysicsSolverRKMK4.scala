@@ -1,7 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.mathutil.FastRange
-import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor}
+import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dTransform}
 
 /**
  * Runge-Kutta-Munthe-Kaas solver with 4th order of precision.
@@ -70,7 +70,7 @@ object Pga3dPhysicsSolverRKMK4 extends Pga3dPhysicsSolver:
       val i = initial(pos)
       val u = (ku1(pos) + (ku2(pos) + ku3(pos)) * 2.0 + ku4(pos)) * (dt / 6.0)
 
-      body.motor = i.motor.geometric(u.exp).renormalized
+      body.transform = Pga3dTransform(i.motor.geometric(u.exp))
       body.localB = i.localB + (a1(pos) + (a2(pos) + a3(pos)) * 2.0 + a4(pos)) * (dt / 6.0)
     }
   }
@@ -93,7 +93,7 @@ object Pga3dPhysicsSolverRKMK4 extends Pga3dPhysicsSolver:
       val body = dynamicBodies(pos)
       val i = initial(pos)
 
-      body.motor = i.motor.geometric(u(pos).exp)
+      body.transform = Pga3dTransform(i.motor.geometric(u(pos).exp))
       body.localB = i.localB + acceleration(pos) * stageDt
     }
 

@@ -1,7 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.mathutil.FastRange
-import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dPoint, Pga3dVector}
+import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dPoint, Pga3dTransform, Pga3dVector}
 
 /**
  * resolves hard [[Pga3dDistanceConstraint]]s. Two independent parts, both solver-agnostic:
@@ -104,11 +104,11 @@ class Pga3dConstraintResolver(val constraints: Seq[Pga3dDistanceConstraint],
     for (c <- constraints) {
       if (c.bodyA >= 0) {
         val body = dynamicBodies(c.bodyA)
-        body.motor = body.motor.renormalized
+        body.transform = Pga3dTransform(body.motor)
       }
       if (c.bodyB >= 0) {
         val body = dynamicBodies(c.bodyB)
-        body.motor = body.motor.renormalized
+        body.transform = Pga3dTransform(body.motor)
       }
     }
 

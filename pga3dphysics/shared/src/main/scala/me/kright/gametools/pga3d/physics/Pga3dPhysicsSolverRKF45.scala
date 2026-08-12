@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.mathutil.FastRange
+import me.kright.gametools.pga3d.Pga3dTransform
 import me.kright.gametools.pga3d.physics.Pga3dPhysicsSolverUtil.getDerivative
 
 /**
@@ -93,7 +94,7 @@ class Pga3dPhysicsSolverRKF45 extends Pga3dPhysicsSolver:
       }
 
       val body = dynamicBodies(pos)
-      body.motor = motor.renormalized
+      body.transform = Pga3dTransform(motor)
       body.localB = localB
     }
 
