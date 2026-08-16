@@ -3,6 +3,18 @@
 All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.10.1] - 2026-08-16
+
+### Changed
+
+- `Pga3dPhysicsSolver.step` accepts arrays of `Pga3dPhysicsBody` subclasses:
+  `step[T <: Pga3dPhysicsBody](dynamicBodies: Array[T], ...)` (arrays are invariant, so
+  `Array[MyBody]` did not fit the old signature). The helpers (`Pga3dPhysicsSolverUtil`,
+  `Pga3dConstraintResolver`) take `Array[? <: Pga3dPhysicsBody]` - they only read from the
+  array. Source- and binary-compatible: after erasure the signatures are unchanged, and the
+  benchmarks match the pre-change baseline within noise. `Pga3dPhysicsSystem` deliberately
+  stays non-generic.
+
 ## [0.10.0] - 2026-08-12
 
 ### Changed (breaking)
