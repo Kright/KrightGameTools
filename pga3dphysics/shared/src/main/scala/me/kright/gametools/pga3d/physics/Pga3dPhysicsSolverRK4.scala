@@ -6,9 +6,9 @@ import me.kright.gametools.pga3d.physics.Pga3dPhysicsSolverUtil.*
  * Runge-Kutta solver with 4th order of precision
  */
 object Pga3dPhysicsSolverRK4 extends Pga3dPhysicsSolver:
-  override def step(dynamicBodies: Array[Pga3dPhysicsBody],
-                    dt: Double,
-                    addForquesToBodies: (Double) => Unit): Unit = {
+  override def step[T <: Pga3dPhysicsBody](dynamicBodies: Array[T],
+                                           dt: Double,
+                                           addForquesToBodies: (Double) => Unit): Unit = {
 
     val initial = dynamicBodies.map(Pga3dBodyState(_))
 

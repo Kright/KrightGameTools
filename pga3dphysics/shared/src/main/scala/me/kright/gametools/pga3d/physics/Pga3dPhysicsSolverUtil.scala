@@ -4,7 +4,7 @@ import me.kright.gametools.mathutil.FastRange
 import me.kright.gametools.pga3d.Pga3dTransform
 
 object Pga3dPhysicsSolverUtil:
-  def getDerivative(dynamicBodies: Array[Pga3dPhysicsBody], currentDt: Double, addForquesToBodies: Double => Unit): Array[Pga3dBodyState] = {
+  def getDerivative(dynamicBodies: Array[? <: Pga3dPhysicsBody], currentDt: Double, addForquesToBodies: Double => Unit): Array[Pga3dBodyState] = {
     for (body <- dynamicBodies) {
       body.resetForqueAccum()
     }
@@ -13,7 +13,7 @@ object Pga3dPhysicsSolverUtil:
     dynamicBodies.map(b => Pga3dBodyState.derivative(b))
   }
 
-  def setNewState(result: Array[Pga3dPhysicsBody], state: Array[Pga3dBodyState]): Unit =
+  def setNewState(result: Array[? <: Pga3dPhysicsBody], state: Array[Pga3dBodyState]): Unit =
     for (pos <- FastRange(result.length)) {
       val r = result(pos)
       val i = state(pos)
@@ -22,7 +22,7 @@ object Pga3dPhysicsSolverUtil:
       r.localB = i.localB
     }
 
-  def setNewState(result: Array[Pga3dPhysicsBody], initial: Array[Pga3dBodyState], dt: Double, derivative: Array[Pga3dBodyState]): Unit =
+  def setNewState(result: Array[? <: Pga3dPhysicsBody], initial: Array[Pga3dBodyState], dt: Double, derivative: Array[Pga3dBodyState]): Unit =
     for (pos <- FastRange(result.length)) {
       val r = result(pos)
       val i = initial(pos)
@@ -32,7 +32,7 @@ object Pga3dPhysicsSolverUtil:
       r.localB = i.localB + d.localB * dt
     }
 
-  def setNewState(result: Array[Pga3dPhysicsBody], initial: Array[Pga3dBodyState], dt: Double,
+  def setNewState(result: Array[? <: Pga3dPhysicsBody], initial: Array[Pga3dBodyState], dt: Double,
                   derivative0: Array[Pga3dBodyState], k0: Double,
                   derivative1: Array[Pga3dBodyState], k1: Double): Unit =
     for (pos <- FastRange(result.length)) {
@@ -51,7 +51,7 @@ object Pga3dPhysicsSolverUtil:
         + d1.localB * (dt * k1)
     }
 
-  def setNewState(result: Array[Pga3dPhysicsBody], initial: Array[Pga3dBodyState], dt: Double,
+  def setNewState(result: Array[? <: Pga3dPhysicsBody], initial: Array[Pga3dBodyState], dt: Double,
                   derivative0: Array[Pga3dBodyState], k0: Double,
                   derivative1: Array[Pga3dBodyState], k1: Double,
                   derivative2: Array[Pga3dBodyState], k2: Double,

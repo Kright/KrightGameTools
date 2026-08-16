@@ -4,9 +4,9 @@ import me.kright.gametools.pga3d.physics.Pga3dPhysicsSolverUtil.{getDerivative, 
 
 /** First order of precision. Very imprecise */
 object Pga3dPhysicsSolverEuler extends Pga3dPhysicsSolver:
-  override def step(dynamicBodies: Array[Pga3dPhysicsBody],
-                    dt: Double,
-                    addForquesToBodies: (Double) => Unit): Unit = {
+  override def step[T <: Pga3dPhysicsBody](dynamicBodies: Array[T],
+                                           dt: Double,
+                                           addForquesToBodies: (Double) => Unit): Unit = {
 
     val initial = dynamicBodies.map(Pga3dBodyState(_))
     val k1 = getDerivative(dynamicBodies, 0.0, addForquesToBodies)

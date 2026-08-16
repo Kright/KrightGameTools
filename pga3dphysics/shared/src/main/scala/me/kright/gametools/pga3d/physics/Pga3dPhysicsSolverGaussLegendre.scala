@@ -10,7 +10,7 @@ import me.kright.gametools.mathutil.FastRange
  *                   With two iterations precision is similar with [[Pga3dPhysicsSolverRK4]], but RK4 is faster to compute
  */
 class Pga3dPhysicsSolverGaussLegendre(val iterations: Int = 3) extends Pga3dPhysicsSolver:
-  override def step(dynamicBodies: Array[Pga3dPhysicsBody], dt: Double, addForquesToBodies: Double => Unit): Unit = {
+  override def step[T <: Pga3dPhysicsBody](dynamicBodies: Array[T], dt: Double, addForquesToBodies: Double => Unit): Unit = {
     val c1 = 0.5 - Math.sqrt(3) / 6
     val c2 = 0.5 + Math.sqrt(3) / 6
 

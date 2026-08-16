@@ -4,9 +4,9 @@ import me.kright.gametools.pga3d.physics.Pga3dPhysicsSolverUtil.*
 
 /** Second order of precision */
 object Pga3dPhysicsSolverMidPoint extends Pga3dPhysicsSolver:
-  override def step(dynamicBodies: Array[Pga3dPhysicsBody],
-                    dt: Double,
-                    addForquesToBodies: (Double) => Unit): Unit = {
+  override def step[T <: Pga3dPhysicsBody](dynamicBodies: Array[T],
+                                           dt: Double,
+                                           addForquesToBodies: (Double) => Unit): Unit = {
 
     val initial = dynamicBodies.map(Pga3dBodyState(_))
     val k1 = getDerivative(dynamicBodies, 0.0, addForquesToBodies)

@@ -13,9 +13,9 @@ package me.kright.gametools.pga3d.physics
 class Pga3dPhysicsSolverConstrained(val inner: Pga3dPhysicsSolver,
                                     val resolver: Pga3dConstraintResolver) extends Pga3dPhysicsSolver:
 
-  override def step(dynamicBodies: Array[Pga3dPhysicsBody],
-                    dt: Double,
-                    addForquesToBodies: Double => Unit): Unit =
+  override def step[T <: Pga3dPhysicsBody](dynamicBodies: Array[T],
+                                           dt: Double,
+                                           addForquesToBodies: Double => Unit): Unit =
     inner.step(dynamicBodies, dt, currentDt => {
       addForquesToBodies(currentDt)
       resolver.addConstraintForques(dynamicBodies)

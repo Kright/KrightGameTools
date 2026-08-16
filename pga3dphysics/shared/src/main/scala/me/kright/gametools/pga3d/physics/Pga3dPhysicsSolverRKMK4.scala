@@ -40,9 +40,9 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dTransform}
  * truncation error dominates, see the measurements in Pga3dPhysicsSolverRKMK4Test.
  */
 object Pga3dPhysicsSolverRKMK4 extends Pga3dPhysicsSolver:
-  override def step(dynamicBodies: Array[Pga3dPhysicsBody],
-                    dt: Double,
-                    addForquesToBodies: Double => Unit): Unit = {
+  override def step[T <: Pga3dPhysicsBody](dynamicBodies: Array[T],
+                                           dt: Double,
+                                           addForquesToBodies: Double => Unit): Unit = {
     val n = dynamicBodies.length
     val initial = dynamicBodies.map(Pga3dBodyState(_))
 
@@ -75,7 +75,7 @@ object Pga3dPhysicsSolverRKMK4 extends Pga3dPhysicsSolver:
     }
   }
 
-  private def getAccelerations(dynamicBodies: Array[Pga3dPhysicsBody],
+  private def getAccelerations(dynamicBodies: Array[? <: Pga3dPhysicsBody],
                                currentDt: Double,
                                addForquesToBodies: Double => Unit): Array[Pga3dBivector] =
     for (body <- dynamicBodies) {
@@ -84,7 +84,7 @@ object Pga3dPhysicsSolverRKMK4 extends Pga3dPhysicsSolver:
     addForquesToBodies(currentDt)
     dynamicBodies.map(b => b.inertia.getAcceleration(b.localB, b.localForque))
 
-  private def setStage(dynamicBodies: Array[Pga3dPhysicsBody],
+  private def setStage(dynamicBodies: Array[? <: Pga3dPhysicsBody],
                        initial: Array[Pga3dBodyState],
                        u: Array[Pga3dBivector],
                        acceleration: Array[Pga3dBivector],

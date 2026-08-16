@@ -31,9 +31,9 @@ class Pga3dPhysicsSolverRKF45 extends Pga3dPhysicsSolver:
     }
     result
 
-  override def step(dynamicBodies: Array[Pga3dPhysicsBody],
-                    dt: Double,
-                    addForquesToBodies: Double => Unit): Unit = {
+  override def step[T <: Pga3dPhysicsBody](dynamicBodies: Array[T],
+                                           dt: Double,
+                                           addForquesToBodies: Double => Unit): Unit = {
     val n = dynamicBodies.length
     val initial = dynamicBodies.map(Pga3dBodyState(_))
 
@@ -80,7 +80,7 @@ class Pga3dPhysicsSolverRKF45 extends Pga3dPhysicsSolver:
     }
   }
 
-  private def setStage(dynamicBodies: Array[Pga3dPhysicsBody],
+  private def setStage(dynamicBodies: Array[? <: Pga3dPhysicsBody],
                        initial: Array[Pga3dBodyState],
                        dt: Double,
                        terms: (Array[Pga3dBodyState], Double)*): Unit =
