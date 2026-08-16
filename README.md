@@ -37,22 +37,22 @@ All the code is under MIT license. Contributions are welcome, feel free to send 
 
 ```scala
 libraryDependencies ++= Seq(
-  "me.kright" %% "gametools-mathutil" % "0.10.0",
-  "me.kright" %% "gametools-flatarray" % "0.10.0",
-  "me.kright" %% "gametools-vector" % "0.10.0",
-  "me.kright" %% "gametools-matrix" % "0.10.0",
-  "me.kright" %% "gametools-pga2d" % "0.10.0",
-  "me.kright" %% "gametools-pga2dgeom" % "0.10.0",
-  "me.kright" %% "gametools-pga3d" % "0.10.0",
-  "me.kright" %% "gametools-pga3dgeom" % "0.10.0",
-  "me.kright" %% "gametools-pga3dphysics" % "0.10.0"
+  "me.kright" %% "gametools-mathutil" % "0.10.1",
+  "me.kright" %% "gametools-flatarray" % "0.10.1",
+  "me.kright" %% "gametools-vector" % "0.10.1",
+  "me.kright" %% "gametools-matrix" % "0.10.1",
+  "me.kright" %% "gametools-pga2d" % "0.10.1",
+  "me.kright" %% "gametools-pga2dgeom" % "0.10.1",
+  "me.kright" %% "gametools-pga3d" % "0.10.1",
+  "me.kright" %% "gametools-pga3dgeom" % "0.10.1",
+  "me.kright" %% "gametools-pga3dphysics" % "0.10.1"
 )
 ```
 
 For Scala.js use `%%%` instead of `%%`:
 
 ```scala
-libraryDependencies += "me.kright" %%% "gametools-pga3d" % "0.10.0"
+libraryDependencies += "me.kright" %%% "gametools-pga3d" % "0.10.1"
 ```
 
 ### Gradle
@@ -61,15 +61,15 @@ Note: suffix `_3` is for Scala 3.
 
 ```groovy
 dependencies {
-  implementation 'me.kright:gametools-mathutil_3:0.10.0'
-  implementation 'me.kright:gametools-flatarray_3:0.10.0'
-  implementation 'me.kright:gametools-vector_3:0.10.0'
-  implementation 'me.kright:gametools-matrix_3:0.10.0'
-  implementation 'me.kright:gametools-pga2d_3:0.10.0'
-  implementation 'me.kright:gametools-pga2dgeom_3:0.10.0'
-  implementation 'me.kright:gametools-pga3d_3:0.10.0'
-  implementation 'me.kright:gametools-pga3dgeom_3:0.10.0'
-  implementation 'me.kright:gametools-pga3dphysics_3:0.10.0'
+  implementation 'me.kright:gametools-mathutil_3:0.10.1'
+  implementation 'me.kright:gametools-flatarray_3:0.10.1'
+  implementation 'me.kright:gametools-vector_3:0.10.1'
+  implementation 'me.kright:gametools-matrix_3:0.10.1'
+  implementation 'me.kright:gametools-pga2d_3:0.10.1'
+  implementation 'me.kright:gametools-pga2dgeom_3:0.10.1'
+  implementation 'me.kright:gametools-pga3d_3:0.10.1'
+  implementation 'me.kright:gametools-pga3dgeom_3:0.10.1'
+  implementation 'me.kright:gametools-pga3dphysics_3:0.10.1'
 }
 ```
 
@@ -166,19 +166,19 @@ Or to the local maven:
 sbt publishM2
 ```
 
-In my case "~/.ivy2/local/me.kright/gametools-pga3d_3/0.10.0-SNAPSHOT"
-and "~/.m2/repository/me/kright/gametools-pga3d_3/0.10.0-SNAPSHOT"
+In my case "~/.ivy2/local/me.kright/gametools-pga3d_3/0.10.2-SNAPSHOT"
+and "~/.m2/repository/me/kright/gametools-pga3d_3/0.10.2-SNAPSHOT"
 
 After that, add the local library to another project. In my case, it was for sbt:
 
 ```scala
-libraryDependencies += "me.kright" %% "gametools-pga3d" % "0.10.0-SNAPSHOT"
+libraryDependencies += "me.kright" %% "gametools-pga3d" % "0.10.2-SNAPSHOT"
 ```
 
 And for Gradle:
 
 ```groovy
-implementation "me.kright:gametools-pga3d_3:0.10.0-SNAPSHOT"
+implementation "me.kright:gametools-pga3d_3:0.10.2-SNAPSHOT"
 ```
 
 Maybe you will need to remove cached lib, it will be placed in path like "~/.cache/coursier/v1/https/repo1.maven.org/maven2/me/kright/".
