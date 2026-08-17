@@ -9,10 +9,10 @@ final case class Pga3dInertiaLocal(mass: Double,
                                    mrxz: Double,
                                    mrxy: Double) extends Pga3dInertia derives CanEqual, CanEqualWithEps, FlatDoubleSerializer:
   
-  val invMass = 1.0 / mass
-  val invMryz = 1.0 / mryz
-  val invMrxz = 1.0 / mrxz
-  val invMrxy = 1.0 / mrxy
+  val invMass: Double = 1.0 / mass
+  val invMryz: Double = 1.0 / mryz
+  val invMrxz: Double = 1.0 / mrxz
+  val invMrxy: Double = 1.0 / mrxy
 
   override def toString: String =
     s"Pga3dInertiaLocal(mass = $mass, mryz = $mryz, mrxz = $mrxz, mrxy = $mrxy)"
