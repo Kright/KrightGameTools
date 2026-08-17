@@ -48,6 +48,11 @@ class AbsoluteRotationTracker(var rotations: Double = 0.0,
     } else if (diff < -0.5) {
       rotations += 1.0
     }
+    
+  def set(template: AbsoluteRotationTracker): Unit = {
+    rotations = template.rotations
+    rotationsOffset = template.rotationsOffset
+  }
 
   def deepCopy: AbsoluteRotationTracker =
     AbsoluteRotationTracker(rotations, rotationsOffset)
