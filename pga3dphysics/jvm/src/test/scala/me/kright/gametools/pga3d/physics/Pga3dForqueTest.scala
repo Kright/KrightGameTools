@@ -1,6 +1,8 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.*
+import me.kright.gametools.physics1d.SpringElasticity
+import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -122,4 +124,38 @@ class Pga3dForqueTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("forque of spring when the poinst are the same") {
     val a = Pga3dPoint(0, 0, 0)
     assert(Pga3dForque.spring(a, a, k = 10, springLength = 1.0) == Pga3dBivector(0, 0, 0, 0, 0, 0))
+  }
+
+  test("SpringElasticity.linear(k) spring gives the same forque as the plain-k spring") {
+    forAll(Pga3dGenerators.points, Pga3dGenerators.points, Gen.choose(0.1, 100.0), Gen.choose(0.0, 2.0)) {
+      (a, b, k, springLength) =>
+        val expected = Pga3dForque.spring(a, b, k, springLength)
+        val actual = Pga3dForque.spring(a, b, SpringElasticity.linear(k), springLength)
+        assert((actual - expected).norm <= 1e-12 * (1.0 + expected.norm))
+    }
+  }
+
+  test("spring forque with elasticity: zero at rest length, pulls together when stretched") {
+    val a = Pga3dPoint(0, 0, 0)
+    val b = Pga3dPoint(0, 0, 1)
+    val elastic = SpringElasticity(softK = 10.0, softZoneTravel = 0.5, stiffK = 1000.0)
+
+    assert(Pga3dForque.spring(a, b, elastic, springLength = 1.0).norm == 0.0)
+
+    // the scalar force is a generalized force along r, so the pull on `a` towards `b` is its negation
+    val stretched = Pga3dForque.spring(a, b, elastic, springLength = 0.5)
+    val expectedStretched = Pga3dForque.force(a, Pga3dVector(0, 0, -elastic.force(0.5)))
+    assert((stretched - expectedStretched).norm <= 1e-12 * expectedStretched.norm)
+    assert(elastic.force(0.5) < 0) // stretched: acts to decrease r, pulls a towards b
+
+    val compressed = Pga3dForque.spring(a, b, elastic, springLength = 2.0)
+    val expectedCompressed = Pga3dForque.force(a, Pga3dVector(0, 0, -elastic.force(-1.0)))
+    assert((compressed - expectedCompressed).norm <= 1e-12 * expectedCompressed.norm)
+    assert(elastic.force(-1.0) > 0) // compressed: acts to increase r, pushes a away from b
+  }
+
+  test("spring forque with elasticity when the points are the same") {
+    val a = Pga3dPoint(1, 2, 3)
+    val elastic = SpringElasticity(softK = 10.0, softZoneTravel = 0.5, stiffK = 1000.0)
+    assert(Pga3dForque.spring(a, a, elastic, springLength = 1.0).norm == 0.0)
   }

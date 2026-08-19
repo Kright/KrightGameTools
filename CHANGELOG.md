@@ -3,6 +3,32 @@
 All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- New module **physics1d** (`gametools-physics1d`, depends only on mathutil): scalar 1d force
+  models along one coordinate, all in the `Pga3dFriction` sign convention (a generalized force
+  along r: negative decreases r), so the elastic, viscous and hysteretic terms of one joint sum
+  directly:
+  - `SpringElasticity(softK, softZoneTravel, stiffK)` - a spring curve with a soft zone
+    blending parabolically into the stiff branch (C1 force, `maxStiffness` for the omega*dt
+    budget), `SpringElasticity.linear(k)` for a plain spring;
+  - `HystereticFriction` - rate-independent friction with memory: pure `forceAt(x)` for the
+    integrator stages (frozen-force or stage-consistent reading), `advance(x)` once per
+    completed step, `maxForce`, `tangentStiffness`, `deepCopy()`;
+  - three models under it: `DahlFriction` (exact exponential step, the smallest state),
+    `BergFriction` (the Berg 1997-1998 bushing friction, hyperbolic tails fitting measured
+    rubber loops), `IwanFriction` (parallel Jenkins elements / Prandtl-Ishlinskii: Masing
+    loops, exact saturation, near-constant loss factor when fitted at several amplitudes).
+- `Pga3dForque.spring(current, another, k: SpringElasticity, springLength)` - the spring forque
+  through a nonlinear elasticity curve; pga3dphysics now depends on physics1d.
+- `AbsoluteRotationTracker.set(anotherTracker)` (mathutil).
+
+### Changed
+
+- `Pga3dInertiaLocal`: the fields `invMass`, `invMryz`, `invMrxz`, `invMrxy` are public.
+
 ## [0.10.1] - 2026-08-16
 
 ### Changed

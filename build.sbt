@@ -86,6 +86,7 @@ lazy val root = (project in file("."))
     pga2d.jvm, pga2d.js,
     pga3dgeom.jvm, pga3dgeom.js,
     pga2dgeom.jvm, pga2dgeom.js,
+    physics1d.jvm, physics1d.js,
     pga3dphysics.jvm, pga3dphysics.js,
     benchmark,
   )
@@ -199,6 +200,15 @@ lazy val pga2dgeom = crossProject(JSPlatform, JVMPlatform)
     pga3dgeom % "test->compile",
   )
 
+// scalar 1d force models (elasticity curves, hysteretic friction), independent of PGA
+lazy val physics1d = crossProject(JSPlatform, JVMPlatform)
+  .withoutSuffixFor(JVMPlatform)
+  .in(file("physics1d"))
+  .jsSettings(jsTestsCompileNotRun)
+  .settings(scalatestSettings, strictSettings)
+  .settings(sonatypeSettings, name := "gametools-physics1d")
+  .dependsOn(mathutil)
+
 lazy val pga3dphysics = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("pga3dphysics"))
@@ -208,6 +218,7 @@ lazy val pga3dphysics = crossProject(JSPlatform, JVMPlatform)
   .dependsOn(
     pga3d % "compile->compile;test->test",
     matrix,
+    physics1d,
   )
 
 lazy val benchmark = (project in file("benchmark"))

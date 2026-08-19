@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dPoint, Pga3dVector}
+import me.kright.gametools.physics1d.SpringElasticity
 
 
 /**
@@ -48,3 +49,12 @@ object Pga3dForque:
     val dir = another - current
     val dirDist = dir.norm
     force(current, dir * (k * (dirDist - springLength) / (dirDist + 1e-100)))
+
+  def spring(current: Pga3dPoint, another: Pga3dPoint, k: SpringElasticity, springLength: Double): Pga3dBivector = {
+    val dPos = another - current
+    val r = dPos.weightNorm
+    // elasticForce is a generalized force along r (negative pulls the ends together),
+    // while a positive multiplier of (current v dPos) pulls current towards another
+    val elasticForce = k.force(r - springLength)
+    (current v dPos) * (-elasticForce / (r + 1e-100))
+  }

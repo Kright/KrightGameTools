@@ -45,6 +45,7 @@ libraryDependencies ++= Seq(
   "me.kright" %% "gametools-pga2dgeom" % "0.10.1",
   "me.kright" %% "gametools-pga3d" % "0.10.1",
   "me.kright" %% "gametools-pga3dgeom" % "0.10.1",
+  "me.kright" %% "gametools-physics1d" % "0.10.1",
   "me.kright" %% "gametools-pga3dphysics" % "0.10.1"
 )
 ```
@@ -69,6 +70,7 @@ dependencies {
   implementation 'me.kright:gametools-pga2dgeom_3:0.10.1'
   implementation 'me.kright:gametools-pga3d_3:0.10.1'
   implementation 'me.kright:gametools-pga3dgeom_3:0.10.1'
+  implementation 'me.kright:gametools-physics1d_3:0.10.1'
   implementation 'me.kright:gametools-pga3dphysics_3:0.10.1'
 }
 ```
@@ -118,6 +120,9 @@ the narrowest-result-type rule) are described in [pga-concepts.md](pga-concepts.
 * [**pgaNdCodeGen**](pgaNdCodeGen/README.md): hand-made code generator for the pga2d and pga3d modules. It does
   operations in symbolic form, and searches the most narrow subclass of multivector for the result. Generates Scala
   code for both, plus C++ code for 3d.
+* [**physics1d**](physics1d/README.md): scalar 1d force models, independent of PGA - the SpringElasticity curve
+  (a soft zone blending into a stiff branch) and rate-independent hysteretic friction for rubber bushings
+  (HystereticFriction: Dahl, Berg, Iwan models) with an integrator-friendly pure-evaluation contract.
 * [**pga3dphysics**](pga3dphysics/README.md): some helper classes for implementing physics engine - body inertia,
   physics solvers, etc. Under active development now.
 * [**pga3dgeom**](pga3dgeom/README.md): classes for geometry - edges, triangles, spheres, rays, axis-aligned
