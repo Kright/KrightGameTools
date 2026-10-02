@@ -87,6 +87,11 @@ I'm inspired by https://bivector.net/PGADYN.html
 
 I rewrote physics equations in PGA, it looks like PGA is a better way of describing physics.
 
+If you are new to geometric algebra, start with my article
+[Plane-based geometric algebra for rigid body motion](https://kright.me/2024/06/02/plane-based-geometricheskaia-algebra-dlia-opisaniia-dvizheniia-tel-en/):
+it explains the ideas behind this library, from the basics of geometric algebra to how rigid body motion and
+physics are expressed in PGA.
+
 The concepts shared by the pga2d and pga3d modules (the products, bulk and weight, duality, exp/log,
 the narrowest-result-type rule) are described in [pga-concepts.md](pga-concepts.md).
 
