@@ -178,19 +178,19 @@ Or to the local maven:
 sbt publishM2
 ```
 
-In my case "~/.ivy2/local/me.kright/gametools-pga3d_3/0.10.2-SNAPSHOT"
-and "~/.m2/repository/me/kright/gametools-pga3d_3/0.10.2-SNAPSHOT"
+In my case "~/.ivy2/local/me.kright/gametools-pga3d_3/0.11.1-SNAPSHOT"
+and "~/.m2/repository/me/kright/gametools-pga3d_3/0.11.1-SNAPSHOT"
 
 After that, add the local library to another project. In my case, it was for sbt:
 
 ```scala
-libraryDependencies += "me.kright" %% "gametools-pga3d" % "0.10.2-SNAPSHOT"
+libraryDependencies += "me.kright" %% "gametools-pga3d" % "0.11.1-SNAPSHOT"
 ```
 
 And for Gradle:
 
 ```groovy
-implementation "me.kright:gametools-pga3d_3:0.10.2-SNAPSHOT"
+implementation "me.kright:gametools-pga3d_3:0.11.1-SNAPSHOT"
 ```
 
 Maybe you will need to remove cached lib, it will be placed in path like "~/.cache/coursier/v1/https/repo1.maven.org/maven2/me/kright/".
