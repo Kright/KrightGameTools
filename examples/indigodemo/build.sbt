@@ -32,7 +32,7 @@ lazy val indigodemo =
       scalacOptions -= "-Xfatal-warnings",
       name         := "indigodemo",
       version      := "0.0.1",
-      scalaVersion := "3.8.3",
+      scalaVersion := "3.9.0",
       organization := "com.github.kright",
       libraryDependencies ++= Seq(
         "org.scalameta" %%% "munit" % "1.1.1" % Test,

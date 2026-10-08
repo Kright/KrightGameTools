@@ -3,7 +3,12 @@
 All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.11.0] - 2026-10-08
+
+### Changed (breaking)
+
+- Scala 3.9.0 (LTS): the artifacts need Scala 3.9 or newer; use 0.10.1 for older Scala 3.
+- matrix depends on arrayview 0.4.0 (the arrayview release for Scala 3.9).
 
 ### Added
 

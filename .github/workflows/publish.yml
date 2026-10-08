@@ -10,12 +10,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -24,6 +24,19 @@ jobs:
       - name: Set up sbt
         uses: sbt/setup-sbt@v1
         
+      - name: Check that tag matches version in build.sbt
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          VERSION=$(grep -oP '(?<=ThisBuild / version := ")[^"]+' build.sbt)
+          if [ -z "$VERSION" ]; then echo "::error::could not extract version from build.sbt"; exit 1; fi
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match build.sbt version $VERSION"
+            exit 1
+          fi
+
+      - name: Compile
+        run: sbt Test/compile
+
       - name: Import GPG Key
         run: |
           echo "${{ secrets.PGP_SECRET }}" | gpg --batch --import
