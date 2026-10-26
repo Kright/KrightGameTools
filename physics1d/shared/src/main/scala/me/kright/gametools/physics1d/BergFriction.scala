@@ -46,6 +46,7 @@ final class BergFriction private(val maxForce: Double,
     val u = Math.abs(x - xs)
     if (u == 0.0 || maxForce == 0.0) return fs
     val target = -maxForce * Math.signum(x - xs)
+    if (u.isInfinite) return target // x - xs overflowed: deep in saturation
     val c = halfSaturationTravel * Math.abs(target - fs) / maxForce
     fs + u / (c + u) * (target - fs)
 

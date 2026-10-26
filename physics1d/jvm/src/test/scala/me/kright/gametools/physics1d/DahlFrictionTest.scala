@@ -198,3 +198,12 @@ class DahlFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     // a few saturationTravel
     assert(Math.abs(r) < 20 * saturationTravel, s"crept away: r = $r")
   }
+
+  test("tiny moves from the virgin state follow the Dahl curve to full precision") {
+    val friction = new DahlFriction(maxForce = 100.0, saturationTravel = 1e-4)
+    friction.advance(0.0)
+    for (dx <- Seq(1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-16, 1e-20, 1e-40)) {
+      val expected = 100.0 * Math.expm1(-dx / 1e-4) // -maxForce * (1 - exp(-dx / d))
+      assert(Math.abs(friction.forceAt(dx) - expected) <= 1e-12 * Math.abs(expected), s"dx $dx: ${friction.forceAt(dx)} vs $expected")
+    }
+  }

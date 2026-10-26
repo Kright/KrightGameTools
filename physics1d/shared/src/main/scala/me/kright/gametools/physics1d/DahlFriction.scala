@@ -60,4 +60,6 @@ object DahlFriction:
     if (dx == 0.0) force
     else
       val target = -maxForce * Math.signum(dx)
-      target + (force - target) * Math.exp(-Math.abs(dx) / saturationTravel)
+      // force + (target - force) * (1 - exp(-|dx| / saturationTravel)); expm1 keeps the step exact for
+      // tiny moves (1 - exp(-1e-10) loses half the digits, and a 1e-100 move must not shake the force by an ulp)
+      force + (target - force) * -Math.expm1(-Math.abs(dx) / saturationTravel)

@@ -27,7 +27,7 @@ final case class IwanElement(stiffness: Double, breakForce: Double):
  * The state is one deformation force per element, f_i in [-breakForce_i, +breakForce_i];
  * a monotone move dx updates each element independently and exactly:
  *
- *   f_i <- clamp(f_i + stiffness_i * dx, +-breakForce_i),   force = -sum(f_i)
+ * f_i <- clamp(f_i + stiffness_i * dx, +-breakForce_i),   force = -sum(f_i)
  *
  * Clamps of same-direction moves compose exactly (clamp(clamp(f + a) + b) = clamp(f + a + b)
  * for a, b of one sign), so the model is rate-independent and, like the Dahl exponent,
@@ -51,13 +51,13 @@ final case class IwanElement(stiffness: Double, breakForce: Double):
  * step-start coordinate) MUST be paired with a viscous term, exactly as for
  * [[DahlFriction]]; reading [[forceAt]] at the stage coordinate removes the lag.
  */
-final class IwanFriction private(val elements: IndexedSeq[IwanElement],
+final class IwanFriction private(val elements: IArray[IwanElement],
                                  private val elementForces: Array[Double],
                                  private var lastX: Double) extends HystereticFriction:
   require(elements.nonEmpty)
 
   def this(elements: Seq[IwanElement]) =
-    this(elements.toIndexedSeq, new Array[Double](elements.size), Double.NaN)
+    this(IArray.from(elements), new Array[Double](elements.size), Double.NaN)
 
   /** the saturation force: the bound of |force| */
   val maxForce: Double =

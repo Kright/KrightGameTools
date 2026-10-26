@@ -3,6 +3,33 @@
 All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- `Pga3dHystereticFriction` (pga3dphysics): the 3d counterpart of the physics1d `HystereticFriction`
+  contract for a point moving in a volume - pure `forceAt(x, y, z)` for the integrator stages,
+  `advance(x, y, z)` once per completed step, `maxForce`, `tangentStiffness`, `deepCopy()`; the
+  `Pga3dPoint` overloads are inlined on top. Two models under it, both rotation-invariant,
+  rate-independent (substeps of one straight move compose exactly) and reducing exactly to their
+  1d counterparts on a collinear path:
+  - `Pga3dDahlFriction(maxForce, saturationTravel)` - the vector Dahl model, exponential relaxation
+    towards `-maxForce * u` along a straight move, passive, three doubles of state;
+  - `Pga3dIwanFriction(elements)` - the same `IwanElement`s as `IwanFriction`, each keeping a force
+    vector inside its ball (flat storage, three doubles per element) and slipping along the great
+    circle towards the move direction (the closed-form step of the Jenkins element on a straight
+    path, unlike a plain radial return).
+  Between commits the path is replaced by its chord: second order in the step while the step travel
+  stays below the saturation travel, first order far beyond it.
+
+### Changed
+
+- `DahlFriction` (physics1d) computes its step as `force + (target - force) * (1 - exp(...))` through
+  `expm1`: a tiny move no longer loses half the digits of the force change or shakes the force by
+  an ulp. `BergFriction` treats an overflowing `x - anchor` as deep saturation instead of a NaN.
+  Edge-case tests for every 1d and 3d model: moves of 1e-320 .. 1e300 and degenerate parameters
+  never produce a NaN or an infinity and never leave the force ball.
+
 ## [0.11.0] - 2026-10-08
 
 ### Changed (breaking)

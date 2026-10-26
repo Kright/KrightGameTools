@@ -52,6 +52,49 @@ test baseline and an order-of-precision example when you write an optimized solv
 own data layout. See [Solvers.md](Solvers.md) for the full table with orders, costs and
 measured accuracies, a selection guide and the constraint resolver details.
 
+## Hysteretic friction in 3d
+
+`Pga3dHystereticFriction` is the 3d counterpart of the
+[`HystereticFriction`](../physics1d/README.md) contract of physics1d: a point held in a volume
+(e.g. a rubber bushing around the attachment point of a rod) with a friction force that depends on
+the motion history. The pure `forceAt(x, y, z)` serves the solver stages (read it at the stage
+position of the attachment point), `advance(x, y, z)` commits once after every completed step,
+plus `maxForce`, `tangentStiffness` (isotropic, enters the omega*dt budget) and `deepCopy()`; the
+`Pga3dPoint` overloads are inlined on top of the scalar ones. Both models are rotation-invariant,
+rate-independent (substeps of one straight move compose exactly) and reduce exactly to their 1d
+counterparts on a collinear path, reversals included:
+
+* **Pga3dDahlFriction(maxForce, saturationTravel)**: the vector Dahl model, the force relaxes
+  exponentially towards `-maxForce * u` along a straight move; three doubles of state. Passive
+  (storage `|F|^2 / 2 sigma`, non-negative dissipation). Its soft slider shows on a curved path: on
+  a steady circle of radius A the force settles at `maxForce / sqrt(1 + (saturationTravel / A)^2)`,
+  below saturation, negligible while the curvature radius is far above saturationTravel.
+* **Pga3dIwanFriction(elements)**: N parallel Jenkins elements (`IwanElement(stiffness, breakForce)`
+  of physics1d). Each element keeps a force vector inside the ball `|f_i| <= breakForce_i` in one
+  flat `Array[Double]`; a straight move adds `stiffness_i * dx` until the sphere and then turns the
+  force towards the move direction along the great circle (the closed-form step of the continuous
+  element; a plain "add and project back on the sphere" would not compose). A slipping element
+  stays on its sphere, lagging a steady circle by `sin(theta) = breakDeformation_i / A`.
+
+```scala
+val friction = Pga3dIwanFriction(IwanElement(4e6, 150.0), IwanElement(1e6, 250.0))
+friction.advance(body.globalCenterOfMass) // latch the starting point
+
+Pga3dPhysicsSolverRK4.step(bodies, dt, addForquesToBodies = { _ =>
+  val p = body.globalCenterOfMass
+  body.addGlobalForque(Pga3dForque.force(p, friction.forceAt(p)))
+})
+friction.advance(body.globalCenterOfMass)
+```
+
+The 3d-specific caveat: between two commits the path is replaced by its chord. With the step travel
+below the saturation travel (break deformations) the error is second order in the step (a midpoint
+rule); far beyond it the force snaps to the chord direction and lags the true tangent by
+`travel * curvature / 2`, first order. RK4 keeps its 4th order on a straight monotone path, drops to
+about 2nd on a reversal inside a step (as in 1d) and to 1st-2nd on a curved slipping path;
+`Pga3dIwanFrictionTest` and `Pga3dDahlFrictionTest` measure it. As in 1d, the frozen-force reading
+(forceAt at the step-start point) must be paired with a viscous term.
+
 ## Inertia representations:
 
 * **Pga3dInertia**: common interface
