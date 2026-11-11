@@ -134,7 +134,7 @@ the narrowest-result-type rule) are described in [pga-concepts.md](pga-concepts.
   (a soft zone blending into a stiff branch) and rate-independent hysteretic friction for rubber bushings
   (HystereticFriction: Dahl, Berg, Iwan models) with an integrator-friendly pure-evaluation contract.
 * [**pga3dphysics**](pga3dphysics/README.md): some helper classes for implementing physics engine - body inertia,
-  physics solvers, etc. Under active development now.
+  physics solvers, etc.
 * [**pga3dgeom**](pga3dgeom/README.md): classes for geometry - edges, triangles, spheres, rays, axis-aligned
   bounding boxes
 * [**pga2dgeom**](pga2dgeom/README.md): the 2d counterpart of pga3dgeom - edges, triangles, circles, rays,
