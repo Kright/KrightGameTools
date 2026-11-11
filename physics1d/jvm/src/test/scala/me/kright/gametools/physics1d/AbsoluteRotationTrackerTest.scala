@@ -1,7 +1,7 @@
-package me.kright.gametools.mathutil
+package me.kright.gametools.physics1d
 
-import me.kright.gametools.mathutil.AbsoluteRotationTracker.*
-import me.kright.gametools.mathutil.{AbsoluteRotationTracker, MathUtil}
+import me.kright.gametools.mathutil.MathUtil
+import me.kright.gametools.physics1d.AbsoluteRotationTracker.*
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 

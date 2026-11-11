@@ -22,6 +22,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   Between commits the path is replaced by its chord: second order in the step while the step travel
   stays below the saturation travel, first order far beyond it.
 
+### Changed (breaking)
+
+- `AbsoluteRotationTracker` moved from mathutil to physics1d: the package is now
+  `me.kright.gametools.physics1d`, the artifact is `gametools-physics1d`.
+
 ### Changed
 
 - `DahlFriction` (physics1d) computes its step as `force + (target - force) * (1 - exp(...))` through

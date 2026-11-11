@@ -57,5 +57,3 @@ Assorted numeric helpers:
 ### Other
 
 * `Sign` — a three-valued (`Negative` / `Zero` / `Positive`) sign type with multiplication, negation and `power`.
-* `AbsoluteRotationTracker` — accumulates a continuous rotation angle across `2*Pi` wraparound (assuming less than
-  half a turn between updates), useful for tracking absolute orientation over time.

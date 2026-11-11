@@ -62,3 +62,8 @@ Two ways to read the force from an integrator:
 All three are rate-independent (substeps of one direction compose exactly as one big step)
 and unconditionally stable for any step size: a step far beyond the saturation travel
 degrades to bang-bang +-maxForce instead of exploding.
+
+## AbsoluteRotationTracker
+
+Accumulates a continuous rotation angle across the `2*Pi` wraparound (assuming less than
+half a turn between updates) - turns a wrapped angle into an unbounded scalar coordinate.
