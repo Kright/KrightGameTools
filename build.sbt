@@ -6,7 +6,7 @@ ThisBuild / scalaVersion := "3.9.0"
 ThisBuild / pomIncludeRepository := { _ => false }
 
 ThisBuild / description := "Kright Game Tools for Scala"
-ThisBuild / homepage := Some(url("https://github.com/kright/KrightGameTools"))
+ThisBuild / homepage := Some(url("https://github.com/Kright/KrightGameTools"))
 ThisBuild / startYear := Some(2022)
 
 ThisBuild / developers := List(
@@ -20,8 +20,8 @@ ThisBuild / developers := List(
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
-    url("https://github.com/kright/KrightGameTools"),
-    "scm:git@github.com:kright/KrightGameTools.git"
+    url("https://github.com/Kright/KrightGameTools"),
+    "scm:git:git@github.com:Kright/KrightGameTools.git"
   )
 )
 
