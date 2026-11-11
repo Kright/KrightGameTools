@@ -19,6 +19,7 @@ All the code is under MIT license. Contributions are welcome, feel free to send 
     - [Gradle](#gradle)
 - [Library modules](#library-modules)
     - [Modules](#modules)
+    - [Module dependencies](#module-dependencies)
     - [C++](#c++-code)
 - [Tests](#tests)
 - [How to change this library and try changes locally in another project](#how-to-change-this-library-and-try-changes-locally-in-another-project)
@@ -34,6 +35,8 @@ All the code is under MIT license. Contributions are welcome, feel free to send 
 ## Getting started
 
 Requires Scala 3.9 or newer (use version 0.10.1 for older Scala 3 versions).
+
+You don't need all the modules listed below: pick the ones you use, see [module dependencies](#module-dependencies).
 
 ### sbt
 
@@ -136,6 +139,37 @@ the narrowest-result-type rule) are described in [pga-concepts.md](pga-concepts.
   bounding boxes
 * [**pga2dgeom**](pga2dgeom/README.md): the 2d counterpart of pga3dgeom - edges, triangles, circles, rays,
   axis-aligned bounding boxes
+
+### Module dependencies
+
+An arrow means "depends on". Only the published modules are shown, and transitive dependencies are omitted.
+The dashed [arrayview](https://github.com/kright/arrayView) is my own library too, under the same MIT license, it
+just lives in a separate repository. vector is standalone: no other published module depends on it.
+
+```mermaid
+graph TD
+    subgraph g3d ["3d"]
+        pga3dphysics --> pga3d
+        pga3dgeom --> pga3d
+    end
+    subgraph g2d ["2d"]
+        pga2dgeom --> pga2d
+    end
+    vector --> mathutil
+    pga3dphysics --> physics1d
+    pga3d --> flatarray
+    pga3d --> matrix
+    pga2d --> flatarray
+    pga2d --> matrix
+    physics1d --> mathutil
+    flatarray --> mathutil
+    matrix --> mathutil
+    matrix --> arrayview["arrayview (separate repo)"]
+    style arrayview stroke-dasharray: 5 5
+```
+
+It is enough to add the topmost module you need, the build tool fetches the rest. For example,
+`gametools-pga3dphysics` brings in pga3d, physics1d, matrix, flatarray, mathutil and arrayview.
 
 ### C++ code
 
