@@ -1,7 +1,7 @@
 import pl.project13.scala.sbt.JmhPlugin
 
 ThisBuild / organization := "me.kright"
-ThisBuild / version := "0.11.1-SNAPSHOT"
+ThisBuild / version := "0.12.0-SNAPSHOT"
 ThisBuild / scalaVersion := "3.9.0"
 ThisBuild / pomIncludeRepository := { _ => false }
 
@@ -120,7 +120,7 @@ lazy val matrix = crossProject(JSPlatform, JVMPlatform)
   .jsSettings(jsTestsCompileNotRun)
   .settings(strictSettings)
   .settings(
-    libraryDependencies += "me.kright" %%% "arrayview" % "0.4.0",
+    libraryDependencies += "me.kright" %%% "arrayview" % "0.4.1",
   )
   .settings(scalatestSettings)
   .settings(sonatypeSettings, name := "gametools-matrix")
