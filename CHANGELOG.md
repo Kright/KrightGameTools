@@ -3,7 +3,7 @@
 All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.12.0] - 2026-11-11
 
 ### Added
 
@@ -34,6 +34,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   an ulp. `BergFriction` treats an overflowing `x - anchor` as deep saturation instead of a NaN.
   Edge-case tests for every 1d and 3d model: moves of 1e-320 .. 1e300 and degenerate parameters
   never produce a NaN or an infinity and never leave the force ball.
+- matrix depends on arrayview 0.4.1 (the same code as 0.4.0, only the project URLs in the POM changed).
+- The project URLs in the POM (`homepage`, `scm`) use `github.com/Kright/KrightGameTools` and the
+  canonical `scm:git:` connection form.
 
 ## [0.11.0] - 2026-10-08
 

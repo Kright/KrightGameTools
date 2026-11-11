@@ -42,23 +42,23 @@ You don't need all the modules listed below: pick the ones you use, see [module 
 
 ```scala
 libraryDependencies ++= Seq(
-  "me.kright" %% "gametools-mathutil" % "0.11.0",
-  "me.kright" %% "gametools-flatarray" % "0.11.0",
-  "me.kright" %% "gametools-vector" % "0.11.0",
-  "me.kright" %% "gametools-matrix" % "0.11.0",
-  "me.kright" %% "gametools-pga2d" % "0.11.0",
-  "me.kright" %% "gametools-pga2dgeom" % "0.11.0",
-  "me.kright" %% "gametools-pga3d" % "0.11.0",
-  "me.kright" %% "gametools-pga3dgeom" % "0.11.0",
-  "me.kright" %% "gametools-physics1d" % "0.11.0",
-  "me.kright" %% "gametools-pga3dphysics" % "0.11.0"
+  "me.kright" %% "gametools-mathutil" % "0.12.0",
+  "me.kright" %% "gametools-flatarray" % "0.12.0",
+  "me.kright" %% "gametools-vector" % "0.12.0",
+  "me.kright" %% "gametools-matrix" % "0.12.0",
+  "me.kright" %% "gametools-pga2d" % "0.12.0",
+  "me.kright" %% "gametools-pga2dgeom" % "0.12.0",
+  "me.kright" %% "gametools-pga3d" % "0.12.0",
+  "me.kright" %% "gametools-pga3dgeom" % "0.12.0",
+  "me.kright" %% "gametools-physics1d" % "0.12.0",
+  "me.kright" %% "gametools-pga3dphysics" % "0.12.0"
 )
 ```
 
 For Scala.js use `%%%` instead of `%%`:
 
 ```scala
-libraryDependencies += "me.kright" %%% "gametools-pga3d" % "0.11.0"
+libraryDependencies += "me.kright" %%% "gametools-pga3d" % "0.12.0"
 ```
 
 ### Gradle
@@ -67,16 +67,16 @@ Note: suffix `_3` is for Scala 3.
 
 ```groovy
 dependencies {
-  implementation 'me.kright:gametools-mathutil_3:0.11.0'
-  implementation 'me.kright:gametools-flatarray_3:0.11.0'
-  implementation 'me.kright:gametools-vector_3:0.11.0'
-  implementation 'me.kright:gametools-matrix_3:0.11.0'
-  implementation 'me.kright:gametools-pga2d_3:0.11.0'
-  implementation 'me.kright:gametools-pga2dgeom_3:0.11.0'
-  implementation 'me.kright:gametools-pga3d_3:0.11.0'
-  implementation 'me.kright:gametools-pga3dgeom_3:0.11.0'
-  implementation 'me.kright:gametools-physics1d_3:0.11.0'
-  implementation 'me.kright:gametools-pga3dphysics_3:0.11.0'
+  implementation 'me.kright:gametools-mathutil_3:0.12.0'
+  implementation 'me.kright:gametools-flatarray_3:0.12.0'
+  implementation 'me.kright:gametools-vector_3:0.12.0'
+  implementation 'me.kright:gametools-matrix_3:0.12.0'
+  implementation 'me.kright:gametools-pga2d_3:0.12.0'
+  implementation 'me.kright:gametools-pga2dgeom_3:0.12.0'
+  implementation 'me.kright:gametools-pga3d_3:0.12.0'
+  implementation 'me.kright:gametools-pga3dgeom_3:0.12.0'
+  implementation 'me.kright:gametools-physics1d_3:0.12.0'
+  implementation 'me.kright:gametools-pga3dphysics_3:0.12.0'
 }
 ```
 

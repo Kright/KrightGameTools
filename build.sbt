@@ -1,7 +1,7 @@
 import pl.project13.scala.sbt.JmhPlugin
 
 ThisBuild / organization := "me.kright"
-ThisBuild / version := "0.12.0-SNAPSHOT"
+ThisBuild / version := "0.12.0"
 ThisBuild / scalaVersion := "3.9.0"
 ThisBuild / pomIncludeRepository := { _ => false }
 
