@@ -1,5 +1,6 @@
 package me.kright.gametools.benchmark
 
+import me.kright.gametools.physics1d.{Integrable, IntegrableUniformArray, OdeSolverCache, OdeSolverRK4}
 import me.kright.gametools.pga3d.*
 import me.kright.gametools.pga3d.physics.*
 import org.openjdk.jmh.annotations.*
@@ -19,21 +20,19 @@ import scala.compiletime.uninitialized
  * benchmark invocations.
  *
  * Measured (8 bodies per step, ns per step / per body; the bodies use Pga3dInertiaMovedLocal,
- * which stores its pose as a Pga3dTransform - that alone made every solver 1.2-1.3x faster
- * than the motor-based inertia; the pair-grouped sums of the generated code shaved a further
- * 0-5% off; the solvers write the motor back as body.transform = Pga3dTransform(motor), so the
- * write-back normalizes once instead of renormalized + another renormalization in the motor
- * setter - that took ~10% off rkf45, the rest moved within run-to-run noise):
- *   euler          711 /  89
- *   midPoint      1393 / 174
- *   heun          1397 / 175
- *   rk4           2850 / 356
- *   verlet        4717 / 590   (one derivative pass, but the displacement solve dominates the
- *                               step - per fixed-point iteration: bivector exp + motor product +
- *                               reverseSandwich + inertia.invert)
- *   rkmk4         5249 / 656
- *   rkf45         6308 / 789
- *   gaussLegendre3 7284 / 911
+ * which stores its pose as a Pga3dTransform):
+ *   euler                753 /  94
+ *   heun                1395 / 174
+ *   midPoint            1418 / 177
+ *   rk4Array            2481 / 310
+ *   rk4ArrayInsideWorld 2561 / 320
+ *   rk4                 2710 / 339
+ *   rkf45               4570 / 571
+ *   verlet              4640 / 580   (one derivative pass, but the displacement solve dominates the
+ *                                     step - per fixed-point iteration: bivector exp + motor product +
+ *                                     reverseSandwich + inertia.invert)
+ *   rkmk4               5329 / 666
+ *   gaussLegendre3      6144 / 768
  *
  * Run with: sbt "benchmark/Jmh/run -f1 .*PhysicsSolverBenchmark.*"
  */
@@ -61,6 +60,10 @@ class PhysicsSolverBenchmark:
   var heunBodies: Array[Pga3dPhysicsBody] = uninitialized
   var midPointBodies: Array[Pga3dPhysicsBody] = uninitialized
   var rk4Bodies: Array[Pga3dPhysicsBody] = uninitialized
+  var rk4ArrayBodies: IntegrableUniformArray[Pga3dPhysicsBody] = uninitialized
+  var rk4ArrayCache: OdeSolverCache = uninitialized
+  var rk4World: Integrable = uninitialized
+  var rk4WorldCache: OdeSolverCache = uninitialized
   var rkmk4Bodies: Array[Pga3dPhysicsBody] = uninitialized
   var rkf45Bodies: Array[Pga3dPhysicsBody] = uninitialized
   var verletBodies: Array[Pga3dPhysicsBody] = uninitialized
@@ -83,6 +86,10 @@ class PhysicsSolverBenchmark:
     heunBodies = makeBodies()
     midPointBodies = makeBodies()
     rk4Bodies = makeBodies()
+    rk4ArrayBodies = IntegrableUniformArray(makeBodies(), Pga3dBodyState.componentsCount)
+    rk4ArrayCache = OdeSolverCache()
+    rk4World = Integrable(IntegrableUniformArray(makeBodies(), Pga3dBodyState.componentsCount), BenchmarkOscillatorA(1.0, 0.0))
+    rk4WorldCache = OdeSolverCache()
     rkmk4Bodies = makeBodies()
     rkf45Bodies = makeBodies()
     verletBodies = makeBodies()
@@ -114,6 +121,14 @@ class PhysicsSolverBenchmark:
   @Benchmark
   def rk4(): Unit =
     Pga3dPhysicsSolverRK4.step(rk4Bodies, dt, _ => ())
+
+  @Benchmark
+  def rk4Array(): Unit =
+    OdeSolverRK4.step(rk4ArrayBodies, dt, _ => (), rk4ArrayCache)
+
+  @Benchmark
+  def rk4ArrayInsideWorld(): Unit =
+    OdeSolverRK4.step(rk4World, dt, _ => (), rk4WorldCache)
 
   @Benchmark
   def rkmk4(): Unit =

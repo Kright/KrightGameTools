@@ -31,16 +31,49 @@ def addGravity(): Unit = {
 }
 
 val timeStep = 0.001
+val bodies = IntegrableUniformArray(dynamicBodies, Pga3dBodyState.componentsCount)
+val cache = OdeSolverCache() // the work arrays of the solver, one per world
 
 for (step <- 0 until stepsCount) {
-  Pga3dPhysicsSolverRK4.step(dynamicBodies, timeStep, addForquesToBodies = { dtInsideStep =>
+  OdeSolverRK4.step(bodies, timeStep, addForces = { timeInsideStep =>
     addGravity()
     addSomeOtherForques()
-  })
+  }, cache)
 }
 ```
 
-Actually, for the Runge-Kutta method of fourth order, the function addForquesToBodies is called four times.
+Actually, for the Runge-Kutta method of fourth order, the function addForces is called four times.
+
+The solvers themselves are universal and live in [physics1d](../physics1d/README.md#ode-solvers):
+they integrate any `Integrable` - an object whose state is a run of doubles.
+`IntegrableUniformArray(dynamicBodies, Pga3dBodyState.componentsCount)` is the `Integrable` of an
+array of bodies: all of them have the same state size, the 14 doubles of `Pga3dBodyState`. The cache is
+optional: without it a solver creates its work arrays on every step.
+`Pga3dPhysicsSolverRK4.step(dynamicBodies, timeStep, addForquesToBodies)` and the other
+Runge-Kutta solvers for an array of bodies are deprecated wrappers over them.
+
+## Other objects in the same world
+
+A wheel spin, engine revolutions, any object with its own state is integrated together with the
+bodies, through the same stages: implement `Integrable` (with `loadState` as the place for a
+normalization) and join everything with `Integrable(...)`:
+
+```scala
+val flywheel = Flywheel(inertia = 0.2, angle = 0.0, omega = 100.0) // extends Integrable
+val world = Integrable(bodies, flywheel)
+
+OdeSolverRK4.step(world, timeStep, dtInsideStep => {
+  addGravity()
+  addBrakeTorque(dynamicBodies(0), flywheel) // both hold the same trial state here
+}, cache)
+```
+
+The bodies are the main scenario: their `IntegrableUniformArray` gets the loops generated for
+the body class at the call site, so the solver makes one interface call per
+stage operation, not one per body
+(measured for RK4 on 2, 10 and 100 bodies: within 1.5% of a solver hardwired to an array of
+bodies, see [Solvers.md](Solvers.md#one-system-flat-state)). A single `Pga3dPhysicsBody` is an `Integrable`
+too (the 14 doubles of `Pga3dBodyState`), which gives snapshots through `saveState` / `loadState`.
 
 ## Solvers
 

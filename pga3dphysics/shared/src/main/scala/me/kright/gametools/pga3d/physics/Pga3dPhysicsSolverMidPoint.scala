@@ -1,21 +1,14 @@
 package me.kright.gametools.pga3d.physics
 
-import me.kright.gametools.pga3d.physics.Pga3dPhysicsSolverUtil.*
+import me.kright.gametools.physics1d.{IntegrableUniformArray, OdeSolverMidPoint}
 
 /** Second order of precision */
+@deprecated("use OdeSolverMidPoint of physics1d over IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount)", "0.13.0")
 object Pga3dPhysicsSolverMidPoint extends Pga3dPhysicsSolver:
   override def step[T <: Pga3dPhysicsBody](dynamicBodies: Array[T],
                                            dt: Double,
-                                           addForquesToBodies: (Double) => Unit): Unit = {
+                                           addForquesToBodies: Double => Unit): Unit =
+    OdeSolverMidPoint.step(IntegrableUniformArray(dynamicBodies, Pga3dBodyState.componentsCount), dt, addForquesToBodies)
 
-    val initial = dynamicBodies.map(Pga3dBodyState(_))
-    val k1 = getDerivative(dynamicBodies, 0.0, addForquesToBodies)
-
-    setNewState(dynamicBodies, initial, dt * 0.5, k1)
-    val k2 = getDerivative(dynamicBodies, dt * 0.5, addForquesToBodies)
-
-    setNewState(dynamicBodies, initial, dt, k2)
-  }
-
-  override def toString: String = 
+  override def toString: String =
     "Pga3dPhysicsSolverMidPoint"

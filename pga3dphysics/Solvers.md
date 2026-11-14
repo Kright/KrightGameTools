@@ -8,28 +8,37 @@ of how to reach the stated order of precision, which is easy to lose to a subtle
 convergence-order tests in `pga3dphysics/jvm/src/test` show how to verify the order of an
 implementation against a fine-step reference trajectory.
 
-The Runge-Kutta-family solvers implement `Pga3dPhysicsSolver.step(dynamicBodies, dt,
-addForquesToBodies)` and integrate the pair (motor, localB) of every body with a fixed step;
-`addForquesToBodies` is called once per derivative evaluation with the time offset inside the
-step, so forces are re-evaluated at the intermediate states. The Verlet family deliberately
-lives outside that interface: for Verlet the state is two consecutive pose arrays owned by the
+The Runge-Kutta solvers themselves are universal and live in
+[physics1d](../physics1d/README.md#ode-solvers): `OdeSolver.step(system, dt, addForces, cache)`
+integrates one `Integrable` with a fixed step - the bodies, as an `IntegrableUniformArray` with
+the pair (motor, localB) of every body, together with any other objects of the same world (see
+[below](#one-system-flat-state)). `addForces` is called once per derivative evaluation with the
+time offset inside the step, so forces are re-evaluated at the intermediate states.
+
+The `Pga3dPhysicsSolver`s of this module, `step(dynamicBodies, dt, addForquesToBodies)`, work
+on arrays of bodies. The Runge-Kutta ones are deprecated: they only wrap the array into the
+`IntegrableUniformArray` and call the universal solver of the same name. `Pga3dPhysicsSolverRKMK4` and
+`Pga3dPhysicsSolverConstrained` exist only in this form. The Verlet family deliberately
+lives outside both interfaces: for Verlet the state is two consecutive pose arrays owned by the
 caller and the velocity exists only implicitly, so its solvers are stateless computation
 strategies over arrays of inertias and motors (see the Verlet bullet below).
 
-| solver                                  | order            | force evaluations per step | ns / body / step | notes                                    |
-|-----------------------------------------|------------------|----------------------------|------------------|------------------------------------------|
-| `Pga3dPhysicsSolverEuler`               | 1                | 1                          | 87               | very imprecise, for reference only       |
-| `Pga3dPhysicsSolverMidPoint`            | 2                | 2                          | 176              |                                          |
-| `Pga3dPhysicsSolverHeun`                | 2                | 2                          | 177              |                                          |
-| `Pga3dPhysicsSolverRK4`                 | 4                | 4                          | 350              | the default workhorse                    |
-| `Pga3dPhysicsSolverVerlet`              | 2                | 1                          | 589              | exact momentum, bounded energy error     |
-| `Pga3dPhysicsSolverRKMK4`               | 4                | 4                          | 648              | Lie-group (Munthe-Kaas) variant of RK4   |
-| `Pga3dPhysicsSolverGaussLegendre(iter)` | 4 (implicit)     | 3 + 2·iter                 | 818 (iter = 3)   | far better energy behavior on stiff forces |
-| `Pga3dPhysicsSolverRKF45`               | 4 (+ embedded 5) | 6                          | 881              | free per-step local-error estimate       |
+| solver                                                               | order            | force evaluations per step | ns / body / step | notes                                    |
+|----------------------------------------------------------------------|------------------|----------------------------|------------------|------------------------------------------|
+| `OdeSolverEuler` / `Pga3dPhysicsSolverEuler`                         | 1                | 1                          | 94               | very imprecise, for reference only       |
+| `OdeSolverMidPoint` / `Pga3dPhysicsSolverMidPoint`                   | 2                | 2                          | 177              |                                          |
+| `OdeSolverHeun` / `Pga3dPhysicsSolverHeun`                           | 2                | 2                          | 174              |                                          |
+| `OdeSolverRK4` / `Pga3dPhysicsSolverRK4`                             | 4                | 4                          | 339              | the default workhorse                    |
+| `OdeSolverRKF45` / `Pga3dPhysicsSolverRKF45`                         | 4 (+ embedded 5) | 6                          | 571              | free per-step local-error estimate       |
+| `Pga3dPhysicsSolverVerlet`                                           | 2                | 1                          | 580              | exact momentum, bounded energy error     |
+| `Pga3dPhysicsSolverRKMK4`                                            | 4                | 4                          | 666              | Lie-group (Munthe-Kaas) variant of RK4   |
+| `OdeSolverGaussLegendre(iter)` / `Pga3dPhysicsSolverGaussLegendre(iter)` | 4 (implicit) | 3 + 2·iter                 | 768 (iter = 3)   | far better energy behavior on stiff forces |
 
 The timing column is the pure solver overhead with an empty force callback
-(`benchmark/PhysicsSolverBenchmark`, free rotating bodies); with real forces the cost of the
-force callback multiplies by the "force evaluations per step" column.
+(`benchmark/PhysicsSolverBenchmark`, 8 free rotating bodies, through the `Pga3dPhysicsSolver`
+step for an array, which allocates the work buffers on every call; `OdeSolverRK4` with a reused
+`OdeSolverCache` takes 310); with real forces the cost of the force callback multiplies by the
+"force evaluations per step" column.
 
 ## A short guide
 
@@ -78,6 +87,90 @@ force callback multiplies by the "force evaluations per step" column.
   velocity, exactly like in position-based dynamics; a teleport must rewrite both pose arrays.
   Costs: velocity-dependent forces see a half-step-stale `localB`, and the rotation per step
   must stay below pi (the motor log wraps).
+
+## One system, flat state
+
+A universal solver sees one [`Integrable`](../physics1d/README.md#integrable): an object that
+saves its state and its derivative into a run of doubles and loads a state back. So a solver is
+plain arithmetic over double arrays - save the initial state, and for every stage combine, load,
+evaluate the derivative:
+
+```scala
+combine(stage, size, initial, 0.5 * dt, k1)   // stage = initial + k1 * (0.5 * dt)
+system.loadState(stage, 0)                    // the motors are renormalized here
+saveDerivative(system, 0.5 * dt, addForces, k2)
+```
+
+* **The bodies** are joined by
+  `IntegrableUniformArray(dynamicBodies, Pga3dBodyState.componentsCount)`: the body number i at
+  the offset `14 * i` (the motor, then localB - the flat form of `Pga3dBodyState`). The class is
+  generated at the call site by the inlined factory, so its loops are written for
+  `Pga3dPhysicsBody` and the constant size 14: the solver makes one interface call per stage
+  operation, and the calls of the bodies are direct.
+* **Other objects** implement `Integrable` themselves and are joined with the bodies by an
+  `Integrable(bodiesArray, flywheel, ...)`. All of them go through the same stages, and
+  the force callback sees them at the same trial state, so the coupling keeps the order of the
+  solver: a spinning body and a 1d point mass joined by a spring converge to the exact solution
+  with the measured orders 1.04 (euler), 2.00 (midPoint, heun) and 4.00-4.01 (rk4, rkf45,
+  gaussLegendre(6)), see `Pga3dBodiesOdeSolverTest`.
+* **`OdeSolverCache`** holds the stage arrays between the steps: a world that passes its own
+  instance to every step allocates them once. The cache is optional (`OdeSolverCache | Null`):
+  without it a solver creates new arrays on every step, as the `Pga3dPhysicsSolver` step for
+  an array does.
+* **`OdeSolverRKF45`** reports `lastErrors`, one value per double of the system;
+  `Pga3dPhysicsSolverRKF45` folds them into the body-indexed `lastMotorErrors` /
+  `lastLocalBErrors`.
+* **`Pga3dPhysicsSolverRKMK4`** stays a solver for an array of bodies only: the group structure
+  it uses is the one of the motors.
+* **Constraints** with a universal solver are plugged in by hand, exactly as
+  `Pga3dPhysicsSolverConstrained` does it for an array of bodies:
+
+  ```scala
+  OdeSolverRK4.step(world, dt, currentDt => {
+    addForques(currentDt)
+    resolver.addConstraintForques(dynamicBodies)
+  }, cache)
+  resolver.project(dynamicBodies)
+  ```
+
+The linear combinations keep the order of the floating point operations of the previous
+object-based solvers: the trajectories of all the solvers are bit-identical to them (the
+per-body estimates of RKF45 are now folded from the per-double ones and differ in the last bit).
+
+What the generality costs, measured for one RK4 step with an empty force callback
+(`benchmark/Rk4BodiesCountBenchmark`, ns per step, three forks):
+
+| RK4 step                                                                | 2 bodies | 10 bodies | 100 bodies |
+|-------------------------------------------------------------------------|----------|-----------|------------|
+| object-based solver of 0.12.0                                           | 724      | 3456      | 35368      |
+| `Pga3dPhysicsSolverRK4.step(dynamicBodies, dt, f)`, no cache            | 716      | 3438      | 35259      |
+| a solver hardwired to an array of bodies, with a cache                  | 661      | 3069      | 31653      |
+| `OdeSolverRK4` over an `IntegrableUniformArray` of bodies, with a cache | 645      | 3082      | 32079      |
+
+The step for an array costs the same as before. A cache takes 9-11% off, and 29% of the
+allocations: 1728 instead of 2445 bytes per body per step, 16 objects instead of 29 (what is
+left are the objects a body keeps after every stage: its `Pga3dTransform` with the motor and
+`localB`, plus the motor before the renormalization). The bodies array is within 1.5% of a solver
+written directly for an array of bodies.
+
+The three ways to join the same bodies (`benchmark/BodiesArrayDispatchBenchmark`, RK4 with a
+cache, ns per step): alone, and in a world with three more arrays of other small objects
+(their own work is included, about 400 ns):
+
+| the bodies joined by                                   | 2 bodies | 10 bodies | 100 bodies | 2, in the world | 10, in the world | 100, in the world |
+|--------------------------------------------------------|----------|-----------|------------|-----------------|------------------|-------------------|
+| `IntegrableUniformArray(bodies, 14)`: loops made for the body class | 650 | 3116   | 32087      | 1043            | 3507             | 32336             |
+| a uniform array with loops shared by all element types | 656      | 3067      | 33143      | 1027            | 3607             | 34753             |
+| `Integrable(bodies)`                              | 657      | 3167      | 33215      | 1107            | 3735             | 34557             |
+
+For a couple of bodies the choice does not matter. The shared loops (a class kept only in
+the benchmark) are as fast as the generated ones only while a single element type passes
+through them, and even then 3% slower at 100 bodies: the element size is a field there, not a
+constant. In a world with several kinds of objects they stop being inlined: 3-7% slower, and 6%
+more allocations at 100 bodies. An offset table instead of a multiplication, the only
+difference between the last two rows, does not show at all. That is why the library has no
+such class: `IntegrableUniformArray` is a trait, and its implementation is generated at the
+call site.
 
 ## Hard constraints
 

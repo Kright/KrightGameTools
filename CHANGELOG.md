@@ -3,6 +3,63 @@
 All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- physics1d: universal ODE solvers and the contract of the objects they integrate, so that
+  other objects of a world (a wheel spin, engine revolutions) go through the same stages as the
+  rigid bodies.
+  - `Integrable` - an object with a state of `stateSize` doubles (a `val`, fixed for the life of
+    the object): `saveState` / `loadState` / `saveDerivative` into a caller-owned
+    `Array[Double]` at an offset, `resetForces` before every force callback. `loadState` receives
+    a raw linear combination and is the place to project the state back onto its manifold
+    (a unit vector, a motor).
+  - `IntegrableArray[T]` - several objects of an `Array[T]` as one `Integrable`, packed one
+    after another: a trait with the public `elements` and `offsetOf`; the arrays nest.
+  - `IntegrableAnyArray[T]` - for objects of any types and state sizes.
+  - `IntegrableUniformArray[T]` - for objects of one type and one state size, with the
+    public `elementSize`. `IntegrableUniformArray(array, elementSize)` is inlined: every call
+    site gets its own implementation with the loops for its element type.
+  - `Integrable(a, b, c)` / `Integrable(array)` - the plain way to join objects, gives an
+    `IntegrableAnyArray`; `Integrable.uniformElementSize(array, elementSize)` - the same as
+    `IntegrableUniformArray(...)`; `Integrable.empty` - the object without a state.
+  - `OdeSolverCache` - the work buffers of a solver, kept between the steps:
+    `getArrays(groupSize, size)` gives all the stage arrays of a step by one call.
+  - `OdeSolver.step(system, dt, addForces, cache: OdeSolverCache | Null = null)` (without a cache
+    a solver creates new arrays on every step) and the solvers `OdeSolverEuler`,
+    `OdeSolverMidPoint`, `OdeSolverHeun`, `OdeSolverRK4`, `OdeSolverRKF45` (with `lastErrors`, the
+    error estimate of every double of the system), `OdeSolverGaussLegendre(iterations)`;
+    `OdeSolverUtil` with their building blocks. Measured on two masses joined by a spring: every
+    solver keeps its order (1.04 / 2.00 / 4.00-4.01).
+- `Pga3dPhysicsBody` is an `Integrable` (the 14 doubles of `Pga3dBodyState`, new
+  `Pga3dBodyState.componentsCount`): snapshots through `saveState` / `loadState`.
+- benchmark: `Rk4BodiesCountBenchmark` - one RK4 step for 2, 10 and 100 bodies;
+  `BodiesArrayDispatchBenchmark` - the bodies array against a uniform array with shared
+  loops and `IntegrableAnyArray`.
+
+### Changed (breaking)
+
+- `Pga3dPhysicsBody` gained the final members `stateSize`, `saveState`, `loadState`,
+  `saveDerivative`, `resetForces`: a subclass cannot declare its own with these names.
+
+### Deprecated
+
+- `Pga3dPhysicsSolverEuler`, `MidPoint`, `Heun`, `RK4`, `RKF45` and `GaussLegendre`: use the
+  universal solver of physics1d with the same suffix (`OdeSolverRK4`, ...) over
+  `IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount)`.
+
+### Changed
+
+- `Pga3dPhysicsSolverEuler`, `MidPoint`, `Heun`, `RK4`, `RKF45` and `GaussLegendre` are thin
+  wrappers now: they wrap the array of bodies into an `IntegrableUniformArray` and call the
+  universal solver of physics1d. The `Pga3dPhysicsSolver` interface is unchanged.
+  The stages are kept in flat double arrays instead of arrays of
+  `Pga3dBodyState`, with the order of the floating point operations preserved: the trajectories
+  are bit-identical to 0.12.0. The per-body estimates of `Pga3dPhysicsSolverRKF45` are folded
+  from the per-double ones and may differ in the last bit.
+- `Pga3dPhysicsSolverUtil` is not used by the solvers of the library any more.
+
 ## [0.12.0] - 2026-11-11
 
 ### Added

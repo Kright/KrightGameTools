@@ -200,7 +200,8 @@ lazy val pga2dgeom = crossProject(JSPlatform, JVMPlatform)
     pga3dgeom % "test->compile",
   )
 
-// scalar 1d force models (elasticity curves, hysteretic friction), independent of PGA
+// physics independent of PGA: scalar 1d force models (elasticity curves, hysteretic friction)
+// and the ODE solvers with the Integrable contract of the objects they integrate
 lazy val physics1d = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .in(file("physics1d"))
@@ -215,10 +216,12 @@ lazy val pga3dphysics = crossProject(JSPlatform, JVMPlatform)
   .jsSettings(jsTestsCompileNotRun)
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-pga3dphysics")
+  // the deprecated Pga3dPhysicsSolver wrappers stay covered by the tests
+  .settings(Test / scalacOptions += "-Wconf:cat=deprecation:s")
   .dependsOn(
     pga3d % "compile->compile;test->test",
     matrix,
-    physics1d,
+    physics1d % "compile->compile;test->test",
   )
 
 lazy val benchmark = (project in file("benchmark"))
@@ -227,6 +230,8 @@ lazy val benchmark = (project in file("benchmark"))
   .settings(
     name := "gametools-benchmark",
     publish / skip := true,
+    // the deprecated Pga3dPhysicsSolver wrappers stay measured
+    scalacOptions += "-Wconf:cat=deprecation:s",
     libraryDependencies += "org.openjdk.jmh" % "jmh-core" % "1.37",
     libraryDependencies += "org.openjdk.jmh" % "jmh-generator-annprocess" % "1.37",
   )

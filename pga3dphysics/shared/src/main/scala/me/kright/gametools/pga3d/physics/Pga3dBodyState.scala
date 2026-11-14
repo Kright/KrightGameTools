@@ -24,6 +24,8 @@ case class Pga3dBodyState(motor: Pga3dMotor,
 
 
 object Pga3dBodyState:
+  inline val componentsCount = 14
+
   def id: Pga3dBodyState =
     Pga3dBodyState(
       Pga3dMotor.id,

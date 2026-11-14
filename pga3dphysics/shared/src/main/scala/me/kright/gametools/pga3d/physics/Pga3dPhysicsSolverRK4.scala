@@ -1,30 +1,16 @@
 package me.kright.gametools.pga3d.physics
 
-import me.kright.gametools.pga3d.physics.Pga3dPhysicsSolverUtil.*
+import me.kright.gametools.physics1d.{IntegrableUniformArray, OdeSolverRK4}
 
 /**
  * Runge-Kutta solver with 4th order of precision
  */
+@deprecated("use OdeSolverRK4 of physics1d over IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount)", "0.13.0")
 object Pga3dPhysicsSolverRK4 extends Pga3dPhysicsSolver:
   override def step[T <: Pga3dPhysicsBody](dynamicBodies: Array[T],
                                            dt: Double,
-                                           addForquesToBodies: (Double) => Unit): Unit = {
-
-    val initial = dynamicBodies.map(Pga3dBodyState(_))
-
-    val k1 = getDerivative(dynamicBodies, 0.0, addForquesToBodies)
-
-    setNewState(dynamicBodies, initial, 0.5 * dt, k1)
-    val k2 = getDerivative(dynamicBodies, 0.5 * dt, addForquesToBodies)
-
-    setNewState(dynamicBodies, initial, 0.5 * dt, k2)
-    val k3 = getDerivative(dynamicBodies, 0.5 * dt, addForquesToBodies)
-
-    setNewState(dynamicBodies, initial, dt, k3)
-    val k4 = getDerivative(dynamicBodies, dt, addForquesToBodies)
-
-    setNewState(dynamicBodies, initial, dt, k1, 1.0 / 6.0, k2, 2.0 / 6.0, k3, 2.0 / 6.0, k4, 1.0 / 6.0)
-  }
+                                           addForquesToBodies: Double => Unit): Unit =
+    OdeSolverRK4.step(IntegrableUniformArray(dynamicBodies, Pga3dBodyState.componentsCount), dt, addForquesToBodies)
 
   override def toString: String =
     "Pga3dPhysicsSolverRK4"

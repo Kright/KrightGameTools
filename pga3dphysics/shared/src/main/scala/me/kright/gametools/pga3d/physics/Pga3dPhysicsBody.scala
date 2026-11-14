@@ -1,5 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
+import me.kright.gametools.flatarray.FlatDoubleSerializer
+import me.kright.gametools.physics1d.Integrable
 import me.kright.gametools.pga3d.*
 
 import scala.util.chaining.scalaUtilChainingOps
@@ -15,7 +17,7 @@ import scala.util.chaining.scalaUtilChainingOps
  */
 class Pga3dPhysicsBody(var inertia: Pga3dInertia,
                        var transform: Pga3dTransform,
-                       var localB: Pga3dBivector):
+                       var localB: Pga3dBivector) extends Integrable:
 
   def this(inertia: Pga3dInertia, motor: Pga3dMotor, localB: Pga3dBivector) =
     this(inertia, Pga3dTransform(motor), localB)
@@ -58,6 +60,22 @@ class Pga3dPhysicsBody(var inertia: Pga3dInertia,
 
   def resetForqueAccum(): Unit =
     globalForqueAccumulator.setZero()
+
+  final override inline val stateSize = Pga3dBodyState.componentsCount
+
+  final override def saveState(dst: Array[Double], offset: Int): Unit =
+    FlatDoubleSerializer.write(Pga3dBodyState(this), dst, offset)
+
+  final override def loadState(src: Array[Double], offset: Int): Unit =
+    val state = FlatDoubleSerializer.read[Pga3dBodyState](src, offset)
+    transform = Pga3dTransform(state.motor)
+    localB = state.localB
+
+  final override def saveDerivative(dst: Array[Double], offset: Int): Unit =
+    FlatDoubleSerializer.write(Pga3dBodyState.derivative(this), dst, offset)
+
+  final override def resetForces(): Unit =
+    resetForqueAccum()
 
   /** @return kinetic energy */
   def getKineticEnergy: Double =
