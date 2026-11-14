@@ -5,13 +5,14 @@ import me.kright.gametools.physics1d.{DahlFriction, HystereticFriction, IwanElem
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 /**
  * The Pga3dHystereticFriction contract, checked identically for every model together with its
  * 1d counterpart: any new model added under the trait should be listed here and pass unchanged.
  */
 class Pga3dHystereticFrictionContractTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
-  private val models: Seq[(String, () => Pga3dHystereticFriction, () => HystereticFriction)] = Seq(
+  private val models: ArraySeq[(String, () => Pga3dHystereticFriction, () => HystereticFriction)] = ArraySeq(
     ("Dahl",
       () => new Pga3dDahlFriction(maxForce = 100.0, saturationTravel = 1e-4),
       () => new DahlFriction(maxForce = 100.0, saturationTravel = 1e-4)),
@@ -72,7 +73,7 @@ class Pga3dHystereticFrictionContractTest extends AnyFunSuiteLike with ScalaChec
         val substeps = make()
         val a = origin + u1 * 6e-5
         val b = a + u2 * 1e-4
-        for (f <- Seq(oneStep, substeps)) { f.advance(origin); f.advance(a); f.advance(b) }
+        for (f <- ArraySeq(oneStep, substeps)) { f.advance(origin); f.advance(a); f.advance(b) }
 
         val dx = u3 * 4e-4
         val n = 100
@@ -171,8 +172,8 @@ class Pga3dHystereticFrictionContractTest extends AnyFunSuiteLike with ScalaChec
   test("extreme step lengths: tiny moves change the force by at most the stuck stiffness, huge moves saturate") {
     val u = Pga3dVector(0.3, -0.5, 0.8).normalizedByNorm
     val w = Pga3dVector(-0.7, 0.2, 0.4).normalizedByNorm // the direction of the saturating history
-    val tiny = Seq(1e-10, 1e-20, 1e-40, 1e-60, 1e-100, 1e-150, 1e-155, 1e-160, 1e-165, 1e-170, 1e-200, 1e-300, 1e-320)
-    val huge = Seq(1e100, 1e154, 1e200, 1e300)
+    val tiny = ArraySeq(1e-10, 1e-20, 1e-40, 1e-60, 1e-100, 1e-150, 1e-155, 1e-160, 1e-165, 1e-170, 1e-200, 1e-300, 1e-320)
+    val huge = ArraySeq(1e100, 1e154, 1e200, 1e300)
     for ((name, make, _) <- models) {
       // from the virgin state and from a state saturated along w (the force on its sphere)
       val virgin = make()
@@ -180,7 +181,7 @@ class Pga3dHystereticFrictionContractTest extends AnyFunSuiteLike with ScalaChec
       val saturated = make()
       saturated.advance(origin - w * 1.0)
       saturated.advance(origin)
-      for ((friction, state) <- Seq((virgin, "virgin"), (saturated, "saturated"))) {
+      for ((friction, state) <- ArraySeq((virgin, "virgin"), (saturated, "saturated"))) {
         val committed = friction.forceAt(origin)
         for (eps <- tiny) {
           val force = friction.forceAt(origin + u * eps)
@@ -199,7 +200,7 @@ class Pga3dHystereticFrictionContractTest extends AnyFunSuiteLike with ScalaChec
     }
   }
 
-  private val extremeLengths = Seq(1e-10, 1e-20, 1e-60, 1e-100, 1e-160, 1e-170, 1e-300, 1e-320, Double.MinPositiveValue,
+  private val extremeLengths = ArraySeq(1e-10, 1e-20, 1e-60, 1e-100, 1e-160, 1e-170, 1e-300, 1e-320, Double.MinPositiveValue,
     1e100, 1e154, 1e200, 1e300, Double.MaxValue)
   private val extremeMoves: Gen[Pga3dVector] =
     for (eps <- Gen.oneOf(extremeLengths); u <- directions) yield u * eps
@@ -229,7 +230,7 @@ class Pga3dHystereticFrictionContractTest extends AnyFunSuiteLike with ScalaChec
   }
 
   test("degenerate parameters: zero saturation force, extreme travels and stiffnesses") {
-    val degenerate: Seq[(String, () => Pga3dHystereticFriction)] = Seq(
+    val degenerate: ArraySeq[(String, () => Pga3dHystereticFriction)] = ArraySeq(
       ("Dahl zero force", () => new Pga3dDahlFriction(maxForce = 0.0, saturationTravel = 1e-4)),
       ("Dahl tiny travel", () => new Pga3dDahlFriction(maxForce = 100.0, saturationTravel = 1e-300)),
       ("Dahl huge travel", () => new Pga3dDahlFriction(maxForce = 100.0, saturationTravel = 1e300)),

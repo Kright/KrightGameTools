@@ -44,13 +44,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed (breaking)
 
 - `Pga3dConstraintResolver` takes the bodies as its first constructor argument and the
-  constraints as an `Array`, `Pga3dConstraintResolver(dynamicBodies, constraints)`, and is an
+  constraints as an `Array`, `Pga3dConstraintResolver(bodies, constraints)`, and is an
   `OdeConstraintResolver` for
   the universal solvers: `addConstraintForces()` (was `addConstraintForques(dynamicBodies)`),
   `project()`, `projectPositions()`, `projectVelocities()` have no arguments. The constraints
   refer to the bodies by their index in the array of the resolver.
-- `Pga3dPhysicsSolverRKMK4` is an `OdeSolver` and a class bound to its bodies:
-  `Pga3dPhysicsSolverRKMK4(dynamicBodies).step(system, dt, addForces, cache, resolver)` (was an
+- `Pga3dPhysicsSolverRKMK4` is renamed to `Pga3dOdeSolverRKMK4`: an `OdeSolver` and a class
+  bound to its bodies,
+  `Pga3dOdeSolverRKMK4(bodies).step(system, dt, addForces, cache, resolver)` (was an
   object with `step(dynamicBodies, dt, addForquesToBodies)`). The whole system goes through the
   classic RK4 stages over its flat state, and the motors of the given bodies get the group
   update, so other objects of the world, a cache and a constraint resolver work with it as with
@@ -59,8 +60,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   slower: the flat motor of every stage is computed and thrown away.
 - `Pga3dPhysicsSystem` takes an `OdeSolver` (was a `Pga3dPhysicsSolver`) and an optional
   `resolver: OdeConstraintResolver | Null`; it steps the `IntegrableUniformArray` of its bodies
-  with its own `OdeSolverCache`. `withStateDeepCopy` requires a system without a resolver: the
-  resolver refers to the bodies it was created with.
+  with its own `OdeSolverCache`. Its array of bodies is `bodies` (was `state`), the callback of
+  `doStep` is `addForces` (was `addForquesToBodies`). `withStateDeepCopy` is removed: it could
+  copy neither a subclass of the body nor a resolver.
+- `Pga3dPhysicsSystem[T]`, `Pga3dConstraintResolver[T]` and `Pga3dOdeSolverRKMK4[T]` are generic
+  in the class of the bodies, `T <: Pga3dPhysicsBody`, and keep the given `Array[T]` as `bodies`:
+  an `Array[MyBody]` of a subclass fits all of them and comes back with its type.
+- `Pga3dPhysicsSolverVerlet` and `Pga3dPhysicsSolverVerletConstrained` are renamed to
+  `Pga3dVerletSolver` and `Pga3dVerletSolverConstrained`: the prefix was the name of the removed
+  interface. The constraints of `Pga3dVerletSolverConstrained` are an `Array` (was a `Seq`), as
+  in `Pga3dConstraintResolver`.
+- `Pga3dPhysicsBody.motor_=` is removed, assign `body.transform = Pga3dTransform(motor)`.
+- `IwanFriction` and `Pga3dIwanFriction`: the constructor takes an `Array[IwanElement]` (was a
+  `Seq`); `IwanFriction(element0, element1)` is unchanged.
 - `Pga3dPhysicsBody` gained the final members `stateSize`, `saveState`, `loadState`,
   `saveDerivative`, `resetForces`: a subclass cannot declare its own with these names.
 
@@ -83,7 +95,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - benchmark: `PhysicsSolverBenchmark` measures the universal solvers over an
   `IntegrableUniformArray` of bodies with a reused `OdeSolverCache`.
-- Solvers.md states where `Pga3dPhysicsSolverRKMK4` is more accurate than RK4, with measurements
+- Solvers.md states where `Pga3dOdeSolverRKMK4` is more accurate than RK4, with measurements
   kept as tests: a step with a twist constant in the body frame (a sphere, a spin about a
   principal axis) is exact, the advantage is 90x and 14x for nearly spherical bodies and fades
   to 1.0 for a tumbling asymmetric one. For RK4 it gives the rule for the step: the body loses

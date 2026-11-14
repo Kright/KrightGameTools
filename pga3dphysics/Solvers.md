@@ -15,7 +15,7 @@ the pair (motor, localB) of every body, together with any other objects of the s
 [below](#one-system-flat-state)). `addForces` is called once per derivative evaluation with the
 time offset inside the step, so forces are re-evaluated at the intermediate states.
 
-`Pga3dPhysicsSolverRKMK4(dynamicBodies)` is an `OdeSolver` too; it lives in this module because
+`Pga3dOdeSolverRKMK4(bodies)` is an `OdeSolver` too; it lives in this module because
 it uses the group of the motors of its bodies. The Verlet family deliberately lives outside this
 interface: for Verlet the state is two consecutive pose arrays owned by the caller and the
 velocity exists only implicitly, so its solvers are stateless computation strategies over arrays
@@ -28,9 +28,9 @@ of inertias and motors (see the Verlet bullet below).
 | `OdeSolverHeun`                          | 2                | 2                          | 158              |                                            |
 | `OdeSolverRK4`                           | 4                | 4                          | 312              | the default workhorse                      |
 | `OdeSolverRKF45`                         | 4 (+ embedded 5) | 6                          | 513              | free per-step local-error estimate         |
-| `Pga3dPhysicsSolverVerlet`               | 2                | 1                          | 584              | exact momentum, bounded energy error       |
+| `Pga3dVerletSolver`               | 2                | 1                          | 584              | exact momentum, bounded energy error       |
 | `OdeSolverGaussLegendre(iter)`           | 4 (implicit)     | 3 + 2·iter                 | 728 (iter = 3)   | far better energy behavior on stiff forces |
-| `Pga3dPhysicsSolverRKMK4(dynamicBodies)` | 4                | 4                          | 815              | Lie-group RK4, exact for a constant twist  |
+| `Pga3dOdeSolverRKMK4(bodies)`        | 4                | 4                          | 815              | Lie-group RK4, exact for a constant twist  |
 
 The timing column is the pure solver overhead with an empty force callback
 (`benchmark/PhysicsSolverBenchmark`, 8 free rotating bodies; the universal solvers run over an
@@ -63,7 +63,7 @@ The timing column is the pure solver overhead with an empty force callback
   of the RK4 error, the part that does not depend on the forces. Measured on a free sphere
   turning at 2 rad/s for 8 s: the motor error is 4.0e-9, 2.5e-6 and 6.1e-4 at dt = 0.02, 0.1 and
   0.4 against the predicted 4.0e-9, 2.5e-6 and 6.4e-4 (the next term of the series shows at
-  0.8 rad per step), see `Pga3dPhysicsSolverRKMK4Test`. `Pga3dPhysicsSolverRKMK4` removes
+  0.8 rad per step), see `Pga3dOdeSolverRKMK4Test`. `Pga3dOdeSolverRKMK4` removes
   exactly this part.
 * **`OdeSolverRKF45` is the same order plus a built-in diagnostic.** The committed state is
   the 4th-order solution of the Fehlberg 4(5) embedded pair (its tableau even shows ~8x smaller
@@ -76,7 +76,7 @@ The timing column is the pure solver overhead with an empty force callback
   dt raises the estimate by ~9 orders of magnitude. In short: a stiffness detector for the price of
   two extra force evaluations. It is a class, not an object — each instance keeps the estimate of
   its own last step.
-* **`Pga3dPhysicsSolverRKMK4` wins when a body spins with a twist that is nearly constant in its
+* **`Pga3dOdeSolverRKMK4` wins when a body spins with a twist that is nearly constant in its
   own frame.** It integrates on the Lie algebra of bivectors (`u' = dexpInv(-u, -localB / 2)`) and
   updates with a single `M0 * exp(u)`, so every stage and the result are exact motors by
   construction, and a step with a constant body-frame twist is exact. RK4 treats `M' = M * omega`
@@ -99,14 +99,14 @@ The timing column is the pure solver overhead with an empty force callback
   flywheels spinning about their axis; for a tumbling asymmetric body the twist changes as fast
   as the body turns, the shared Runge-Kutta truncation error dominates, and RKMK4 wins fractions
   of a percent of trajectory error and ~7% of momentum error. Its step is 2.6 times slower than
-  the one of `OdeSolverRK4`. The measurements are the tests of `Pga3dPhysicsSolverRKMK4Test`.
+  the one of `OdeSolverRK4`. The measurements are the tests of `Pga3dOdeSolverRKMK4Test`.
 * **`OdeSolverGaussLegendre` pays off on stiff forces.** An implicit two-stage 4th-order
   scheme solved by fixed-point iteration (use `iterations >= 3`). On a stiff spring (k = 1e6,
   dt = 1e-4) its relative energy error is 5.8e-8 at 3 iterations and 8.7e-14 at 8, versus 1.4e-4
   for RK4 — at the price of many more force evaluations per step (the position error stays
   comparable to RK4, though). Measurement tables live in the tests
   (`Pga3dInertiaLocalTest`, "mass on spring precistion").
-* **`Pga3dPhysicsSolverVerlet` is a true Verlet on the motor group.** At first sight Verlet does
+* **`Pga3dVerletSolver` is a true Verlet on the motor group.** At first sight Verlet does
   not fit this engine at all: it has no explicit velocities — the state is two consecutive
   positions — while here `localB` is a first-class part of the state, needed by the gyroscopic
   term, kinetic energy, momentum and friction-like forces. The trick is to reconstruct the twist
@@ -141,7 +141,7 @@ saveDerivative(system, 0.5 * dt, addForces, k2)
 ```
 
 * **The bodies** are joined by
-  `IntegrableUniformArray(dynamicBodies, Pga3dBodyState.componentsCount)`: the body number i at
+  `IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount)`: the body number i at
   the offset `14 * i` (the motor, then localB - the flat form of `Pga3dBodyState`). The class is
   generated at the call site by the inlined factory, so its loops are written for
   `Pga3dPhysicsBody` and the constant size 14: the solver makes one interface call per stage
@@ -158,7 +158,7 @@ saveDerivative(system, 0.5 * dt, addForces, k2)
 * **`OdeSolverRKF45`** reports `lastErrors`, one value per double of the system: for the body
   number i these are the 8 doubles of the motor and the 6 of localB, from `offsetOf(i)` of the
   bodies array.
-* **`Pga3dPhysicsSolverRKMK4(dynamicBodies)`** is bound to its bodies: the whole system goes
+* **`Pga3dOdeSolverRKMK4(bodies)`** is bound to its bodies: the whole system goes
   through the classic RK4 stages over the flat state, and after every load the motors of these
   bodies are replaced by the group update `M0 * exp(u)`. So the bodies must be a part of the
   system given to `step`. Everything but these motors is exactly `OdeSolverRK4`: localB of free
@@ -171,7 +171,7 @@ saveDerivative(system, 0.5 * dt, addForces, k2)
   `Pga3dConstraintResolver` is an `OdeConstraintResolver` and knows its bodies.
 
   ```scala
-  val resolver = Pga3dConstraintResolver(dynamicBodies, constraints)
+  val resolver = Pga3dConstraintResolver(bodies, constraints)
   OdeSolverRK4.step(world, dt, addForques, cache, resolver)
   ```
 
@@ -243,7 +243,7 @@ dumbbell and a rigid pendulum with an off-center anchor (RK4, dt = 0.01): the di
 corrections are equal-and-opposite by construction) and the energy error stays at the plain
 RK4 truncation level.
 
-For Verlet there is the dedicated `Pga3dPhysicsSolverVerletConstrained` - a RATTLE on the
+For Verlet there is the dedicated `Pga3dVerletSolverConstrained` - a RATTLE on the
 motor group with the constraints built into the step itself (a generic projection composite
 over Verlet only reaches the 1st order). Like the plain Verlet it is a stateless strategy over
 caller-owned pose arrays; the constraints are an argument of `step` and may change freely

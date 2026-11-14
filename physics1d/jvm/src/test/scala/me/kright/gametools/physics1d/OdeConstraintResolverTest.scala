@@ -6,7 +6,7 @@ import scala.collection.immutable.ArraySeq
 import scala.collection.mutable.ArrayBuffer
 
 class OdeConstraintResolverTest extends AnyFunSuiteLike:
-  private val solvers: Seq[(solver: OdeSolver, order: Int, forceEvaluationsPerStep: Int)] = Seq(
+  private val solvers: ArraySeq[(solver: OdeSolver, order: Int, forceEvaluationsPerStep: Int)] = ArraySeq(
     (OdeSolverEuler, 1, 1),
     (OdeSolverMidPoint, 2, 2),
     (OdeSolverHeun, 2, 2),
@@ -20,8 +20,8 @@ class OdeConstraintResolverTest extends AnyFunSuiteLike:
       val log = ArrayBuffer[String]()
       s.solver.step(OdeSolverCallRecorder(log), 0.01, _ => log += "forces", resolver = OdeConstraintResolverCallRecorder(log))
 
-      val evaluation = Seq("reset", "forces", "constraint forces", "derivative")
-      val expected = Seq("save") ++ evaluation ++ Seq.fill(s.forceEvaluationsPerStep - 1)("load" +: evaluation).flatten ++ Seq("load", "project")
+      val evaluation = ArraySeq("reset", "forces", "constraint forces", "derivative")
+      val expected = ArraySeq("save") ++ evaluation ++ ArraySeq.fill(s.forceEvaluationsPerStep - 1)("load" +: evaluation).flatten ++ ArraySeq("load", "project")
       assert(log.toSeq == expected, s"solver ${s.solver}")
     }
   }
@@ -74,7 +74,7 @@ class OdeConstraintResolverTest extends AnyFunSuiteLike:
   }
 
   test("a null resolver is the same as no resolver") {
-    def bits(system: Integrable): Seq[Long] =
+    def bits(system: Integrable): ArraySeq[Long] =
       val state = new Array[Double](system.stateSize)
       system.saveState(state, 0)
       ArraySeq.unsafeWrapArray(state.map(java.lang.Double.doubleToRawLongBits))

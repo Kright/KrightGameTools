@@ -41,14 +41,14 @@ import me.kright.gametools.physics1d.OdeSolverUtil.{combine, saveDerivative}
  * about a principal axis) is exact, where RK4 keeps the error of its rotation per step. For a
  * tumbling asymmetric body the gain over renormalized RK4 is a fraction of a percent at all
  * step sizes - the shared tableau truncation error dominates. The measurements are in
- * Solvers.md and Pga3dPhysicsSolverRKMK4Test.
+ * Solvers.md and Pga3dOdeSolverRKMK4Test.
  *
  * As an [[OdeSolver]] it integrates the whole system by the classic RK4 over the flat state and
- * replaces only the motors of [[dynamicBodies]] by the group update, so the bodies must be a
+ * replaces only the motors of [[bodies]] by the group update, so the bodies must be a
  * part of the system given to [[step]]. Everything else of the system, localB of the bodies
  * included, goes through the plain RK4 stages.
  */
-class Pga3dPhysicsSolverRKMK4(val dynamicBodies: Array[? <: Pga3dPhysicsBody]) extends OdeSolver:
+class Pga3dOdeSolverRKMK4[T <: Pga3dPhysicsBody](val bodies: Array[T]) extends OdeSolver:
   override def step(system: Integrable,
                     dt: Double,
                     addForces: (timeInsideStep: Double) => Unit,
@@ -63,10 +63,10 @@ class Pga3dPhysicsSolverRKMK4(val dynamicBodies: Array[? <: Pga3dPhysicsBody]) e
     val k4 = arrays(4)
     val stage = arrays(5)
 
-    val initialMotors = dynamicBodies.map(_.motor)
+    val initialMotors = bodies.map(_.motor)
 
     // stage 1: u1 = 0, dexpInv is the identity
-    val ku1 = dynamicBodies.map(_.localB * -0.5)
+    val ku1 = bodies.map(_.localB * -0.5)
     system.saveState(initial, 0)
     saveDerivative(system, 0.0, addForces, resolver, k1)
 
@@ -91,7 +91,7 @@ class Pga3dPhysicsSolverRKMK4(val dynamicBodies: Array[? <: Pga3dPhysicsBody]) e
     saveDerivative(system, dt, addForces, resolver, k4)
     val ku4 = getAlgebraVelocities(u4)
 
-    val u = Array.tabulate(dynamicBodies.length) { pos =>
+    val u = Array.tabulate(bodies.length) { pos =>
       (ku1(pos) + (ku2(pos) + ku3(pos)) * 2.0 + ku4(pos)) * (dt / 6.0)
     }
     combine(stage, size, initial, dt, k1, 1.0 / 6.0, k2, 2.0 / 6.0, k3, 2.0 / 6.0, k4, 1.0 / 6.0)
@@ -103,13 +103,13 @@ class Pga3dPhysicsSolverRKMK4(val dynamicBodies: Array[? <: Pga3dPhysicsBody]) e
   }
 
   private def setMotors(initialMotors: Array[Pga3dMotor], u: Array[Pga3dBivector]): Unit =
-    for (pos <- FastRange(dynamicBodies.length)) {
-      dynamicBodies(pos).transform = Pga3dTransform(initialMotors(pos).geometric(u(pos).exp))
+    for (pos <- FastRange(bodies.length)) {
+      bodies(pos).transform = Pga3dTransform(initialMotors(pos).geometric(u(pos).exp))
     }
 
   /** du/dt of every body at its current localB */
   private def getAlgebraVelocities(u: Array[Pga3dBivector]): Array[Pga3dBivector] =
-    Array.tabulate(dynamicBodies.length)(pos => (-u(pos)).dexpInv(dynamicBodies(pos).localB * -0.5))
+    Array.tabulate(bodies.length)(pos => (-u(pos)).dexpInv(bodies(pos).localB * -0.5))
 
   override def toString: String =
-    "Pga3dPhysicsSolverRKMK4"
+    "Pga3dOdeSolverRKMK4"

@@ -3,6 +3,7 @@ package me.kright.gametools.pga3d.physics
 import me.kright.gametools.ga.{GARepresentationConfig, MultiVector, PGA3, Signature}
 import me.kright.gametools.pga3d.*
 import org.scalatest.funsuite.AnyFunSuiteLike
+import scala.collection.immutable.ArraySeq
 
 /**
  * Measures how the accuracy of Pga3dInertiaMovedLocal and Pga3dInertiaSummable degrades as
@@ -76,7 +77,7 @@ class Pga3dInertiaPrecisionTest extends AnyFunSuiteLike:
       "yz" -> b("wx") / big(inertia.mryz),
     )
 
-  private val bivectorBlades = Seq("wx", "wy", "wz", "xy", "xz", "yz")
+  private val bivectorBlades = ArraySeq("wx", "wy", "wz", "xy", "xz", "yz")
 
   private def relError(actual: Pga3dBivector, ref: MultiVector[BigDecimal]): Double =
     val actualByBlade = Map(
@@ -106,7 +107,7 @@ class Pga3dInertiaPrecisionTest extends AnyFunSuiteLike:
     println("max relative error over random bounded local twists, by center of mass offset:")
     println("    offset |    apply     |    invert    |    energy    | acceleration |   (moved | summable)")
 
-    for (offset <- Seq(0.0, 1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6)) {
+    for (offset <- ArraySeq(0.0, 1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6)) {
       val motor = Pga3dTranslator.addVector(direction * offset).geometric(rotor)
       val moved = Pga3dInertia.moved(motor, localInertia)
       val summable = moved.toSummable

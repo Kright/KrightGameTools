@@ -11,9 +11,9 @@ import scala.util.chaining.scalaUtilChainingOps
  * A rigid body: inertia, pose and velocity.
  *
  * The pose is stored as a [[Pga3dTransform]], so applying it to points, vectors and bivectors many
- * times per step is a plain matrix multiplication. The motor accessors are derived from it: reading
- * `motor` is free, assigning `motor = m` renormalizes m and rebuilds the transform (about the cost
- * of one sandwich).
+ * times per step is a plain matrix multiplication. Reading `motor` is free; a new pose is
+ * assigned as `transform = Pga3dTransform(m)`, which renormalizes m and builds the matrix (about
+ * the cost of one sandwich).
  */
 class Pga3dPhysicsBody(var inertia: Pga3dInertia,
                        var transform: Pga3dTransform,
@@ -25,10 +25,6 @@ class Pga3dPhysicsBody(var inertia: Pga3dInertia,
   private val globalForqueAccumulator = Pga3dBivectorMutable()
 
   def motor: Pga3dMotor = transform.motor
-
-  @Deprecated
-  def motor_=(m: Pga3dMotor): Unit =
-    transform = Pga3dTransform(m)
 
   def motorSandwich(point: Pga3dPoint): Pga3dPoint =
     transform.sandwich(point)

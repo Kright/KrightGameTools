@@ -7,19 +7,19 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 import scala.collection.immutable.ArraySeq
 
 /**
- * [[Pga3dPhysicsSolverVerletConstrained]] (RATTLE on the motor group) on the same scenarios as
+ * [[Pga3dVerletSolverConstrained]] (RATTLE on the motor group) on the same scenarios as
  * the RK4-family constraint tests: 2nd order, constraints at the machine epsilon, bounded
  * energy oscillation and exact momentum of body-body constraints. The solver is stateless -
  * the caller owns the pose arrays and passes the constraints to every step.
  */
-class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
+class Pga3dVerletSolverConstrainedTest extends AnyFunSuiteLike:
   private val origin = Pga3dPoint(0, 0, 0)
   private val gravity = Pga3dVector(0, -9.8, 0)
   private val linkLength = 0.5
 
   /** caller-side state plus the constrained step; the observers use reconstructNode */
   private class State(bodies: Array[Pga3dPhysicsBody],
-                      constraints: Seq[Pga3dDistanceConstraint],
+                      constraints: Array[Pga3dDistanceConstraint],
                       useGravity: Boolean,
                       dt: Double):
     val inertias: Array[Pga3dInertia] = bodies.map(_.inertia)
@@ -37,14 +37,14 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
 
     var prevMotors: Array[Pga3dMotor] =
       val localBs = bodies.map(_.localB)
-      Pga3dPhysicsSolverVerlet.makePrevMotors(inertias, motors, localBs, forquesAt(motors, localBs), dt)
+      Pga3dVerletSolver.makePrevMotors(inertias, motors, localBs, forquesAt(motors, localBs), dt)
     private var nextMotors: Array[Pga3dMotor] = new Array[Pga3dMotor](bodies.length)
 
     /** the localBs output of the last step: the node twists of the poses that step consumed */
     val stepLocalBs: Array[Pga3dBivector] = new Array[Pga3dBivector](bodies.length)
 
-    def step(dt: Double, stepConstraints: Seq[Pga3dDistanceConstraint] = constraints): Unit =
-      Pga3dPhysicsSolverVerletConstrained.step(
+    def step(dt: Double, stepConstraints: Array[Pga3dDistanceConstraint] = constraints): Unit =
+      Pga3dVerletSolverConstrained.step(
         inertias, prevMotors, motors, stepConstraints, forquesAt, dt, dt, nextMotors, stepLocalBs)
       val tmp = prevMotors
       prevMotors = motors
@@ -53,7 +53,7 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
 
     def localBs: Array[Pga3dBivector] =
       val out = new Array[Pga3dBivector](motors.length)
-      Pga3dPhysicsSolverVerletConstrained.reconstructNode(
+      Pga3dVerletSolverConstrained.reconstructNode(
         inertias, prevMotors, motors, constraints, forquesAt, prevDt = dt, out, projectionIterations = 100)
       out
 
@@ -82,7 +82,7 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
         Pga3dTranslator.addVector(Pga3dVector(1, 0, 0)).toMotor, Pga3dBivector(wy = 1.0)),
       Pga3dPhysicsBody(Pga3dInertiaLocal(1.0, 0.1, 0.1, 0.1),
         Pga3dTranslator.addVector(Pga3dVector(-1, 0, 0)).toMotor, Pga3dBivector(wy = -1.0)))
-    val constraints = ArraySeq(Pga3dDistanceConstraint.rod(0, origin, 1, origin, 2.0))
+    val constraints = Array(Pga3dDistanceConstraint.rod(0, origin, 1, origin, 2.0))
     val state = State(bodies, constraints, useGravity = false, dt = 0.01)
 
     val initialE = state.energy
@@ -109,7 +109,7 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
     val bodies = Array(
       Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(2.0, 0.8, 0.5, 0.3),
         Pga3dTranslator.addVector(translation).toMotor))
-    val constraints = ArraySeq(
+    val constraints = Array(
       Pga3dDistanceConstraint.rod(0, anchorLocal, Pga3dDistanceConstraint.world, origin, 1.5))
     val state = State(bodies, constraints, useGravity = true, dt = 0.01)
     val initialEnergy = state.energy
@@ -126,13 +126,13 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
     assert(maxEnergyError < 0.01 * Math.abs(initialEnergy))
   }
 
-  private def chain(angle: Double): (Array[Pga3dPhysicsBody], ArraySeq[Pga3dDistanceConstraint]) =
+  private def chain(angle: Double): (Array[Pga3dPhysicsBody], Array[Pga3dDistanceConstraint]) =
     val dir = Pga3dVector(Math.sin(angle), -Math.cos(angle), 0.0)
     val bodies = Array.tabulate(4) { k =>
       Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(1.0, 0.02, 0.02, 0.02),
         Pga3dTranslator.addVector(dir * (linkLength * (k + 1))).toMotor)
     }
-    val constraints = ArraySeq.tabulate(4) { k =>
+    val constraints = Array.tabulate(4) { k =>
       if (k == 0) Pga3dDistanceConstraint.rod(0, origin, Pga3dDistanceConstraint.world, origin, linkLength)
       else Pga3dDistanceConstraint.rod(k, origin, k - 1, origin, linkLength)
     }
@@ -167,7 +167,7 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
 
     val (referenceBodies, referenceConstraints) = chain(0.3)
     val referenceSystem = Pga3dPhysicsSystem(referenceBodies, OdeSolverRK4,
-      resolver = Pga3dConstraintResolver(referenceBodies, referenceConstraints.toArray))
+      resolver = Pga3dConstraintResolver(referenceBodies, referenceConstraints))
     def addGravityToBodies(): Unit =
       for (body <- referenceBodies) {
         body.addGlobalForque(Pga3dForque.force(body.globalCenterOfMass, gravity * body.inertia.mass))
@@ -182,7 +182,7 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
           (state.localBs(i) - referenceBodies(i).localB).norm
       }.sum
 
-    val dts = Seq(0.02, 0.01, 0.005, 0.0025)
+    val dts = ArraySeq(0.02, 0.01, 0.005, 0.0025)
     val errors = dts.map(dt => stateDifference(finalState(dt)))
     for (i <- 1 until dts.length) {
       assert(errors(i) < errors(i - 1), s"errors = $errors do not decrease for dts = $dts")
@@ -197,7 +197,7 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
     val state = State(bodies, constraints, useGravity = true, dt = 0.01)
     for (_ <- 0 until 10) {
       val expected = new Array[Pga3dBivector](bodies.length)
-      Pga3dPhysicsSolverVerletConstrained.reconstructNode(
+      Pga3dVerletSolverConstrained.reconstructNode(
         state.inertias, state.prevMotors, state.motors, constraints, state.forquesAt, prevDt = 0.01, expected)
       state.step(0.01)
       for (i <- bodies.indices) {
@@ -209,9 +209,9 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
     val withOutput = new Array[Pga3dMotor](bodies.length)
     val withoutOutput = new Array[Pga3dMotor](bodies.length)
     val twists = new Array[Pga3dBivector](bodies.length)
-    Pga3dPhysicsSolverVerletConstrained.step(
+    Pga3dVerletSolverConstrained.step(
       state.inertias, state.prevMotors, state.motors, constraints, state.forquesAt, 0.01, 0.01, withOutput, twists)
-    Pga3dPhysicsSolverVerletConstrained.step(
+    Pga3dVerletSolverConstrained.step(
       state.inertias, state.prevMotors, state.motors, constraints, state.forquesAt, 0.01, 0.01, withoutOutput)
     for (i <- bodies.indices) {
       assert(withOutput(i) == withoutOutput(i))
@@ -229,7 +229,7 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
         Pga3dTranslator.addVector(Pga3dVector(0.5, 0, 0)).toMotor),
       Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(1.0, 0.02, 0.02, 0.02),
         Pga3dTranslator.addVector(Pga3dVector(1.0, 0, 0)).toMotor))
-    val constraints = ArraySeq(
+    val constraints = Array(
       Pga3dDistanceConstraint.rod(0, origin, Pga3dDistanceConstraint.world, origin, 0.5),
       Pga3dDistanceConstraint(1, origin, 0, origin, 0.4, 0.6))
     val state = State(bodies, constraints, useGravity = true, dt = 0.01)
@@ -268,7 +268,7 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
     val bodies = Array(
       Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(1.0, 0.1, 0.1, 0.1),
         Pga3dTranslator.addVector(Pga3dVector(2.5, 0, 0)).toMotor))
-    val constraints = ArraySeq(
+    val constraints = Array(
       Pga3dDistanceConstraint(0, origin, Pga3dDistanceConstraint.world, origin, 1.0, 2.0),
       Pga3dDistanceConstraint.rod(0, origin, Pga3dDistanceConstraint.world, rodAnchor, 1.0))
     val state = State(bodies, constraints, useGravity = false, dt = 0.01)
@@ -287,7 +287,7 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
     val bodies = Array(
       Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(1.0, 0.1, 0.1, 0.1),
         Pga3dTranslator.addVector(Pga3dVector(1.0, 0, 0)).toMotor))
-    val constraints = ArraySeq(
+    val constraints = Array(
       Pga3dDistanceConstraint.rope(0, origin, Pga3dDistanceConstraint.world, origin, 2.0))
     val state = State(bodies, constraints, useGravity = true, dt = 0.005)
 
@@ -310,10 +310,10 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
       Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(1.0, 0.1, 0.1, 0.1),
         Pga3dTranslator.addVector(Pga3dVector(1.0, 0, 0)).toMotor))
     val rope = Pga3dDistanceConstraint.rope(0, origin, Pga3dDistanceConstraint.world, origin, 2.0)
-    val state = State(bodies, ArraySeq(rope), useGravity = true, dt = 0.005)
+    val state = State(bodies, Array(rope), useGravity = true, dt = 0.005)
 
     for (step <- 0 until 2000) {
-      state.step(0.005, if (step < 100) ArraySeq.empty else ArraySeq(rope))
+      state.step(0.005, if (step < 100) Array.empty[Pga3dDistanceConstraint] else Array(rope))
     }
     val dist = state.motors(0).sandwich(origin).toPointUnsafe.toVectorUnsafe.norm
     assert(dist <= 2.0 * (1.0 + 1e-9), s"dist = $dist")

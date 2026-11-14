@@ -61,7 +61,7 @@ class PhysicsSolverBenchmark:
   var cache: OdeSolverCache = uninitialized
   var verletBodies: Array[Pga3dPhysicsBody] = uninitialized
 
-  var rkmk4Solver: Pga3dPhysicsSolverRKMK4 = uninitialized
+  var rkmk4Solver: Pga3dOdeSolverRKMK4[Pga3dPhysicsBody] = uninitialized
   var rkf45Solver: OdeSolverRKF45 = uninitialized
   var gaussLegendreSolver: OdeSolverGaussLegendre = uninitialized
 
@@ -80,7 +80,7 @@ class PhysicsSolverBenchmark:
     cache = OdeSolverCache()
     verletBodies = makeBodies()
 
-    rkmk4Solver = Pga3dPhysicsSolverRKMK4(bodies.elements)
+    rkmk4Solver = Pga3dOdeSolverRKMK4(bodies.elements)
     rkf45Solver = OdeSolverRKF45()
     gaussLegendreSolver = OdeSolverGaussLegendre(iterations = 3)
 
@@ -88,7 +88,7 @@ class PhysicsSolverBenchmark:
     verletCurrent = verletBodies.map(_.motor)
     verletLocalBs = verletBodies.map(_.localB)
     verletForques = Array.fill(bodiesCount)(Pga3dBivector.zero)
-    verletPrev = Pga3dPhysicsSolverVerlet.makePrevMotors(
+    verletPrev = Pga3dVerletSolver.makePrevMotors(
       verletInertias, verletCurrent, verletLocalBs, verletForques, dt)
     verletNext = new Array[Pga3dMotor](bodiesCount)
 
@@ -122,7 +122,7 @@ class PhysicsSolverBenchmark:
 
   @Benchmark
   def verlet(): Unit =
-    Pga3dPhysicsSolverVerlet.step(
+    Pga3dVerletSolver.step(
       verletInertias, verletPrev, verletCurrent, verletForques, dt, dt, verletNext, verletLocalBs)
     val tmp = verletPrev
     verletPrev = verletCurrent

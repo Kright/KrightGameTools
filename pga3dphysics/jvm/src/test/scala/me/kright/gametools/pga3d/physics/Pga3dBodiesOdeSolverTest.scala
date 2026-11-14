@@ -10,22 +10,22 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
   private def world(bodies: Array[Pga3dPhysicsBody], others: Integrable*): Integrable =
     Integrable((IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount) +: others)*)
 
-  private val solvers: Seq[(name: String, make: Array[Pga3dPhysicsBody] => OdeSolver, order: Int)] = Seq(
+  private val solvers: ArraySeq[(name: String, make: Array[Pga3dPhysicsBody] => OdeSolver, order: Int)] = ArraySeq(
     ("euler", _ => OdeSolverEuler, 1),
     ("midPoint", _ => OdeSolverMidPoint, 2),
     ("heun", _ => OdeSolverHeun, 2),
     ("rk4", _ => OdeSolverRK4, 4),
-    ("rkmk4", Pga3dPhysicsSolverRKMK4(_), 4),
+    ("rkmk4", Pga3dOdeSolverRKMK4(_), 4),
     ("rkf45", _ => OdeSolverRKF45(), 4),
     ("gaussLegendre(6)", _ => OdeSolverGaussLegendre(iterations = 6), 4),
   )
 
-  private def bits(system: Integrable): Seq[Long] =
+  private def bits(system: Integrable): ArraySeq[Long] =
     val state = new Array[Double](system.stateSize)
     system.saveState(state, 0)
     ArraySeq.unsafeWrapArray(state.map(java.lang.Double.doubleToRawLongBits))
 
-  private def bits(bodies: Array[Pga3dPhysicsBody]): Seq[Long] =
+  private def bits(bodies: Array[Pga3dPhysicsBody]): ArraySeq[Long] =
     bits(IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount))
 
   private def makeBodies(): Array[Pga3dPhysicsBody] =
@@ -270,7 +270,7 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
     assert(bits(bodies) == bits(expectedBodies))
   }
 
-  private def runBodiesWithMassOnSpring(makeSolver: Array[Pga3dPhysicsBody] => OdeSolver, nextCache: () => OdeSolverCache | Null): Seq[Long] =
+  private def runBodiesWithMassOnSpring(makeSolver: Array[Pga3dPhysicsBody] => OdeSolver, nextCache: () => OdeSolverCache | Null): ArraySeq[Long] =
     val bodies = makeBodies()
     val solver = makeSolver(bodies)
     val mass = makeMass()

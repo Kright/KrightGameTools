@@ -3,6 +3,7 @@ package me.kright.gametools.pga3d.physics
 import me.kright.gametools.pga3d.*
 import me.kright.gametools.physics1d.{OdeSolver, OdeSolverRKF45}
 import org.scalatest.funsuite.AnyFunSuiteLike
+import scala.collection.immutable.ArraySeq
 
 class Pga3dBodiesOdeSolverRKF45Test extends AnyFunSuiteLike:
 
@@ -33,7 +34,7 @@ class Pga3dBodiesOdeSolverRKF45Test extends AnyFunSuiteLike:
   }
 
   test("the error estimate scales as dt^5") {
-    for (dt <- Seq(0.02, 0.01)) {
+    for (dt <- ArraySeq(0.02, 0.01)) {
       val solver = OdeSolverRKF45()
       val system = freeBodySystem(solver)
 
@@ -52,21 +53,21 @@ class Pga3dBodiesOdeSolverRKF45Test extends AnyFunSuiteLike:
   }
 
   test("the error estimate matches the actual local error of the step") {
-    for (dt <- Seq(0.05, 0.02, 0.01)) {
+    for (dt <- ArraySeq(0.05, 0.02, 0.01)) {
       val solver = OdeSolverRKF45()
       val system = freeBodySystem(solver)
       system.doStep(dt, _ => ())
       val estimate = motorPlusLocalBErrorOfSingleBody(solver)
 
       val referenceBodies = Array(Pga3dPhysicsSystemForTest.simpleBody(Pga3dMotor.id))
-      val referenceSystem = Pga3dPhysicsSystemForTest(referenceBodies, Pga3dPhysicsSolverRKMK4(referenceBodies))
+      val referenceSystem = Pga3dPhysicsSystemForTest(referenceBodies, Pga3dOdeSolverRKMK4(referenceBodies))
       val substeps = 1000
       for (_ <- 0 until substeps) {
         referenceSystem.doStep(dt / substeps, _ => ())
       }
 
-      val state = Pga3dBodyState(system.state.head)
-      val reference = Pga3dBodyState(referenceSystem.state.head)
+      val state = Pga3dBodyState(system.bodies.head)
+      val reference = Pga3dBodyState(referenceSystem.bodies.head)
       val actual = (state.motor - reference.motor).norm + (state.localB - reference.localB).norm
 
       // measured ratios 0.98-1.01: the estimate is essentially exact for a single step
@@ -87,8 +88,8 @@ class Pga3dBodiesOdeSolverRKF45Test extends AnyFunSuiteLike:
       var maxEstimate = 0.0
       for (_ <- 0 until 100) {
         system.doStep(dt, _ => {
-          val globalForque = (system.state.head.globalCenter v springCenter) * k
-          system.state.head.addGlobalForque(globalForque)
+          val globalForque = (system.bodies.head.globalCenter v springCenter) * k
+          system.bodies.head.addGlobalForque(globalForque)
         })
         maxEstimate = Math.max(maxEstimate, motorPlusLocalBErrorOfSingleBody(solver))
       }

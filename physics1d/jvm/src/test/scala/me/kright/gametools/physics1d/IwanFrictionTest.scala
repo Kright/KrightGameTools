@@ -3,6 +3,7 @@ package me.kright.gametools.physics1d
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class IwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   // the reference bushing pair: a stiff "micro" element and a soft "macro" element
@@ -47,7 +48,7 @@ class IwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("the virgin curve is piecewise linear with knees at the break deformations") {
     val friction = makeFriction()
     // before the first knee (3.75e-5), between the knees, and past the second knee (2.5e-4)
-    for (x <- Seq(1e-5, 3.75e-5, 1e-4, 2.5e-4, 1e-3, 1e-2)) {
+    for (x <- ArraySeq(1e-5, 3.75e-5, 1e-4, 2.5e-4, 1e-3, 1e-2)) {
       assert(Math.abs(friction.forceAt(x) - virginForce(x)) <= 1e-12 * maxForce, s"at x = $x")
       assert(Math.abs(friction.forceAt(-x) + virginForce(x)) <= 1e-12 * maxForce, s"at x = -$x")
     }
@@ -78,7 +79,7 @@ class IwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val oneStep = makeFriction()
     val substeps = makeFriction()
     // start from a non-trivial state with a reversal in the history
-    for (f <- Seq(oneStep, substeps)) { f.advance(6e-5); f.advance(2e-5) }
+    for (f <- ArraySeq(oneStep, substeps)) { f.advance(6e-5); f.advance(2e-5) }
 
     val dx = 4e-4
     val n = 100
@@ -125,7 +126,7 @@ class IwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     friction.advance(top) // deep saturation: force = -maxForce
     assert(friction.forceAt(top) == -maxForce)
 
-    for (u <- Seq(1e-5, 5e-5, 3e-4, 7e-4)) {
+    for (u <- ArraySeq(1e-5, 5e-5, 3e-4, 7e-4)) {
       val expected = -maxForce - 2.0 * virginForce(u / 2)
       assert(Math.abs(friction.forceAt(top - u) - expected) <= 1e-9 * maxForce, s"at u = $u")
     }
@@ -156,7 +157,7 @@ class IwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   }
 
   test("steady cycle dissipation matches the per-element analytic formula") {
-    for (amplitude <- Seq(4e-4, 1e-3)) {
+    for (amplitude <- ArraySeq(4e-4, 1e-3)) {
       val friction = makeFriction()
       val stepsPerPeriod = 1000
 

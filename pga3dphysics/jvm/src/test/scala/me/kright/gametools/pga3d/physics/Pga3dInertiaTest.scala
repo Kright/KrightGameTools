@@ -21,7 +21,7 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
          |                 xy = ${p.xy}, xz = ${p.xz}, yz = ${p.yz})""".stripMargin
 
 
-  private val shifts: Seq[Pga3dVector] = ArraySeq(
+  private val shifts: ArraySeq[Pga3dVector] = ArraySeq(
     Pga3dVector(0.0, 0.0, 0.0),
     Pga3dVector(1.0, 0.0, 0.0),
     Pga3dVector(0.0, 1.0, 0.0),
@@ -144,11 +144,11 @@ class Pga3dInertiaTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     assertEq(sumOfPoints, localInertia.toSummable)
   }
 
-  private def getMainAxesSorted(inertia: Pga3dInertiaMovedLocal): Seq[Double] =
+  private def getMainAxesSorted(inertia: Pga3dInertiaMovedLocal): ArraySeq[Double] =
     val local = inertia.localInertia
     ArraySeq(local.mryz, local.mrxz, local.mrxy).sorted
 
-  private def maxDiff(lstA: Seq[Double], lstB: Seq[Double]): Double =
+  private def maxDiff(lstA: ArraySeq[Double], lstB: ArraySeq[Double]): Double =
     lstA.zip(lstB).map((a, b) => Math.abs(a - b)).max
 
   test("inertia diagonalization preservers summableInertia") {

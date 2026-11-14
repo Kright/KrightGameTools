@@ -32,8 +32,8 @@ final class Pga3dIwanFriction private(val elements: IArray[IwanElement],
                                       private var lastZ: Double) extends Pga3dHystereticFriction:
   require(elements.nonEmpty)
 
-  def this(elements: Seq[IwanElement]) =
-    this(IArray.from(elements), new Array[Double](3 * elements.size), Double.NaN, Double.NaN, Double.NaN)
+  def this(elements: Array[IwanElement]) =
+    this(IArray.from(elements), new Array[Double](3 * elements.length), Double.NaN, Double.NaN, Double.NaN)
 
   /** the saturation force: the bound of |force|, reached after a long enough straight move */
   override val maxForce: Double =
@@ -90,7 +90,7 @@ final class Pga3dIwanFriction private(val elements: IArray[IwanElement],
 
 object Pga3dIwanFriction:
   def apply(elements: IwanElement*): Pga3dIwanFriction =
-    new Pga3dIwanFriction(elements)
+    new Pga3dIwanFriction(elements.toArray)
 
   /**
    * the exact step of one Jenkins element for a straight move dx: the force moves linearly

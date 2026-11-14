@@ -8,7 +8,7 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor, Pga3dPoint, Pga3dTr
  * [[Pga3dDistanceConstraint]]s built into the step itself (a generic projection composite
  * over Verlet only reaches the 1st order).
  *
- * Like [[Pga3dPhysicsSolverVerlet]] this is a stateless computation strategy, not a
+ * Like [[Pga3dVerletSolver]] this is a stateless computation strategy, not a
  * `OdeSolver`: the state is two consecutive pose arrays owned by the caller, the
  * constraints are an argument of [[step]] and may change freely between steps (e.g.
  * contact-like constraints regenerated every frame), and pose edits between steps implicitly
@@ -27,10 +27,11 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor, Pga3dPoint, Pga3dTr
  * on violated bounds (the accumulated lambda is clamped to the admissible sign and may
  * release), the velocity stage only stops the motion into the violation.
  *
- * The first step needs virtual previous poses: use [[Pga3dPhysicsSolverVerlet.makePrevMotors]]
+ * The first step needs virtual previous poses: use [[Pga3dVerletSolver.makePrevMotors]]
  * (the reconstruction then recovers exactly the caller-provided node momenta).
  */
-object Pga3dPhysicsSolverVerletConstrained:
+object Pga3dVerletSolverConstrained:
+  private given CanEqual[Array[Pga3dBivector] | Null, Null] = CanEqual.derived
 
   /**
    * one constrained Verlet step; the poses are the whole state, like in the classic Verlet,
@@ -38,7 +39,7 @@ object Pga3dPhysicsSolverVerletConstrained:
    * for observers (energy, momentum, velocity-dependent logic outside the solver) they are
    * exactly what a separate [[reconstructNode]] call would produce, without paying its second
    * force callback;
-   * the raw segment twist [[Pga3dPhysicsSolverVerlet.segmentLocalB]] is half a step stale.
+   * the raw segment twist [[Pga3dVerletSolver.segmentLocalB]] is half a step stale.
    *
    * @param addForques (motors, localBs) => world forques at that state; called once
    * @param nextMotors output; may alias prevMotors, must not alias motors
@@ -49,8 +50,8 @@ object Pga3dPhysicsSolverVerletConstrained:
   def step(inertias: Array[Pga3dInertia],
            prevMotors: Array[Pga3dMotor],
            motors: Array[Pga3dMotor],
-           constraints: Seq[Pga3dDistanceConstraint],
-           addForques: (Array[Pga3dMotor], Array[Pga3dBivector]) => Array[Pga3dBivector],
+           constraints: Array[Pga3dDistanceConstraint],
+           addForques: (motors: Array[Pga3dMotor], localBs: Array[Pga3dBivector]) => Array[Pga3dBivector],
            prevDt: Double,
            dt: Double,
            nextMotors: Array[Pga3dMotor],
@@ -62,7 +63,7 @@ object Pga3dPhysicsSolverVerletConstrained:
     // (the reconstruction, the gradients, up to `projectionIterations` velocity sweeps) -
     // cache them as transforms; the motors are normalized (this very step renormalizes its output)
     val transforms = buildTransforms(motors)
-    val nodeLocalBs: Array[Pga3dBivector] = if (localBs eq null) new Array[Pga3dBivector](n) else localBs
+    val nodeLocalBs: Array[Pga3dBivector] = if (localBs == null) new Array[Pga3dBivector](n) else localBs
     val forques =
       reconstructNodeImpl(inertias, prevMotors, motors, transforms, constraints, addForques, prevDt, nodeLocalBs, projectionIterations)
 
@@ -140,8 +141,8 @@ object Pga3dPhysicsSolverVerletConstrained:
   def reconstructNode(inertias: Array[Pga3dInertia],
                       prevMotors: Array[Pga3dMotor],
                       motors: Array[Pga3dMotor],
-                      constraints: Seq[Pga3dDistanceConstraint],
-                      addForques: (Array[Pga3dMotor], Array[Pga3dBivector]) => Array[Pga3dBivector],
+                      constraints: Array[Pga3dDistanceConstraint],
+                      addForques: (motors: Array[Pga3dMotor], localBs: Array[Pga3dBivector]) => Array[Pga3dBivector],
                       prevDt: Double,
                       localBs: Array[Pga3dBivector] | Null = null,
                       projectionIterations: Int = 100): Array[Pga3dBivector] =
@@ -155,13 +156,13 @@ object Pga3dPhysicsSolverVerletConstrained:
                                   prevMotors: Array[Pga3dMotor],
                                   motors: Array[Pga3dMotor],
                                   transforms: Array[Pga3dTransform],
-                                  constraints: Seq[Pga3dDistanceConstraint],
-                                  addForques: (Array[Pga3dMotor], Array[Pga3dBivector]) => Array[Pga3dBivector],
+                                  constraints: Array[Pga3dDistanceConstraint],
+                                  addForques: (motors: Array[Pga3dMotor], localBs: Array[Pga3dBivector]) => Array[Pga3dBivector],
                                   prevDt: Double,
                                   localBs: Array[Pga3dBivector] | Null,
                                   projectionIterations: Int): Array[Pga3dBivector] =
     val n = motors.length
-    val twists: Array[Pga3dBivector] = if (localBs eq null) new Array[Pga3dBivector](n) else localBs
+    val twists: Array[Pga3dBivector] = if (localBs == null) new Array[Pga3dBivector](n) else localBs
     val lSegments = new Array[Pga3dBivector](n)
     for (pos <- FastRange(n)) {
       val d = prevMotors(pos).reverse.geometric(motors(pos)).log
@@ -191,7 +192,7 @@ object Pga3dPhysicsSolverVerletConstrained:
                         nextMotors: Array[Pga3dMotor],
                         pos: Int): Unit =
     val displacement =
-      Pga3dPhysicsSolverVerlet.solveDisplacement(inertias(pos), motors(pos), localBs(pos), lHalf(pos), dt)
+      Pga3dVerletSolver.solveDisplacement(inertias(pos), motors(pos), localBs(pos), lHalf(pos), dt)
     nextMotors(pos) = motors(pos).geometric(displacement.exp)
 
   /** the accumulated lambda of a one-sided constraint keeps its admissible sign; a two-sided
@@ -210,7 +211,7 @@ object Pga3dPhysicsSolverVerletConstrained:
   private def projectVelocities(inertias: Array[Pga3dInertia],
                                 transforms: Array[Pga3dTransform],
                                 localBs: Array[Pga3dBivector],
-                                constraints: Seq[Pga3dDistanceConstraint],
+                                constraints: Array[Pga3dDistanceConstraint],
                                 projectionIterations: Int): Unit =
     Pga3dConstraintResolver.sweepToConvergence(projectionIterations) { () =>
       var sweepMax = 0.0

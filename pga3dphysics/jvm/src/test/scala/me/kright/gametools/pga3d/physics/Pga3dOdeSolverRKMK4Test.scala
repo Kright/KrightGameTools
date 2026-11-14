@@ -6,13 +6,13 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 
 import scala.collection.immutable.ArraySeq
 
-class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
+class Pga3dOdeSolverRKMK4Test extends AnyFunSuiteLike:
 
   private def precessionMaxError(motor: Pga3dMotor,
                                  stepsCount: Int = 1000,
                                  dt: Double = 0.01): ErrorOfEnergyAndMomentum =
     val bodies = Array(Pga3dPhysicsSystemForTest.simpleBody(motor))
-    val system = Pga3dPhysicsSystemForTest(bodies, Pga3dPhysicsSolverRKMK4(bodies))
+    val system = Pga3dPhysicsSystemForTest(bodies, Pga3dOdeSolverRKMK4(bodies))
     val errors = for (_ <- 0 until stepsCount) yield {
       system.doStep(dt, _ => ())
       system.getError()
@@ -68,7 +68,7 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
     for (_ <- 0 until stepsCount) {
       system.doStep(dt, _ => ())
     }
-    Pga3dBodyState(system.state.head)
+    Pga3dBodyState(system.bodies.head)
 
   /**
    * checks whether RKMK4 pulls ahead of RK4 when the rotation per step is large - it does not.
@@ -94,7 +94,7 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
     assume(false, "skip test")
 
     val totalTime = 12.0
-    val reference = precessionFinalState(Pga3dPhysicsSolverRKMK4(_), dt = 1e-4, totalTime)
+    val reference = precessionFinalState(Pga3dOdeSolverRKMK4(_), dt = 1e-4, totalTime)
 
     def run(makeSolver: Array[Pga3dPhysicsBody] => OdeSolver, dt: Double): (Pga3dBodyState, ErrorOfEnergyAndMomentum) =
       val bodies = Array(Pga3dPhysicsSystemForTest.simpleBody(Pga3dMotor.id))
@@ -104,11 +104,11 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
         system.doStep(dt, _ => ())
         system.getError()
       }
-      (Pga3dBodyState(system.state.head), errors.reduce(_ max _))
+      (Pga3dBodyState(system.bodies.head), errors.reduce(_ max _))
 
-    for (dt <- Seq(0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.75, 1.0)) {
+    for (dt <- ArraySeq(0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.75, 1.0)) {
       val (rk4State, rk4Err) = run(_ => OdeSolverRK4, dt)
-      val (rkmk4State, rkmk4Err) = run(Pga3dPhysicsSolverRKMK4(_), dt)
+      val (rkmk4State, rkmk4Err) = run(Pga3dOdeSolverRKMK4(_), dt)
 
       def motorError(state: Pga3dBodyState): Double = (state.motor - reference.motor).norm
 
@@ -137,7 +137,7 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
    */
   test("RKMK4 precession trajectory error: 4th order and not worse than RK4") {
     val totalTime = 10.0
-    val reference = precessionFinalState(Pga3dPhysicsSolverRKMK4(_), dt = 1e-4, totalTime)
+    val reference = precessionFinalState(Pga3dOdeSolverRKMK4(_), dt = 1e-4, totalTime)
 
     def error(state: Pga3dBodyState): Double =
       (state.motor - reference.motor).norm + (state.localB - reference.localB).norm
@@ -145,7 +145,7 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
     val dts = ArraySeq(0.04, 0.02, 0.01, 0.005)
     val errors = dts.map { dt =>
       val rk4 = error(precessionFinalState(_ => OdeSolverRK4, dt, totalTime))
-      val rkmk4 = error(precessionFinalState(Pga3dPhysicsSolverRKMK4(_), dt, totalTime))
+      val rkmk4 = error(precessionFinalState(Pga3dOdeSolverRKMK4(_), dt, totalTime))
       // println(s"dt = $dt, rk4 error = $rk4, rkmk4 error = $rkmk4, ratio = ${rk4 / rkmk4}")
 
       assert(rkmk4 <= rk4, s"dt = $dt, rkmk4 error = $rkmk4 is worse than rk4 error = $rk4")
@@ -175,7 +175,7 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
     val bodies = makeBodies()
     val mass = makeMass()
     val world = Integrable(IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount), mass)
-    val rkmk4 = Pga3dPhysicsSolverRKMK4(bodies)
+    val rkmk4 = Pga3dOdeSolverRKMK4(bodies)
 
     for (_ <- 0 until 1000) {
       OdeSolverRK4.step(rk4World, 0.01, _ => addSpringForce(rk4Mass))
@@ -208,18 +208,18 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
                                     dt: Double,
                                     reference: Pga3dMotor): (rk4: Double, rkmk4: Double) =
     (rk4 = (finalMotorOfFreeBody(_ => OdeSolverRK4, inertia, localB, dt) - reference).norm,
-      rkmk4 = (finalMotorOfFreeBody(Pga3dPhysicsSolverRKMK4(_), inertia, localB, dt) - reference).norm)
+      rkmk4 = (finalMotorOfFreeBody(Pga3dOdeSolverRKMK4(_), inertia, localB, dt) - reference).norm)
 
   test("a twist constant in the body frame: RKMK4 is exact up to rounding at any step, RK4 keeps the error of its rotation per step") {
     val sphere = Pga3dInertiaLocal(1.0, 1.0, 1.0, 1.0)
     val asymmetric = Pga3dInertiaLocal(1.0, 3.0, 2.0, 1.0)
-    val bodiesWithConstantTwist = Seq[(name: String, inertia: Pga3dInertiaLocal, localB: Pga3dBivector)](
+    val bodiesWithConstantTwist = ArraySeq[(name: String, inertia: Pga3dInertiaLocal, localB: Pga3dBivector)](
       ("a sphere, any axis", sphere, tumblingAtTwoRadiansPerSecond),
       ("an asymmetric body about its principal axis xy", asymmetric, Pga3dBivector(xy = 2.0)),
       ("an asymmetric body about its principal axis xz", asymmetric, Pga3dBivector(xz = 2.0)),
       ("an asymmetric body about its principal axis yz", asymmetric, Pga3dBivector(yz = 2.0)),
     )
-    val stepsAndMinRk4Errors = Seq[(dt: Double, minRk4Error: Double)]((0.02, 3e-9), (0.1, 2e-6), (0.4, 5e-4))
+    val stepsAndMinRk4Errors = ArraySeq[(dt: Double, minRk4Error: Double)]((0.02, 3e-9), (0.1, 2e-6), (0.4, 5e-4))
 
     for (body <- bodiesWithConstantTwist; step <- stepsAndMinRk4Errors) {
       val exact = (body.localB * (-0.5 * spinTime)).exp
@@ -233,7 +233,7 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
     val sphere = Pga3dInertiaLocal(1.0, 1.0, 1.0, 1.0)
     val localB = tumblingAtTwoRadiansPerSecond
     val exact = (localB * (-0.5 * spinTime)).exp
-    val stepsAndMeasuredToPredictedRatios = Seq[(dt: Double, minRatio: Double, maxRatio: Double)](
+    val stepsAndMeasuredToPredictedRatios = ArraySeq[(dt: Double, minRatio: Double, maxRatio: Double)](
       (0.02, 0.99, 1.01),
       (0.1, 0.99, 1.01),
       (0.4, 0.93, 0.97),
@@ -250,15 +250,15 @@ class Pga3dPhysicsSolverRKMK4Test extends AnyFunSuiteLike:
 
   test("the advantage of RKMK4 over RK4 fades as the twist stops being constant in the body frame") {
     val asymmetric = Pga3dInertiaLocal(1.0, 3.0, 2.0, 1.0)
-    val bodiesAndRk4ToRkmk4ErrorRatios = Seq[(name: String, inertia: Pga3dInertiaLocal, localB: Pga3dBivector, minRatio: Double, maxRatio: Double)](
+    val bodiesAndRk4ToRkmk4ErrorRatios = ArraySeq[(name: String, inertia: Pga3dInertiaLocal, localB: Pga3dBivector, minRatio: Double, maxRatio: Double)](
       ("moments of inertia (1, 1.01, 0.99)", Pga3dInertiaLocal(1.0, 1.0, 1.01, 0.99), tumblingAtTwoRadiansPerSecond, 60.0, 120.0),
       ("moments of inertia (1, 1.1, 0.9)", Pga3dInertiaLocal(1.0, 1.0, 1.1, 0.9), tumblingAtTwoRadiansPerSecond, 9.0, 20.0),
       ("moments of inertia (3, 2, 1), 0.05 rad off the principal axis", asymmetric, Pga3dBivector(xy = 2.0 * Math.cos(0.05), yz = 2.0 * Math.sin(0.05)), 2.5, 4.5),
       ("moments of inertia (3, 2, 1), tumbling", asymmetric, tumblingAtTwoRadiansPerSecond, 0.95, 1.05),
     )
 
-    for (body <- bodiesAndRk4ToRkmk4ErrorRatios; dt <- Seq(0.02, 0.1, 0.4)) {
-      val reference = finalMotorOfFreeBody(Pga3dPhysicsSolverRKMK4(_), body.inertia, body.localB, dt / 200.0)
+    for (body <- bodiesAndRk4ToRkmk4ErrorRatios; dt <- ArraySeq(0.02, 0.1, 0.4)) {
+      val reference = finalMotorOfFreeBody(Pga3dOdeSolverRKMK4(_), body.inertia, body.localB, dt / 200.0)
       val errors = motorErrorsOfFreeBody(body.inertia, body.localB, dt, reference)
       val ratio = errors.rk4 / errors.rkmk4
       assert(ratio > body.minRatio && ratio < body.maxRatio, s"${body.name}, dt = $dt: rk4 error ${errors.rk4}, rkmk4 error ${errors.rkmk4}")

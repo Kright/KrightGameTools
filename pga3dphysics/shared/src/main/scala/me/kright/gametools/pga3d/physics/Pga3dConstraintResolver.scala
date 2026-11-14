@@ -22,13 +22,13 @@ import me.kright.gametools.physics1d.OdeConstraintResolver
  * constraint forque line J = anchor v direction and apply them equal-and-opposite, so the total
  * momentum of the constrained bodies is preserved exactly.
  *
- * The constraints refer to the bodies by their index in [[dynamicBodies]]. As an
+ * The constraints refer to the bodies by their index in [[bodies]]. As an
  * [[OdeConstraintResolver]] it is passed to the universal solvers of physics1d.
  */
-class Pga3dConstraintResolver(val dynamicBodies: Array[? <: Pga3dPhysicsBody],
-                              val constraints: Array[Pga3dDistanceConstraint],
-                              val projectionIterations: Int = 100,
-                              val forqueIterations: Int = 100) extends OdeConstraintResolver:
+class Pga3dConstraintResolver[T <: Pga3dPhysicsBody](val bodies: Array[T],
+                                                     val constraints: Array[Pga3dDistanceConstraint],
+                                                     val projectionIterations: Int = 100,
+                                                     val forqueIterations: Int = 100) extends OdeConstraintResolver:
 
   /**
    * part 1: add the acceleration-level constraint forques (call after the user forces).
@@ -67,8 +67,8 @@ class Pga3dConstraintResolver(val dynamicBodies: Array[? <: Pga3dPhysicsBody],
         if (lambda != 0.0) {
           sweepMax = Math.max(sweepMax, Math.abs(lambda))
           val forque = g.j * lambda
-          if (c.bodyA >= 0) dynamicBodies(c.bodyA).addGlobalForque(forque)
-          if (c.bodyB >= 0) dynamicBodies(c.bodyB).addGlobalForque(-forque)
+          if (c.bodyA >= 0) bodies(c.bodyA).addGlobalForque(forque)
+          if (c.bodyB >= 0) bodies(c.bodyB).addGlobalForque(-forque)
         }
       }
     }
@@ -106,11 +106,11 @@ class Pga3dConstraintResolver(val dynamicBodies: Array[? <: Pga3dPhysicsBody],
     // hygiene against the rounding noise of the correction products
     for (c <- constraints) {
       if (c.bodyA >= 0) {
-        val body = dynamicBodies(c.bodyA)
+        val body = bodies(c.bodyA)
         body.transform = Pga3dTransform(body.motor)
       }
       if (c.bodyB >= 0) {
-        val body = dynamicBodies(c.bodyB)
+        val body = bodies(c.bodyB)
         body.transform = Pga3dTransform(body.motor)
       }
     }
@@ -128,11 +128,11 @@ class Pga3dConstraintResolver(val dynamicBodies: Array[? <: Pga3dPhysicsBody],
           if (lambda != 0.0) {
             sweepMax = Math.max(sweepMax, Math.abs(lambda))
             if (c.bodyA >= 0) {
-              val body = dynamicBodies(c.bodyA)
+              val body = bodies(c.bodyA)
               body.localB = body.localB + g.gA * lambda
             }
             if (c.bodyB >= 0) {
-              val body = dynamicBodies(c.bodyB)
+              val body = bodies(c.bodyB)
               body.localB = body.localB - g.gB * lambda
             }
           }
@@ -167,12 +167,12 @@ class Pga3dConstraintResolver(val dynamicBodies: Array[? <: Pga3dPhysicsBody],
     Some(Pga3dConstraintGeometry(pA, pB, dist, n, j, gA, gB, wSum))
 
   private def anchorWorld(bodyIndex: Int, anchor: Pga3dPoint): Pga3dPoint =
-    if (bodyIndex >= 0) dynamicBodies(bodyIndex).motorSandwich(anchor) else anchor
+    if (bodyIndex >= 0) bodies(bodyIndex).motorSandwich(anchor) else anchor
 
   /** the local twist response to a unit world constraint forque; zero for the world side */
   private def responseTwist(bodyIndex: Int, j: Pga3dBivector): Pga3dBivector =
     if (bodyIndex >= 0) {
-      val body = dynamicBodies(bodyIndex)
+      val body = bodies(bodyIndex)
       body.inertia.invert(body.transform.reverseSandwich(j))
     } else {
       Pga3dBivector.zero
@@ -182,7 +182,7 @@ class Pga3dConstraintResolver(val dynamicBodies: Array[? <: Pga3dPhysicsBody],
   private def responseAlongN(bodyIndex: Int,
                              gLocal: Pga3dBivector, p: Pga3dPoint, n: Pga3dVector): Double =
     if (bodyIndex >= 0) {
-      val gWorld = dynamicBodies(bodyIndex).transform.sandwich(gLocal)
+      val gWorld = bodies(bodyIndex).transform.sandwich(gLocal)
       (-(gWorld cross p)).antiDotI(n)
     } else {
       0.0
@@ -191,7 +191,7 @@ class Pga3dConstraintResolver(val dynamicBodies: Array[? <: Pga3dPhysicsBody],
   /** world velocity of the body point p: -(W cross p) for the world twist W */
   private def pointVelocity(bodyIndex: Int, p: Pga3dPoint): Pga3dVector =
     if (bodyIndex >= 0) {
-      val body = dynamicBodies(bodyIndex)
+      val body = bodies(bodyIndex)
       -(body.transform.sandwich(body.localB) cross p)
     } else {
       Pga3dVector(0.0, 0.0, 0.0)
@@ -204,7 +204,7 @@ class Pga3dConstraintResolver(val dynamicBodies: Array[? <: Pga3dPhysicsBody],
    */
   private def pointAcceleration(bodyIndex: Int, p: Pga3dPoint): Pga3dVector =
     if (bodyIndex >= 0) {
-      val body = dynamicBodies(bodyIndex)
+      val body = bodies(bodyIndex)
       val wWorld = body.transform.sandwich(body.localB)
       val v = -(wWorld cross p)
       val dwWorld = body.transform.sandwich(body.inertia.getAcceleration(body.localB, body.localForque))
@@ -216,8 +216,8 @@ class Pga3dConstraintResolver(val dynamicBodies: Array[? <: Pga3dPhysicsBody],
   private def applyPoseCorrection(bodyIndex: Int,
                                   gLocal: Pga3dBivector, lambda: Double): Unit =
     if (bodyIndex >= 0 && lambda != 0.0) {
-      val body = dynamicBodies(bodyIndex)
-      body.motor = body.motor.geometric((gLocal * (-0.5 * lambda)).exp)
+      val body = bodies(bodyIndex)
+      body.transform = Pga3dTransform(body.motor.geometric((gLocal * (-0.5 * lambda)).exp))
     }
 
   override def toString: String =

@@ -19,10 +19,10 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor}
  *
  * Usage sketch (the caller owns and rotates the pose arrays):
  * {{{
- * var prev = Pga3dPhysicsSolverVerlet.makePrevMotors(inertias, motors, localBs, forques, dt)
+ * var prev = Pga3dVerletSolver.makePrevMotors(inertias, motors, localBs, forques, dt)
  * while (running) {
  *   val forques = computeForques(motors, localBs) // once per step, at the current poses
- *   Pga3dPhysicsSolverVerlet.step(inertias, prev, motors, forques, dt, dt, next, localBs)
+ *   Pga3dVerletSolver.step(inertias, prev, motors, forques, dt, dt, next, localBs)
  *   val tmp = prev; prev = motors; motors = next; next = tmp
  * }
  * }}}
@@ -36,7 +36,7 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor}
  * teleport must rewrite both pose arrays, otherwise the jump is read as a huge velocity.
  * The rotation per step must stay below pi (the motor log wraps).
  */
-object Pga3dPhysicsSolverVerlet:
+object Pga3dVerletSolver:
 
   /** the half-step twist of the segment [prevMotor, motor]: the Lie derivative of the pose */
   def segmentLocalB(prevMotor: Pga3dMotor, motor: Pga3dMotor, prevDt: Double): Pga3dBivector =

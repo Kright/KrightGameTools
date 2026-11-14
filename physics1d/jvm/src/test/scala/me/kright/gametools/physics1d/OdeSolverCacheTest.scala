@@ -1,6 +1,7 @@
 package me.kright.gametools.physics1d
 
 import org.scalatest.funsuite.AnyFunSuiteLike
+import scala.collection.immutable.ArraySeq
 
 class OdeSolverCacheTest extends AnyFunSuiteLike:
 
@@ -17,13 +18,13 @@ class OdeSolverCacheTest extends AnyFunSuiteLike:
     first.exists(a => second.exists(_ eq a))
 
   test("one call gives exactly the asked count of separate arrays of exactly the asked size") {
-    for (cache <- Seq[OdeSolverCache | Null](OdeSolverCache(), null); (groupSize, size) <- Seq((6, 14), (3, 0), (0, 0), (0, 10), (9, 1))) {
+    for (cache <- ArraySeq[OdeSolverCache | Null](OdeSolverCache(), null); (groupSize, size) <- ArraySeq((6, 14), (3, 0), (0, 0), (0, 10), (9, 1))) {
       assertSeparateArrays(OdeSolverCache.getArrays(cache, groupSize, size), groupSize, size)
     }
   }
 
   test("a negative group size or size is rejected, with a cache and without") {
-    for (cache <- Seq[OdeSolverCache | Null](OdeSolverCache(), null)) {
+    for (cache <- ArraySeq[OdeSolverCache | Null](OdeSolverCache(), null)) {
       assertThrows[IllegalArgumentException](OdeSolverCache.getArrays(cache, -1, 4))
       assertThrows[IllegalArgumentException](OdeSolverCache.getArrays(cache, 1, -1))
     }
@@ -41,7 +42,7 @@ class OdeSolverCacheTest extends AnyFunSuiteLike:
   }
 
   test("a cache replaces all the arrays when the group size or the size changes") {
-    for ((groupSize, size) <- Seq((6, 15), (6, 13), (7, 14), (5, 14))) {
+    for ((groupSize, size) <- ArraySeq((6, 15), (6, 13), (7, 14), (5, 14))) {
       val cache = OdeSolverCache()
       val before = cache.getArrays(6, 14)
       val after = cache.getArrays(groupSize, size)

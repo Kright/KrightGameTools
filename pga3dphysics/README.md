@@ -5,14 +5,15 @@ is quite efficient now.
 
 `Pga3dPhysicsBody` stores its pose as a [`Pga3dTransform`](../pga3d/shared/src/main/scala/me/kright/gametools/pga3d/Pga3dTransform.scala) -
 the cached matrix form of a motor - so applying the pose to points, vectors and bivectors many times per step
-is a plain matrix multiplication. There is an auxiliary constructor from a plain `Pga3dMotor`, and the
-`body.motor` accessors are derived from the transform (assigning a motor rebuilds it).
+is a plain matrix multiplication. There is an auxiliary constructor from a plain `Pga3dMotor`,
+`body.motor` reads the motor of the transform, and a new pose is assigned as
+`body.transform = Pga3dTransform(motor)`.
 `Pga3dBivectorMutable` is made for performance reasons.
 
 ## Example of usage:
 
 ```scala
-val dynamicBodies: Array[Pga3dPhysicsBody] =
+val bodies: Array[Pga3dPhysicsBody] =
   Array(
     Pga3dPhysicsBody.motionless(Pga3dInertia.sphere(mass = 2.0, r = 1), Pga3dMotor.id),
     Pga3dPhysicsBody.motionless(Pga3dInertia.cube(mass = 2.0, rx = 1, ry = 2, rz = 0.5),
@@ -22,7 +23,7 @@ val dynamicBodies: Array[Pga3dPhysicsBody] =
 def addGravity(): Unit = {
   val g: Pga3dVector = Pga3dVector(0, -9.8, 0) // y axis down
 
-  for (body <- dynamicBodies) {
+  for (body <- bodies) {
     val forque = Pga3dForque.force(body.globalCenterOfMass, g * body.inertia.mass)
     // same as body.globalCenterOfMass v (g * body.inertia.mass)
 
@@ -31,11 +32,11 @@ def addGravity(): Unit = {
 }
 
 val timeStep = 0.001
-val bodies = IntegrableUniformArray(dynamicBodies, Pga3dBodyState.componentsCount)
+val bodiesArray = IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount)
 val cache = OdeSolverCache() // the work arrays of the solver, one per world
 
 for (step <- 0 until stepsCount) {
-  OdeSolverRK4.step(bodies, timeStep, addForces = { timeInsideStep =>
+  OdeSolverRK4.step(bodiesArray, timeStep, addForces = { timeInsideStep =>
     addGravity()
     addSomeOtherForques()
   }, cache)
@@ -46,7 +47,7 @@ Actually, for the Runge-Kutta method of fourth order, the function addForces is 
 
 The solvers themselves are universal and live in [physics1d](../physics1d/README.md#ode-solvers):
 they integrate any `Integrable` - an object whose state is a run of doubles.
-`IntegrableUniformArray(dynamicBodies, Pga3dBodyState.componentsCount)` is the `Integrable` of an
+`IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount)` is the `Integrable` of an
 array of bodies: all of them have the same state size, the 14 doubles of `Pga3dBodyState`. The cache is
 optional: without it a solver creates its work arrays on every step.
 
@@ -58,11 +59,11 @@ normalization) and join everything with `Integrable(...)`:
 
 ```scala
 val flywheel = Flywheel(inertia = 0.2, angle = 0.0, omega = 100.0) // extends Integrable
-val world = Integrable(bodies, flywheel)
+val world = Integrable(bodiesArray, flywheel)
 
 OdeSolverRK4.step(world, timeStep, dtInsideStep => {
   addGravity()
-  addBrakeTorque(dynamicBodies(0), flywheel) // both hold the same trial state here
+  addBrakeTorque(bodies(0), flywheel) // both hold the same trial state here
 }, cache)
 ```
 
@@ -78,7 +79,7 @@ too (the 14 doubles of `Pga3dBodyState`), which gives snapshots through `saveSta
 Eight integrators with orders from 1 (Euler) to 4 (RK4, RKMK4, RKF45, GaussLegendre), including
 a Verlet on the motor group, plus hard distance constraints (rod / rope / strut): a
 `Pga3dConstraintResolver` is the `resolver` argument of a solver, and Verlet has the RATTLE-style
-`Pga3dPhysicsSolverVerletConstrained`. These are reference implementations - simple and readable first, and usable as a
+`Pga3dVerletSolverConstrained`. These are reference implementations - simple and readable first, and usable as a
 test baseline and an order-of-precision example when you write an optimized solver for your
 own data layout. See [Solvers.md](Solvers.md) for the full table with orders, costs and
 measured accuracies, a selection guide and the constraint resolver details.

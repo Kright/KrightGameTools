@@ -5,6 +5,7 @@ import me.kright.gametools.physics1d.{IwanElement, IwanFriction, OdeSolverRK4}
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga3dIwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   // the reference bushing pair of IwanFrictionTest: a stiff "micro" and a soft "macro" element
@@ -82,7 +83,7 @@ class Pga3dIwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
       // a non-trivial history with turns in it
       val a = origin + u1 * 6e-5
       val b = a + u2 * 1e-4
-      for (f <- Seq(oneStep, substeps)) { f.advance(a); f.advance(b) }
+      for (f <- ArraySeq(oneStep, substeps)) { f.advance(a); f.advance(b) }
 
       val dx = u3 * 4e-4
       val n = 100
@@ -155,7 +156,7 @@ class Pga3dIwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     forAll(points, points, points, MinSuccessful(300)) { (a, b, c) =>
       val force = (b - a) * 1e6 // up to ~2e4, well beyond every break force
       val dx = c - a
-      for (element <- Seq(micro, macro_, IwanElement(1e6, 0.0))) {
+      for (element <- ArraySeq(micro, macro_, IwanElement(1e6, 0.0))) {
         val expected = Pga3dIwanFriction.movedForce(force, dx, element)
         val inPlace = Array(0.0, force.x, force.y, force.z, 0.0)
         Pga3dIwanFriction.moveForce(inPlace(1), inPlace(2), inPlace(3), dx.x, dx.y, dx.z, element, inPlace, 1)
@@ -255,8 +256,8 @@ class Pga3dIwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     }
     body.globalCenterOfMass
 
-  private def order(errors: Seq[Double]): Seq[Double] =
-    errors.sliding(2).map { case Seq(coarse, fine) => Math.log(coarse / fine) / Math.log(2.0) }.toSeq
+  private def order(errors: ArraySeq[Double]): ArraySeq[Double] =
+    ArraySeq.tabulate(errors.length - 1)(i => Math.log(errors(i) / errors(i + 1)) / Math.log(2.0))
 
   test("RK4 keeps the 4th order on a straight monotone path with slipping and stuck elements") {
     // committed state: moved 1e-4 along x, so the micro element slips (150) and the macro one is stuck at 100;
@@ -267,7 +268,7 @@ class Pga3dIwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     val t = 2.5e-3
     val exact = 1e-4 + 5e-5 * (1 - Math.cos(1000.0 * t))
 
-    val errors = for (dt <- Seq(1e-4, 5e-5, 2.5e-5)) yield {
+    val errors = for (dt <- ArraySeq(1e-4, 5e-5, 2.5e-5)) yield {
       val friction = makeFriction()
       friction.advance(start)
       val steps = Math.round(t / dt).toInt
@@ -285,7 +286,7 @@ class Pga3dIwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     val u = Pga3dVector(1.0, 0.0, 0.0)
     val start = origin + u * 1e-4
     val t = 4e-3
-    val dts = Seq(1e-4, 5e-5, 2.5e-5, 1.25e-5)
+    val dts = ArraySeq(1e-4, 5e-5, 2.5e-5, 1.25e-5)
     def run(dt: Double): Double =
       val friction = makeFriction()
       friction.advance(start)
@@ -305,7 +306,7 @@ class Pga3dIwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     val tangent = Pga3dVector(0.0, 1.0, 0.0)
     val omega = 1000.0
     val t = 2e-3 // about 2 radians of turning
-    val dts = Seq(2e-4, 1e-4, 5e-5, 2.5e-5)
+    val dts = ArraySeq(2e-4, 1e-4, 5e-5, 2.5e-5)
     def run(dt: Double): Pga3dPoint =
       val friction = Pga3dIwanFriction(micro, macro_)
       friction.advance(start - tangent * 1e-2)

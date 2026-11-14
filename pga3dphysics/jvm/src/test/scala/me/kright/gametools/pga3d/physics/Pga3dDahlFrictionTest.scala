@@ -5,6 +5,7 @@ import me.kright.gametools.physics1d.OdeSolverRK4
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga3dDahlFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private val maxForce = 100.0
@@ -28,7 +29,7 @@ class Pga3dDahlFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
   test("the virgin curve along a line saturates exponentially") {
     val friction = makeFriction()
     val u = Pga3dVector(0.0, 0.0, 1.0)
-    for (s <- Seq(1e-5, 1e-4, 5e-4, 1e-2)) {
+    for (s <- ArraySeq(1e-5, 1e-4, 5e-4, 1e-2)) {
       val expected = u * (-maxForce * (1 - Math.exp(-s / saturationTravel)))
       assert((friction.forceAt(origin + u * s) - expected).norm <= 1e-12 * maxForce, s"at $s")
     }
@@ -37,7 +38,7 @@ class Pga3dDahlFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
   test("tiny moves from the virgin state follow the Dahl curve to full precision") {
     val friction = makeFriction()
     val u = Pga3dVector(0.3, -0.5, 0.8).normalizedByNorm
-    for (eps <- Seq(1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-16, 1e-20, 1e-40)) {
+    for (eps <- ArraySeq(1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-16, 1e-20, 1e-40)) {
       val expected = u * (maxForce * Math.expm1(-eps / saturationTravel)) // -maxForce * (1 - exp(-eps / d))
       val force = friction.forceAt(origin + u * eps)
       assert((force - expected).norm <= 1e-12 * expected.norm, s"eps $eps: $force vs $expected")
@@ -75,7 +76,7 @@ class Pga3dDahlFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
 
   test("steady circle: the force settles below saturation with the soft-slider lag") {
     // in the rotating frame of a circle of radius A: |F| = maxForce / sqrt(1 + (d / A)^2), tan(lag) = d / A
-    for (radius <- Seq(1e-4, 1e-3)) {
+    for (radius <- ArraySeq(1e-4, 1e-3)) {
       val friction = new Pga3dDahlFriction(maxForce, saturationTravel)
       val stepsPerPeriod = 20000
       def position(i: Int): Pga3dPoint =
@@ -102,7 +103,7 @@ class Pga3dDahlFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     // as the force grows; monotone within the measured interval
     val u = Pga3dVector(1.0, 0.0, 0.0)
     val t = 2e-3
-    val dts = Seq(1e-4, 5e-5, 2.5e-5)
+    val dts = ArraySeq(1e-4, 5e-5, 2.5e-5)
     def run(dt: Double): Double =
       val friction = makeFriction()
       val body = new Pga3dPhysicsBody(Pga3dInertia.sphere(mass = 1.0, r = 0.1),
@@ -117,6 +118,6 @@ class Pga3dDahlFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
       body.globalCenterOfMass.x
     val reference = run(dts.last / 64)
     val errors = dts.map(dt => Math.abs(run(dt) - reference))
-    val orders = errors.sliding(2).map { case Seq(coarse, fine) => Math.log(coarse / fine) / Math.log(2.0) }.toSeq
+    val orders = ArraySeq.tabulate(errors.length - 1)(i => Math.log(errors(i) / errors(i + 1)) / Math.log(2.0))
     assert(orders.forall(o => o > 3.7 && o < 4.3), s"errors $errors, orders $orders")
   }

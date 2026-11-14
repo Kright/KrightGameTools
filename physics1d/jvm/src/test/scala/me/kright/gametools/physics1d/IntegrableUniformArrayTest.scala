@@ -1,6 +1,7 @@
 package me.kright.gametools.physics1d
 
 import org.scalatest.funsuite.AnyFunSuiteLike
+import scala.collection.immutable.ArraySeq
 
 class IntegrableUniformArrayTest extends AnyFunSuiteLike:
   private val marker = -777.0
@@ -90,5 +91,5 @@ class IntegrableUniformArrayTest extends AnyFunSuiteLike:
 
     val state = new Array[Double](integrableArray.stateSize)
     integrableArray.saveState(state, 0)
-    assert(state.take(2).toSeq == Seq(100.0, 200.0))
+    assert(state.take(2).toSeq == ArraySeq(100.0, 200.0))
   }

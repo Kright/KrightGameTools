@@ -28,9 +28,9 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     assume(false, "skip test")
     for (i <- FastRange(100)) {
       val system = Pga3dPhysicsSystemForTest(
-        state = ArraySeq(0.0, 1e-2, 1e-1, 1.0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6).map { d =>
+        bodies = Array(0.0, 1e-2, 1e-1, 1.0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6).map { d =>
           Pga3dPhysicsSystemForTest.simpleBody(Pga3dTranslator.addVector(Pga3dVector(d, d, d)).toMotor)
-        }.toArray,
+        },
         solver = OdeSolverRK4
       )
 
@@ -140,7 +140,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     }
     val end = System.nanoTime()
     // println(s"dt = ${(end - start) / stepsCount}ns")
-    // println(system.state.head)
+    // println(system.bodies.head)
   }
 
   test("calculate energy accumulation for linear force during rotation") {
@@ -159,10 +159,10 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     val errors = for (step <- 1 to stepsCount) yield {
       val t = step * dt
 
-      val bodyCenter = system.state.head.globalCenter
+      val bodyCenter = system.bodies.head.globalCenter
       val globalForque = Pga3dForque.force(bodyCenter, forceDirection)
 
-      system.doStep(dt, _ => system.state.head.addGlobalForque(globalForque))
+      system.doStep(dt, _ => system.bodies.head.addGlobalForque(globalForque))
 
       val expectedEnergy = system.initialE + 0.5 * forceDirection.normSquare * t * t / body.inertia.mass
       accumulatedL += globalForque * dt
@@ -174,7 +174,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     val maxError = errors.reduce(_ max _)
     assert(maxError < ErrorOfEnergyAndMomentum(2e-9, 4e-9))
 
-    val endPoint = system.state.head.globalCenter
+    val endPoint = system.bodies.head.globalCenter
     val expectedPoint = Pga3dPlane(w = 1.0, x = 0.5).dual
 
     assert((endPoint - expectedPoint).norm < 2e-9)
@@ -196,20 +196,20 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
     val springK = 20
 
     def getEnergy(): Double =
-      (system.state.head.globalCenter - springCenter).normSquare * 0.5 * springK + system.getKineticEnergy()
+      (system.bodies.head.globalCenter - springCenter).normSquare * 0.5 * springK + system.getKineticEnergy()
 
     val initialEnergy = getEnergy()
 
     for (_ <- 1 to stepsCount) {
       system.doStep(dt, _ => {
-        val globalForque = (system.state.head.globalCenter v springCenter) * springK
-        system.state.head.addGlobalForque(globalForque)
+        val globalForque = (system.bodies.head.globalCenter v springCenter) * springK
+        system.bodies.head.addGlobalForque(globalForque)
       })
 
       val expectedPos = springCenter - (springCenter.weight * Math.cos(system.time * Math.sqrt(springK / mass))).toProjectivePoint
 
       val dE = math.abs(initialEnergy - getEnergy()) / initialEnergy
-      val dPos = (expectedPos - system.state.head.globalCenter).norm
+      val dPos = (expectedPos - system.bodies.head.globalCenter).norm
 
       assert(dE <= 1.2e-10)
       assert(dPos <= 2.4e-8)
@@ -322,7 +322,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
       val system = Pga3dPhysicsSystemForTest(Array(body), solver)
 
       def getEnergy(): Double =
-        (system.state.head.globalCenter - springCenter).normSquare * 0.5 * k + system.getKineticEnergy()
+        (system.bodies.head.globalCenter - springCenter).normSquare * 0.5 * k + system.getKineticEnergy()
 
       val initialEnergy = getEnergy()
 
@@ -333,14 +333,14 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
         val t = step * dt
 
         system.doStep(dt, _ => {
-          val globalForque = (system.state.head.globalCenter v springCenter) * k
-          system.state.head.addGlobalForque(globalForque)
+          val globalForque = (system.bodies.head.globalCenter v springCenter) * k
+          system.bodies.head.addGlobalForque(globalForque)
         })
 
         val expectedPos = springCenter - (springCenter.weight * Math.cos(t * Math.sqrt(k / mass))).toProjectivePoint
 
         val dE = math.abs(initialEnergy - getEnergy()) / initialEnergy
-        val dPos = (expectedPos - system.state.head.globalCenter).norm
+        val dPos = (expectedPos - system.bodies.head.globalCenter).norm
 
         maxDe = Math.max(maxDe, dE)
         maxDpos = Math.max(maxDpos, dPos)
@@ -365,7 +365,7 @@ class Pga3dInertiaLocalTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
       _ => OdeSolverHeun,
       _ => OdeSolverMidPoint,
       _ => OdeSolverRK4,
-      Pga3dPhysicsSolverRKMK4(_),
+      Pga3dOdeSolverRKMK4(_),
       _ => OdeSolverRKF45(),
 
       _ => OdeSolverGaussLegendre(iterations = 0),

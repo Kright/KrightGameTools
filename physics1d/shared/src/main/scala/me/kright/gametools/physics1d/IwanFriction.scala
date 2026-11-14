@@ -56,8 +56,8 @@ final class IwanFriction private(val elements: IArray[IwanElement],
                                  private var lastX: Double) extends HystereticFriction:
   require(elements.nonEmpty)
 
-  def this(elements: Seq[IwanElement]) =
-    this(IArray.from(elements), new Array[Double](elements.size), Double.NaN)
+  def this(elements: Array[IwanElement]) =
+    this(IArray.from(elements), new Array[Double](elements.length), Double.NaN)
 
   /** the saturation force: the bound of |force| */
   val maxForce: Double =
@@ -96,4 +96,4 @@ final class IwanFriction private(val elements: IArray[IwanElement],
 
 object IwanFriction:
   def apply(elements: IwanElement*): IwanFriction =
-    new IwanFriction(elements)
+    new IwanFriction(elements.toArray)

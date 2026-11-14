@@ -33,7 +33,7 @@ class BodiesArrayDispatchBenchmark:
       )
     }
 
-  private def threeOtherKinds(): Seq[Integrable] = Seq(
+  private def threeOtherKinds(): Array[Integrable] = Array(
     BenchmarkSharedLoopsUniformArray[BenchmarkOscillatorA](Array.fill(2)(BenchmarkOscillatorA(1.0, 0.0)), 2),
     BenchmarkSharedLoopsUniformArray[BenchmarkOscillatorB](Array.fill(2)(BenchmarkOscillatorB(1.0, 0.0)), 2),
     BenchmarkSharedLoopsUniformArray[BenchmarkOscillatorC](Array.fill(2)(BenchmarkOscillatorC(1.0, 0.0)), 2),

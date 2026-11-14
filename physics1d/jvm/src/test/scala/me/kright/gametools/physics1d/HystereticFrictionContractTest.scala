@@ -3,6 +3,7 @@ package me.kright.gametools.physics1d
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 /**
  * The HystereticFriction contract, checked identically for every model: any new model
@@ -11,7 +12,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
  * branch breaks one of them on a random path.
  */
 class HystereticFrictionContractTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
-  private val models: Seq[(String, () => HystereticFriction)] = Seq(
+  private val models: ArraySeq[(String, () => HystereticFriction)] = ArraySeq(
     ("DahlFriction", () => new DahlFriction(maxForce = 100.0, saturationTravel = 1e-4)),
     ("BergFriction", () => new BergFriction(maxForce = 100.0, halfSaturationTravel = 1e-4)),
     ("IwanFriction", () => IwanFriction(IwanElement(4e5, 40.0), IwanElement(2e5, 60.0))),
@@ -104,7 +105,7 @@ class HystereticFrictionContractTest extends AnyFunSuiteLike with ScalaCheckProp
     for ((name, make) <- models) {
       val oneStep = make()
       val substeps = make()
-      for (f <- Seq(oneStep, substeps)) { f.advance(0.0); f.advance(5e-4); f.advance(2e-4) }
+      for (f <- ArraySeq(oneStep, substeps)) { f.advance(0.0); f.advance(5e-4); f.advance(2e-4) }
 
       val end = 2e-4 - 6e-4
       val n = 100

@@ -1,6 +1,7 @@
 package me.kright.gametools.physics1d
 
 import org.scalatest.funsuite.AnyFunSuiteLike
+import scala.collection.immutable.ArraySeq
 
 class IntegrableAnyArrayTest extends AnyFunSuiteLike:
   private val marker = -777.0
@@ -12,11 +13,11 @@ class IntegrableAnyArrayTest extends AnyFunSuiteLike:
     val integrableArray = IntegrableAnyArray(TestOscillator(1.0, 1.0, 2.0), TestTriple(3.0, 4.0, 5.0), TestOscillator(1.0, 6.0, 7.0))
 
     assert(integrableArray.stateSize == 7)
-    assert((0 until 3).map(integrableArray.offsetOf) == Seq(0, 2, 5))
+    assert((0 until 3).map(integrableArray.offsetOf) == ArraySeq(0, 2, 5))
 
     val dst = markedArray(11)
     integrableArray.saveState(dst, 2)
-    assert(dst.toSeq == Seq(marker, marker, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, marker, marker))
+    assert(dst.toSeq == ArraySeq(marker, marker, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, marker, marker))
   }
 
   test("loadState is the inverse of saveState and reads only its own run of doubles") {
@@ -34,7 +35,7 @@ class IntegrableAnyArrayTest extends AnyFunSuiteLike:
 
     val dst = markedArray(7)
     integrableArray.saveDerivative(dst, 1)
-    assert(dst.toSeq == Seq(marker, 2.0, -10.0, -3.0, -8.0, -15.0, marker))
+    assert(dst.toSeq == ArraySeq(marker, 2.0, -10.0, -3.0, -8.0, -15.0, marker))
   }
 
   test("resetForces reaches every part, nested ones too") {
@@ -69,7 +70,7 @@ class IntegrableAnyArrayTest extends AnyFunSuiteLike:
   }
 
   test("an empty array has no state and touches nothing") {
-    for (empty <- Seq(IntegrableAnyArray(), IntegrableAnyArray(IntegrableAnyArray(), IntegrableAnyArray()), Integrable.empty)) {
+    for (empty <- ArraySeq(IntegrableAnyArray(), IntegrableAnyArray(IntegrableAnyArray(), IntegrableAnyArray()), Integrable.empty)) {
       assert(empty.stateSize == 0)
 
       val array = markedArray(3)
@@ -103,14 +104,14 @@ class IntegrableAnyArrayTest extends AnyFunSuiteLike:
 
     val dst = new Array[Double](2)
     integrableArray.saveState(dst, 0)
-    assert(dst.toSeq == Seq(100.0, 200.0))
+    assert(dst.toSeq == ArraySeq(100.0, 200.0))
   }
 
   test("the factories of Integrable give the same arrays as the factories of the classes") {
-    def state(integrable: Integrable): Seq[Double] =
+    def state(integrable: Integrable): ArraySeq[Double] =
       val dst = new Array[Double](integrable.stateSize)
       integrable.saveState(dst, 0)
-      dst.toSeq
+      ArraySeq.unsafeWrapArray(dst)
 
     def makeElements(): Array[TestOscillator] =
       Array(TestOscillator(1.0, 1.0, 2.0), TestOscillator(1.0, 10.0, 20.0))
@@ -118,7 +119,7 @@ class IntegrableAnyArrayTest extends AnyFunSuiteLike:
     val elements = makeElements()
     assert(Integrable(elements).elements eq elements)
     assert(state(Integrable(makeElements())) == state(IntegrableAnyArray(makeElements())))
-    assert(state(Integrable(TestOscillator(1.0, 3.0, 4.0), TestTriple(5.0, 6.0, 7.0))) == Seq(3.0, 4.0, 5.0, 6.0, 7.0))
+    assert(state(Integrable(TestOscillator(1.0, 3.0, 4.0), TestTriple(5.0, 6.0, 7.0))) == ArraySeq(3.0, 4.0, 5.0, 6.0, 7.0))
 
     val uniform = Integrable.uniformElementSize(elements, 2)
     assert(uniform.elements eq elements)

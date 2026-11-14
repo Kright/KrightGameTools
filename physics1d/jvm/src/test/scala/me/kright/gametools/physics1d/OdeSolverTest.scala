@@ -6,7 +6,7 @@ import scala.collection.immutable.ArraySeq
 import scala.collection.mutable.ArrayBuffer
 
 class OdeSolverTest extends AnyFunSuiteLike:
-  private val solvers: Seq[(solver: OdeSolver, order: Int, forceEvaluationsPerStep: Int)] = Seq(
+  private val solvers: ArraySeq[(solver: OdeSolver, order: Int, forceEvaluationsPerStep: Int)] = ArraySeq(
     (OdeSolverEuler, 1, 1),
     (OdeSolverMidPoint, 2, 2),
     (OdeSolverHeun, 2, 2),
@@ -19,7 +19,7 @@ class OdeSolverTest extends AnyFunSuiteLike:
     val measured = Math.log(error / errorAtHalfStep) / Math.log(2.0)
     assert(Math.abs(measured - expected) < 0.1, s"$solver: measured order $measured, expected $expected")
 
-  private def bits(system: Integrable): Seq[Long] =
+  private def bits(system: Integrable): ArraySeq[Long] =
     val state = new Array[Double](system.stateSize)
     system.saveState(state, 0)
     ArraySeq.unsafeWrapArray(state.map(java.lang.Double.doubleToRawLongBits))
@@ -29,8 +29,8 @@ class OdeSolverTest extends AnyFunSuiteLike:
       val log = ArrayBuffer[String]()
       s.solver.step(OdeSolverCallRecorder(log), 0.01, _ => log += "forces", OdeSolverCache())
 
-      val evaluation = Seq("reset", "forces", "derivative")
-      val expected = Seq("save") ++ evaluation ++ Seq.fill(s.forceEvaluationsPerStep - 1)("load" +: evaluation).flatten ++ Seq("load")
+      val evaluation = ArraySeq("reset", "forces", "derivative")
+      val expected = ArraySeq("save") ++ evaluation ++ ArraySeq.fill(s.forceEvaluationsPerStep - 1)("load" +: evaluation).flatten ++ ArraySeq("load")
       assert(log.toSeq == expected, s"solver ${s.solver}")
     }
   }
@@ -38,7 +38,7 @@ class OdeSolverTest extends AnyFunSuiteLike:
   test("the force callback of RK4 gets the time offsets 0, dt / 2, dt / 2, dt") {
     val offsets = ArrayBuffer[Double]()
     OdeSolverRK4.step(makeMass(), 0.1, timeInsideStep => offsets += timeInsideStep)
-    assert(offsets.toSeq == Seq(0.0, 0.05, 0.05, 0.1))
+    assert(offsets.toSeq == ArraySeq(0.0, 0.05, 0.05, 0.1))
   }
 
   private def twoMassesOnSpringError(solver: OdeSolver, dt: Double, totalTime: Double): Double =
@@ -109,7 +109,7 @@ class OdeSolverTest extends AnyFunSuiteLike:
   }
 
   test("normalization in loadState keeps the vector unit and costs no accuracy, so the order is kept too") {
-    for (s <- solvers; dt <- Seq(0.005, 0.0025)) {
+    for (s <- solvers; dt <- ArraySeq(0.005, 0.0025)) {
       val normalized = directionError(s.solver, dt, normalize = true)
       val plain = directionError(s.solver, dt, normalize = false)
 
@@ -143,7 +143,7 @@ class OdeSolverTest extends AnyFunSuiteLike:
         s.solver.step(directionAlone, dt, _ => ())
       }
 
-      for (nested <- Seq(false, true)) {
+      for (nested <- ArraySeq(false, true)) {
         val mass = makeMass()
         val direction = makeDirection()
         val system =
@@ -159,7 +159,7 @@ class OdeSolverTest extends AnyFunSuiteLike:
     }
   }
 
-  private def runCoupledMasses(solver: OdeSolver, nextCache: () => OdeSolverCache | Null): Seq[Long] =
+  private def runCoupledMasses(solver: OdeSolver, nextCache: () => OdeSolverCache | Null): ArraySeq[Long] =
     val a = makeMass()
     val b = PointMass1d(3.0, 2.5, -0.2)
     val system = Integrable(a, makeDirection(), b)
@@ -196,7 +196,7 @@ class OdeSolverTest extends AnyFunSuiteLike:
     val expected = runCoupledMasses(OdeSolverRK4, () => null)
 
     val shared = OdeSolverCache()
-    val biggerSystem = Integrable(Seq.fill(40)(makeDirection())*)
+    val biggerSystem = Integrable(ArraySeq.fill(40)(makeDirection())*)
     val stepBiggerSystemFirst = () => {
       OdeSolverRK4.step(biggerSystem, dt, _ => (), shared)
       shared
@@ -234,7 +234,7 @@ class OdeSolverTest extends AnyFunSuiteLike:
   }
 
   test("the RKF45 estimate matches the actual local error of the step") {
-    for (dt <- Seq(0.05, 0.02)) {
+    for (dt <- ArraySeq(0.05, 0.02)) {
       val stiffness = 40.0
       val initialX = 1.0
       val initialV = 0.7

@@ -2,6 +2,7 @@ package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.*
 import org.scalatest.funsuite.AnyFunSuiteLike
+import scala.collection.immutable.ArraySeq
 
 /** caller-side state of the stateless Verlet: the two pose arrays and the derived twists */
 private class VerletState(bodies: Array[Pga3dPhysicsBody], dt: Double,
@@ -10,11 +11,11 @@ private class VerletState(bodies: Array[Pga3dPhysicsBody], dt: Double,
   var motors: Array[Pga3dMotor] = bodies.map(_.motor)
   var localBs: Array[Pga3dBivector] = bodies.map(_.localB)
   var prevMotors: Array[Pga3dMotor] =
-    Pga3dPhysicsSolverVerlet.makePrevMotors(inertias, motors, localBs, forquesAt(motors, localBs), dt)
+    Pga3dVerletSolver.makePrevMotors(inertias, motors, localBs, forquesAt(motors, localBs), dt)
   private var nextMotors: Array[Pga3dMotor] = new Array[Pga3dMotor](bodies.length)
 
   def step(dt: Double): Unit =
-    Pga3dPhysicsSolverVerlet.step(
+    Pga3dVerletSolver.step(
       inertias, prevMotors, motors, forquesAt(motors, localBs), dt, dt, nextMotors, localBs)
     val tmp = prevMotors
     prevMotors = motors
@@ -32,7 +33,7 @@ object VerletState:
   val noForques: (Array[Pga3dMotor], Array[Pga3dBivector]) => Array[Pga3dBivector] =
     (motors, _) => Array.fill(motors.length)(Pga3dBivector.zero)
 
-class Pga3dPhysicsSolverVerletTest extends AnyFunSuiteLike:
+class Pga3dVerletSolverTest extends AnyFunSuiteLike:
 
   private def freeBody(): Array[Pga3dPhysicsBody] =
     Array(Pga3dPhysicsSystemForTest.simpleBody(Pga3dMotor.id))
@@ -66,13 +67,13 @@ class Pga3dPhysicsSolverVerletTest extends AnyFunSuiteLike:
       state.motors.head
 
     val referenceBodies = freeBody()
-    val referenceSystem = Pga3dPhysicsSystemForTest(referenceBodies, Pga3dPhysicsSolverRKMK4(referenceBodies))
+    val referenceSystem = Pga3dPhysicsSystemForTest(referenceBodies, Pga3dOdeSolverRKMK4(referenceBodies))
     for (_ <- 0 until 100000) {
       referenceSystem.doStep(totalTime / 100000, _ => ())
     }
-    val reference = referenceSystem.state.head.motor
+    val reference = referenceSystem.bodies.head.motor
 
-    val dts = Seq(0.02, 0.01, 0.005, 0.0025)
+    val dts = ArraySeq(0.02, 0.01, 0.005, 0.0025)
     val errors = dts.map(dt => (finalMotor(dt) - reference).norm)
     for (i <- 1 until dts.length) {
       val order = math.log(errors(i - 1) / errors(i)) / math.log(2.0)

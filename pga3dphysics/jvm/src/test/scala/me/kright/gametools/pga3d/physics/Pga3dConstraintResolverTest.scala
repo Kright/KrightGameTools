@@ -10,7 +10,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
   private val origin = Pga3dPoint(0, 0, 0)
 
   /** two unit-mass bodies at (+-1, 0, 0) connected by a rod of length 2, spinning in the xy plane */
-  private def dumbbell(): (Array[Pga3dPhysicsBody], Pga3dConstraintResolver) =
+  private def dumbbell(): (Array[Pga3dPhysicsBody], Pga3dConstraintResolver[Pga3dPhysicsBody]) =
     val v = 1.0
     val bodies = Array(
       Pga3dPhysicsBody(
@@ -99,7 +99,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
    * pendulum on a rod with an off-center anchor and an asymmetric inertia: the constraint
    * force creates torque, so the resolver must handle the rotational response correctly
    */
-  private def offsetPendulum(): (Array[Pga3dPhysicsBody], Pga3dConstraintResolver) =
+  private def offsetPendulum(): (Array[Pga3dPhysicsBody], Pga3dConstraintResolver[Pga3dPhysicsBody]) =
     // the initial pose satisfies the rod exactly: a projection snap at the start would be an
     // O(dt)-sized transient that ruins convergence measurements
     val anchorLocal = Pga3dPoint(0.2, 0.3, -0.1)
@@ -122,8 +122,8 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
       body.addGlobalForque(Pga3dForque.force(body.globalCenterOfMass, gravity * body.inertia.mass))
     }
 
-  private def pendulumEnergy(system: Pga3dPhysicsSystem): Double =
-    val body = system.state.head
+  private def pendulumEnergy(system: Pga3dPhysicsSystem[Pga3dPhysicsBody]): Double =
+    val body = system.bodies.head
     system.getKineticEnergy() - body.inertia.mass * gravity.antiDotI(body.globalCenterOfMass.toVectorUnsafe)
 
   test("offset pendulum: constraint is held and energy is conserved") {
@@ -161,7 +161,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
 
     val reference = finalState(1e-4)
 
-    val dts = Seq(0.02, 0.01, 0.005)
+    val dts = ArraySeq(0.02, 0.01, 0.005)
     val errors = dts.map { dt =>
       val state = finalState(dt)
       (state.motor - reference.motor).norm + (state.localB - reference.localB).norm
@@ -231,7 +231,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
       (_ => OdeSolverHeun, 1e-5),
       (_ => OdeSolverMidPoint, 1e-5),
       (_ => OdeSolverRK4, 1e-9),
-      (Pga3dPhysicsSolverRKMK4(_), 1e-9),
+      (Pga3dOdeSolverRKMK4(_), 1e-9),
       (_ => OdeSolverRKF45(), 1e-9),
       (_ => OdeSolverGaussLegendre(iterations = 3), 1e-9),
     )

@@ -3,6 +3,7 @@ package me.kright.gametools.physics1d
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class SpringElasticityTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   private val softK = 10.0
@@ -22,13 +23,13 @@ class SpringElasticityTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks
     assert(Math.abs(slope(elastic, -h, h) + softK) <= 1e-6 * softK)
 
     // within 1% of the pure softK spring while deflection is small compared to the soft zone
-    for (d <- Seq(0.001, 0.005, 0.01).map(_ * travel); sign <- Seq(-1.0, 1.0)) {
+    for (d <- ArraySeq(0.001, 0.005, 0.01).map(_ * travel); sign <- ArraySeq(-1.0, 1.0)) {
       assert(Math.abs(elastic.force(sign * d) + softK * sign * d) <= 0.01 * softK * d)
     }
   }
 
   test("stiffness far from the soft zone equals stiffK") {
-    for ((d0, d1) <- Seq((travel, 2 * travel), (3 * travel, 10 * travel), (-2 * travel, -travel))) {
+    for ((d0, d1) <- ArraySeq((travel, 2 * travel), (3 * travel, 10 * travel), (-2 * travel, -travel))) {
       assert(Math.abs(slope(elastic, d0, d1) + stiffK) <= 1e-9 * stiffK)
     }
   }

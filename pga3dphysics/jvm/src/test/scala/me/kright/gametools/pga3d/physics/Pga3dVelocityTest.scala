@@ -9,7 +9,7 @@ class Pga3dVelocityTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   private def makeSystem(localB: Pga3dBivector) =
     Pga3dPhysicsSystem(
-      state = Array(
+      bodies = Array(
         Pga3dPhysicsBody(
           Pga3dInertiaSimple(1.0, 1.0),
           Pga3dMotor.id,
@@ -25,11 +25,11 @@ class Pga3dVelocityTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     forAll(Pga3dGenerators.vectors, MinSuccessful(100)) { linearVelocity =>
       val velocity = Pga3dVelocity.linear(linearVelocity).toBivector
       val system = makeSystem(velocity)
-      system.doStep(dt, addForquesToBodies = { _ => })
+      system.doStep(dt, addForces = { _ => })
 
       val expectedPos: Pga3dPoint = Pga3dPoint.center + linearVelocity * dt
 
-      val newPos: Pga3dPoint = system.state(0).globalCenterOfMass
+      val newPos: Pga3dPoint = system.bodies(0).globalCenterOfMass
       val newPos2: Pga3dPoint = velocity.exp(-dt * 0.5).sandwich(Pga3dPoint.center).toPoint
 
       assert((newPos - expectedPos).norm < 1e-15)
@@ -50,9 +50,9 @@ class Pga3dVelocityTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
     forAll(Pga3dGenerators.bivectorBulks, MinSuccessful(100)) { w =>
       val system = makeSystem(w.toBivector)
-      system.doStep(dt, addForquesToBodies = { _ => })
+      system.doStep(dt, addForces = { _ => })
 
-      val newCenterPos = system.state(0).motor.sandwich(Pga3dPoint.center).toPoint
+      val newCenterPos = system.bodies(0).motor.sandwich(Pga3dPoint.center).toPoint
       assert((newCenterPos - Pga3dPoint.center).norm < 1e-15)
     }
   }

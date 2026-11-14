@@ -18,7 +18,7 @@ class Pga3dConstrainedChainTest extends AnyFunSuiteLike:
   private val chainSize = 4
   private val gravity = Pga3dVector(0, -9.8, 0)
 
-  private def chain(angle: Double): (Array[Pga3dPhysicsBody], Pga3dConstraintResolver) =
+  private def chain(angle: Double): (Array[Pga3dPhysicsBody], Pga3dConstraintResolver[Pga3dPhysicsBody]) =
     val dir = Pga3dVector(Math.sin(angle), -Math.cos(angle), 0.0)
     val bodies = Array.tabulate(chainSize) { k =>
       Pga3dPhysicsBody.motionless(
@@ -36,7 +36,7 @@ class Pga3dConstrainedChainTest extends AnyFunSuiteLike:
       body.addGlobalForque(Pga3dForque.force(body.globalCenterOfMass, gravity * body.inertia.mass))
     }
 
-  private def maxRodError(bodies: Array[Pga3dPhysicsBody], resolver: Pga3dConstraintResolver): Double =
+  private def maxRodError(bodies: Array[Pga3dPhysicsBody], resolver: Pga3dConstraintResolver[Pga3dPhysicsBody]): Double =
     resolver.constraints.map { c =>
       val pA = if (c.bodyA >= 0) bodies(c.bodyA).motorSandwich(c.anchorA) else c.anchorA
       val pB = if (c.bodyB >= 0) bodies(c.bodyB).motorSandwich(c.anchorB) else c.anchorB
@@ -50,7 +50,7 @@ class Pga3dConstrainedChainTest extends AnyFunSuiteLike:
 
   private def runChain(makeSolver: Array[Pga3dPhysicsBody] => OdeSolver,
                        dt: Double,
-                       totalTime: Double): (Array[Pga3dPhysicsBody], Pga3dConstraintResolver) =
+                       totalTime: Double): (Array[Pga3dPhysicsBody], Pga3dConstraintResolver[Pga3dPhysicsBody]) =
     val (bodies, resolver) = chain(angle = 0.3)
     val system = Pga3dPhysicsSystem(bodies, makeSolver(bodies), resolver = resolver)
     for (_ <- 0 until Math.round(totalTime / dt).toInt) {
@@ -72,13 +72,13 @@ class Pga3dConstrainedChainTest extends AnyFunSuiteLike:
       ("heun", _ => OdeSolverHeun, 1.7, 2.5),
       ("midPoint", _ => OdeSolverMidPoint, 1.7, 2.5),
       ("rk4", _ => OdeSolverRK4, 3.5, 4.5),
-      ("rkmk4", Pga3dPhysicsSolverRKMK4(_), 3.5, 4.5),
+      ("rkmk4", Pga3dOdeSolverRKMK4(_), 3.5, 4.5),
       ("rkf45", _ => OdeSolverRKF45(), 3.5, 4.5),
       ("gaussLegendre(6)", _ => OdeSolverGaussLegendre(iterations = 6), 3.5, 4.5),
     )
 
     for ((solver, makeSolver, minOrder, maxOrder) <- solversAndExpectedOrder) {
-      val dts = Seq(0.02, 0.01, 0.005)
+      val dts = ArraySeq(0.02, 0.01, 0.005)
       val errors = dts.map(dt => stateDifference(runChain(makeSolver, dt, totalTime)._1, reference))
 
       // convergence: the error must shrink monotonically with the step
