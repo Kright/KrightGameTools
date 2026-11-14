@@ -3,6 +3,7 @@ package me.kright.gametools.pga3d.physics
 import me.kright.gametools.mathutil.FastRange
 import me.kright.gametools.pga3d.Pga3dTransform
 
+@deprecated("the solvers moved to physics1d, see OdeSolverUtil", "0.13.0")
 object Pga3dPhysicsSolverUtil:
   def getDerivative(dynamicBodies: Array[? <: Pga3dPhysicsBody], currentDt: Double, addForquesToBodies: Double => Unit): Array[Pga3dBodyState] = {
     for (body <- dynamicBodies) {

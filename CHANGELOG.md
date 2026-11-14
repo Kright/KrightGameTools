@@ -48,6 +48,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `Pga3dPhysicsSolverEuler`, `MidPoint`, `Heun`, `RK4`, `RKF45` and `GaussLegendre`: use the
   universal solver of physics1d with the same suffix (`OdeSolverRK4`, ...) over
   `IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount)`.
+- `Pga3dPhysicsSolverUtil`: the solvers of the library do not use it any more, their building
+  blocks over flat double arrays are in `OdeSolverUtil` of physics1d.
 
 ### Changed
 
@@ -58,7 +60,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `Pga3dBodyState`, with the order of the floating point operations preserved: the trajectories
   are bit-identical to 0.12.0. The per-body estimates of `Pga3dPhysicsSolverRKF45` are folded
   from the per-double ones and may differ in the last bit.
-- `Pga3dPhysicsSolverUtil` is not used by the solvers of the library any more.
 
 ## [0.12.0] - 2026-11-11
 
