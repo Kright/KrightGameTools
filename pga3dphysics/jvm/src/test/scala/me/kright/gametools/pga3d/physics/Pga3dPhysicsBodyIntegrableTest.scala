@@ -74,9 +74,9 @@ class Pga3dPhysicsBodyIntegrableTest extends AnyFunSuiteLike with ScalaCheckProp
     }
   }
 
-  test("resetForces drops the accumulated forque") {
+  test("resetAccum drops the accumulated forque") {
     val b = body(Pga3dMotor.id, Pga3dBivector.zero)
     b.addGlobalForque(Pga3dBivector(wx = 1.0, xy = 2.0))
-    b.resetForces()
+    b.resetAccum()
     assert(b.globalForque == Pga3dBivector.zero)
   }

@@ -33,9 +33,9 @@ final class IntegrableAnyArray[T <: Integrable](val elements: Array[T]) extends 
       elements(i).saveDerivative(dst, offset + offsets(i))
     }
 
-  override def resetForces(): Unit =
+  override def resetAccum(): Unit =
     for (i <- FastRange(elements.length)) {
-      elements(i).resetForces()
+      elements(i).resetAccum()
     }
 
   override def toString: String =

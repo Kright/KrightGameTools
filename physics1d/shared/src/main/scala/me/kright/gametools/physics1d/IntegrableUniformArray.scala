@@ -48,9 +48,9 @@ object IntegrableUniformArray:
           array(i).saveDerivative(dst, offset + i * sizeOfElement)
         }
 
-      override def resetForces(): Unit =
+      override def resetAccum(): Unit =
         for (i <- FastRange(array.length)) {
-          array(i).resetForces()
+          array(i).resetAccum()
         }
 
   def requireStateSizes(elements: Array[? <: Integrable], expected: Int): Unit =

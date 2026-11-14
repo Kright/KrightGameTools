@@ -127,7 +127,7 @@ trait Integrable:
   def saveState(dst: Array[Double], offset: Int): Unit
   def loadState(src: Array[Double], offset: Int): Unit
   def saveDerivative(dst: Array[Double], offset: Int): Unit
-  def resetForces(): Unit
+  def resetAccum(): Unit
 ```
 
 * `stateSize` is a `val`: the size cannot change during the life of the object, so a solver
@@ -135,7 +135,7 @@ trait Integrable:
 * `saveState` / `loadState` write and read `stateSize` doubles starting at `offset`.
 * `saveDerivative` writes d(state)/dt in the same layout: the double number j is the derivative
   of the double number j of the state.
-* `resetForces` drops whatever the previous force callback accumulated (forces, torques, any
+* `resetAccum` drops whatever the previous force callback accumulated (forces, torques, any
   other inputs); an object without accumulators leaves it empty. The method is abstract on
   purpose: a forgotten reset silently sums the forces of all the stages.
 
@@ -143,7 +143,7 @@ One derivative evaluation of a solver is always the same sequence:
 
 1. `loadState` of every object with the trial state of the stage (skipped for the first
    stage - the objects already hold the state);
-2. `resetForces` of every object;
+2. `resetAccum` of every object;
 3. the force callback of the step: user code reads the objects and adds forces to them;
 4. `saveDerivative` of every object.
 
@@ -196,7 +196,7 @@ final class Flywheel(val inertia: Double, var angle: Double, var omega: Double) 
     dst(offset) = omega
     dst(offset + 1) = torque / inertia
 
-  override def resetForces(): Unit =
+  override def resetAccum(): Unit =
     torque = 0.0
 ```
 

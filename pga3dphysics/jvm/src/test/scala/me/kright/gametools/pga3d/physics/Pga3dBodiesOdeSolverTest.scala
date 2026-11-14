@@ -43,8 +43,8 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
       val gravity = Pga3dVector(0.0, -9.8 * (1.0 + timeInsideStep), 0.0) * body.inertia.mass
       body.addGlobalForque(Pga3dForque.force(body.globalCenterOfMass, gravity))
       if (i > 0) {
-        val a = body.motorSandwich(Pga3dPoint(0.1, 0.2, -0.1))
-        val b = bodies(i - 1).motorSandwich(Pga3dPoint(-0.2, 0.1, 0.3))
+        val a = body.transform.sandwich(Pga3dPoint(0.1, 0.2, -0.1))
+        val b = bodies(i - 1).transform.sandwich(Pga3dPoint(-0.2, 0.1, 0.3))
         body.addGlobalForquePaired(Pga3dForque.spring(a, b, 50.0, 0.5), bodies(i - 1))
       }
     }
@@ -79,7 +79,7 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
     assert(ownDerivative.toSeq == generalDerivative.toSeq)
     assert(ownDerivative(1) == marker && ownDerivative(bodiesArray.stateSize + 2) == marker)
 
-    bodiesArray.resetForces()
+    bodiesArray.resetAccum()
     assert(bodies.forall(_.globalForque == Pga3dBivector.zero))
   }
 
@@ -101,7 +101,7 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
     val empty = IntegrableUniformArray(Array.empty[Pga3dPhysicsBody], Pga3dBodyState.componentsCount)
     assert(empty.stateSize == 0)
     empty.saveState(new Array[Double](0), 0)
-    empty.resetForces()
+    empty.resetAccum()
   }
 
   private def runBodies(makeSolver: Array[Pga3dPhysicsBody] => OdeSolver): Array[Pga3dPhysicsBody] =

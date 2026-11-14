@@ -14,7 +14,7 @@ abstract class BenchmarkOscillator(var x: Double, var v: Double) extends Integra
     x = src(offset)
     v = src(offset + 1)
 
-  override def resetForces(): Unit = ()
+  override def resetAccum(): Unit = ()
 
 
 final class BenchmarkOscillatorA(x: Double, v: Double) extends BenchmarkOscillator(x, v):
@@ -53,7 +53,7 @@ final class BenchmarkSharedLoopsUniformArray[T <: Integrable](override val eleme
       elements(i).saveDerivative(dst, offset + i * elementSize)
     }
 
-  override def resetForces(): Unit =
+  override def resetAccum(): Unit =
     for (i <- FastRange(elements.length)) {
-      elements(i).resetForces()
+      elements(i).resetAccum()
     }

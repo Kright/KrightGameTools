@@ -22,42 +22,56 @@ class Pga3dPhysicsBody(var inertia: Pga3dInertia,
   def this(inertia: Pga3dInertia, motor: Pga3dMotor, localB: Pga3dBivector) =
     this(inertia, Pga3dTransform(motor), localB)
 
-  private val globalForqueAccumulator = Pga3dBivectorMutable()
+  final override inline val stateSize = Pga3dBodyState.componentsCount
+
+  // the accumulator of the global forque is six plain fields, not a Pga3dBivectorMutable: by the
+  // benchmarks an RK4 step takes the same time for 100 bodies, 2-6% less for 10'000 and up to
+  // 30% less for 100'000 - the more, the less of the bodies stays in the cache
+  private var forqueWx: Double = 0.0
+  private var forqueWy: Double = 0.0
+  private var forqueWz: Double = 0.0
+  private var forqueXy: Double = 0.0
+  private var forqueXz: Double = 0.0
+  private var forqueYz: Double = 0.0
 
   def motor: Pga3dMotor = transform.motor
-
-  def motorSandwich(point: Pga3dPoint): Pga3dPoint =
-    transform.sandwich(point)
-
-  def motorSandwich(vector: Pga3dVector): Pga3dVector =
-    transform.sandwich(vector)
 
   def globalCenter: Pga3dPoint =
     transform.sandwich(Pga3dPointCenter)
 
   def deepCopy: Pga3dPhysicsBody =
     Pga3dPhysicsBody(inertia, transform, localB).tap { b =>
-      b.globalForqueAccumulator := globalForqueAccumulator
+      b.forqueWx = forqueWx
+      b.forqueWy = forqueWy
+      b.forqueWz = forqueWz
+      b.forqueXy = forqueXy
+      b.forqueXz = forqueXz
+      b.forqueYz = forqueYz
     }
 
   def globalForque: Pga3dBivector =
-    globalForqueAccumulator.toBivector
+    Pga3dBivector(forqueWx, forqueWy, forqueWz, forqueXy, forqueXz, forqueYz)
 
   def localForque: Pga3dBivector =
     transform.reverseSandwich(globalForque)
 
   def addGlobalForque(globalForque: Pga3dBivector): Unit =
-    globalForqueAccumulator += globalForque
+    forqueWx += globalForque.wx
+    forqueWy += globalForque.wy
+    forqueWz += globalForque.wz
+    forqueXy += globalForque.xy
+    forqueXz += globalForque.xz
+    forqueYz += globalForque.yz
 
   /** Otherwise it's too easy to forget adding paired force */
   def addGlobalForquePaired(globalForque: Pga3dBivector, other: Pga3dPhysicsBody): Unit =
-    globalForqueAccumulator += globalForque
-    other.globalForqueAccumulator -= globalForque
-
-  def resetForqueAccum(): Unit =
-    globalForqueAccumulator.setZero()
-
-  final override inline val stateSize = Pga3dBodyState.componentsCount
+    addGlobalForque(globalForque)
+    other.forqueWx -= globalForque.wx
+    other.forqueWy -= globalForque.wy
+    other.forqueWz -= globalForque.wz
+    other.forqueXy -= globalForque.xy
+    other.forqueXz -= globalForque.xz
+    other.forqueYz -= globalForque.yz
 
   final override def saveState(dst: Array[Double], offset: Int): Unit =
     FlatDoubleSerializer.write(Pga3dBodyState(this), dst, offset)
@@ -70,8 +84,13 @@ class Pga3dPhysicsBody(var inertia: Pga3dInertia,
   final override def saveDerivative(dst: Array[Double], offset: Int): Unit =
     FlatDoubleSerializer.write(Pga3dBodyState.derivative(this), dst, offset)
 
-  final override def resetForces(): Unit =
-    resetForqueAccum()
+  final override def resetAccum(): Unit =
+    forqueWx = 0.0
+    forqueWy = 0.0
+    forqueWz = 0.0
+    forqueXy = 0.0
+    forqueXz = 0.0
+    forqueYz = 0.0
 
   /** @return kinetic energy */
   def getKineticEnergy: Double =
@@ -82,7 +101,7 @@ class Pga3dPhysicsBody(var inertia: Pga3dInertia,
     transform.sandwich(inertia(localB))
 
   def globalCenterOfMass: Pga3dPoint =
-    motorSandwich(inertia.centerOfMass)
+    transform.sandwich(inertia.centerOfMass)
 
   override def toString: String =
     s"PhysicsBody(inertia = ${inertia}, motor=${motor}, localB=${localB})"

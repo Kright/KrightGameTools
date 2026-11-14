@@ -23,7 +23,7 @@ final class PointMass1d(val mass: Double, var x: Double, var v: Double) extends 
     dst(offset) = v
     dst(offset + 1) = force / mass
 
-  override def resetForces(): Unit =
+  override def resetAccum(): Unit =
     force = 0.0
 
 
@@ -58,7 +58,7 @@ final class UnitDirection(val damping: Double, initialAngle: Double, var omega: 
     dst(offset + 1) = omega * cos
     dst(offset + 2) = -damping * omega
 
-  override def resetForces(): Unit = ()
+  override def resetAccum(): Unit = ()
 
 
 final class RigidRod1dConstraintResolver(a: PointMass1d, b: PointMass1d, length: Double) extends OdeConstraintResolver:

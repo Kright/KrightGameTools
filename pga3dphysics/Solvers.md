@@ -105,7 +105,7 @@ The timing column is the pure solver overhead with an empty force callback
   dt = 1e-4) its relative energy error is 5.8e-8 at 3 iterations and 8.7e-14 at 8, versus 1.4e-4
   for RK4 — at the price of many more force evaluations per step (the position error stays
   comparable to RK4, though). Measurement tables live in the tests
-  (`Pga3dInertiaLocalTest`, "mass on spring precistion").
+  (`Pga3dBodiesOdeSolverAccuracyTest`, "mass on spring precistion").
 * **`Pga3dVerletSolver` is a true Verlet on the motor group.** At first sight Verlet does
   not fit this engine at all: it has no explicit velocities — the state is two consecutive
   positions — while here `localB` is a first-class part of the state, needed by the gyroscopic

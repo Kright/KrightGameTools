@@ -38,13 +38,13 @@ class IntegrableAnyArrayTest extends AnyFunSuiteLike:
     assert(dst.toSeq == ArraySeq(marker, 2.0, -10.0, -3.0, -8.0, -15.0, marker))
   }
 
-  test("resetForces reaches every part, nested ones too") {
+  test("resetAccum reaches every part, nested ones too") {
     val a = TestOscillator(1.0, 0.0, 0.0)
     val b = TestOscillator(1.0, 0.0, 0.0)
     val integrableArray = IntegrableAnyArray(a, IntegrableAnyArray(b))
 
-    integrableArray.resetForces()
-    integrableArray.resetForces()
+    integrableArray.resetAccum()
+    integrableArray.resetAccum()
     assert(a.resetsCount == 2)
     assert(b.resetsCount == 2)
   }
@@ -78,7 +78,7 @@ class IntegrableAnyArrayTest extends AnyFunSuiteLike:
       empty.saveState(array, 1)
       empty.saveDerivative(array, offsetRightAfterTheEnd)
       empty.loadState(array, 0)
-      empty.resetForces()
+      empty.resetAccum()
       assert(array.forall(_ == marker))
     }
   }

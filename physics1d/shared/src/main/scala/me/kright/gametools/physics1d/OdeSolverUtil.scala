@@ -8,7 +8,7 @@ object OdeSolverUtil:
                      addForces: (timeInsideStep: Double) => Unit,
                      resolver: OdeConstraintResolver | Null,
                      dst: Array[Double]): Unit =
-    system.resetForces()
+    system.resetAccum()
     addForces(timeInsideStep)
     if (resolver != null) {
       resolver.addConstraintForces()

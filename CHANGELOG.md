@@ -12,7 +12,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   rigid bodies.
   - `Integrable` - an object with a state of `stateSize` doubles (a `val`, fixed for the life of
     the object): `saveState` / `loadState` / `saveDerivative` into a caller-owned
-    `Array[Double]` at an offset, `resetForces` before every force callback. `loadState` receives
+    `Array[Double]` at an offset, `resetAccum` before every force callback. `loadState` receives
     a raw linear combination and is the place to project the state back onto its manifold
     (a unit vector, a motor).
   - `IntegrableArray[T]` - several objects of an `Array[T]` as one `Integrable`, packed one
@@ -71,10 +71,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   interface. The constraints of `Pga3dVerletSolverConstrained` are an `Array` (was a `Seq`), as
   in `Pga3dConstraintResolver`.
 - `Pga3dPhysicsBody.motor_=` is removed, assign `body.transform = Pga3dTransform(motor)`.
+- `Pga3dPhysicsBody.motorSandwich(...)` is removed, call `body.transform.sandwich(...)`.
+- `Pga3dPhysicsBody.resetForqueAccum()` is renamed to `resetAccum()`, the method of `Integrable`
+  that every solver calls before the force callback.
 - `IwanFriction` and `Pga3dIwanFriction`: the constructor takes an `Array[IwanElement]` (was a
   `Seq`); `IwanFriction(element0, element1)` is unchanged.
 - `Pga3dPhysicsBody` gained the final members `stateSize`, `saveState`, `loadState`,
-  `saveDerivative`, `resetForces`: a subclass cannot declare its own with these names.
+  `saveDerivative`, `resetAccum`: a subclass cannot declare its own with these names.
 
 ### Removed
 
@@ -100,6 +103,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   principal axis) is exact, the advantage is 90x and 14x for nearly spherical bodies and fades
   to 1.0 for a tumbling asymmetric one. For RK4 it gives the rule for the step: the body loses
   the fraction `phi^4 / 5120` of its rotation, `phi` being the rotation per step.
+- `Pga3dPhysicsBody` keeps the accumulated forque in its own six fields instead of a separate
+  `Pga3dBivectorMutable`: an RK4 step takes the same time for 100 bodies, 2-6% less for 10'000
+  and up to 30% less for 100'000, where the bodies do not fit into the cache.
 - matrix depends on arrayview 0.4.2.
 
 ## [0.12.0] - 2026-11-11

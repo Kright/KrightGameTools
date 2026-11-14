@@ -17,7 +17,7 @@ final class TestOscillator(val k: Double, var x: Double, var v: Double) extends 
     dst(offset) = v
     dst(offset + 1) = -k * x
 
-  override def resetForces(): Unit =
+  override def resetAccum(): Unit =
     resetsCount += 1
 
 
@@ -39,4 +39,4 @@ final class TestTriple(var a: Double, var b: Double, var c: Double) extends Inte
     dst(offset + 1) = -2.0 * b
     dst(offset + 2) = -3.0 * c
 
-  override def resetForces(): Unit = ()
+  override def resetAccum(): Unit = ()

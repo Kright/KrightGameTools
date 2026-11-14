@@ -271,5 +271,5 @@ final class OdeSolverCallRecorder(log: ArrayBuffer[String]) extends Integrable:
     log += "derivative"
     dst(offset) = -value
 
-  override def resetForces(): Unit =
+  override def resetAccum(): Unit =
     log += "reset"

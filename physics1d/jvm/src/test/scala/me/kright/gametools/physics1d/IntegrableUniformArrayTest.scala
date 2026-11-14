@@ -56,11 +56,11 @@ class IntegrableUniformArrayTest extends AnyFunSuiteLike:
     assert(target.map(e => (e.x, e.v)).toSeq == source.elements.map(e => (e.x, e.v)).toSeq)
   }
 
-  test("resetForces reaches every element") {
+  test("resetAccum reaches every element") {
     val elements = makeElements()
     val integrableArray = IntegrableUniformArray[TestOscillator](elements, 2)
-    integrableArray.resetForces()
-    integrableArray.resetForces()
+    integrableArray.resetAccum()
+    integrableArray.resetAccum()
     assert(elements.forall(_.resetsCount == 2))
   }
 
@@ -77,7 +77,7 @@ class IntegrableUniformArrayTest extends AnyFunSuiteLike:
     empty.saveState(array, 1)
     empty.saveDerivative(array, 1)
     empty.loadState(array, 1)
-    empty.resetForces()
+    empty.resetAccum()
     assert(array.forall(_ == marker))
   }
 

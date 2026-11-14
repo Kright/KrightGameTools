@@ -38,8 +38,8 @@ class Pga3dConstrainedChainTest extends AnyFunSuiteLike:
 
   private def maxRodError(bodies: Array[Pga3dPhysicsBody], resolver: Pga3dConstraintResolver[Pga3dPhysicsBody]): Double =
     resolver.constraints.map { c =>
-      val pA = if (c.bodyA >= 0) bodies(c.bodyA).motorSandwich(c.anchorA) else c.anchorA
-      val pB = if (c.bodyB >= 0) bodies(c.bodyB).motorSandwich(c.anchorB) else c.anchorB
+      val pA = if (c.bodyA >= 0) bodies(c.bodyA).transform.sandwich(c.anchorA) else c.anchorA
+      val pB = if (c.bodyB >= 0) bodies(c.bodyB).transform.sandwich(c.anchorB) else c.anchorB
       Math.abs((pA - pB).norm - linkLength)
     }.max
 

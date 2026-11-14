@@ -167,7 +167,7 @@ class Pga3dConstraintResolver[T <: Pga3dPhysicsBody](val bodies: Array[T],
     Some(Pga3dConstraintGeometry(pA, pB, dist, n, j, gA, gB, wSum))
 
   private def anchorWorld(bodyIndex: Int, anchor: Pga3dPoint): Pga3dPoint =
-    if (bodyIndex >= 0) bodies(bodyIndex).motorSandwich(anchor) else anchor
+    if (bodyIndex >= 0) bodies(bodyIndex).transform.sandwich(anchor) else anchor
 
   /** the local twist response to a unit world constraint forque; zero for the world side */
   private def responseTwist(bodyIndex: Int, j: Pga3dBivector): Pga3dBivector =

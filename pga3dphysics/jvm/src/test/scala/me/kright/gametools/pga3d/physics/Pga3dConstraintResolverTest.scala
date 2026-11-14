@@ -27,8 +27,8 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
     (bodies, resolver)
 
   private def anchorDistance(bodies: Array[Pga3dPhysicsBody], c: Pga3dDistanceConstraint): Double =
-    val pA = if (c.bodyA >= 0) bodies(c.bodyA).motorSandwich(c.anchorA) else c.anchorA
-    val pB = if (c.bodyB >= 0) bodies(c.bodyB).motorSandwich(c.anchorB) else c.anchorB
+    val pA = if (c.bodyA >= 0) bodies(c.bodyA).transform.sandwich(c.anchorA) else c.anchorA
+    val pB = if (c.bodyB >= 0) bodies(c.bodyB).transform.sandwich(c.anchorB) else c.anchorB
     (pA - pB).norm
 
   test("spinning dumbbell: distance, momentum and energy are conserved") {
@@ -74,9 +74,9 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
 
     // the formulas the resolver is built on: v = -(W cross p), a = -(W' cross p) - (W cross v)
     val w = body.motor.sandwich(body.localB)
-    val p0 = body.motorSandwich(q)
+    val p0 = body.transform.sandwich(q)
     val vFormula = -(w cross p0)
-    body.resetForqueAccum()
+    body.resetAccum()
     val dw = body.motor.sandwich(body.inertia.getAcceleration(body.localB, body.localForque))
     val aFormula = -(dw cross p0) - (w cross vFormula)
 
@@ -84,7 +84,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
     def anchorAfter(dt: Double): Pga3dPoint =
       val copy = body.deepCopy
       Pga3dPhysicsSystem(Array(copy), OdeSolverRK4).doStep(dt, _ => ())
-      copy.motorSandwich(q)
+      copy.transform.sandwich(q)
 
     val pPlus = anchorAfter(h)
     val pMinus = anchorAfter(-h)
