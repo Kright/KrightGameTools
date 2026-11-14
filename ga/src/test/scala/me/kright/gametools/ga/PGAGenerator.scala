@@ -3,6 +3,7 @@ package me.kright.gametools.ga
 import me.kright.gametools.vector.VectorMathGenerators
 import me.kright.gametools.mathutil.Sign
 import org.scalacheck.Gen
+import scala.collection.immutable.ArraySeq
 
 object PGAGenerator:
   def allPGASeq: IndexedSeq[PGA] =
@@ -17,7 +18,7 @@ object PGAGenerator:
 
   def planeGen(using ga: PGA): Gen[MultiVector[Double]] =
     val vectors = ga.generators
-    for (lst <- Gen.containerOfN[Seq, Double](vectors.size, VectorMathGenerators.double1))
+    for (lst <- Gen.containerOfN[ArraySeq, Double](vectors.size, VectorMathGenerators.double1))
       yield MultiVector(
         lst.zip(vectors).map { (value, vec) =>
           BasisBlade(vec, ga.signature) -> value
@@ -26,7 +27,7 @@ object PGAGenerator:
 
   def pointGen(using ga: PGA): Gen[MultiVector[Double]] =
     val vectors = ga.generators
-    for (lst <- Gen.containerOfN[Seq, Double](vectors.size, VectorMathGenerators.double1))
+    for (lst <- Gen.containerOfN[ArraySeq, Double](vectors.size, VectorMathGenerators.double1))
       yield MultiVector(
         lst.zip(vectors).map { (value, vec) =>
           BasisBlade(vec, ga.signature) -> (if (vec.squareSign == Sign.Zero) 1.0 else value)

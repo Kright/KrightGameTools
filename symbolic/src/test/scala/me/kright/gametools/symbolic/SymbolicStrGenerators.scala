@@ -9,7 +9,7 @@ import scala.collection.immutable.ArraySeq
 
 
 object SymbolicStrGenerators:
-  val possibleNames: Seq[String] = ArraySeq("a", "b", "c", "d", "e", "f", "g", "h", "x", "y", "z")
+  val possibleNames: ArraySeq[String] = ArraySeq("a", "b", "c", "d", "e", "f", "g", "h", "x", "y", "z")
   val variable: Gen[SymbolicStr] = Gen.oneOf(possibleNames).map(SymbolicStr(_))
 
   val numberValue: Gen[Int] = chooseNum[Int](-100, 100, -1, 0, 1)

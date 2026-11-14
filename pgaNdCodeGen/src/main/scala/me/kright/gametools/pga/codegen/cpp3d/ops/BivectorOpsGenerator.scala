@@ -64,7 +64,7 @@ class BivectorOpsGenerator extends CppCodeGenerator {
     val includes = if (cls == CppSubclasses.bivector) {
       ArraySeq("<utility>")
     } else {
-      Seq.empty
+      ArraySeq.empty[String]
     }
 
     val code = if (cls == CppSubclasses.bivector) {

@@ -8,6 +8,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 
 import scala.math.Numeric.Implicits.infixNumericOps
+import scala.collection.immutable.ArraySeq
 
 class MultiVectorTest extends AnyFunSuite:
   private implicit val doubleEquality: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(1e-9)
@@ -88,7 +89,7 @@ class MultiVectorTest extends AnyFunSuite:
   test("geometric product preserves length for a product of blades") {
     forAnyGA {
       if (ga.signature.zeros == 0) {
-        forAll(Gen.containerOfN[Seq, MultiVector[Double]](4, bladesGen(1))) { blades =>
+        forAll(Gen.containerOfN[ArraySeq, MultiVector[Double]](4, bladesGen(1))) { blades =>
           val mags = blades.map(_.magnitude)
           val totalMag = blades.reduce(_ ⟑ _).magnitude
           assert(mags.product === totalMag)

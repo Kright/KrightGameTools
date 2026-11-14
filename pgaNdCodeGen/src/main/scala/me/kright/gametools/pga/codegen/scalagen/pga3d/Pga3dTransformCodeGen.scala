@@ -1,6 +1,7 @@
 package me.kright.gametools.pga.codegen.scalagen.pga3d
 
 import me.kright.gametools.pga.codegen.scalagen.common.ScalaTransformCodeGen
+import scala.collection.immutable.ArraySeq
 
 /**
  * The 3d transform generator (Pga3dProjectiveTransform for normalized = false, Pga3dTransform for
@@ -23,7 +24,7 @@ class Pga3dTransformCodeGen(normalized: Boolean) extends ScalaTransformCodeGen(n
       })
     }
 
-  override protected def momentBlockDocLines: Seq[String] = Seq(
+  override protected def momentBlockDocLines: Seq[String] = ArraySeq(
     " *  - d00..d22: the dual (moment) 3x3 block for bivectors, which mixes the bulk part into the weight part;",
     " *    the reverse block is expressed through the same coefficients.",
   )

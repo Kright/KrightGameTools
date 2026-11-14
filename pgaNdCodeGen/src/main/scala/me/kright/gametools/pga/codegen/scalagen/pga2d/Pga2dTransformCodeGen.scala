@@ -1,6 +1,7 @@
 package me.kright.gametools.pga.codegen.scalagen.pga2d
 
 import me.kright.gametools.pga.codegen.scalagen.common.ScalaTransformCodeGen
+import scala.collection.immutable.ArraySeq
 
 /**
  * The 2d transform generator (Pga2dProjectiveTransform for normalized = false, Pga2dTransform for
@@ -19,13 +20,13 @@ class Pga2dTransformCodeGen(normalized: Boolean) extends ScalaTransformCodeGen(n
 
   override protected def rotationDocLines: Seq[String] =
     if (normalized)
-      Seq(
+      ArraySeq(
         " *  - cos, sin: the cosine and sine of the rotation angle;",
         " *    the full 2x2 rotation matrix is [[cos, sin], [-sin, cos]], and the reverse transformation",
         " *    uses its transpose.",
       )
     else
-      Seq(
+      ArraySeq(
         " *  - r00, r01: the two independent entries of the 2x2 rotation matrix [[r00, r01], [-r01, r00]],",
         " *    the cosine and sine of the rotation angle scaled by motor.normSquare; the reverse",
         " *    transformation uses the transpose.",

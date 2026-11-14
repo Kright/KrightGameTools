@@ -3,6 +3,7 @@ package me.kright.gametools.pga3d
 import me.kright.gametools.ga.{GARepresentationConfig, MultiVector, PGA3, Signature}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 /**
  * Properties of the generated closed-form dexp/dexpInv, checked against the slow generic
@@ -41,7 +42,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
       val gaMotor = PGA3.expForBivector(toGa(u))
       val motor = u.exp
-      val diff = Seq(
+      val diff = ArraySeq(
         gaMotor("s") - motor.s,
         gaMotor("wx") - motor.wx, gaMotor("wy") - motor.wy, gaMotor("wz") - motor.wz,
         gaMotor("xy") - motor.xy, gaMotor("xz") - motor.xz, gaMotor("yz") - motor.yz,
@@ -58,7 +59,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   test("dexp matches the ga series for every argument type") {
     // 1.0: large arguments; 1e-4: small, still on the trigonometric branch; 1e-6: the series branch
-    for (scale <- Seq(1.0, 1e-4, 1e-6)) {
+    for (scale <- ArraySeq(1.0, 1e-4, 1e-6)) {
       forAll(Pga3dGenerators.bivectors, Pga3dGenerators.bivectors) { (u0, b) =>
         val u = u0 * scale
         val tol = 1e-13 * (1.0 + b.norm) * (1.0 + u.norm)
@@ -84,7 +85,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     // (the eps/x profile of the trigonometric k2/k3 cancellations); the wide polynomial
     // windows of SharedFormulas.dexpSinMinusCos/dexpK2 keep the error at a few ulps for
     // every bulk magnitude, which this sweep pins on both sides of both windows
-    for (bulkScale <- Seq(1.2e-5, 1e-4, 1e-3, 1e-2, 0.1, 0.45, 0.55, 1.0)) {
+    for (bulkScale <- ArraySeq(1.2e-5, 1e-4, 1e-3, 1e-2, 0.1, 0.45, 0.55, 1.0)) {
       forAll(Pga3dGenerators.bivectors.filter(_.bulkNorm > 1e-20), Pga3dGenerators.bivectors) { (u0, b) =>
         val u = toBivector(u0.weight) + u0.bulk.normalizedByNorm * bulkScale
         val tol = 1e-14 * (1.0 + b.norm) * (1.0 + u.norm)
@@ -102,7 +103,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("dexpInv matches the ga series for every argument type") {
     // 0.5 instead of 1.0: keeps bulkNorm below ~0.9, where the truncated Bernoulli series
     // of the reference still converges to full double precision
-    for (scale <- Seq(0.5, 1e-4, 1e-6)) {
+    for (scale <- ArraySeq(0.5, 1e-4, 1e-6)) {
       forAll(Pga3dGenerators.bivectors, Pga3dGenerators.bivectors) { (u0, b) =>
         val u = u0 * scale
         val tol = 1e-13 * (1.0 + b.norm) * (1.0 + u.norm)
@@ -138,7 +139,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     forAll(Pga3dGenerators.bivectors) { u =>
       // the generated cross groups the mirrored product pairs (see SortAntisymmetricPairs),
       // so u.cross(u * t) is exactly zero for power-of-two t and dexp passes b through exactly
-      for (t <- Seq(1.0, 2.0, 0.5, -4.0)) {
+      for (t <- ArraySeq(1.0, 2.0, 0.5, -4.0)) {
         val b = u * t
         assert(u.dexp(b) == b, s"u = $u, t = $t")
         assert(u.dexpInv(b) == b, s"u = $u, t = $t")
@@ -169,7 +170,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("no jump at the trigonometry/series thresholds") {
     // 1e-5 is the guard threshold of the dual coefficients (k2d, k3d), 0.5 is the wide
     // polynomial window of sinMinusCosDivLen2 and k2
-    for ((threshold, delta) <- Seq((1e-5, 1e-9), (0.5, 1e-12))) {
+    for ((threshold, delta) <- ArraySeq((1e-5, 1e-9), (0.5, 1e-12))) {
       forAll(Pga3dGenerators.bivectors.filter(_.bulkNorm > 1e-20), Pga3dGenerators.bivectors) { (u0, b) =>
         val direction = u0.normalizedByBulk
         val below = direction * (threshold * (1.0 - delta))

@@ -14,7 +14,7 @@ class ProductOfSumToSumOfProducts extends SymbolicStrTransformDepthFirst({
 
 
 private def flatten(elems: Seq[SymbolicStr]): SymbolicStr = {
-  var result: Seq[Seq[SymbolicStr]] = ArraySeq(Seq.empty)
+  var result: Seq[Seq[SymbolicStr]] = ArraySeq(ArraySeq.empty)
   for (e <- elems) {
     result = e match
       case Func("+", sumElems) =>

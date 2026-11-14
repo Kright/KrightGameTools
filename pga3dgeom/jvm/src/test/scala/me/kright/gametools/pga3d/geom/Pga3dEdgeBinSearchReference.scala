@@ -2,6 +2,7 @@ package me.kright.gametools.pga3d.geom
 
 import me.kright.gametools.mathutil.MathUtil
 import me.kright.gametools.pga3d.Pga3dPoint
+import scala.collection.immutable.ArraySeq
 
 /**
  * former Pga3dEdge.getNearestPointsBinSearch, removed from the library (slow, allocating,
@@ -11,13 +12,12 @@ import me.kright.gametools.pga3d.Pga3dPoint
 object Pga3dEdgeBinSearchReference:
   def getNearestPoints(a: Pga3dEdge, b: Pga3dEdge,
                        t0: Double = 0.0, t1: Double = 1.0): (Pga3dPoint, Pga3dPoint) = {
-    val numberToDistance: Seq[(Int, Double)] = (0 to 4)
-      .map { i =>
-        val t = MathUtil.interpolate(t0, t1, i / 4.0)
-        val ai = a.interpolatedPoint(t)
-        val dist = b.distanceTo(ai)
-        (i, dist)
-      }
+    val numberToDistance: ArraySeq[(Int, Double)] = ArraySeq.tabulate(5) { i =>
+      val t = MathUtil.interpolate(t0, t1, i / 4.0)
+      val ai = a.interpolatedPoint(t)
+      val dist = b.distanceTo(ai)
+      (i, dist)
+    }
 
     val maxDist = numberToDistance.map(_._2).max
     val (minI, minDist) = numberToDistance.minBy(_._2)

@@ -39,7 +39,7 @@ class StructFieldsGenerator extends CppCodeGenerator:
 
     val includes =
       if (cls.variableFields.nonEmpty) ArraySeq("<array>", "<span>")
-      else Seq.empty
+      else ArraySeq.empty[String]
 
     structBodyPart(
       code.toString,

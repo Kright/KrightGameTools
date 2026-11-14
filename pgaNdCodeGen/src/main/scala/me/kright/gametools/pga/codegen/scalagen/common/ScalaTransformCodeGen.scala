@@ -8,6 +8,7 @@ import me.kright.gametools.symbolic.transform.simplifiers.ReplaceSumOrProduct
 
 import scala.collection.mutable
 import scala.math.Numeric.Implicits.infixNumericOps
+import scala.collection.immutable.ArraySeq
 
 /**
  * Generates the ${prefix}ProjectiveTransform class (normalized = false) or the ${prefix}Transform
@@ -68,9 +69,9 @@ class ScalaTransformCodeGen(protected val normalized: Boolean)(using protected v
   private val normSquareName = "normSquare"
   private val normSquareIName = s"${normSquareName}I"
   private var hasNormSquareI = false
-  protected var rotationNames: Seq[String] = Seq.empty
+  protected var rotationNames: Seq[String] = ArraySeq.empty
   protected var rotationIsComplete = true
-  private var translationLines: Seq[Seq[String]] = Seq.empty
+  private var translationLines: Seq[Seq[String]] = ArraySeq.empty
 
   protected def isZero(e: Sym): Boolean =
     e == Sym.zero || e == num.zero
@@ -111,7 +112,7 @@ class ScalaTransformCodeGen(protected val normalized: Boolean)(using protected v
   protected def registerMomentBlock(): Unit = ()
 
   /** doc-comment lines describing the fields of [[registerMomentBlock]] */
-  protected def momentBlockDocLines: Seq[String] = Seq.empty
+  protected def momentBlockDocLines: Seq[String] = ArraySeq.empty
 
   /**
    * the name of the cached rotation-matrix entry at (row, column). In 2d the two stored entries
@@ -125,7 +126,7 @@ class ScalaTransformCodeGen(protected val normalized: Boolean)(using protected v
     val n = algebra.vector.variableFields.size
     val rNamesText = if (rotationIsComplete) s"${rotationFieldName(0, 0)}..${rotationFieldName(n - 1, n - 1)}" else rotationNames.mkString(", ")
     val scaledNote = if (normalized) "" else " (scaled by motor.normSquare for non-normalized motors)"
-    Seq(
+    ArraySeq(
       s" *  - $rNamesText: the ${n}x$n rotation matrix of the motor$scaledNote,",
       " *    used for the euclidean part of any object; the reverse transformation uses its transpose.",
     ) ++ Option.when(!rotationIsComplete)(
@@ -162,18 +163,18 @@ class ScalaTransformCodeGen(protected val normalized: Boolean)(using protected v
     if (!normalized) newGroup()
     val psField = algebra.pseudoScalar.variableFields.head
     register(normSquareName, outputExpr(forwardOp.apply(basisInput(psField)), psField))
-    if (!normalized) addLine(Seq(normSquareName))
+    if (!normalized) addLine(ArraySeq(normSquareName))
     val motorScalarField = motor.variableFields.find(_.basisBlade == algebra.pga.scalarBlade).get
     val normSquareIExpr = outputExpr(forwardOp.apply(basisInput(motorScalarField)), psField)
     if (!isZero(normSquareIExpr)) {
       register(normSquareIName, normSquareIExpr)
-      if (!normalized) addLine(Seq(normSquareIName))
+      if (!normalized) addLine(ArraySeq(normSquareIName))
       hasNormSquareI = true
     }
 
     // t / tRev: the translations for points, from the two sandwiches of the coordinate center
     newGroup()
-    for ((op, suffix) <- Seq(forwardOp -> "", reverseOp -> "Rev")) {
+    for ((op, suffix) <- ArraySeq(forwardOp -> "", reverseOp -> "Rev")) {
       val result = op.apply(constInput(algebra.pointCenter).get)
       val resultCls = algebra.findMatchingClass(result)
       addLine(resultCls.variableFields.flatMap { outF =>
@@ -206,18 +207,18 @@ class ScalaTransformCodeGen(protected val normalized: Boolean)(using protected v
 
   override def generateClassDoc(): String =
     val rLine = rotationDocLines
-    val tLine = Seq(
+    val tLine = ArraySeq(
       s" *  - ${translationLines.map(_.mkString(", ")).mkString(" and ")}: translation for points, forward and reverse.")
     val normSquareLines =
       if (normalized)
-        Seq.empty
+        ArraySeq.empty[String]
       else if (hasNormSquareI)
-        Seq(
+        ArraySeq(
           " *  - normSquare and normSquareI: the Study number motor * motor.reverse (normSquareI = 0",
           " *    for normalized motors).",
         )
       else
-        Seq(" *  - normSquare: the squared norm of the motor, the weight of the resulting projective point.")
+        ArraySeq(" *  - normSquare: the squared norm of the motor, the weight of the resulting projective point.")
 
     val cachedValues = (rLine ++ momentBlockDocLines ++ tLine ++ normSquareLines).mkString("\n")
 
@@ -289,7 +290,7 @@ class ScalaTransformCodeGen(protected val normalized: Boolean)(using protected v
                val rSym = Sym(s"r.${f.name}")
                (rSym * expr, rSym * Sym(name))
              };
-           signed <- Seq((pattern, replacement), (num.negate(pattern), num.negate(replacement))))
+           signed <- ArraySeq((pattern, replacement), (num.negate(pattern), num.negate(replacement))))
       yield signed
 
     val substituted = substitutions.foldLeft(fullResult) { case (mv, (pattern, replacement)) =>
@@ -399,7 +400,7 @@ class ScalaTransformCodeGen(protected val normalized: Boolean)(using protected v
         code(s"""s"${name}($$motor)"""")
       }
 
-      for (cls <- supportedClasses; op <- Seq(forwardOp, reverseOp)) {
+      for (cls <- supportedClasses; op <- ArraySeq(forwardOp, reverseOp)) {
         generateMethod(code, op, cls)
       }
     }

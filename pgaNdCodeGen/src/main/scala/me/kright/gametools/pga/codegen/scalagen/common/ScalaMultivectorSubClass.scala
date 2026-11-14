@@ -43,7 +43,7 @@ class ScalaMultivectorSubClass(name: String,
     val bladesAreTrivial = constantFields.isEmpty &&
       variableFields.forall(f => f.sign == Sign.Positive && algebra.pga.representation(f.basisBlade) == f.name)
 
-    val lines = Seq.newBuilder[String]
+    val lines = ArraySeq.newBuilder[String]
     lines ++= description.linesIterator
     lines += ""
     if (variableFields.nonEmpty) lines += s"Variable fields: ${variableFields.map(_.name).mkString(", ")}."

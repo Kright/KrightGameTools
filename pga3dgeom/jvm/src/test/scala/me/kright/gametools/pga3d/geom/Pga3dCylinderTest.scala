@@ -3,22 +3,23 @@ package me.kright.gametools.pga3d.geom
 import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dPoint, Pga3dTranslator, Pga3dVector}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 class Pga3dCylinderTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   /** points densely sampling the cylinder surface: both cap rims, the cap centers and the side */
-  private def surfacePoints(c: Pga3dCylinder): Seq[Pga3dPoint] =
+  private def surfacePoints(c: Pga3dCylinder): ArraySeq[Pga3dPoint] =
     val axis = (c.b - c.a).normalizedByNorm
     val anyOrtho = if (Math.abs(axis.x) < 0.9) Pga3dVector(1, 0, 0) else Pga3dVector(0, 1, 0)
     val u = Pga3dVector.crossRightHanded(axis, anyOrtho).normalizedByNorm
     val v = Pga3dVector.crossRightHanded(axis, u)
     val points = for {
-      angleStep <- 0 until 64
+      angleStep <- ArraySeq.range(0, 64)
       angle = angleStep * (2.0 * Math.PI / 64)
       radial = (u * Math.cos(angle) + v * Math.sin(angle)) * c.r
-      t <- Seq(0.0, 0.25, 0.5, 0.75, 1.0)
+      t <- ArraySeq(0.0, 0.25, 0.5, 0.75, 1.0)
     } yield c.a + (c.b - c.a) * t + radial
-    points ++ Seq(c.a, c.b)
+    points ++ ArraySeq(c.a, c.b)
   
   test("contains correctly identifies points inside the cylinder") {
     val a = Pga3dPoint(0, 0, 0)
@@ -153,7 +154,7 @@ class Pga3dCylinderTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     val moved = motor.sandwich(cylinder)
 
     assert(moved.r == cylinder.r)
-    val testPoints = Seq(
+    val testPoints = ArraySeq(
       Pga3dPoint(0, 0, 5), Pga3dPoint(1.9, 0, 5), Pga3dPoint(2.1, 0, 5),
       Pga3dPoint(0, 0, -1), Pga3dPoint(0, 0, 11), Pga3dPoint(0, 1.5, 0.1))
     for (p <- testPoints) {

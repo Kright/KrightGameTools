@@ -37,7 +37,7 @@ class ExactArithTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   private def assertPreciseDiffOfProducts(a: Double, b: Double, c: Double, d: Double): Unit = {
     val expected = exactDiffOfProducts(a, b, c, d)
-    for ((result, tolerance) <- Seq(
+    for ((result, tolerance) <- ArraySeq(
       (ExactArith.diffOfProducts(a, b, c, d), 1e-15),
       (diffOfProductsPortable(a, b, c, d), 2e-15))) {
       if (expected.signum == 0) {

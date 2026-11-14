@@ -2,6 +2,7 @@ package me.kright.gametools.pga3d
 
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 /**
  * Bit-exact properties of the generated cross: the code generator groups the mirrored
@@ -11,7 +12,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 class CrossTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
   // exact power-of-two multiples: the mirrored products round to bit-identical doubles
-  private val powerOfTwoMultipliers = Seq(1.0, 2.0, 0.5, -4.0)
+  private val powerOfTwoMultipliers = ArraySeq(1.0, 2.0, 0.5, -4.0)
 
   test("cross of proportional arguments is exactly zero") {
     forAll(Pga3dGenerators.bivectors) { u =>

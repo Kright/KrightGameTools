@@ -4,6 +4,7 @@ import me.kright.gametools.symbolic.SymbolicStr.{*, given}
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import scala.math.Numeric.Implicits.infixNumericOps
+import scala.collection.immutable.ArraySeq
 
 
 class SymbolicToPrettyStringTest extends AnyFunSuiteLike:
@@ -27,17 +28,17 @@ class SymbolicToPrettyStringTest extends AnyFunSuiteLike:
     assert(SymbolicToPrettyString(flatSum("a", "b", "c", "d", "e", "f")) == "((a + b) + (c + d) + (e + f))")
     assert(SymbolicToPrettyString(flatSum("a", "b", "c", "d", "e", "f", "g", "h")) ==
       "(((a + b) + (c + d)) + ((e + f) + (g + h)))")
-    assert(SymbolicToPrettyString(SymbolicStr("+", Seq(SymbolicStr("a"), SymbolicStr(-1.0) * SymbolicStr("b"), SymbolicStr("c"), SymbolicStr(-1.0) * SymbolicStr("d")))) ==
+    assert(SymbolicToPrettyString(SymbolicStr("+", ArraySeq(SymbolicStr("a"), SymbolicStr(-1.0) * SymbolicStr("b"), SymbolicStr("c"), SymbolicStr(-1.0) * SymbolicStr("d")))) ==
       "((a - b) + (c - d))")
   }
 
   test("a pair starting with a negative term is subtracted as a whole") {
     // a + b - c + d becomes (a + b) - (c - d): no group starts with a minus
-    assert(SymbolicToPrettyString(SymbolicStr("+", Seq(
+    assert(SymbolicToPrettyString(SymbolicStr("+", ArraySeq(
       SymbolicStr("a"), SymbolicStr("b"), SymbolicStr(-1.0) * SymbolicStr("c"), SymbolicStr("d")))) ==
       "((a + b) - (c - d))")
     // both terms negative: the pair is subtracted with a plus inside
-    assert(SymbolicToPrettyString(SymbolicStr("+", Seq(
+    assert(SymbolicToPrettyString(SymbolicStr("+", ArraySeq(
       SymbolicStr("a"), SymbolicStr("b"), SymbolicStr(-1.0) * SymbolicStr("c"), SymbolicStr(-2.0) * SymbolicStr("d")))) ==
       "((a + b) - (c + 2.0 * d))")
   }

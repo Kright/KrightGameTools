@@ -4,6 +4,7 @@ import me.kright.gametools.pga2d.{Pga2dPoint, Pga2dVector}
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 /**
  * Pga2dTriangle.getNearestPoint implementation used up to 0.9.x, kept as a correctness
@@ -128,14 +129,14 @@ class Pga2dTriangleNearestPointTest extends AnyFunSuiteLike with ScalaCheckPrope
   test("voronoi regions survive extreme coordinate magnitudes") {
     // beyond ~1e75 the intermediate products of dot products (~scale^4) overflow;
     // below ~1e-75 they underflow to zero and the answer degrades to the longest-edge fallback
-    for (scale <- Seq(1e-70, 1e-30, 1e-10, 1e-3, 1e3, 1e10, 1e30, 1e70)) {
+    for (scale <- ArraySeq(1e-70, 1e-30, 1e-10, 1e-3, 1e3, 1e10, 1e30, 1e70)) {
       checkRegions(scale, offset = Pga2dVector(0, 0))
     }
   }
 
   test("voronoi regions survive a far-away scene") {
     for (
-      offset <- Seq(
+      offset <- ArraySeq(
         Pga2dVector(1e6, -1e6),
         Pga2dVector(-1e9, 1e9),
       )
@@ -204,7 +205,7 @@ class Pga2dTriangleNearestPointTest extends AnyFunSuiteLike with ScalaCheckPrope
       val tolerance = 1e-9 * (1.0 + expectedDist)
 
       for (
-        triangle <- Seq(
+        triangle <- ArraySeq(
           Pga2dTriangle(edge.a, edge.a, edge.b),
           Pga2dTriangle(edge.a, edge.b, edge.a),
           Pga2dTriangle(edge.a, edge.b, edge.b),

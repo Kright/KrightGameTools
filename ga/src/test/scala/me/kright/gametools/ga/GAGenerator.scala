@@ -1,6 +1,7 @@
 package me.kright.gametools.ga
 
 import org.scalacheck.Gen
+import scala.collection.immutable.ArraySeq
 
 object GAGenerator:
   def allGASeq: IndexedSeq[GA] =
@@ -23,7 +24,7 @@ object GAGenerator:
     basisBladesGen.map(MultiVector(ga, _))
 
   def multivectorsGen(using ga: GA): Gen[MultiVector[Double]] =
-    Gen.containerOfN[Seq, Double](ga.signature.bladesCount, Gen.double).map { values =>
+    Gen.containerOfN[ArraySeq, Double](ga.signature.bladesCount, Gen.double).map { values =>
       require(values.length == ga.signature.bladesCount)
       MultiVector(ga.blades.zip(values))(using ga)
     }

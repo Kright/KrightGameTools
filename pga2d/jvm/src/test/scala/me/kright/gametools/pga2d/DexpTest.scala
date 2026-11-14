@@ -3,6 +3,7 @@ package me.kright.gametools.pga2d
 import me.kright.gametools.ga.{GARepresentationConfig, MultiVector, PGA2, Signature}
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import scala.collection.immutable.ArraySeq
 
 /**
  * Properties of the generated closed-form dexp/dexpInv, checked against the slow generic
@@ -35,7 +36,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
 
       val gaMotor = PGA2.expForBivector(toGa(u))
       val motor = u.exp
-      val diff = Seq(
+      val diff = ArraySeq(
         gaMotor("s") - motor.s,
         gaMotor("wx") - motor.wx, gaMotor("wy") - motor.wy, gaMotor("xy") - motor.xy,
       ).map(Math.abs).max
@@ -51,7 +52,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("dexp and dexpInv match the ga series for every argument type") {
     // 1.0: large arguments (bulkNorm <= 1, inside the convergence radius of the dexpInv
     // reference); 1e-4: small, still on the trigonometric branch; 1e-6: the series branch
-    for (scale <- Seq(1.0, 1e-4, 1e-6)) {
+    for (scale <- ArraySeq(1.0, 1e-4, 1e-6)) {
       forAll(Pga2dGenerators.projectivePoints, Pga2dGenerators.projectivePoints) { (u0, b) =>
         val u = u0 * scale
         val tol = 1e-13 * (1.0 + b.norm) * (1.0 + u.norm)
@@ -68,7 +69,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     // the closed forms lost up to ~4e-11 * weightNorm(u) * norm(b) just above the threshold;
     // the wide polynomial windows of SharedFormulas.dexpSinMinusCos/dexpK2 keep the error at
     // a few ulps for every bulk magnitude, which this sweep pins on both sides of the window
-    for (bulkScale <- Seq(1.2e-5, 1e-4, 1e-3, 1e-2, 0.1, 0.45, 0.55, 1.0)) {
+    for (bulkScale <- ArraySeq(1.2e-5, 1e-4, 1e-3, 1e-2, 0.1, 0.45, 0.55, 1.0)) {
       forAll(Pga2dGenerators.projectivePoints, Pga2dGenerators.projectivePoints) { (u0, b) =>
         val u = Pga2dProjectivePoint(u0.x, u0.y, if (u0.w < 0) -bulkScale else bulkScale)
         val tol = 1e-14 * (1.0 + b.norm) * (1.0 + u.norm)
@@ -102,7 +103,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
     forAll(Pga2dGenerators.projectivePoints) { u =>
       // in 2d each component of cross is a single product difference, so u.cross(u * t) is
       // exactly zero for power-of-two t (the products are bit-identical) and dexp is exact
-      for (t <- Seq(1.0, 2.0, 0.5, -4.0)) {
+      for (t <- ArraySeq(1.0, 2.0, 0.5, -4.0)) {
         val b = u * t
         assert(u.dexp(b) == b, s"u = $u, t = $t")
         assert(u.dexpInv(b) == b, s"u = $u, t = $t")
@@ -131,7 +132,7 @@ class DexpTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
   test("no jump at the trigonometry/series thresholds") {
     // 1e-5 is the series window of sinDivLen, 0.5 the wide polynomial window of
     // sinMinusCosDivLen2 and k2
-    for ((threshold, delta) <- Seq((1e-5, 1e-9), (0.5, 1e-12))) {
+    for ((threshold, delta) <- ArraySeq((1e-5, 1e-9), (0.5, 1e-12))) {
       forAll(Pga2dGenerators.projectivePoints.filter(_.bulkNorm > 1e-20), Pga2dGenerators.projectivePoints) { (u0, b) =>
         val direction = u0.normalizedByBulk
         val below = direction * (threshold * (1.0 - delta))
