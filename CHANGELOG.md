@@ -60,6 +60,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `Pga3dBodyState`, with the order of the floating point operations preserved: the trajectories
   are bit-identical to 0.12.0. The per-body estimates of `Pga3dPhysicsSolverRKF45` are folded
   from the per-double ones and may differ in the last bit.
+- matrix depends on arrayview 0.4.2.
 
 ## [0.12.0] - 2026-11-11
 

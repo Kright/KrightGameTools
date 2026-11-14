@@ -120,7 +120,7 @@ lazy val matrix = crossProject(JSPlatform, JVMPlatform)
   .jsSettings(jsTestsCompileNotRun)
   .settings(strictSettings)
   .settings(
-    libraryDependencies += "me.kright" %%% "arrayview" % "0.4.1",
+    libraryDependencies += "me.kright" %%% "arrayview" % "0.4.2",
   )
   .settings(scalatestSettings)
   .settings(sonatypeSettings, name := "gametools-matrix")
