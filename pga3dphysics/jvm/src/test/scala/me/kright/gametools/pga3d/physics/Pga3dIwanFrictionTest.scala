@@ -1,7 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.{Pga3dPoint, Pga3dRotor, Pga3dTranslator, Pga3dVector}
-import me.kright.gametools.physics1d.{IwanElement, IwanFriction}
+import me.kright.gametools.physics1d.{IwanElement, IwanFriction, OdeSolverRK4}
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -245,9 +245,8 @@ class Pga3dIwanFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
                           externalForce: Pga3dVector, springK: Double, dt: Double, steps: Int): Pga3dPoint =
     val body = new Pga3dPhysicsBody(Pga3dInertia.sphere(mass = 1.0, r = 0.1),
       Pga3dTranslator.addVector(start - origin).toMotor, Pga3dVelocity.linear(velocity).toBivector)
-    val bodies = Array(body)
     for (_ <- 1 to steps) {
-      Pga3dPhysicsSolverRK4.step(bodies, dt, addForquesToBodies = { _ =>
+      OdeSolverRK4.step(body, dt, addForces = { _ =>
         val p = body.globalCenterOfMass
         val force = externalForce + (origin - p) * springK + friction.forceAt(p)
         body.addGlobalForque(Pga3dForque.force(p, force))

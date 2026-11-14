@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.{Pga3dPoint, Pga3dTranslator, Pga3dVector}
+import me.kright.gametools.physics1d.OdeSolverRK4
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -106,9 +107,8 @@ class Pga3dDahlFrictionTest extends AnyFunSuiteLike with ScalaCheckPropertyCheck
       val friction = makeFriction()
       val body = new Pga3dPhysicsBody(Pga3dInertia.sphere(mass = 1.0, r = 0.1),
         Pga3dTranslator.addVector(Pga3dVector.zero).toMotor, Pga3dVelocity.linear(Pga3dVector.zero).toBivector)
-      val bodies = Array(body)
       for (_ <- 1 to Math.round(t / dt).toInt) {
-        Pga3dPhysicsSolverRK4.step(bodies, dt, addForquesToBodies = { _ =>
+        OdeSolverRK4.step(body, dt, addForces = { _ =>
           val p = body.globalCenterOfMass
           body.addGlobalForque(Pga3dForque.force(p, u * 60.0 + friction.forceAt(p)))
         })

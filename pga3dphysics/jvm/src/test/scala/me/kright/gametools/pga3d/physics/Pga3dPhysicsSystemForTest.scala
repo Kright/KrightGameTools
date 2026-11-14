@@ -1,9 +1,11 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor}
+import me.kright.gametools.physics1d.{OdeConstraintResolver, OdeSolver}
 
 class Pga3dPhysicsSystemForTest(state: Array[Pga3dPhysicsBody],
-                                solver: Pga3dPhysicsSolver) extends Pga3dPhysicsSystem(state, solver):
+                                solver: OdeSolver,
+                                resolver: OdeConstraintResolver | Null = null) extends Pga3dPhysicsSystem(state, solver, resolver = resolver):
 
   val initialState: Array[Pga3dBodyState] = state.map(Pga3dBodyState(_))
   val initialE = getKineticEnergy()

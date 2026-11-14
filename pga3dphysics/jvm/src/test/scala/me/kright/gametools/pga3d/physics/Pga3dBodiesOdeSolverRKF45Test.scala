@@ -1,18 +1,27 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.*
+import me.kright.gametools.physics1d.{OdeSolver, OdeSolverRKF45}
 import org.scalatest.funsuite.AnyFunSuiteLike
 
-class Pga3dPhysicsSolverRKF45Test extends AnyFunSuiteLike:
+class Pga3dBodiesOdeSolverRKF45Test extends AnyFunSuiteLike:
 
-  private def freeBodySystem(solver: Pga3dPhysicsSolver): Pga3dPhysicsSystemForTest =
+  private def freeBodySystem(solver: OdeSolver): Pga3dPhysicsSystemForTest =
     Pga3dPhysicsSystemForTest(Array(Pga3dPhysicsSystemForTest.simpleBody(Pga3dMotor.id)), solver)
+
+  private def norm(values: Array[Double]): Double =
+    Math.sqrt(values.map(v => v * v).sum)
+
+  private def motorPlusLocalBErrorOfSingleBody(solver: OdeSolverRKF45): Double =
+    require(solver.lastErrors.length == Pga3dBodyState.componentsCount)
+    val (motorErrors, localBErrors) = solver.lastErrors.splitAt(Pga3dMotor.componentsCount)
+    norm(motorErrors) + norm(localBErrors)
 
   test("calculate free rotation body precession for RKF45") {
     val stepsCount = 1000
     val dt = 0.01
 
-    val system = freeBodySystem(Pga3dPhysicsSolverRKF45())
+    val system = freeBodySystem(OdeSolverRKF45())
     val errors = for (_ <- 0 until stepsCount) yield {
       system.doStep(dt, _ => ())
       system.getError()
@@ -25,16 +34,16 @@ class Pga3dPhysicsSolverRKF45Test extends AnyFunSuiteLike:
 
   test("the error estimate scales as dt^5") {
     for (dt <- Seq(0.02, 0.01)) {
-      val solver = Pga3dPhysicsSolverRKF45()
+      val solver = OdeSolverRKF45()
       val system = freeBodySystem(solver)
 
       system.doStep(dt, _ => ())
-      val eFull = solver.lastMaxError
+      val eFull = motorPlusLocalBErrorOfSingleBody(solver)
 
-      val solverHalf = Pga3dPhysicsSolverRKF45()
+      val solverHalf = OdeSolverRKF45()
       val systemHalf = freeBodySystem(solverHalf)
       systemHalf.doStep(dt * 0.5, _ => ())
-      val eHalf = solverHalf.lastMaxError
+      val eHalf = motorPlusLocalBErrorOfSingleBody(solverHalf)
 
       val ratio = eFull / eHalf
       // println(s"dt = $dt, eFull = $eFull, eHalf = $eHalf, ratio = $ratio")
@@ -44,12 +53,13 @@ class Pga3dPhysicsSolverRKF45Test extends AnyFunSuiteLike:
 
   test("the error estimate matches the actual local error of the step") {
     for (dt <- Seq(0.05, 0.02, 0.01)) {
-      val solver = Pga3dPhysicsSolverRKF45()
+      val solver = OdeSolverRKF45()
       val system = freeBodySystem(solver)
       system.doStep(dt, _ => ())
-      val estimate = solver.lastMaxError
+      val estimate = motorPlusLocalBErrorOfSingleBody(solver)
 
-      val referenceSystem = freeBodySystem(Pga3dPhysicsSolverRKMK4)
+      val referenceBodies = Array(Pga3dPhysicsSystemForTest.simpleBody(Pga3dMotor.id))
+      val referenceSystem = Pga3dPhysicsSystemForTest(referenceBodies, Pga3dPhysicsSolverRKMK4(referenceBodies))
       val substeps = 1000
       for (_ <- 0 until substeps) {
         referenceSystem.doStep(dt / substeps, _ => ())
@@ -70,7 +80,7 @@ class Pga3dPhysicsSolverRKF45Test extends AnyFunSuiteLike:
 
     def maxEstimateWithSpring(k: Double): Double =
       val body = Pga3dPhysicsBody.motionless(Pga3dInertiaLocal(1.0, 1.0, 1.0, 1.0), Pga3dMotor.id)
-      val solver = Pga3dPhysicsSolverRKF45()
+      val solver = OdeSolverRKF45()
       val system = Pga3dPhysicsSystem(Array(body), solver)
       val springCenter = Pga3dPoint(3.0, 4.0, 0.0)
 
@@ -80,7 +90,7 @@ class Pga3dPhysicsSolverRKF45Test extends AnyFunSuiteLike:
           val globalForque = (system.state.head.globalCenter v springCenter) * k
           system.state.head.addGlobalForque(globalForque)
         })
-        maxEstimate = Math.max(maxEstimate, solver.lastMaxError)
+        maxEstimate = Math.max(maxEstimate, motorPlusLocalBErrorOfSingleBody(solver))
       }
       maxEstimate
 

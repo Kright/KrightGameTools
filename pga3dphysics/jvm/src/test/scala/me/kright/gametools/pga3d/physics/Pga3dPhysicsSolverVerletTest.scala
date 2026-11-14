@@ -65,7 +65,8 @@ class Pga3dPhysicsSolverVerletTest extends AnyFunSuiteLike:
       }
       state.motors.head
 
-    val referenceSystem = Pga3dPhysicsSystemForTest(freeBody(), Pga3dPhysicsSolverRKMK4)
+    val referenceBodies = freeBody()
+    val referenceSystem = Pga3dPhysicsSystemForTest(referenceBodies, Pga3dPhysicsSolverRKMK4(referenceBodies))
     for (_ <- 0 until 100000) {
       referenceSystem.doStep(totalTime / 100000, _ => ())
     }

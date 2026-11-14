@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.*
+import me.kright.gametools.physics1d.OdeSolverRK4
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -15,7 +16,7 @@ class Pga3dVelocityTest extends AnyFunSuiteLike with ScalaCheckPropertyChecks:
           localB,
         )
       ),
-      solver = Pga3dPhysicsSolverRK4,
+      solver = OdeSolverRK4,
     )
 
   test("linear velocity") {

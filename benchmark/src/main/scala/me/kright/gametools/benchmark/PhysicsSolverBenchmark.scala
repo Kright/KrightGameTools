@@ -1,6 +1,6 @@
 package me.kright.gametools.benchmark
 
-import me.kright.gametools.physics1d.{Integrable, IntegrableUniformArray, OdeSolverCache, OdeSolverRK4}
+import me.kright.gametools.physics1d.*
 import me.kright.gametools.pga3d.*
 import me.kright.gametools.pga3d.physics.*
 import org.openjdk.jmh.annotations.*
@@ -20,19 +20,19 @@ import scala.compiletime.uninitialized
  * benchmark invocations.
  *
  * Measured (8 bodies per step, ns per step / per body; the bodies use Pga3dInertiaMovedLocal,
- * which stores its pose as a Pga3dTransform):
- *   euler                753 /  94
- *   heun                1395 / 174
- *   midPoint            1418 / 177
- *   rk4Array            2481 / 310
- *   rk4ArrayInsideWorld 2561 / 320
- *   rk4                 2710 / 339
- *   rkf45               4570 / 571
- *   verlet              4640 / 580   (one derivative pass, but the displacement solve dominates the
- *                                     step - per fixed-point iteration: bivector exp + motor product +
- *                                     reverseSandwich + inertia.invert)
- *   rkmk4               5329 / 666
- *   gaussLegendre3      6144 / 768
+ * which stores its pose as a Pga3dTransform; the universal solvers run over an
+ * IntegrableUniformArray of the bodies with a reused OdeSolverCache):
+ *   euler            638 /  80
+ *   midPoint        1244 / 155
+ *   heun            1261 / 158
+ *   rk4             2500 / 312
+ *   rk4InsideWorld  2585 / 323
+ *   rkf45           4104 / 513
+ *   verlet          4669 / 584   (one derivative pass, but the displacement solve dominates the
+ *                                 step - per fixed-point iteration: bivector exp + motor product +
+ *                                 reverseSandwich + inertia.invert)
+ *   gaussLegendre3  5826 / 728
+ *   rkmk4           6516 / 815
  *
  * Run with: sbt "benchmark/Jmh/run -f1 .*PhysicsSolverBenchmark.*"
  */
@@ -56,21 +56,14 @@ class PhysicsSolverBenchmark:
       )
     }
 
-  var eulerBodies: Array[Pga3dPhysicsBody] = uninitialized
-  var heunBodies: Array[Pga3dPhysicsBody] = uninitialized
-  var midPointBodies: Array[Pga3dPhysicsBody] = uninitialized
-  var rk4Bodies: Array[Pga3dPhysicsBody] = uninitialized
-  var rk4ArrayBodies: IntegrableUniformArray[Pga3dPhysicsBody] = uninitialized
-  var rk4ArrayCache: OdeSolverCache = uninitialized
-  var rk4World: Integrable = uninitialized
-  var rk4WorldCache: OdeSolverCache = uninitialized
-  var rkmk4Bodies: Array[Pga3dPhysicsBody] = uninitialized
-  var rkf45Bodies: Array[Pga3dPhysicsBody] = uninitialized
+  var bodies: IntegrableUniformArray[Pga3dPhysicsBody] = uninitialized
+  var world: Integrable = uninitialized
+  var cache: OdeSolverCache = uninitialized
   var verletBodies: Array[Pga3dPhysicsBody] = uninitialized
-  var gaussLegendreBodies: Array[Pga3dPhysicsBody] = uninitialized
 
-  var rkf45Solver: Pga3dPhysicsSolverRKF45 = uninitialized
-  var gaussLegendreSolver: Pga3dPhysicsSolverGaussLegendre = uninitialized
+  var rkmk4Solver: Pga3dPhysicsSolverRKMK4 = uninitialized
+  var rkf45Solver: OdeSolverRKF45 = uninitialized
+  var gaussLegendreSolver: OdeSolverGaussLegendre = uninitialized
 
   // the stateless Verlet works on caller-owned arrays instead of bodies
   var verletInertias: Array[Pga3dInertia] = uninitialized
@@ -82,21 +75,14 @@ class PhysicsSolverBenchmark:
 
   @Setup
   def setup(): Unit =
-    eulerBodies = makeBodies()
-    heunBodies = makeBodies()
-    midPointBodies = makeBodies()
-    rk4Bodies = makeBodies()
-    rk4ArrayBodies = IntegrableUniformArray(makeBodies(), Pga3dBodyState.componentsCount)
-    rk4ArrayCache = OdeSolverCache()
-    rk4World = Integrable(IntegrableUniformArray(makeBodies(), Pga3dBodyState.componentsCount), BenchmarkOscillatorA(1.0, 0.0))
-    rk4WorldCache = OdeSolverCache()
-    rkmk4Bodies = makeBodies()
-    rkf45Bodies = makeBodies()
+    bodies = IntegrableUniformArray(makeBodies(), Pga3dBodyState.componentsCount)
+    world = Integrable(IntegrableUniformArray(makeBodies(), Pga3dBodyState.componentsCount), BenchmarkOscillatorA(1.0, 0.0))
+    cache = OdeSolverCache()
     verletBodies = makeBodies()
-    gaussLegendreBodies = makeBodies()
 
-    rkf45Solver = Pga3dPhysicsSolverRKF45()
-    gaussLegendreSolver = Pga3dPhysicsSolverGaussLegendre(iterations = 3)
+    rkmk4Solver = Pga3dPhysicsSolverRKMK4(bodies.elements)
+    rkf45Solver = OdeSolverRKF45()
+    gaussLegendreSolver = OdeSolverGaussLegendre(iterations = 3)
 
     verletInertias = verletBodies.map(_.inertia)
     verletCurrent = verletBodies.map(_.motor)
@@ -108,35 +94,31 @@ class PhysicsSolverBenchmark:
 
   @Benchmark
   def euler(): Unit =
-    Pga3dPhysicsSolverEuler.step(eulerBodies, dt, _ => ())
+    OdeSolverEuler.step(bodies, dt, _ => (), cache)
 
   @Benchmark
   def heun(): Unit =
-    Pga3dPhysicsSolverHeun.step(heunBodies, dt, _ => ())
+    OdeSolverHeun.step(bodies, dt, _ => (), cache)
 
   @Benchmark
   def midPoint(): Unit =
-    Pga3dPhysicsSolverMidPoint.step(midPointBodies, dt, _ => ())
+    OdeSolverMidPoint.step(bodies, dt, _ => (), cache)
 
   @Benchmark
   def rk4(): Unit =
-    Pga3dPhysicsSolverRK4.step(rk4Bodies, dt, _ => ())
+    OdeSolverRK4.step(bodies, dt, _ => (), cache)
 
   @Benchmark
-  def rk4Array(): Unit =
-    OdeSolverRK4.step(rk4ArrayBodies, dt, _ => (), rk4ArrayCache)
-
-  @Benchmark
-  def rk4ArrayInsideWorld(): Unit =
-    OdeSolverRK4.step(rk4World, dt, _ => (), rk4WorldCache)
+  def rk4InsideWorld(): Unit =
+    OdeSolverRK4.step(world, dt, _ => (), cache)
 
   @Benchmark
   def rkmk4(): Unit =
-    Pga3dPhysicsSolverRKMK4.step(rkmk4Bodies, dt, _ => ())
+    rkmk4Solver.step(bodies, dt, _ => (), cache)
 
   @Benchmark
   def rkf45(): Unit =
-    rkf45Solver.step(rkf45Bodies, dt, _ => ())
+    rkf45Solver.step(bodies, dt, _ => (), cache)
 
   @Benchmark
   def verlet(): Unit =
@@ -149,4 +131,4 @@ class PhysicsSolverBenchmark:
 
   @Benchmark
   def gaussLegendre3(): Unit =
-    gaussLegendreSolver.step(gaussLegendreBodies, dt, _ => ())
+    gaussLegendreSolver.step(bodies, dt, _ => (), cache)

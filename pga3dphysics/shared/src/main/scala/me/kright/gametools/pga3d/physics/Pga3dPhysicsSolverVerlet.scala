@@ -7,7 +7,7 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor}
  * Position-Verlet (leapfrog) on the motor group, 2nd order of precision, one force evaluation
  * per step.
  *
- * This is a stateless computation strategy, not a [[Pga3dPhysicsSolver]]: for Verlet the state
+ * This is a stateless computation strategy, not an `OdeSolver`: for Verlet the state
  * is two consecutive pose arrays owned by the caller, and the velocity is not stored anywhere -
  * it is derived on the fly as the Lie derivative of the pose,
  * `B = -2 * (prevMotor.reverse * motor).log / prevDt`, the group analog of "velocity is the

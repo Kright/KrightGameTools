@@ -49,8 +49,6 @@ they integrate any `Integrable` - an object whose state is a run of doubles.
 `IntegrableUniformArray(dynamicBodies, Pga3dBodyState.componentsCount)` is the `Integrable` of an
 array of bodies: all of them have the same state size, the 14 doubles of `Pga3dBodyState`. The cache is
 optional: without it a solver creates its work arrays on every step.
-`Pga3dPhysicsSolverRK4.step(dynamicBodies, timeStep, addForquesToBodies)` and the other
-Runge-Kutta solvers for an array of bodies are deprecated wrappers over them.
 
 ## Other objects in the same world
 
@@ -78,8 +76,8 @@ too (the 14 doubles of `Pga3dBodyState`), which gives snapshots through `saveSta
 ## Solvers
 
 Eight integrators with orders from 1 (Euler) to 4 (RK4, RKMK4, RKF45, GaussLegendre), including
-a Verlet on the motor group, plus hard distance constraints (rod / rope / strut) wired in through
-`Pga3dPhysicsSolverConstrained` (any solver except Verlet) and the RATTLE-style
+a Verlet on the motor group, plus hard distance constraints (rod / rope / strut): a
+`Pga3dConstraintResolver` is the `resolver` argument of a solver, and Verlet has the RATTLE-style
 `Pga3dPhysicsSolverVerletConstrained`. These are reference implementations - simple and readable first, and usable as a
 test baseline and an order-of-precision example when you write an optimized solver for your
 own data layout. See [Solvers.md](Solvers.md) for the full table with orders, costs and
@@ -113,7 +111,7 @@ counterparts on a collinear path, reversals included:
 val friction = Pga3dIwanFriction(IwanElement(4e6, 150.0), IwanElement(1e6, 250.0))
 friction.advance(body.globalCenterOfMass) // latch the starting point
 
-Pga3dPhysicsSolverRK4.step(bodies, dt, addForquesToBodies = { _ =>
+OdeSolverRK4.step(body, dt, addForces = { _ =>
   val p = body.globalCenterOfMass
   body.addGlobalForque(Pga3dForque.force(p, friction.forceAt(p)))
 })

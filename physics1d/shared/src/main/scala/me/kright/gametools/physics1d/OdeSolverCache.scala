@@ -20,8 +20,10 @@ final class OdeSolverCache:
 
 
 object OdeSolverCache:
+  given CanEqual[OdeSolverCache | Null, Null] = CanEqual.derived
+
   def getArrays(cache: OdeSolverCache | Null, groupSize: Int, size: Int): Array[Array[Double]] =
-    if (cache eq null) {
+    if (cache == null) {
       require(groupSize >= 0 && size >= 0)
       return Array.fill(groupSize)(new Array[Double](size))
     }

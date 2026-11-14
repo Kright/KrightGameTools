@@ -3,10 +3,23 @@ package me.kright.gametools.physics1d
 import me.kright.gametools.mathutil.FastRange
 
 object OdeSolverUtil:
-  def saveDerivative(system: Integrable, timeInsideStep: Double, addForces: (timeInsideStep: Double) => Unit, dst: Array[Double]): Unit =
+  def saveDerivative(system: Integrable,
+                     timeInsideStep: Double,
+                     addForces: (timeInsideStep: Double) => Unit,
+                     resolver: OdeConstraintResolver | Null,
+                     dst: Array[Double]): Unit =
     system.resetForces()
     addForces(timeInsideStep)
+    if (resolver != null) {
+      resolver.addConstraintForces()
+    }
     system.saveDerivative(dst, 0)
+
+  def loadFinalState(system: Integrable, src: Array[Double], resolver: OdeConstraintResolver | Null): Unit =
+    system.loadState(src, 0)
+    if (resolver != null) {
+      resolver.project()
+    }
 
   def combine(dst: Array[Double], size: Int, initial: Array[Double], dt: Double, derivative: Array[Double]): Unit =
     for (j <- FastRange(size)) {

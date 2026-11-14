@@ -9,59 +9,98 @@ convergence-order tests in `pga3dphysics/jvm/src/test` show how to verify the or
 implementation against a fine-step reference trajectory.
 
 The Runge-Kutta solvers themselves are universal and live in
-[physics1d](../physics1d/README.md#ode-solvers): `OdeSolver.step(system, dt, addForces, cache)`
+[physics1d](../physics1d/README.md#ode-solvers): `OdeSolver.step(system, dt, addForces, cache, resolver)`
 integrates one `Integrable` with a fixed step - the bodies, as an `IntegrableUniformArray` with
 the pair (motor, localB) of every body, together with any other objects of the same world (see
 [below](#one-system-flat-state)). `addForces` is called once per derivative evaluation with the
 time offset inside the step, so forces are re-evaluated at the intermediate states.
 
-The `Pga3dPhysicsSolver`s of this module, `step(dynamicBodies, dt, addForquesToBodies)`, work
-on arrays of bodies. The Runge-Kutta ones are deprecated: they only wrap the array into the
-`IntegrableUniformArray` and call the universal solver of the same name. `Pga3dPhysicsSolverRKMK4` and
-`Pga3dPhysicsSolverConstrained` exist only in this form. The Verlet family deliberately
-lives outside both interfaces: for Verlet the state is two consecutive pose arrays owned by the
-caller and the velocity exists only implicitly, so its solvers are stateless computation
-strategies over arrays of inertias and motors (see the Verlet bullet below).
+`Pga3dPhysicsSolverRKMK4(dynamicBodies)` is an `OdeSolver` too; it lives in this module because
+it uses the group of the motors of its bodies. The Verlet family deliberately lives outside this
+interface: for Verlet the state is two consecutive pose arrays owned by the caller and the
+velocity exists only implicitly, so its solvers are stateless computation strategies over arrays
+of inertias and motors (see the Verlet bullet below).
 
-| solver                                                               | order            | force evaluations per step | ns / body / step | notes                                    |
-|----------------------------------------------------------------------|------------------|----------------------------|------------------|------------------------------------------|
-| `OdeSolverEuler` / `Pga3dPhysicsSolverEuler`                         | 1                | 1                          | 94               | very imprecise, for reference only       |
-| `OdeSolverMidPoint` / `Pga3dPhysicsSolverMidPoint`                   | 2                | 2                          | 177              |                                          |
-| `OdeSolverHeun` / `Pga3dPhysicsSolverHeun`                           | 2                | 2                          | 174              |                                          |
-| `OdeSolverRK4` / `Pga3dPhysicsSolverRK4`                             | 4                | 4                          | 339              | the default workhorse                    |
-| `OdeSolverRKF45` / `Pga3dPhysicsSolverRKF45`                         | 4 (+ embedded 5) | 6                          | 571              | free per-step local-error estimate       |
-| `Pga3dPhysicsSolverVerlet`                                           | 2                | 1                          | 580              | exact momentum, bounded energy error     |
-| `Pga3dPhysicsSolverRKMK4`                                            | 4                | 4                          | 666              | Lie-group (Munthe-Kaas) variant of RK4   |
-| `OdeSolverGaussLegendre(iter)` / `Pga3dPhysicsSolverGaussLegendre(iter)` | 4 (implicit) | 3 + 2·iter                 | 768 (iter = 3)   | far better energy behavior on stiff forces |
+| solver                                   | order            | force evaluations per step | ns / body / step | notes                                      |
+|------------------------------------------|------------------|----------------------------|------------------|--------------------------------------------|
+| `OdeSolverEuler`                         | 1                | 1                          | 80               | very imprecise, for reference only         |
+| `OdeSolverMidPoint`                      | 2                | 2                          | 155              |                                            |
+| `OdeSolverHeun`                          | 2                | 2                          | 158              |                                            |
+| `OdeSolverRK4`                           | 4                | 4                          | 312              | the default workhorse                      |
+| `OdeSolverRKF45`                         | 4 (+ embedded 5) | 6                          | 513              | free per-step local-error estimate         |
+| `Pga3dPhysicsSolverVerlet`               | 2                | 1                          | 584              | exact momentum, bounded energy error       |
+| `OdeSolverGaussLegendre(iter)`           | 4 (implicit)     | 3 + 2·iter                 | 728 (iter = 3)   | far better energy behavior on stiff forces |
+| `Pga3dPhysicsSolverRKMK4(dynamicBodies)` | 4                | 4                          | 815              | Lie-group RK4, exact for a constant twist  |
 
 The timing column is the pure solver overhead with an empty force callback
-(`benchmark/PhysicsSolverBenchmark`, 8 free rotating bodies, through the `Pga3dPhysicsSolver`
-step for an array, which allocates the work buffers on every call; `OdeSolverRK4` with a reused
-`OdeSolverCache` takes 310); with real forces the cost of the force callback multiplies by the
+(`benchmark/PhysicsSolverBenchmark`, 8 free rotating bodies; the universal solvers run over an
+`IntegrableUniformArray` of the bodies with a reused `OdeSolverCache`); with real forces the cost of the force callback multiplies by the
 "force evaluations per step" column.
 
 ## A short guide
 
-* **Use `Pga3dPhysicsSolverRK4` by default.** It adds scaled derivatives in flat coordinates and
-  renormalizes the motor after the full step; projecting after the step (unlike projecting the
-  intermediate stages) does not hurt the 4th order, so it is effectively a geometric method too.
-* **`Pga3dPhysicsSolverRKF45` is the same order plus a built-in diagnostic.** The committed state is
+* **Use `OdeSolverRK4` by default.** It adds scaled derivatives in flat coordinates and
+  renormalizes the motor on every load, the stage states included; the measured order stays 4,
+  so it is effectively a geometric method too.
+  **Its step is limited by the rotation per step.** Even for a free body with a twist constant in
+  its own frame, where nothing but the pose changes, the motor of RK4 lags the exact one by
+  `theta^5 / 320` per step, `theta = |localB| * dt / 2` being half of the rotation angle of the
+  step. (The 4th-order Taylor polynomial of `exp` alone would give `theta^5 / 120`; the
+  renormalization of the stage motors in `loadState` brings it down to 1/320, and the error is a
+  pure lag: the axis and `localB` stay exact.) In terms of the rotation `phi = |localB| * dt`
+  per step the body turns slower by the fraction `phi^4 / 5120`:
+
+  | rotation per step | lost fraction of the rotation |
+  |-------------------|-------------------------------|
+  | 0.05 rad (2.9°)   | 1.2e-9                        |
+  | 0.1 rad (5.7°)    | 2.0e-8                        |
+  | 0.2 rad (11°)     | 3.1e-7                        |
+  | 0.5 rad (29°)     | 1.2e-5                        |
+  | 1 rad (57°)       | 2.0e-4                        |
+
+  So `dt = (5120 * eps)^(1/4) / |localB|` keeps the lag below the fraction `eps`: a wheel at
+  100 rad/s loses 2e-8 of its angle with dt = 1 ms and 2e-4 with dt = 10 ms. This is the floor
+  of the RK4 error, the part that does not depend on the forces. Measured on a free sphere
+  turning at 2 rad/s for 8 s: the motor error is 4.0e-9, 2.5e-6 and 6.1e-4 at dt = 0.02, 0.1 and
+  0.4 against the predicted 4.0e-9, 2.5e-6 and 6.4e-4 (the next term of the series shows at
+  0.8 rad per step), see `Pga3dPhysicsSolverRKMK4Test`. `Pga3dPhysicsSolverRKMK4` removes
+  exactly this part.
+* **`OdeSolverRKF45` is the same order plus a built-in diagnostic.** The committed state is
   the 4th-order solution of the Fehlberg 4(5) embedded pair (its tableau even shows ~8x smaller
   free-precession error constants than the classic RK4 one); the difference from the embedded
-  5th-order solution is a per-step, per-body local-error estimate exposed as `lastMotorErrors` /
-  `lastLocalBErrors` / `lastMaxError`. The estimate is essentially exact (measured 0.98–1.01 of the
-  true single-step error) and scales as dt^5. Log it in a dev build to map where the error lives —
+  5th-order solution is a per-step local-error estimate of every double of the system, exposed as
+  `lastErrors` / `lastMaxError`. The estimate is essentially exact (for a body, the norm of its
+  motor part plus the norm of its localB part is 0.98–1.01 of the true single-step error) and
+  scales as dt^5. Log it in a dev build to map where the error lives —
   impacts, stiff constraints, fast-spinning bodies: a stiff spring (k = 1000 vs k = 1) at the same
   dt raises the estimate by ~9 orders of magnitude. In short: a stiffness detector for the price of
   two extra force evaluations. It is a class, not an object — each instance keeps the estimate of
   its own last step.
-* **`Pga3dPhysicsSolverRKMK4` has no practical advantage on our measurements.** It integrates on the
-  Lie algebra of bivectors (`u' = dexpInv(-u, -localB / 2)`) and updates with a single
-  `M0 * exp(u)`, so every stage and the result are exact motors by construction — geometrically the
-  cleanest formulation. But the shared Runge-Kutta truncation error dominates at every step size:
-  against RK4 it wins fractions of a percent of trajectory error and ~7% of momentum error at
-  practical steps, converging to parity as the step grows. Kept as a reference implementation.
-* **`Pga3dPhysicsSolverGaussLegendre` pays off on stiff forces.** An implicit two-stage 4th-order
+* **`Pga3dPhysicsSolverRKMK4` wins when a body spins with a twist that is nearly constant in its
+  own frame.** It integrates on the Lie algebra of bivectors (`u' = dexpInv(-u, -localB / 2)`) and
+  updates with a single `M0 * exp(u)`, so every stage and the result are exact motors by
+  construction, and a step with a constant body-frame twist is exact. RK4 treats `M' = M * omega`
+  as a flat linear equation and reproduces `exp` only up to its 4th-order Taylor polynomial, so
+  its error is set by the rotation per step even when nothing else changes; the error of RKMK4 is
+  set by how fast the twist changes in the body frame. Measured on a free body turning at
+  2 rad/s for 8 s, the error of the final motor at dt = 0.1 (0.2 rad per step):
+
+  | body and motion                                              | RK4    | RKMK4   | RK4 / RKMK4 |
+  |--------------------------------------------------------------|--------|---------|-------------|
+  | a sphere, moments of inertia (1, 1, 1), any axis             | 2.5e-6 | 3.0e-15 | exact       |
+  | moments (3, 2, 1), spin about a principal axis               | 2.5e-6 | 1.4e-15 | exact       |
+  | moments (1, 1.01, 0.99), tumbling                            | 2.5e-6 | 2.8e-8  | 90          |
+  | moments (1, 1.1, 0.9), tumbling                              | 2.4e-6 | 1.8e-7  | 14          |
+  | moments (3, 2, 1), spin 0.05 rad off a principal axis        | 3.0e-6 | 9.2e-7  | 3.3         |
+  | moments (3, 2, 1), tumbling                                  | 1.3e-5 | 1.3e-5  | 1.0         |
+
+  The ratios are the same at dt = 0.02 and dt = 0.4 (both solvers keep the 4th order), and the
+  exact rows stay at the rounding level at any step. So it pays off for balls and for wheels and
+  flywheels spinning about their axis; for a tumbling asymmetric body the twist changes as fast
+  as the body turns, the shared Runge-Kutta truncation error dominates, and RKMK4 wins fractions
+  of a percent of trajectory error and ~7% of momentum error. Its step is 2.6 times slower than
+  the one of `OdeSolverRK4`. The measurements are the tests of `Pga3dPhysicsSolverRKMK4Test`.
+* **`OdeSolverGaussLegendre` pays off on stiff forces.** An implicit two-stage 4th-order
   scheme solved by fixed-point iteration (use `iterations >= 3`). On a stiff spring (k = 1e6,
   dt = 1e-4) its relative energy error is 5.8e-8 at 3 iterations and 8.7e-14 at 8, versus 1.4e-4
   for RK4 — at the price of many more force evaluations per step (the position error stays
@@ -75,7 +114,7 @@ step for an array, which allocates the work buffers on every call; `OdeSolverRK4
   the group analog of "velocity is the difference of two positions" — and to apply the kick to
   the world-frame momentum (the discrete Moser-Veselov idea), solving the next displacement from
   the momentum by a fixed-point iterated to convergence, so the gyroscopic term never appears
-  explicitly. Accordingly the API is a stateless strategy, not a `Pga3dPhysicsSolver`:
+  explicitly. Accordingly the API is a stateless strategy, not an `OdeSolver`:
   `step(inertias, prevMotors, motors, globalForques, prevDt, dt, nextMotors, nextLocalBs)` over
   caller-owned arrays (`nextMotors` may alias `prevMotors` — the classic two-array rotation),
   with `makePrevMotors(...)` building the virtual previous poses for the first step. Measured
@@ -115,27 +154,29 @@ saveDerivative(system, 0.5 * dt, addForces, k2)
   gaussLegendre(6)), see `Pga3dBodiesOdeSolverTest`.
 * **`OdeSolverCache`** holds the stage arrays between the steps: a world that passes its own
   instance to every step allocates them once. The cache is optional (`OdeSolverCache | Null`):
-  without it a solver creates new arrays on every step, as the `Pga3dPhysicsSolver` step for
-  an array does.
-* **`OdeSolverRKF45`** reports `lastErrors`, one value per double of the system;
-  `Pga3dPhysicsSolverRKF45` folds them into the body-indexed `lastMotorErrors` /
-  `lastLocalBErrors`.
-* **`Pga3dPhysicsSolverRKMK4`** stays a solver for an array of bodies only: the group structure
-  it uses is the one of the motors.
-* **Constraints** with a universal solver are plugged in by hand, exactly as
-  `Pga3dPhysicsSolverConstrained` does it for an array of bodies:
+  without it a solver creates new arrays on every step.
+* **`OdeSolverRKF45`** reports `lastErrors`, one value per double of the system: for the body
+  number i these are the 8 doubles of the motor and the 6 of localB, from `offsetOf(i)` of the
+  bodies array.
+* **`Pga3dPhysicsSolverRKMK4(dynamicBodies)`** is bound to its bodies: the whole system goes
+  through the classic RK4 stages over the flat state, and after every load the motors of these
+  bodies are replaced by the group update `M0 * exp(u)`. So the bodies must be a part of the
+  system given to `step`. Everything but these motors is exactly `OdeSolverRK4`: localB of free
+  bodies and the objects not coupled with the bodies keep every bit. The flat motor of every
+  stage is computed and then thrown away: one step of 8 bodies takes 6550 ns against 5373 ns of
+  the solver of 0.12.0 written for an array of bodies (+22%, and +15% of allocations). Its
+  trajectories differ from the ones of 0.12.0 in the last bits (the final combination has the
+  operation order of `OdeSolverRK4` now): 3e-14 after 300 steps of the test scene.
+* **Constraints** go into a universal solver as its optional `resolver` argument:
+  `Pga3dConstraintResolver` is an `OdeConstraintResolver` and knows its bodies.
 
   ```scala
-  OdeSolverRK4.step(world, dt, currentDt => {
-    addForques(currentDt)
-    resolver.addConstraintForques(dynamicBodies)
-  }, cache)
-  resolver.project(dynamicBodies)
+  val resolver = Pga3dConstraintResolver(dynamicBodies, constraints)
+  OdeSolverRK4.step(world, dt, addForques, cache, resolver)
   ```
 
-The linear combinations keep the order of the floating point operations of the previous
-object-based solvers: the trajectories of all the solvers are bit-identical to them (the
-per-body estimates of RKF45 are now folded from the per-double ones and differ in the last bit).
+The linear combinations keep the order of the floating point operations of the object-based
+solvers of 0.12.0: the trajectories of all the solvers are bit-identical to them.
 
 What the generality costs, measured for one RK4 step with an empty force callback
 (`benchmark/Rk4BodiesCountBenchmark`, ns per step, three forks):
@@ -143,11 +184,11 @@ What the generality costs, measured for one RK4 step with an empty force callbac
 | RK4 step                                                                | 2 bodies | 10 bodies | 100 bodies |
 |-------------------------------------------------------------------------|----------|-----------|------------|
 | object-based solver of 0.12.0                                           | 724      | 3456      | 35368      |
-| `Pga3dPhysicsSolverRK4.step(dynamicBodies, dt, f)`, no cache            | 716      | 3438      | 35259      |
+| `OdeSolverRK4` over an `IntegrableUniformArray` of bodies, no cache     | 716      | 3438      | 35259      |
 | a solver hardwired to an array of bodies, with a cache                  | 661      | 3069      | 31653      |
 | `OdeSolverRK4` over an `IntegrableUniformArray` of bodies, with a cache | 645      | 3082      | 32079      |
 
-The step for an array costs the same as before. A cache takes 9-11% off, and 29% of the
+Without a cache the step costs the same as in 0.12.0. A cache takes 9-11% off, and 29% of the
 allocations: 1728 instead of 2445 bytes per body per step, 16 objects instead of 29 (what is
 left are the objects a body keeps after every stage: its `Pga3dTransform` with the motor and
 `localB`, plus the motor before the renormalization). The bodies array is within 1.5% of a solver
@@ -195,9 +236,9 @@ order (measured: euler 1.21, heun/midPoint 2.05, rk4/rkmk4 4.15, rkf45 4.33,
 gaussLegendre(6) 3.94), the rods hold to the machine epsilon and the energy error stays at the
 solver's truncation level.
 
-`Pga3dPhysicsSolverConstrained(inner, resolver)` wires both into any solver without touching
-the solver code. Measured on a spinning dumbbell and a rigid pendulum with an off-center
-anchor (RK4, dt = 0.01): the distance is held to ~1e-15, the trajectory keeps the 4th order
+Both parts are wired into a step by passing the resolver as the `resolver` argument of a
+solver: `OdeSolverRK4.step(system, dt, addForques, cache, resolver)`. Measured on a spinning
+dumbbell and a rigid pendulum with an off-center anchor (RK4, dt = 0.01): the distance is held to ~1e-15, the trajectory keeps the 4th order
 (measured 4.06-4.10), the momentum of body-body constraints is conserved to ~1e-12 (the
 corrections are equal-and-opposite by construction) and the energy error stays at the plain
 RK4 truncation level.

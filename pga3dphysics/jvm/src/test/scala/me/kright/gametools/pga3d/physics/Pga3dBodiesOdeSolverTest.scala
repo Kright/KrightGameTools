@@ -10,22 +10,14 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
   private def world(bodies: Array[Pga3dPhysicsBody], others: Integrable*): Integrable =
     Integrable((IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount) +: others)*)
 
-  private val solvers: Seq[(solver: OdeSolver, order: Int)] = Seq(
-    (OdeSolverEuler, 1),
-    (OdeSolverMidPoint, 2),
-    (OdeSolverHeun, 2),
-    (OdeSolverRK4, 4),
-    (OdeSolverRKF45(), 4),
-    (OdeSolverGaussLegendre(iterations = 6), 4),
-  )
-
-  private val solversForArraysWithUniversalOnes: Seq[(forArray: Pga3dPhysicsSolver, universal: OdeSolver)] = Seq(
-    (Pga3dPhysicsSolverEuler, OdeSolverEuler),
-    (Pga3dPhysicsSolverMidPoint, OdeSolverMidPoint),
-    (Pga3dPhysicsSolverHeun, OdeSolverHeun),
-    (Pga3dPhysicsSolverRK4, OdeSolverRK4),
-    (Pga3dPhysicsSolverRKF45(), OdeSolverRKF45()),
-    (Pga3dPhysicsSolverGaussLegendre(iterations = 2), OdeSolverGaussLegendre(iterations = 2)),
+  private val solvers: Seq[(name: String, make: Array[Pga3dPhysicsBody] => OdeSolver, order: Int)] = Seq(
+    ("euler", _ => OdeSolverEuler, 1),
+    ("midPoint", _ => OdeSolverMidPoint, 2),
+    ("heun", _ => OdeSolverHeun, 2),
+    ("rk4", _ => OdeSolverRK4, 4),
+    ("rkmk4", Pga3dPhysicsSolverRKMK4(_), 4),
+    ("rkf45", _ => OdeSolverRKF45(), 4),
+    ("gaussLegendre(6)", _ => OdeSolverGaussLegendre(iterations = 6), 4),
   )
 
   private def bits(system: Integrable): Seq[Long] =
@@ -112,8 +104,9 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
     empty.resetForces()
   }
 
-  private def runBodies(solver: OdeSolver): Array[Pga3dPhysicsBody] =
+  private def runBodies(makeSolver: Array[Pga3dPhysicsBody] => OdeSolver): Array[Pga3dPhysicsBody] =
     val bodies = makeBodies()
+    val solver = makeSolver(bodies)
     val bodiesArray = IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount)
     val cache = OdeSolverCache()
     for (_ <- 0 until steps) {
@@ -121,58 +114,17 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
     }
     bodies
 
-  test("a solver for an array of bodies gives exactly the universal solver over the bodies array") {
-    for (pair <- solversForArraysWithUniversalOnes) {
-      val bodies = makeBodies()
-      for (_ <- 0 until steps) {
-        pair.forArray.step(bodies, dt, timeInsideStep => addTimeDependentGravityAndSpringsBetweenNeighbours(bodies, timeInsideStep))
-      }
-      assert(bits(bodies) == bits(runBodies(pair.universal)), s"solver ${pair.forArray}")
-    }
-  }
-
-  test("the default iterations count of GaussLegendre is the one of the universal solver") {
-    assert(Pga3dPhysicsSolverGaussLegendre().iterations == OdeSolverGaussLegendre().iterations)
-    assert(Pga3dPhysicsSolverGaussLegendre(iterations = 5).iterations == 5)
-  }
-
-  test("the per-body estimates of RKF45 are the norms of the per-double estimates of the universal solver") {
-    val forArray = Pga3dPhysicsSolverRKF45()
-    val bodies = makeBodies()
-    forArray.step(bodies, dt, timeInsideStep => addTimeDependentGravityAndSpringsBetweenNeighbours(bodies, timeInsideStep))
-
-    val universal = OdeSolverRKF45()
-    val sameBodies = makeBodies()
-    val bodiesArray = IntegrableUniformArray(sameBodies, Pga3dBodyState.componentsCount)
-    universal.step(bodiesArray, dt, timeInsideStep => addTimeDependentGravityAndSpringsBetweenNeighbours(sameBodies, timeInsideStep))
-
-    assert(forArray.lastMotorErrors.length == 3 && forArray.lastLocalBErrors.length == 3)
-    assert(universal.lastErrors.length == bodiesArray.stateSize)
-
-    var maxError = 0.0
-    for (pos <- bodies.indices) {
-      val errorsOfBody = universal.lastErrors.slice(bodiesArray.offsetOf(pos), bodiesArray.offsetOf(pos + 1))
-      val motorNorm = Math.sqrt(errorsOfBody.take(Pga3dMotor.componentsCount).map(e => e * e).sum)
-      val localBNorm = Math.sqrt(errorsOfBody.drop(Pga3dMotor.componentsCount).map(e => e * e).sum)
-
-      assert(forArray.lastMotorErrors(pos) > 0.0 && forArray.lastLocalBErrors(pos) > 0.0)
-      assert(Math.abs(forArray.lastMotorErrors(pos) - motorNorm) <= 1e-14 * motorNorm)
-      assert(Math.abs(forArray.lastLocalBErrors(pos) - localBNorm) <= 1e-14 * localBNorm)
-      maxError = Math.max(maxError, forArray.lastMotorErrors(pos) + forArray.lastLocalBErrors(pos))
-    }
-    assert(forArray.lastMaxError == maxError)
-  }
-
   test("a body and a point mass of the same mass under the same force coincide at every stage: no stage is loaded into only a part of the system") {
     for (s <- solvers) {
       val bodies = Array(Pga3dPhysicsBody.motionless(Pga3dInertia.sphere(2.0, 0.5), Pga3dMotor.id))
       val mass = PointMass1d(2.0, x = 0.0, v = 0.0)
       val system = world(bodies, mass)
+      val solver = s.make(bodies)
       val cache = OdeSolverCache()
 
       var maxDifference = 0.0
       for (_ <- 0 until 100) {
-        s.solver.step(system, 0.01, timeInsideStep => {
+        solver.step(system, 0.01, timeInsideStep => {
           val center = bodies(0).globalCenterOfMass
           maxDifference = Math.max(maxDifference, Math.abs(center.x - mass.x))
 
@@ -183,12 +135,12 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
       }
 
       val tolerance = 1e-13
-      assert(mass.x > 1e12 * tolerance, s"solver ${s.solver}: the objects must travel far more than the tolerance")
-      assert(maxDifference < tolerance, s"solver ${s.solver}")
+      assert(mass.x > 1e12 * tolerance, s"solver ${s.name}: the objects must travel far more than the tolerance")
+      assert(maxDifference < tolerance, s"solver ${s.name}")
     }
   }
 
-  private def bodyAndPointMassOnSpringError(solver: OdeSolver, dt: Double, totalTime: Double): Double =
+  private def bodyAndPointMassOnSpringError(makeSolver: Array[Pga3dPhysicsBody] => OdeSolver, dt: Double, totalTime: Double): Double =
     val bodyMass = 2.0
     val pointMass = 3.0
     val stiffness = 50.0
@@ -202,7 +154,9 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
       Pga3dTranslator.addVector(Pga3dVector(initialBodyX, 0.0, 0.0)).toMotor,
       spinAroundCenterOfMass)
     val mass = PointMass1d(pointMass, initialMassX, 0.0)
-    val system = world(Array(body), mass)
+    val bodies = Array(body)
+    val system = world(bodies, mass)
+    val solver = makeSolver(bodies)
     val cache = OdeSolverCache()
 
     val initialStretch = initialMassX - initialBodyX - restLength
@@ -229,10 +183,10 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
 
   test("a spinning body and a point mass joined by a spring converge to the exact solution with the order of the solver") {
     for (s <- solvers) {
-      val error = bodyAndPointMassOnSpringError(s.solver, 0.005, totalTime = 1.0)
-      val errorAtHalfStep = bodyAndPointMassOnSpringError(s.solver, 0.0025, totalTime = 1.0)
+      val error = bodyAndPointMassOnSpringError(s.make, 0.005, totalTime = 1.0)
+      val errorAtHalfStep = bodyAndPointMassOnSpringError(s.make, 0.0025, totalTime = 1.0)
       val measuredOrder = Math.log(error / errorAtHalfStep) / Math.log(2.0)
-      assert(Math.abs(measuredOrder - s.order) < 0.1, s"${s.solver}: measured order $measuredOrder, expected ${s.order}")
+      assert(Math.abs(measuredOrder - s.order) < 0.1, s"${s.name}: measured order $measuredOrder, expected ${s.order}")
     }
   }
 
@@ -244,74 +198,81 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
         Integrable(IntegrableUniformArray(bodies.take(1), Pga3dBodyState.componentsCount), makeDirection()),
         Integrable(Integrable(IntegrableUniformArray(bodies.slice(1, 2), Pga3dBodyState.componentsCount))),
         bodies(2))
+      val solver = s.make(bodies)
       val cache = OdeSolverCache()
       for (_ <- 0 until steps) {
-        s.solver.step(system, dt, timeInsideStep => addTimeDependentGravityAndSpringsBetweenNeighbours(bodies, timeInsideStep), cache)
+        solver.step(system, dt, timeInsideStep => addTimeDependentGravityAndSpringsBetweenNeighbours(bodies, timeInsideStep), cache)
       }
-      assert(bits(bodies) == bits(runBodies(s.solver)), s"solver ${s.solver}")
+      assert(bits(bodies) == bits(runBodies(s.make)), s"solver ${s.name}")
     }
   }
 
   test("uncoupled bodies and other objects do not affect each other") {
     for (s <- solvers) {
-      val bodiesAlone = runBodies(s.solver)
+      val bodiesAlone = runBodies(s.make)
 
       val massAlone = makeMass()
       val directionAlone = makeDirection()
+      val solverWithoutBodies = s.make(Array.empty)
       for (_ <- 0 until steps) {
-        s.solver.step(massAlone, dt, _ => addMassForce(massAlone))
-        s.solver.step(directionAlone, dt, _ => ())
+        solverWithoutBodies.step(massAlone, dt, _ => addMassForce(massAlone))
+        solverWithoutBodies.step(directionAlone, dt, _ => ())
       }
 
       val bodies = makeBodies()
       val mass = makeMass()
       val direction = makeDirection()
       val system = world(bodies, mass, direction)
+      val solver = s.make(bodies)
       val cache = OdeSolverCache()
       for (_ <- 0 until steps) {
-        s.solver.step(system, dt, timeInsideStep => {
+        solver.step(system, dt, timeInsideStep => {
           addTimeDependentGravityAndSpringsBetweenNeighbours(bodies, timeInsideStep)
           addMassForce(mass)
         }, cache)
       }
 
-      assert(bits(bodies) == bits(bodiesAlone), s"solver ${s.solver}")
-      assert(bits(mass) == bits(massAlone), s"solver ${s.solver}")
-      assert(bits(direction) == bits(directionAlone), s"solver ${s.solver}")
+      assert(bits(bodies) == bits(bodiesAlone), s"solver ${s.name}")
+      assert(bits(mass) == bits(massAlone), s"solver ${s.name}")
+      assert(bits(direction) == bits(directionAlone), s"solver ${s.name}")
     }
   }
 
-  test("constraint forques added in the callback and a projection after the step give exactly Pga3dPhysicsSolverConstrained") {
+  test("a universal solver with the resolver of the bodies gives exactly the constraint forces added by the force callback and the projection after the step") {
     val origin = Pga3dPoint(0.0, 0.0, 0.0)
-    val constraints = ArraySeq(
+    val constraints = Array(
       Pga3dDistanceConstraint.rod(0, origin, Pga3dDistanceConstraint.world, Pga3dPoint(0.0, 1.0, 0.0), 1.2),
       Pga3dDistanceConstraint.rod(1, origin, 2, Pga3dPoint(0.1, 0.0, 0.0), 0.8))
 
     val expectedBodies = makeBodies()
-    val constrained = Pga3dPhysicsSolverConstrained(Pga3dPhysicsSolverRK4, Pga3dConstraintResolver(constraints))
+    val expectedBodiesArray = IntegrableUniformArray(expectedBodies, Pga3dBodyState.componentsCount)
+    val calledByHand = Pga3dConstraintResolver(expectedBodies, constraints)
     for (_ <- 0 until steps) {
-      constrained.step(expectedBodies, dt, timeInsideStep => addTimeDependentGravityAndSpringsBetweenNeighbours(expectedBodies, timeInsideStep))
+      OdeSolverRK4.step(expectedBodiesArray, dt, timeInsideStep => {
+        addTimeDependentGravityAndSpringsBetweenNeighbours(expectedBodies, timeInsideStep)
+        calledByHand.addConstraintForces()
+      })
+      calledByHand.project()
     }
 
     val bodies = makeBodies()
     val uncoupledMass = makeMass()
     val system = world(bodies, uncoupledMass)
-    val resolver = Pga3dConstraintResolver(constraints)
+    val resolver = Pga3dConstraintResolver(bodies, constraints)
     val cache = OdeSolverCache()
     for (_ <- 0 until steps) {
       OdeSolverRK4.step(system, dt, timeInsideStep => {
         addTimeDependentGravityAndSpringsBetweenNeighbours(bodies, timeInsideStep)
         addMassForce(uncoupledMass)
-        resolver.addConstraintForques(bodies)
-      }, cache)
-      resolver.project(bodies)
+      }, cache, resolver)
     }
 
     assert(bits(bodies) == bits(expectedBodies))
   }
 
-  private def runBodiesWithMassOnSpring(solver: OdeSolver, nextCache: () => OdeSolverCache | Null): Seq[Long] =
+  private def runBodiesWithMassOnSpring(makeSolver: Array[Pga3dPhysicsBody] => OdeSolver, nextCache: () => OdeSolverCache | Null): Seq[Long] =
     val bodies = makeBodies()
+    val solver = makeSolver(bodies)
     val mass = makeMass()
     val system = world(bodies, mass, makeDirection())
     for (_ <- 0 until steps) {
@@ -327,12 +288,12 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
 
   test("the result with bodies does not depend on the cache: absent, new on every step, reused, filled with NaN before every step") {
     for (s <- solvers) {
-      val withoutCache = runBodiesWithMassOnSpring(s.solver, () => null)
+      val withoutCache = runBodiesWithMassOnSpring(s.make, () => null)
 
-      assert(runBodiesWithMassOnSpring(s.solver, () => OdeSolverCache()) == withoutCache, s"solver ${s.solver}, a new cache on every step")
+      assert(runBodiesWithMassOnSpring(s.make, () => OdeSolverCache()) == withoutCache, s"solver ${s.name}, a new cache on every step")
 
       val reused = OdeSolverCache()
-      assert(runBodiesWithMassOnSpring(s.solver, () => reused) == withoutCache, s"solver ${s.solver}, a reused cache")
+      assert(runBodiesWithMassOnSpring(s.make, () => reused) == withoutCache, s"solver ${s.name}, a reused cache")
 
       val filledWithNaN = OdeSolverCache()
       val poison = () => {
@@ -341,6 +302,6 @@ class Pga3dBodiesOdeSolverTest extends AnyFunSuiteLike:
         }
         filledWithNaN
       }
-      assert(runBodiesWithMassOnSpring(s.solver, poison) == withoutCache, s"solver ${s.solver} read a double it did not write during the step")
+      assert(runBodiesWithMassOnSpring(s.make, poison) == withoutCache, s"solver ${s.name} read a double it did not write during the step")
     }
   }

@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.*
+import me.kright.gametools.physics1d.*
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import scala.collection.immutable.ArraySeq
@@ -21,7 +22,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
         Pga3dTranslator.addVector(Pga3dVector(-1, 0, 0)).toMotor,
         Pga3dBivector(wy = -v)),
     )
-    val resolver = Pga3dConstraintResolver(ArraySeq(
+    val resolver = Pga3dConstraintResolver(bodies, Array(
       Pga3dDistanceConstraint.rod(0, origin, 1, origin, 2.0)))
     (bodies, resolver)
 
@@ -32,8 +33,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
 
   test("spinning dumbbell: distance, momentum and energy are conserved") {
     val (bodies, resolver) = dumbbell()
-    val solver = Pga3dPhysicsSolverConstrained(Pga3dPhysicsSolverRK4, resolver)
-    val system = Pga3dPhysicsSystemForTest(bodies, solver)
+    val system = Pga3dPhysicsSystemForTest(bodies, OdeSolverRK4, resolver)
     val constraint = resolver.constraints.head
 
     var maxDistError = 0.0
@@ -50,12 +50,12 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
 
   test("the constraint forques alone keep the dumbbell on the circle, without any projection") {
     val (bodies, resolver) = dumbbell()
-    val system = Pga3dPhysicsSystemForTest(bodies, Pga3dPhysicsSolverRK4)
+    val system = Pga3dPhysicsSystemForTest(bodies, OdeSolverRK4)
     val constraint = resolver.constraints.head
 
     var maxDistError = 0.0
     for (_ <- 0 until 100) {
-      system.doStep(0.01, _ => resolver.addConstraintForques(bodies))
+      system.doStep(0.01, _ => resolver.addConstraintForces())
       maxDistError = Math.max(maxDistError, Math.abs(anchorDistance(bodies, constraint) - 2.0))
     }
     // measured 1.4e-12 / 1.4e-12: part 1 supplies the exact centripetal force, so even with
@@ -83,7 +83,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
     val h = 1e-5
     def anchorAfter(dt: Double): Pga3dPoint =
       val copy = body.deepCopy
-      Pga3dPhysicsSystem(Array(copy), Pga3dPhysicsSolverRK4).doStep(dt, _ => ())
+      Pga3dPhysicsSystem(Array(copy), OdeSolverRK4).doStep(dt, _ => ())
       copy.motorSandwich(q)
 
     val pPlus = anchorAfter(h)
@@ -111,7 +111,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
       Pga3dPhysicsBody.motionless(
         Pga3dInertiaLocal(2.0, 0.8, 0.5, 0.3),
         Pga3dTranslator.addVector(translation).toMotor))
-    val resolver = Pga3dConstraintResolver(ArraySeq(
+    val resolver = Pga3dConstraintResolver(bodies, Array(
       Pga3dDistanceConstraint.rod(0, anchorLocal, Pga3dDistanceConstraint.world, origin, 1.5)))
     (bodies, resolver)
 
@@ -128,8 +128,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
 
   test("offset pendulum: constraint is held and energy is conserved") {
     val (bodies, resolver) = offsetPendulum()
-    val solver = Pga3dPhysicsSolverConstrained(Pga3dPhysicsSolverRK4, resolver)
-    val system = Pga3dPhysicsSystem(bodies, solver)
+    val system = Pga3dPhysicsSystem(bodies, OdeSolverRK4, resolver = resolver)
     val constraint = resolver.constraints.head
 
     // the initial pose does not satisfy the constraint exactly: the first projection snaps it
@@ -154,7 +153,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
     // diverge exponentially and long-horizon order measurements only see the chaos
     def finalState(dt: Double): Pga3dBodyState =
       val (bodies, resolver) = offsetPendulum()
-      val system = Pga3dPhysicsSystem(bodies, Pga3dPhysicsSolverConstrained(Pga3dPhysicsSolverRK4, resolver))
+      val system = Pga3dPhysicsSystem(bodies, OdeSolverRK4, resolver = resolver)
       for (_ <- 0 until Math.round(1.0 / dt).toInt) {
         system.doStep(dt, _ => addGravity(bodies))
       }
@@ -180,9 +179,9 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
       Pga3dPhysicsBody.motionless(
         Pga3dInertiaLocal(1.0, 0.1, 0.1, 0.1),
         Pga3dTranslator.addVector(Pga3dVector(1.0, 0, 0)).toMotor))
-    val resolver = Pga3dConstraintResolver(ArraySeq(
+    val resolver = Pga3dConstraintResolver(bodies, Array(
       Pga3dDistanceConstraint.rope(0, origin, Pga3dDistanceConstraint.world, origin, 2.0)))
-    val system = Pga3dPhysicsSystem(bodies, Pga3dPhysicsSolverConstrained(Pga3dPhysicsSolverRK4, resolver))
+    val system = Pga3dPhysicsSystem(bodies, OdeSolverRK4, resolver = resolver)
     val constraint = resolver.constraints.head
 
     var maxDist = 0.0
@@ -208,9 +207,9 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
         Pga3dInertiaLocal(1.0, 0.1, 0.1, 0.1),
         Pga3dTranslator.addVector(Pga3dVector(-0.25, 0, 0)).toMotor),
     )
-    val resolver = Pga3dConstraintResolver(ArraySeq(
+    val resolver = Pga3dConstraintResolver(bodies, Array(
       Pga3dDistanceConstraint.strut(0, origin, 1, origin, 1.0)))
-    val system = Pga3dPhysicsSystem(bodies, Pga3dPhysicsSolverConstrained(Pga3dPhysicsSolverRK4, resolver))
+    val system = Pga3dPhysicsSystem(bodies, OdeSolverRK4, resolver = resolver)
     val constraint = resolver.constraints.head
 
     for (_ <- 0 until 10) {
@@ -227,19 +226,20 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
     // the momentum leak comes from the pose projection, so it scales with the solver's own
     // per-step drift: tiny for the 4th-order solvers, visible for the 2nd-order ones, and
     // only the distance is guaranteed for Euler
-    val solversAndMaxErrorL = ArraySeq[(Pga3dPhysicsSolver, Double)](
-      (Pga3dPhysicsSolverEuler, 1.0),
-      (Pga3dPhysicsSolverHeun, 1e-5),
-      (Pga3dPhysicsSolverMidPoint, 1e-5),
-      (Pga3dPhysicsSolverRK4, 1e-9),
-      (Pga3dPhysicsSolverRKMK4, 1e-9),
-      (Pga3dPhysicsSolverRKF45(), 1e-9),
-      (Pga3dPhysicsSolverGaussLegendre(iterations = 3), 1e-9),
+    val solversAndMaxErrorL = ArraySeq[(Array[Pga3dPhysicsBody] => OdeSolver, Double)](
+      (_ => OdeSolverEuler, 1.0),
+      (_ => OdeSolverHeun, 1e-5),
+      (_ => OdeSolverMidPoint, 1e-5),
+      (_ => OdeSolverRK4, 1e-9),
+      (Pga3dPhysicsSolverRKMK4(_), 1e-9),
+      (_ => OdeSolverRKF45(), 1e-9),
+      (_ => OdeSolverGaussLegendre(iterations = 3), 1e-9),
     )
 
-    for ((inner, maxErrorL) <- solversAndMaxErrorL) {
+    for ((makeSolver, maxErrorL) <- solversAndMaxErrorL) {
       val (bodies, resolver) = dumbbell()
-      val system = Pga3dPhysicsSystemForTest(bodies, Pga3dPhysicsSolverConstrained(inner, resolver))
+      val solver = makeSolver(bodies)
+      val system = Pga3dPhysicsSystemForTest(bodies, solver, resolver)
       val constraint = resolver.constraints.head
 
       var maxDistError = 0.0
@@ -250,7 +250,7 @@ class Pga3dConstraintResolverTest extends AnyFunSuiteLike:
       val error = system.getError()
       // measured errorL: euler 2.6e-2, heun/midPoint 6.3e-7, rk4/rkmk4 3.5e-12,
       // rkf45 1.3e-12, gaussLegendre(3) 4.8e-16
-      assert(maxDistError < 1e-9, s"solver = $inner, maxDistError = $maxDistError")
-      assert(error.errorL < maxErrorL, s"solver = $inner, error = $error")
+      assert(maxDistError < 1e-9, s"solver = $solver, maxDistError = $maxDistError")
+      assert(error.errorL < maxErrorL, s"solver = $solver, error = $error")
     }
   }

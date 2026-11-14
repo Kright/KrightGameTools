@@ -33,7 +33,7 @@ class Rk4BodiesCountBenchmark:
       )
     }
 
-  var arrayBodies: Array[Pga3dPhysicsBody] = uninitialized
+  var bodiesArrayWithoutCache: IntegrableUniformArray[Pga3dPhysicsBody] = uninitialized
   var bodiesArray: IntegrableUniformArray[Pga3dPhysicsBody] = uninitialized
   var bodiesArrayCache: OdeSolverCache = uninitialized
   var world: Integrable = uninitialized
@@ -41,15 +41,15 @@ class Rk4BodiesCountBenchmark:
 
   @Setup
   def setup(): Unit =
-    arrayBodies = makeBodies()
+    bodiesArrayWithoutCache = IntegrableUniformArray(makeBodies(), Pga3dBodyState.componentsCount)
     bodiesArray = IntegrableUniformArray(makeBodies(), Pga3dBodyState.componentsCount)
     bodiesArrayCache = OdeSolverCache()
     world = Integrable(IntegrableUniformArray(makeBodies(), Pga3dBodyState.componentsCount), BenchmarkOscillatorA(1.0, 0.0))
     worldCache = OdeSolverCache()
 
   @Benchmark
-  def solverForArray(): Unit =
-    Pga3dPhysicsSolverRK4.step(arrayBodies, dt, _ => ())
+  def universalSolverOverBodiesArrayWithoutCache(): Unit =
+    OdeSolverRK4.step(bodiesArrayWithoutCache, dt, _ => ())
 
   @Benchmark
   def universalSolverOverBodiesArray(): Unit =

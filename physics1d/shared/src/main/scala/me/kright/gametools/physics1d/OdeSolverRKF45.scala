@@ -1,7 +1,7 @@
 package me.kright.gametools.physics1d
 
 import me.kright.gametools.mathutil.FastRange
-import me.kright.gametools.physics1d.OdeSolverUtil.saveDerivative
+import me.kright.gametools.physics1d.OdeSolverUtil.{loadFinalState, saveDerivative}
 
 /**
  * Runge-Kutta-Fehlberg 4(5) with a fixed step: the state is advanced by the 4th-order solution,
@@ -18,7 +18,11 @@ class OdeSolverRKF45 extends OdeSolver:
     }
     result
 
-  override def step(system: Integrable, dt: Double, addForces: (timeInsideStep: Double) => Unit, cache: OdeSolverCache | Null): Unit = {
+  override def step(system: Integrable,
+                    dt: Double,
+                    addForces: (timeInsideStep: Double) => Unit,
+                    cache: OdeSolverCache | Null,
+                    resolver: OdeConstraintResolver | Null): Unit = {
     val size = system.stateSize
     val arrays = OdeSolverCache.getArrays(cache, 9, size)
     val initial = arrays(0)
@@ -32,24 +36,30 @@ class OdeSolverRKF45 extends OdeSolver:
     val difference = arrays(8)
 
     system.saveState(initial, 0)
-    saveDerivative(system, 0.0, addForces, k1)
+    saveDerivative(system, 0.0, addForces, resolver, k1)
 
-    loadStage(system, stage, size, initial, dt, (k1, 1.0 / 4.0))
-    saveDerivative(system, dt * (1.0 / 4.0), addForces, k2)
+    combineStage(stage, size, initial, dt, (k1, 1.0 / 4.0))
+    system.loadState(stage, 0)
+    saveDerivative(system, dt * (1.0 / 4.0), addForces, resolver, k2)
 
-    loadStage(system, stage, size, initial, dt, (k1, 3.0 / 32.0), (k2, 9.0 / 32.0))
-    saveDerivative(system, dt * (3.0 / 8.0), addForces, k3)
+    combineStage(stage, size, initial, dt, (k1, 3.0 / 32.0), (k2, 9.0 / 32.0))
+    system.loadState(stage, 0)
+    saveDerivative(system, dt * (3.0 / 8.0), addForces, resolver, k3)
 
-    loadStage(system, stage, size, initial, dt, (k1, 1932.0 / 2197.0), (k2, -7200.0 / 2197.0), (k3, 7296.0 / 2197.0))
-    saveDerivative(system, dt * (12.0 / 13.0), addForces, k4)
+    combineStage(stage, size, initial, dt, (k1, 1932.0 / 2197.0), (k2, -7200.0 / 2197.0), (k3, 7296.0 / 2197.0))
+    system.loadState(stage, 0)
+    saveDerivative(system, dt * (12.0 / 13.0), addForces, resolver, k4)
 
-    loadStage(system, stage, size, initial, dt, (k1, 439.0 / 216.0), (k2, -8.0), (k3, 3680.0 / 513.0), (k4, -845.0 / 4104.0))
-    saveDerivative(system, dt, addForces, k5)
+    combineStage(stage, size, initial, dt, (k1, 439.0 / 216.0), (k2, -8.0), (k3, 3680.0 / 513.0), (k4, -845.0 / 4104.0))
+    system.loadState(stage, 0)
+    saveDerivative(system, dt, addForces, resolver, k5)
 
-    loadStage(system, stage, size, initial, dt, (k1, -8.0 / 27.0), (k2, 2.0), (k3, -3544.0 / 2565.0), (k4, 1859.0 / 4104.0), (k5, -11.0 / 40.0))
-    saveDerivative(system, dt * (1.0 / 2.0), addForces, k6)
+    combineStage(stage, size, initial, dt, (k1, -8.0 / 27.0), (k2, 2.0), (k3, -3544.0 / 2565.0), (k4, 1859.0 / 4104.0), (k5, -11.0 / 40.0))
+    system.loadState(stage, 0)
+    saveDerivative(system, dt * (1.0 / 2.0), addForces, resolver, k6)
 
-    loadStage(system, stage, size, initial, dt, (k1, 25.0 / 216.0), (k3, 1408.0 / 2565.0), (k4, 2197.0 / 4104.0), (k5, -1.0 / 5.0))
+    combineStage(stage, size, initial, dt, (k1, 25.0 / 216.0), (k3, 1408.0 / 2565.0), (k4, 2197.0 / 4104.0), (k5, -1.0 / 5.0))
+    loadFinalState(system, stage, resolver)
 
     // (5th - 4th order) difference: b* - b = 1/360, 0, -128/4275, -2197/75240, 1/50, 2/55
     for (j <- FastRange(size)) {
@@ -67,12 +77,11 @@ class OdeSolverRKF45 extends OdeSolver:
     }
   }
 
-  private def loadStage(system: Integrable,
-                        stage: Array[Double],
-                        size: Int,
-                        initial: Array[Double],
-                        dt: Double,
-                        terms: (Array[Double], Double)*): Unit =
+  private def combineStage(stage: Array[Double],
+                           size: Int,
+                           initial: Array[Double],
+                           dt: Double,
+                           terms: (Array[Double], Double)*): Unit =
     System.arraycopy(initial, 0, stage, 0, size)
     for ((k, c) <- terms) {
       val scale = dt * c
@@ -80,7 +89,6 @@ class OdeSolverRKF45 extends OdeSolver:
         stage(j) += k(j) * scale
       }
     }
-    system.loadState(stage, 0)
 
   override def toString: String =
     "OdeSolverRKF45"

@@ -10,7 +10,11 @@ import me.kright.gametools.physics1d.OdeSolverUtil.*
  *                   With two iterations precision is similar with [[OdeSolverRK4]], but RK4 is faster to compute
  */
 class OdeSolverGaussLegendre(val iterations: Int = 3) extends OdeSolver:
-  override def step(system: Integrable, dt: Double, addForces: (timeInsideStep: Double) => Unit, cache: OdeSolverCache | Null): Unit = {
+  override def step(system: Integrable,
+                    dt: Double,
+                    addForces: (timeInsideStep: Double) => Unit,
+                    cache: OdeSolverCache | Null,
+                    resolver: OdeConstraintResolver | Null): Unit = {
     val c1 = 0.5 - Math.sqrt(3) / 6
     val c2 = 0.5 + Math.sqrt(3) / 6
 
@@ -33,27 +37,27 @@ class OdeSolverGaussLegendre(val iterations: Int = 3) extends OdeSolver:
 
     system.saveState(initial, 0)
 
-    saveDerivative(system, dt * c1, addForces, fy1)
+    saveDerivative(system, dt * c1, addForces, resolver, fy1)
     combine(y1, size, initial, dt * (a11 + a12), fy1)
     combine(y2, size, initial, dt * (a21 + a22), fy1)
 
     for (i <- FastRange(iterations)) {
       system.loadState(y1, 0)
-      saveDerivative(system, dt * c1, addForces, fy1)
+      saveDerivative(system, dt * c1, addForces, resolver, fy1)
       system.loadState(y2, 0)
-      saveDerivative(system, dt * c2, addForces, fy2)
+      saveDerivative(system, dt * c2, addForces, resolver, fy2)
 
       combine(y1, size, initial, dt, fy1, a11, fy2, a12)
       combine(y2, size, initial, dt, fy1, a21, fy2, a22)
     }
 
     system.loadState(y1, 0)
-    saveDerivative(system, dt * c1, addForces, fy1)
+    saveDerivative(system, dt * c1, addForces, resolver, fy1)
     system.loadState(y2, 0)
-    saveDerivative(system, dt * c2, addForces, fy2)
+    saveDerivative(system, dt * c2, addForces, resolver, fy2)
 
     combine(stage, size, initial, dt, fy1, b1, fy2, b2)
-    system.loadState(stage, 0)
+    loadFinalState(system, stage, resolver)
   }
 
   override def toString: String =

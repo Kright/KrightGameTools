@@ -26,8 +26,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
     `IntegrableUniformArray(...)`; `Integrable.empty` - the object without a state.
   - `OdeSolverCache` - the work buffers of a solver, kept between the steps:
     `getArrays(groupSize, size)` gives all the stage arrays of a step by one call.
-  - `OdeSolver.step(system, dt, addForces, cache: OdeSolverCache | Null = null)` (without a cache
-    a solver creates new arrays on every step) and the solvers `OdeSolverEuler`,
+  - `OdeConstraintResolver` - hard constraints for a solver: `addConstraintForces()` after the
+    force callback of every derivative evaluation, `project()` after the completed step.
+  - `OdeSolver.step(system, dt, addForces, cache: OdeSolverCache | Null = null, resolver:
+    OdeConstraintResolver | Null = null)` (without a cache a solver creates new arrays on every
+    step) and the solvers `OdeSolverEuler`,
     `OdeSolverMidPoint`, `OdeSolverHeun`, `OdeSolverRK4`, `OdeSolverRKF45` (with `lastErrors`, the
     error estimate of every double of the system), `OdeSolverGaussLegendre(iterations)`;
     `OdeSolverUtil` with their building blocks. Measured on two masses joined by a spring: every
@@ -40,26 +43,51 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed (breaking)
 
+- `Pga3dConstraintResolver` takes the bodies as its first constructor argument and the
+  constraints as an `Array`, `Pga3dConstraintResolver(dynamicBodies, constraints)`, and is an
+  `OdeConstraintResolver` for
+  the universal solvers: `addConstraintForces()` (was `addConstraintForques(dynamicBodies)`),
+  `project()`, `projectPositions()`, `projectVelocities()` have no arguments. The constraints
+  refer to the bodies by their index in the array of the resolver.
+- `Pga3dPhysicsSolverRKMK4` is an `OdeSolver` and a class bound to its bodies:
+  `Pga3dPhysicsSolverRKMK4(dynamicBodies).step(system, dt, addForces, cache, resolver)` (was an
+  object with `step(dynamicBodies, dt, addForquesToBodies)`). The whole system goes through the
+  classic RK4 stages over its flat state, and the motors of the given bodies get the group
+  update, so other objects of the world, a cache and a constraint resolver work with it as with
+  any other solver. Everything but these motors is exactly `OdeSolverRK4`; the trajectories
+  differ from 0.12.0 in the last bits (one ulp of one double after a step), and a step is 22%
+  slower: the flat motor of every stage is computed and thrown away.
+- `Pga3dPhysicsSystem` takes an `OdeSolver` (was a `Pga3dPhysicsSolver`) and an optional
+  `resolver: OdeConstraintResolver | Null`; it steps the `IntegrableUniformArray` of its bodies
+  with its own `OdeSolverCache`. `withStateDeepCopy` requires a system without a resolver: the
+  resolver refers to the bodies it was created with.
 - `Pga3dPhysicsBody` gained the final members `stateSize`, `saveState`, `loadState`,
   `saveDerivative`, `resetForces`: a subclass cannot declare its own with these names.
 
-### Deprecated
+### Removed
 
 - `Pga3dPhysicsSolverEuler`, `MidPoint`, `Heun`, `RK4`, `RKF45` and `GaussLegendre`: use the
   universal solver of physics1d with the same suffix (`OdeSolverRK4`, ...) over
-  `IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount)`.
-- `Pga3dPhysicsSolverUtil`: the solvers of the library do not use it any more, their building
-  blocks over flat double arrays are in `OdeSolverUtil` of physics1d.
+  `IntegrableUniformArray(bodies, Pga3dBodyState.componentsCount)`. The stages are kept in flat
+  double arrays instead of arrays of `Pga3dBodyState`, with the order of the floating point
+  operations preserved: the trajectories are bit-identical to 0.12.0. Instead of the per-body
+  `lastMotorErrors` / `lastLocalBErrors` of RKF45 there is `lastErrors` of `OdeSolverRKF45`, one
+  value per double of the system.
+- `Pga3dPhysicsSolverConstrained`: pass the `Pga3dConstraintResolver` as the `resolver`
+  argument of a universal solver.
+- `Pga3dPhysicsSolverUtil`: the building blocks of the solvers over flat double arrays are in
+  `OdeSolverUtil` of physics1d.
+- `Pga3dPhysicsSolver`: every Runge-Kutta solver is an `OdeSolver` of physics1d.
 
 ### Changed
 
-- `Pga3dPhysicsSolverEuler`, `MidPoint`, `Heun`, `RK4`, `RKF45` and `GaussLegendre` are thin
-  wrappers now: they wrap the array of bodies into an `IntegrableUniformArray` and call the
-  universal solver of physics1d. The `Pga3dPhysicsSolver` interface is unchanged.
-  The stages are kept in flat double arrays instead of arrays of
-  `Pga3dBodyState`, with the order of the floating point operations preserved: the trajectories
-  are bit-identical to 0.12.0. The per-body estimates of `Pga3dPhysicsSolverRKF45` are folded
-  from the per-double ones and may differ in the last bit.
+- benchmark: `PhysicsSolverBenchmark` measures the universal solvers over an
+  `IntegrableUniformArray` of bodies with a reused `OdeSolverCache`.
+- Solvers.md states where `Pga3dPhysicsSolverRKMK4` is more accurate than RK4, with measurements
+  kept as tests: a step with a twist constant in the body frame (a sphere, a spin about a
+  principal axis) is exact, the advantage is 90x and 14x for nearly spherical bodies and fades
+  to 1.0 for a tumbling asymmetric one. For RK4 it gives the rule for the step: the body loses
+  the fraction `phi^4 / 5120` of its rotation, `phi` being the rotation per step.
 - matrix depends on arrayview 0.4.2.
 
 ## [0.12.0] - 2026-11-11

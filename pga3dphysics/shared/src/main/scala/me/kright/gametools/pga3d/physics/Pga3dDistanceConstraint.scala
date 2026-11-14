@@ -7,12 +7,11 @@ import me.kright.gametools.pga3d.Pga3dPoint
  * [minDistance, maxDistance]. Equal bounds give a rigid rod, `rope` bounds only the maximum
  * (pulls when taut, slack otherwise), `strut` bounds only the minimum (pushes when compressed).
  *
- * Bodies are referenced by their index in the `dynamicBodies` array passed to the solver;
+ * Bodies are referenced by their index in `dynamicBodies` of the [[Pga3dConstraintResolver]];
  * [[Pga3dDistanceConstraint.world]] anchors the point to the static world (then the anchor is
  * in world coordinates, otherwise in body-local coordinates).
  *
- * Resolved by [[Pga3dConstraintResolver]]; see [[Pga3dPhysicsSolverConstrained]] for plugging
- * it into a solver.
+ * Resolved by [[Pga3dConstraintResolver]], which is passed to a solver as its resolver.
  */
 final case class Pga3dDistanceConstraint(bodyA: Int,
                                          anchorA: Pga3dPoint,

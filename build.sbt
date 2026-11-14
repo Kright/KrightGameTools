@@ -216,8 +216,6 @@ lazy val pga3dphysics = crossProject(JSPlatform, JVMPlatform)
   .jsSettings(jsTestsCompileNotRun)
   .settings(scalatestSettings, strictSettings)
   .settings(sonatypeSettings, name := "gametools-pga3dphysics")
-  // the deprecated Pga3dPhysicsSolver wrappers stay covered by the tests
-  .settings(Test / scalacOptions += "-Wconf:cat=deprecation:s")
   .dependsOn(
     pga3d % "compile->compile;test->test",
     matrix,
@@ -230,8 +228,6 @@ lazy val benchmark = (project in file("benchmark"))
   .settings(
     name := "gametools-benchmark",
     publish / skip := true,
-    // the deprecated Pga3dPhysicsSolver wrappers stay measured
-    scalacOptions += "-Wconf:cat=deprecation:s",
     libraryDependencies += "org.openjdk.jmh" % "jmh-core" % "1.37",
     libraryDependencies += "org.openjdk.jmh" % "jmh-generator-annprocess" % "1.37",
   )

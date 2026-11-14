@@ -6,6 +6,9 @@ final class PointMass1d(val mass: Double, var x: Double, var v: Double) extends 
   def addForce(f: Double): Unit =
     force += f
 
+  def accumulatedForce: Double =
+    force
+
   override val stateSize: Int = 2
 
   override def saveState(dst: Array[Double], offset: Int): Unit =
@@ -56,3 +59,24 @@ final class UnitDirection(val damping: Double, initialAngle: Double, var omega: 
     dst(offset + 2) = -damping * omega
 
   override def resetForces(): Unit = ()
+
+
+final class RigidRod1dConstraintResolver(a: PointMass1d, b: PointMass1d, length: Double) extends OdeConstraintResolver:
+  private val inverseMassA = 1.0 / a.mass
+  private val inverseMassB = 1.0 / b.mass
+  private val inverseMassSum = inverseMassA + inverseMassB
+
+  override def addConstraintForces(): Unit =
+    val relativeAcceleration = b.accumulatedForce * inverseMassB - a.accumulatedForce * inverseMassA
+    val lambda = relativeAcceleration / inverseMassSum
+    a.addForce(lambda)
+    b.addForce(-lambda)
+
+  override def project(): Unit =
+    val positionError = (b.x - a.x - length) / inverseMassSum
+    a.x += positionError * inverseMassA
+    b.x -= positionError * inverseMassB
+
+    val velocityError = (b.v - a.v) / inverseMassSum
+    a.v += velocityError * inverseMassA
+    b.v -= velocityError * inverseMassB

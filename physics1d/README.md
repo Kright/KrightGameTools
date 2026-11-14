@@ -87,13 +87,33 @@ the objects: they integrate one `Integrable`.
 | `OdeSolverRKF45`                | 4 (+ embedded 5) | 6                          | free per-step local-error estimate         |
 | `OdeSolverGaussLegendre(iter)`  | 4 (implicit)     | 3 + 2·iter                 | far better energy behavior on stiff forces |
 
-All of them implement `OdeSolver.step(system, dt, addForces, cache)`; `addForces` is called
-once per derivative evaluation with the time offset inside the step. The orders are measured
+All of them implement `OdeSolver.step(system, dt, addForces, cache, resolver)`; `addForces` is
+called once per derivative evaluation with the time offset inside the step. The cache and the
+constraint resolver are optional, see below. The orders are measured
 in `OdeSolverTest` on two masses joined by a spring against the exact solution: 1.04, 2.00,
 2.00, 4.00, 4.01, 4.00. `OdeSolverRKF45` exposes `lastErrors`, the estimate of the local error
 of every double of the state (measured 0.97-0.99 of the actual error of a step, scaling as
 dt^5), and `lastMaxError`. For the rigid bodies of pga3dphysics, timings and a selection guide
 see [pga3dphysics/Solvers.md](../pga3dphysics/Solvers.md).
+
+### OdeConstraintResolver
+
+Hard constraints are plugged into a step by the optional `resolver` argument:
+
+```scala
+trait OdeConstraintResolver:
+  def addConstraintForces(): Unit
+  def project(): Unit
+```
+
+A solver calls `addConstraintForces()` at every derivative evaluation, right after the force
+callback - the constraint forces then belong to a smooth ODE, and the solver keeps its order -
+and `project()` once after the state of the completed step is loaded, to remove the residual
+drift. The methods have no arguments: a resolver knows itself which objects it constrains.
+Measured in `OdeConstraintResolverTest` on two masses joined by a rigid rod: every solver
+keeps its order (0.99 / 2.00 / 2.00 / 4.00 / 4.06 / 4.00), the rod length holds to 4e-16.
+
+For the rigid bodies of pga3dphysics the resolver is `Pga3dConstraintResolver(bodies, constraints)`.
 
 ### Integrable
 

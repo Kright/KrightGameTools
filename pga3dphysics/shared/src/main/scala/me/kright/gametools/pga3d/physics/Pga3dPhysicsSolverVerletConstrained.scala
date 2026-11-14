@@ -9,7 +9,7 @@ import me.kright.gametools.pga3d.{Pga3dBivector, Pga3dMotor, Pga3dPoint, Pga3dTr
  * over Verlet only reaches the 1st order).
  *
  * Like [[Pga3dPhysicsSolverVerlet]] this is a stateless computation strategy, not a
- * [[Pga3dPhysicsSolver]]: the state is two consecutive pose arrays owned by the caller, the
+ * `OdeSolver`: the state is two consecutive pose arrays owned by the caller, the
  * constraints are an argument of [[step]] and may change freely between steps (e.g.
  * contact-like constraints regenerated every frame), and pose edits between steps implicitly
  * edit the velocity, like in position-based dynamics.

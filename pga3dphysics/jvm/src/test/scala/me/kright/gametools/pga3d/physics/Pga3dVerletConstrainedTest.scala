@@ -1,6 +1,7 @@
 package me.kright.gametools.pga3d.physics
 
 import me.kright.gametools.pga3d.*
+import me.kright.gametools.physics1d.OdeSolverRK4
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 import scala.collection.immutable.ArraySeq
@@ -165,8 +166,8 @@ class Pga3dVerletConstrainedTest extends AnyFunSuiteLike:
       state
 
     val (referenceBodies, referenceConstraints) = chain(0.3)
-    val referenceSystem = Pga3dPhysicsSystem(referenceBodies,
-      Pga3dPhysicsSolverConstrained(Pga3dPhysicsSolverRK4, Pga3dConstraintResolver(referenceConstraints)))
+    val referenceSystem = Pga3dPhysicsSystem(referenceBodies, OdeSolverRK4,
+      resolver = Pga3dConstraintResolver(referenceBodies, referenceConstraints.toArray))
     def addGravityToBodies(): Unit =
       for (body <- referenceBodies) {
         body.addGlobalForque(Pga3dForque.force(body.globalCenterOfMass, gravity * body.inertia.mass))
