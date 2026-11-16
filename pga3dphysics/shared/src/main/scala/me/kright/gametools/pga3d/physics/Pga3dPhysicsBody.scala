@@ -27,12 +27,12 @@ class Pga3dPhysicsBody(var inertia: Pga3dInertia,
   // the accumulator of the global forque is six plain fields, not a Pga3dBivectorMutable: by the
   // benchmarks an RK4 step takes the same time for 100 bodies, 2-6% less for 10'000 and up to
   // 30% less for 100'000 - the more, the less of the bodies stays in the cache
-  private var forqueWx: Double = 0.0
-  private var forqueWy: Double = 0.0
-  private var forqueWz: Double = 0.0
-  private var forqueXy: Double = 0.0
-  private var forqueXz: Double = 0.0
-  private var forqueYz: Double = 0.0
+  protected var forqueWx: Double = 0.0
+  protected var forqueWy: Double = 0.0
+  protected var forqueWz: Double = 0.0
+  protected var forqueXy: Double = 0.0
+  protected var forqueXz: Double = 0.0
+  protected var forqueYz: Double = 0.0
 
   def motor: Pga3dMotor = transform.motor
 
